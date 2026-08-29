@@ -18,6 +18,16 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D010 | NOT_SUPPORTED | Inquiry Intent v1 no debe usarse como capa predictiva: aprende principalmente día de la semana y empeora AP/AUC/lift fuera de muestra. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D011 | SUPPORTED | El perfil de Spot actual mezcla arquetipo físico con geografía; varios clusters son esencialmente regiones/estados. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D012 | INCONCLUSIVE | Existen bolsillos locales de compatibilidad Lead/Need × Spot × Broker con lift descriptivo, pero no hay evidencia suficiente de una sinergia global generalizable. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
+| D013 | INCONCLUSIVE | El RF T2 tuvo mejor punto estimado que el head T2 en el diagnóstico inicial, pero E005 no confirma un ganador T2 robusto; refinado por D021. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D014 | SUPPORTED | La señal T2 se interpreta mejor como trayectoria/progreso vs estancamiento que como efecto de la inquiry actual aislada. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D015 | SUPPORTED | Condicionada al historial observable, la inquiry actual y el match Lead↔Spot aportan poca señal incremental promedio en T2, aunque recuperan valor en el último T2. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D016 | INCONCLUSIVE | `availability_snapshot_age_days` aparece predictiva, pero su dirección es sospechosa y puede estar capturando estructura temporal/cobertura en lugar de disponibilidad accionable. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D017 | SUPPORTED | La baja concordancia entre rankings del multi-head y RF indica que las conclusiones más robustas son por familias, no por ranking exacto de variables individuales. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D018 | INCONCLUSIVE | En comparación equivalente, especialistas e híbrido mejoran macro AP puntualmente frente al Multi-Head, pero los IC95% por lead cruzan cero. | [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md) |
+| D019 | SUPPORTED | T1 sí favorece claramente un especialista Random Forest: mejora AP y AUC frente al head T1 con IC95% por lead completamente positivo. | [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md) |
+| D020 | SUPPORTED | Un CatBoost pooled con stage como variable supera robustamente al Multi-Head en AUC macro; en AP macro la ventaja aún es inconclusa. | [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md) |
+| D021 | INCONCLUSIVE | T2 sigue sin ganador robusto: CatBoost/RF mejoran algunos puntos estimados, pero los intervalos AP/AUC vs Multi-Head cruzan cero. | [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md) |
+| D022 | INCONCLUSIVE | El híbrido seleccionado sólo con validation obtiene el mayor macro AP puntual, pero su mejora vs Multi-Head no es estadísticamente robusta. | [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -248,3 +258,179 @@ Sin embargo, el modelo global de perfiles sólo alcanza lift@10% 1.033x (E001) y
 **Siguiente implicación:** usar las matrices Need × Spot y Need × Broker como hipótesis de routing, exigir soporte mínimo/intervalos de confianza y validar después con diseño online o cuasi-experimental.
 
 Evidencia: [EV-006](../Evidencias/EV-006_profile_clustering_v2.md).
+
+
+## D013 — El multi-head todavía no gana contra especialistas no lineales
+
+**Estado:** SUPPORTED para la comparación T2 disponible.
+
+En el mismo test temporal T2:
+
+- Multi-head T2: ROC AUC 0.595, AP 0.515, Lift@10% 1.39x.
+- Random Forest T2: ROC AUC 0.609, AP 0.524, Lift@10% 1.43x.
+
+**Interpretación:** D003 sigue siendo válido frente al challenger pooled y las regresiones separadas, pero no debe generalizarse a “multi-head es la mejor familia”. Un especialista tabular no lineal ya produjo una mejora pequeña.
+
+**No demuestra:** que Random Forest sea definitivamente superior; fue un diagnóstico T2, no un benchmark exhaustivo multi-etapa.
+
+**Siguiente implicación:** comparar el mismo multi-head contra especialistas RF/ExtraTrees/CatBoost y un pooled tabular bajo idéntico split, target, features y calibración.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D014 — T2 captura trayectoria: progreso vs estancamiento
+
+**Estado:** SUPPORTED como interpretación predictiva.
+
+La familia `interaction_history` domina en todos los T2 (ΔAP +0.0638). La dominancia se conserva usando una sola observación por lead:
+
+- primer T2 por lead: ΔAP +0.0471;
+- último T2 por lead: ΔAP +0.0757.
+
+Además, más respuestas ya observadas no equivalen a mejor resultado futuro: leads con <=1 respuesta histórica tuvieron 49.2% de visita futura frente a 36.2% con >=2; patrones similares aparecen para respuestas aceptadas sin visita posterior.
+
+**Interpretación:** el modelo parece reconocer una trayectoria del funnel: la acumulación de interacciones sin visita puede ser señal de fricción o estancamiento, no sólo de intención.
+
+**No demuestra:** que provocar más o menos interacciones cause conversión; el patrón está condicionado por la definición pre-visita de T2.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D015 — La última inquiry aporta menos que la trayectoria acumulada
+
+**Estado:** SUPPORTED para este head y población T2.
+
+Permutation importance por familias sobre todos los T2:
+
+- `current_inquiry`: ΔAP -0.0024;
+- `lead_spot_match`: ΔAP -0.0012;
+- `interaction_history`: ΔAP +0.0638.
+
+En el último T2 por lead, la inquiry actual y el match sí recuperan señal (aprox. +0.0077 y +0.0074 AP), pero siguen muy por debajo del historial (+0.0757).
+
+**Interpretación:** una vez existe historia suficiente, el estado acumulado del proceso pesa más que una sola interacción.
+
+**No demuestra:** que inquiry o matching sean inútiles en T0/T1, ni que deban eliminarse del producto.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D016 — La edad del snapshot de disponibilidad requiere auditoría
+
+**Estado:** INCONCLUSIVE.
+
+`availability_snapshot_age_days` fue la tercera variable individual del head T2 por permutation importance (ΔAP +0.0070), pero el perfil descriptivo fue contraintuitivo: snapshots más viejos presentaron mayor tasa de visita futura que snapshots recientes.
+
+**Interpretación:** puede estar actuando como proxy de periodo, cobertura de inventario, corredor o mecanismo sintético de generación de datos, no como una palanca de disponibilidad.
+
+**No demostrar / no hacer:** no interpretar “información más vieja es mejor” ni usar la variable como regla operativa hasta realizar una auditoría temporal específica.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D017 — Confiar en familias, no en el ranking exacto
+
+**Estado:** SUPPORTED.
+
+La concordancia de rankings fue modesta:
+
+- Spearman multi-head vs RF permutation: 0.245;
+- Spearman multi-head vs RF MDI: 0.259.
+
+Sin embargo, ambos modelos señalan variables de tiempo/progreso/historial como relevantes y el análisis por familias del propio head es estable al cambiar la muestra T2 por lead.
+
+**Interpretación:** las conclusiones de negocio deben apoyarse en bloques de información y ablations, no en afirmar que una variable individual es universalmente “la #1”.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D018 — No hay ganador global robusto por macro AP
+
+**Estado:** INCONCLUSIVE.
+
+E005 mantuvo target, población, features y split de E003 sin cambios (comparación `EQUIVALENT`).
+
+Resultados macro AP:
+
+- Multi-Head: 0.5083.
+- mejor especialista fijo, Random Forest: 0.5175; delta +0.0092.
+- pooled CatBoost + stage: 0.5242; delta +0.0159.
+- híbrido elegido sólo con validation: 0.5295; delta +0.0212.
+
+Sin embargo:
+
+- RF vs Multi-Head: IC95% AP [-0.0173, +0.0394].
+- pooled CatBoost vs Multi-Head: IC95% AP [-0.0080, +0.0438].
+- híbrido vs Multi-Head: IC95% AP [-0.0059, +0.0520].
+
+**Interpretación:** la ventaja puntual favorece modelos tabulares fuertes, pero la métrica primaria no permite declarar un ganador global con confianza.
+
+**No demuestra:** que Multi-Head sea equivalente en producción ni que la arquitectura de heads sea innecesaria; sólo que el test actual no separa robustamente sus macro AP.
+
+Evidencia: [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md).
+
+## D019 — T1 sí necesita un challenger más fuerte que el head actual
+
+**Estado:** SUPPORTED.
+
+En T1, Random Forest especializado obtuvo:
+
+- AP 0.5628 vs 0.5075 del Multi-Head; delta +0.0553, IC95% [+0.0143, +0.0963].
+- AUC 0.5877 vs 0.4901; delta +0.0975, IC95% [+0.0523, +0.1439].
+
+La probabilidad bootstrap de delta positivo fue 99.8% para AP y 100% para AUC.
+
+**Interpretación:** la debilidad de T1 del Multi-Head no debe atribuirse a ausencia de señal en esa etapa; un especialista basado en árboles la extrae mucho mejor.
+
+**Siguiente implicación:** tratar T1 como candidato real a modelo especializado o revisar la representación/objetivo del head T1.
+
+Evidencia: [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md).
+
+## D020 — Un solo modelo fuerte con stage puede ser suficiente para buena discriminación
+
+**Estado:** SUPPORTED para AUC macro; **INCONCLUSIVE** para AP macro.
+
+Pooled CatBoost + stage obtuvo:
+
+- macro AUC 0.5642 vs 0.5330 Multi-Head; delta +0.0312, IC95% [+0.0076, +0.0573].
+- macro AP 0.5242 vs 0.5083; delta +0.0159, IC95% [-0.0080, +0.0438].
+- Brier 0.2438 vs 0.2489.
+- log loss 0.6808 vs 0.6912.
+
+**Interpretación:** D003 no debe leerse como prueba de que “varios heads” son necesarios. Parte de aquella ventaja provenía de comparar contra un pooled neural más débil. Un pooled tabular fuerte con stage es una alternativa arquitectónica seria.
+
+**No demuestra:** superioridad por la métrica primaria AP; esa diferencia sigue incierta.
+
+Evidencia: [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md).
+
+## D021 — T2 mantiene señal, pero no un ganador de arquitectura
+
+**Estado:** INCONCLUSIVE.
+
+En T2:
+
+- Multi-Head: AP 0.5148, AUC 0.5947.
+- Specialist CatBoost: AP 0.5338, AUC 0.6201.
+- Specialist RF: AP 0.5213, AUC 0.6062.
+- pooled CatBoost: AP 0.5203, AUC 0.6152.
+
+El mejor punto AP fue CatBoost especializado (+0.0190 vs Multi-Head), pero su IC95% fue [-0.0278, +0.0644]. Ningún challenger T2 obtuvo un intervalo AP/AUC completamente positivo frente al Multi-Head.
+
+**Interpretación:** D004 sigue siendo el hallazgo fuerte de T2 —la historia importa—, pero E005 no demuestra qué arquitectura la explota mejor.
+
+**Refina:** D013; el pequeño triunfo puntual inicial de RF no es evidencia suficiente para declararlo ganador T2.
+
+Evidencia: [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md).
+
+## D022 — El híbrido por etapa es prometedor, todavía no definitivo
+
+**Estado:** INCONCLUSIVE.
+
+Selección hecha únicamente con validation AP:
+
+- T0 → Specialist CatBoost.
+- T1 → Specialist Random Forest.
+- T2 → pooled CatBoost + stage.
+
+En test, el híbrido alcanza el mayor macro AP del benchmark: 0.5295 frente a 0.5083 del Multi-Head (+0.0212). El IC95% del delta es [-0.0059, +0.0520], por lo que todavía cruza cero.
+
+**Interpretación:** existe heterogeneidad real por etapa y T1 sí justifica especialización, pero aún no hay evidencia suficiente para convertir el sistema completo en tres modelos independientes.
+
+**Caveat adicional:** escoger entre varias familias en el mismo validation set introduce selection bias; debe validarse con otra cohorte temporal.
+
+Evidencia: [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md).
