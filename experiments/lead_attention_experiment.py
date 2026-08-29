@@ -80,8 +80,8 @@ def fit_logistic(train, test, target, categorical, numeric):
     y_test = test[target].astype(int)
 
     for c in categorical:
-        X_train[c] = X_train[c].astype("string")
-        X_test[c] = X_test[c].astype("string")
+        X_train[c] = X_train[c].fillna("__MISSING__").astype(str)
+        X_test[c] = X_test[c].fillna("__MISSING__").astype(str)
 
     prep = ColumnTransformer([
         ("cat", Pipeline([
