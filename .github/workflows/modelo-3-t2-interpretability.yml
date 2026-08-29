@@ -58,6 +58,7 @@ jobs:
 
       - name: Validate outputs
         run: |
+          test -s experimentos/modelo_3/interpretabilidad_t2/EVIDENCIA.md
           test -s experimentos/modelo_3/interpretabilidad_t2/results/REPORT.md
           test -s experimentos/modelo_3/interpretabilidad_t2/results/model_fidelity.json
           test -s experimentos/modelo_3/interpretabilidad_t2/results/multihead_permutation_importance.csv
@@ -95,6 +96,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: modelo-3-t2-interpretability
-          path: experimentos/modelo_3/interpretabilidad_t2/results/
+          path: |
+            experimentos/modelo_3/interpretabilidad_t2/EVIDENCIA.md
+            experimentos/modelo_3/interpretabilidad_t2/results/
           if-no-files-found: warn
           retention-days: 30
