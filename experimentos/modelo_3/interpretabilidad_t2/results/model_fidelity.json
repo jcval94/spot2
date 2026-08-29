@@ -1,0 +1,22 @@
+{
+  "original_t2": {
+    "roc_auc": 0.5946743554952509,
+    "average_precision": 0.5147819895580609
+  },
+  "retrained_multihead": {
+    "roc_auc": 0.5946743554952509,
+    "average_precision": 0.5147819895580609
+  },
+  "random_forest": {
+    "roc_auc": 0.609190250048459,
+    "average_precision": 0.5243812993092248,
+    "brier": 0.2402145606532475,
+    "log_loss": 0.6732962734902805,
+    "lift_top_10pct": 1.4252747252747253,
+    "recall_top_20pct": 0.26785714285714285
+  },
+  "test_population": {
+    "n": 1297,
+    "positive_rate": 0.4317656129529684
+  }
+}

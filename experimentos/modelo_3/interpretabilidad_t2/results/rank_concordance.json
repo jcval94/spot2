@@ -1,0 +1,5 @@
+{
+  "spearman_multihead_vs_rf_permutation": 0.2452233032469816,
+  "spearman_multihead_vs_rf_mdi": 0.259257088763436,
+  "n_features": 80
+}
