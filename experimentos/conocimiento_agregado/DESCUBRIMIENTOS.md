@@ -14,6 +14,8 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D006 | INCONCLUSIVE | Clustering balanceado produce perfiles mucho más interpretables, pero su lift predictivo sigue siendo pequeño e incierto. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D007 | PROPOSAL | Enriquecimiento geográfico externo tiene rutas plausibles, pero requiere joins point-in-time y validación incremental. | [EV-007](../Evidencias/EV-007_geographic_enrichment.md) |
 | D008 | PROPOSAL | El LLM es defendible como capa de triage/extracción operativa; no existe evidencia en estos datos de lift causal del LLM. | [EV-008](../Evidencias/EV-008_llm_triage.md) |
+| D023 | PROPOSAL | Separar Spot en arquetipo físico y localización puede mejorar interpretabilidad y/o ranking frente al Spot unificado; requiere auditoría relacional y A/B controlado. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D024 | PROPOSAL | Interacciones explícitas Need × Physical × Location × Broker pueden capturar compatibilidad útil para routing; requiere comparación A/B con los mismos perfiles marginales. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
 | D009 | SUPPORTED | Separar Lead Persona de Search Need produce perfiles mucho más estables, balanceados y semánticamente claros, sin evidencia de lift incremental robusto. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D010 | NOT_SUPPORTED | Inquiry Intent v1 no debe usarse como capa predictiva: aprende principalmente día de la semana y empeora AP/AUC/lift fuera de muestra. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D011 | SUPPORTED | El perfil de Spot actual mezcla arquetipo físico con geografía; varios clusters son esencialmente regiones/estados. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
@@ -434,3 +436,38 @@ En test, el híbrido alcanza el mayor macro AP del benchmark: 0.5295 frente a 0.
 **Caveat adicional:** escoger entre varias familias en el mismo validation set introduce selection bias; debe validarse con otra cohorte temporal.
 
 Evidencia: [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md).
+
+
+## D023 — Separar Spot físico de localización
+
+**Estado:** PROPOSAL.
+
+E006 compara dos brazos sobre la misma población temporal:
+
+- **A / control:** Persona + Search Need + Broker + Spot unificado.
+- **B / tratamiento:** Persona + Search Need + Broker + Physical Space Archetype + Location Profile.
+
+Antes del modelado, una auditoría de PK/FK, cardinalidad, completitud, reglas de negocio y joins point-in-time debe pasar sin fallos críticos.
+
+**Qué resolverá:** si descomponer el Spot mejora interpretabilidad y/o desempeño futuro sin atribuir al perfil físico una señal que en realidad es geográfica.
+
+**No prueba todavía:** lift causal. El backtest histórico será evidencia pre-experimento; la causalidad requiere el A/B online pre-registrado.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D024 — Compatibility Routing como tratamiento explícito
+
+**Estado:** PROPOSAL.
+
+E007 mantiene exactamente los perfiles marginales de E006 y cambia sólo una cosa:
+
+- **A / control:** perfiles marginales.
+- **B / tratamiento:** mismos perfiles + interacciones regularizadas Persona×Need, Need×Physical, Need×Location, Need×Broker, Physical×Broker y Need×Physical×Broker.
+
+El diseño online usa asignación sticky 50/50 por `lead_id`, estratificada por sector, modalidad y tipo de lead, con outcome primario lead-level a 30 días.
+
+**Qué resolverá:** si la compatibilidad añade valor por encima de saber por separado quién es el lead, qué necesita, qué spot es y qué broker lo atiende.
+
+**No prueba todavía:** que una celda histórica con lift alto sea causal o estable.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).

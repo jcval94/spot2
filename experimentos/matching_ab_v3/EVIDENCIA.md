@@ -1,8 +1,13 @@
 # Evidencia
 
-Esta suite queda provisionalmente enlazada a sus specs hasta completar la primera ejecución reproducible.
+Registro central: [EV-010 — Relational audit + Matching A/B v3](../Evidencias/EV-010_matching_ab_v3.md)
 
-- E006: [spec](specs/E006_physical_location_spot.json)
-- E007: [spec](specs/E007_compatibility_routing.json)
+Experimentos gobernados:
 
-La ejecución debe generar el reporte de calidad relacional, resultados A/B offline, diseño A/B online, power analysis y artifacts fuente antes de crear la evidencia canónica en `experimentos/Evidencias/`.
+- [E006 — Physical vs Location Spot](specs/E006_physical_location_spot.json)
+- [E007 — Compatibility Routing](specs/E007_compatibility_routing.json)
+
+Conocimiento acumulado:
+
+- [D023 — Separar Spot físico de localización](../conocimiento_agregado/DESCUBRIMIENTOS.md#d023--separar-spot-físico-de-localización)
+- [D024 — Compatibility Routing](../conocimiento_agregado/DESCUBRIMIENTOS.md#d024--compatibility-routing-como-tratamiento-explícito)
