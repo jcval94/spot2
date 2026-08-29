@@ -1,0 +1,61 @@
+{
+  "experiment_id": "E009_eda_profundo",
+  "parent_experiment": null,
+  "question": "¿Qué propiedades distribucionales, temporales y de anomalía deben entenderse antes del feature engineering del modelo multi-head?",
+  "hypothesis": "El dataset contiene colas, regímenes y artefactos sintéticos que hacen peligroso tratar outliers o variables temporales de forma ingenua.",
+  "primary_change": "Profundizar el EDA con distribuciones, outliers estratificados, relaciones deterministas y Isolation Forest diagnóstico.",
+  "secondary_changes": [
+    "Migrar el EDA base a la estructura gobernada actual",
+    "Registrar evidencia y descubrimientos acumulados"
+  ],
+  "scoring": {
+    "stages": [
+      "T0 lead creation",
+      "T1 inquiry_at",
+      "T2+ declared per later experiment"
+    ],
+    "note": "Isolation Forest usa sólo información observable en el espacio semántico analizado."
+  },
+  "target": {
+    "usage": "Sólo diagnóstico descriptivo cuando se compara scheduled_visit; nunca se usa para ajustar Isolation Forest.",
+    "event": "broker_response == scheduled_visit",
+    "horizon_days": 30
+  },
+  "population": {
+    "tables": [
+      "leads",
+      "inquiries",
+      "spots",
+      "spot_attributes",
+      "market_context",
+      "availability_snapshot"
+    ],
+    "hidden_outcomes_used": false
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/market_context.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "validation": {
+    "type": "EDA / descriptive",
+    "temporal_analysis": "cohorts by leads.created_at month",
+    "anomaly_detection": "Isolation Forest stratified by sector and modality; contamination 0.03 diagnostic"
+  },
+  "leakage": {
+    "lead_score_internal": "excluded from anomaly space",
+    "current_spot_state_fields": "excluded from spot anomaly space",
+    "broker_response_fields": "excluded from inquiry anomaly space",
+    "availability": "trajectory analysis only",
+    "market_context": "panel coverage analysis only"
+  },
+  "conclusion_status_values": [
+    "SUPPORTED",
+    "NOT_SUPPORTED",
+    "INCONCLUSIVE",
+    "PROPOSAL"
+  ]
+}
