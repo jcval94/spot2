@@ -43,6 +43,7 @@ Their responsibilities are intentionally separate:
 | `spot2-domain` | What does this data mean? |
 | `spot2-leakage` | Could this information be known at scoring time? |
 | `spot2-experiment` | What exactly are we testing relative to the parent? |
+| `spot2-experiment-sandbox` | Where may experimental work live and how is it linked to evidence? |
 
 The harness answers:
 
@@ -58,7 +59,7 @@ E###_<short_name>
 
 and declare `parent_experiment`.
 
-Existing experiments in `experiments/` and `experimentos/` are intentionally left untouched. Do not invent retroactive lineage unless it is explicitly reconstructed and documented.
+All governed experimental work now lives under `experimentos/`. Legacy work was migrated mechanically without inventing retroactive lineage.
 
 ## Validate a spec
 
@@ -137,7 +138,7 @@ This makes a run traceable even if a file at the same path changes later.
 
 ## Suggested future structure
 
-Do not migrate legacy work only for aesthetics.
+Keep all new experimental work inside `experimentos/`; migrate legacy work only when needed to preserve the single sandbox boundary.
 
 For new experiments:
 
