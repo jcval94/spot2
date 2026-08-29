@@ -1,0 +1,135 @@
+{
+  "experiment_id": "E004_t2_interpretability",
+  "parent_experiment": null,
+  "question": "Which point-in-time variables and feature families explain the predictive advantage of the T2 engaged head?",
+  "hypothesis": "Accumulated interaction history and current lead-to-spot context explain more of T2 ranking power than static lead intake fields alone.",
+  "primary_change": "out-of-sample permutation importance and Random Forest diagnostics focused on T2",
+  "secondary_changes": [
+    "joint family permutation",
+    "Random Forest impurity importance",
+    "directional descriptive profiles",
+    "rank concordance between the multi-head and Random Forest diagnostics"
+  ],
+  "scoring_time": {
+    "stage": "T2_engaged",
+    "timestamp_definition": "second and later inquiries.inquiry_at before an observed scheduled visit"
+  },
+  "target": {
+    "event": "future scheduled_visit response event",
+    "horizon_days": 30,
+    "anchor": "scoring_time",
+    "censoring": "right"
+  },
+  "population": {
+    "eligibility": "T2 scoring snapshots with a complete 30-day future observation window and no already observed scheduled visit.",
+    "exclusions": [
+      "Right-censored snapshots.",
+      "Post-conversion snapshots.",
+      "Current/future broker-response information."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "features": {
+    "inherited": [],
+    "added": [
+      "lead_intake_family",
+      "current_inquiry_family",
+      "spot_static_family",
+      "lead_spot_match_family",
+      "availability_asof_family",
+      "historical_interactions_asof_family",
+      "context_flags_family"
+    ],
+    "removed": []
+  },
+  "validation": {
+    "strategy": "same temporal lead-cohort train/validation/test as Modelo 3",
+    "time_column": "leads.created_at",
+    "split_description": "Chronological 70/15/15 split by lead creation with all snapshots from a lead kept in one partition; importance is measured only on T2 test."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "T2_engaged"
+  ],
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "lead_intake_family",
+        "source": "leads",
+        "scoring_time": "T2 inquiry_at",
+        "information_available_at": "leads.created_at",
+        "status": "ALLOW",
+        "evidence": "Inherited from the leakage-safe Modelo 3 pipeline; lead_score_internal remains blocked."
+      },
+      {
+        "element": "current_inquiry_family",
+        "source": "inquiries excluding current broker outcome/timing",
+        "scoring_time": "T2 inquiry_at",
+        "information_available_at": "inquiry_at",
+        "status": "ALLOW",
+        "evidence": "Only inquiry payload fields known when the inquiry arrives are predictors."
+      },
+      {
+        "element": "spot_static_family",
+        "source": "spots + spot_attributes",
+        "scoring_time": "T2 inquiry_at",
+        "information_available_at": "listing/inquiry time",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Mutable spot snapshot fields remain excluded."
+      },
+      {
+        "element": "lead_spot_match_family",
+        "source": "derived point-in-time lead/inquiry/spot fields",
+        "scoring_time": "T2 inquiry_at",
+        "information_available_at": "inquiry_at",
+        "status": "ALLOW",
+        "evidence": "Compatibility features use only information available at scoring time."
+      },
+      {
+        "element": "availability_asof_family",
+        "source": "availability_snapshot",
+        "scoring_time": "T2 inquiry_at",
+        "information_available_at": "latest snapshot_date <= inquiry_at",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Backward as-of join is inherited from Modelo 3."
+      },
+      {
+        "element": "historical_interactions_asof_family",
+        "source": "prior inquiries and responses already realized",
+        "scoring_time": "T2 inquiry_at",
+        "information_available_at": "response_event_at <= inquiry_at",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Historical response features require the response event to have already happened."
+      },
+      {
+        "element": "context_flags_family",
+        "source": "derived availability of inquiry/spot/availability context",
+        "scoring_time": "T2 inquiry_at",
+        "information_available_at": "inquiry_at",
+        "status": "ALLOW",
+        "evidence": "Flags describe which point-in-time contexts are available and do not use future outcomes."
+      }
+    ]
+  }
+}
