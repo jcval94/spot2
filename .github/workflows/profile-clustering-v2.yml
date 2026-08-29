@@ -49,7 +49,10 @@ jobs:
           from pathlib import Path
           import base64, zlib
           root = Path("experimentos/profile_clustering_v2")
-          packed = (root / ".run_experiments.py.zlib.b64").read_text().strip()
+          packed = "".join(
+              (root / f".run_experiments.py.zlib.b64.part{i}").read_text().strip()
+              for i in range(4)
+          )
           (root / "run_experiments.py").write_bytes(zlib.decompress(base64.b64decode(packed)))
           PY
           python -m py_compile experimentos/profile_clustering_v2/run_experiments.py
@@ -92,7 +95,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add experimentos/profile_clustering_v2/run_experiments.py experimentos/profile_clustering_v2/README.md experimentos/profile_clustering_v2/results/
-          git rm -f experimentos/profile_clustering_v2/.run_experiments.py.zlib.b64
+          git rm -f experimentos/profile_clustering_v2/.run_experiments.py.zlib.b64.part*
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
