@@ -1,0 +1,83 @@
+name: Entity profile match experiment
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "experimentos/entity_profile_match/run_experiment.py"
+      - "data/candidate/**"
+      - ".github/workflows/entity-profile-match-experiment.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experimentos/entity_profile_match/run_experiment.py"
+      - "data/candidate/**"
+      - ".github/workflows/entity-profile-match-experiment.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy scikit-learn
+
+      - name: Run entity profiling and compatibility experiment
+        run: python experimentos/entity_profile_match/run_experiment.py
+
+      - name: Validate required outputs
+        run: |
+          test -s experimentos/entity_profile_match/README.md
+          test -s experimentos/entity_profile_match/results/results.json
+          test -s experimentos/entity_profile_match/results/model_metrics.csv
+          test -s experimentos/entity_profile_match/results/top_combinations.csv
+
+      - name: Publish README in job summary
+        if: always()
+        run: |
+          if [ -f experimentos/entity_profile_match/README.md ]; then
+            cat experimentos/entity_profile_match/README.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Commit reproducible results to repository
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/entity_profile_match/README.md experimentos/entity_profile_match/results/
+          if git diff --cached --quiet; then
+            echo "No result changes to commit."
+          else
+            git commit -m "Add entity profile experiment results [skip ci]"
+            git push
+          fi
+
+      - name: Upload experiment artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: entity-profile-match-experiment
+          path: |
+            experimentos/entity_profile_match/README.md
+            experimentos/entity_profile_match/results/
+          if-no-files-found: warn
+          retention-days: 30
