@@ -31,7 +31,7 @@ Before execution, establish:
 
 Use `spot2-domain` for semantic interpretation and `spot2-leakage` for point-in-time review.
 
-The repository harness is the standard validator and recorder of the experiment contract.
+The repository harness is the standard validator and recorder of the experiment contract. Use `spot2-experiment-sandbox` first for repository placement, evidence registration, and accumulated-knowledge rules.
 
 ## Identity and lineage
 
@@ -210,6 +210,18 @@ Once an experiment record is finalized, do not silently alter target, population
 
 A material change requires a new experiment ID.
 
+## Evidence completion
+
+A governed experiment is not complete until:
+
+- its files live under `experimentos/`;
+- the experiment folder contains `EVIDENCIA.md`;
+- a canonical entry exists under `experimentos/Evidencias/`;
+- every material new finding is reflected in `experimentos/conocimiento_agregado/DESCUBRIMIENTOS.md`;
+- the discovery links to evidence and evidence links back to source results.
+
+Use `spot2-experiment-sandbox` as the authority for repository placement and allowed structural exceptions.
+
 ## Final checks
 
 Before considering an experiment governed, verify:
@@ -223,7 +235,8 @@ Before considering an experiment governed, verify:
 - core metrics are present;
 - unfavorable results are retained;
 - conclusion matches the evidence;
-- next experiment follows from the remaining uncertainty.
+- next experiment follows from the remaining uncertainty;
+- evidence and accumulated knowledge are linked and complete.
 
 The intended evidence chain is:
 
