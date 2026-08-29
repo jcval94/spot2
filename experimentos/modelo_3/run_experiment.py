@@ -94,6 +94,7 @@ def main() -> None:
     for frame in [train, val, test]:
         for c in CAT_FEATURES:
             frame[c] = frame[c].astype("object")
+            frame[c] = frame[c].where(frame[c].notna(), np.nan)
 
     prep = make_preprocessor()
     x_train = np.asarray(prep.fit_transform(train[CAT_FEATURES + NUM_FEATURES]), dtype=np.float32)
