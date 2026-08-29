@@ -300,6 +300,115 @@ def heatmap(corr: pd.DataFrame, title: str, name: str) -> None:
     save(fig,name)
 
 
+
+def selected_correlations(data: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    leads = data["leads"]
+    inquiries = data["inquiries"]
+    spots = data["spots"]
+    market = data["market_context"]
+
+    def log_series(s: pd.Series) -> pd.Series:
+        return np.log1p(pd.to_numeric(s, errors="coerce").clip(lower=0))
+
+    pairs = [
+        ("leads", "prior_searches", "prior_inquiries",
+         pd.to_numeric(leads["prior_searches"], errors="coerce"),
+         pd.to_numeric(leads["prior_inquiries"], errors="coerce")),
+        ("leads", "log_target_area", "log_max_rent_budget",
+         log_series(leads["target_area_sqm"]), log_series(leads["max_budget_mxn_rent_monthly"])),
+        ("leads", "log_target_area", "log_max_sale_budget",
+         log_series(leads["target_area_sqm"]), log_series(leads["max_budget_mxn_sale_total"])),
+        ("inquiries", "log_requested_area", "message_length",
+         log_series(inquiries["requested_area_sqm"]),
+         pd.to_numeric(inquiries["message_length"], errors="coerce")),
+        ("inquiries", "urgency_days", "broker_response_hours",
+         pd.to_numeric(inquiries["urgency_days"], errors="coerce"),
+         pd.to_numeric(inquiries["broker_response_hours"], errors="coerce")),
+        ("spots", "log_area", "log_rent_total",
+         log_series(spots["area_sqm"]), log_series(spots["price_total_mxn_rent"])),
+        ("spots", "log_area", "log_sale_total",
+         log_series(spots["area_sqm"]), log_series(spots["price_total_mxn_sale"])),
+        ("spots", "total_views", "total_inquiries",
+         pd.to_numeric(spots["total_views"], errors="coerce"),
+         pd.to_numeric(spots["total_inquiries"], errors="coerce")),
+        ("spots", "days_on_market", "total_views",
+         pd.to_numeric(spots["days_on_market"], errors="coerce"),
+         pd.to_numeric(spots["total_views"], errors="coerce")),
+        ("market_context", "recent_occupancy_rate", "absorption_velocity_days",
+         pd.to_numeric(market["recent_occupancy_rate"], errors="coerce"),
+         pd.to_numeric(market["absorption_velocity_days"], errors="coerce")),
+        ("market_context", "recent_occupancy_rate", "avg_price_sqm_mxn",
+         pd.to_numeric(market["recent_occupancy_rate"], errors="coerce"),
+         pd.to_numeric(market["avg_price_sqm_mxn"], errors="coerce")),
+        ("market_context", "recent_inquiry_volume", "similar_available_spots",
+         pd.to_numeric(market["recent_inquiry_volume"], errors="coerce"),
+         pd.to_numeric(market["similar_available_spots"], errors="coerce")),
+    ]
+    rows = []
+    for table, a_name, b_name, a, b in pairs:
+        valid = a.notna() & b.notna()
+        rows.append({
+            "table": table,
+            "variable_a": a_name,
+            "variable_b": b_name,
+            "n": int(valid.sum()),
+            "pearson_r": float(a[valid].corr(b[valid])) if valid.sum() >= 3 else np.nan,
+        })
+    return pd.DataFrame(rows)
+
+
+def iforest_univariate_overlap(
+    scored: pd.DataFrame, groups: list[str], features: list[str], log_features: set[str]
+) -> pd.DataFrame:
+    rows = []
+    for keys, g in scored.groupby(groups, dropna=False):
+        transformed = pd.DataFrame(index=g.index)
+        for col in features:
+            s = pd.to_numeric(g[col], errors="coerce")
+            if col in log_features:
+                s = np.log1p(s.clip(lower=0))
+            transformed[col] = s
+
+        extreme = pd.Series(False, index=g.index)
+        for col in transformed:
+            s = transformed[col].dropna()
+            if len(s) < 30:
+                continue
+            q1, q3 = s.quantile([.25, .75])
+            iqr = q3 - q1
+            if not np.isfinite(iqr) or iqr <= 0:
+                continue
+            extreme |= transformed[col].lt(q1 - 1.5 * iqr) | transformed[col].gt(q3 + 1.5 * iqr)
+
+        for flag, part in g.groupby("isolation_forest_flag"):
+            idx = part.index
+            rows.append({
+                "entity": str(g["entity"].iloc[0]),
+                "group": " | ".join(
+                    f"{name}={value}" for name, value in zip(
+                        groups, keys if isinstance(keys, tuple) else (keys,)
+                    )
+                ),
+                "isolation_forest_flag": bool(flag),
+                "n": len(idx),
+                "share_with_any_univariate_extreme": float(extreme.loc[idx].mean()),
+            })
+    return pd.DataFrame(rows)
+
+
+def aggregate_iforest_overlap(overlap: pd.DataFrame) -> pd.DataFrame:
+    out = []
+    for (entity, flag), g in overlap.groupby(["entity", "isolation_forest_flag"]):
+        weighted = np.average(g["share_with_any_univariate_extreme"], weights=g["n"])
+        out.append({
+            "entity": entity,
+            "isolation_forest_flag": flag,
+            "n": int(g["n"].sum()),
+            "share_with_any_univariate_extreme": float(weighted),
+        })
+    return pd.DataFrame(out)
+
+
 def make_figures(data, cohort, rel, market_cov, av_traj, if_summary, matches, broker):
     leads, inquiries, spots = data["leads"], data["inquiries"], data["spots"]
     hist(leads["target_area_sqm"], "01_lead_target_area_log_hist.svg", "Lead target area", True)
@@ -345,8 +454,26 @@ def main():
     inq_feat=["message_length","requested_area_sqm","requested_budget_mxn_rent_monthly","requested_budget_mxn_sale_total","urgency_days","asked_visit"]
     inq_score,inq_sum=iforest_by_group(inquiry_input,"inquiry","inquiry_id",["search_sector","search_modality"],inq_feat,set(inq_feat)-{"asked_visit"})
     if_sum=pd.concat([lead_sum,spot_sum,inq_sum],ignore_index=True)
+    if_overlap = pd.concat([
+        iforest_univariate_overlap(
+            lead_score, ["search_sector","search_modality"], lead_feat,
+            set(lead_feat)-{"has_converted_before"}
+        ),
+        iforest_univariate_overlap(
+            spot_score, ["sector_name","modality"], spot_feat, set(spot_feat)
+        ),
+        iforest_univariate_overlap(
+            inq_score, ["search_sector","search_modality"], inq_feat,
+            set(inq_feat)-{"asked_visit"}
+        ),
+    ], ignore_index=True)
+    if_overlap_agg = aggregate_iforest_overlap(if_overlap)
+    correlations = selected_correlations(data)
     cohort=cohort_dynamics(leads,inquiries); rel=deterministic_relationships(leads,inquiries,spots); market_cov=market_panel(data["market_context"]); av=availability_trajectories(data["availability_snapshot"]); matches=match_rates(leads,inquiries,spots); broker=broker_summary(spots,inquiries)
     numeric.to_csv(RESULTS/"numeric_summary.csv",index=False); outliers.to_csv(RESULTS/"stratified_outliers.csv",index=False); rel.to_csv(RESULTS/"deterministic_relationships.csv",index=False); cohort.to_csv(RESULTS/"cohort_dynamics.csv",index=False); market_cov.to_csv(RESULTS/"market_panel_coverage.csv",index=False); av.to_csv(RESULTS/"availability_trajectories.csv",index=False); matches.to_csv(RESULTS/"match_bucket_rates.csv",index=False); broker.to_csv(RESULTS/"broker_summary.csv",index=False); if_sum.to_csv(RESULTS/"iforest_summary.csv",index=False)
+    correlations.to_csv(RESULTS/"selected_correlations.csv", index=False)
+    if_overlap.to_csv(RESULTS/"iforest_univariate_overlap_by_group.csv", index=False)
+    if_overlap_agg.to_csv(RESULTS/"iforest_univariate_overlap.csv", index=False)
     lead_score.loc[lead_score["isolation_forest_flag"]].head(250).to_csv(RESULTS/"iforest_lead_anomalies.csv",index=False)
     spot_score.loc[spot_score["isolation_forest_flag"]].head(250).to_csv(RESULTS/"iforest_spot_anomalies.csv",index=False)
     inq_score.loc[inq_score["isolation_forest_flag"]].head(500).to_csv(RESULTS/"iforest_inquiry_anomalies.csv",index=False)
@@ -359,7 +486,13 @@ def main():
         "deterministic_relationships":dict(zip(rel.metric,rel.value)),
         "market_panel":{"keys":len(market_cov),"global_months":data["market_context"]["month"].nunique(),"min_months":market_cov.observed_months.min(),"median_months":market_cov.observed_months.median(),"max_months":market_cov.observed_months.max(),"complete_keys":int((market_cov.observed_months==data["market_context"]["month"].nunique()).sum())},
         "availability":{"change_share":av.ever_changes.mean(),"median_transitions":av.transitions.median(),"median_snapshots":av.snapshots.median()},
-        "isolation_forest":{"contamination":CONTAMINATION,"lead_flags":int(lead_score.isolation_forest_flag.sum()),"spot_flags":int(spot_score.isolation_forest_flag.sum()),"inquiry_flags":int(inq_score.isolation_forest_flag.sum())},
+        "isolation_forest":{
+            "contamination":CONTAMINATION,
+            "lead_flags":int(lead_score.isolation_forest_flag.sum()),
+            "spot_flags":int(spot_score.isolation_forest_flag.sum()),
+            "inquiry_flags":int(inq_score.isolation_forest_flag.sum()),
+            "univariate_overlap": if_overlap_agg.to_dict(orient="records"),
+        },
         "broker_ge50":{"min_rate":broker.loc[broker.n>=50,"rate"].min(),"max_rate":broker.loc[broker.n>=50,"rate"].max()},
     }
     (RESULTS/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False,default=str)+"\n",encoding="utf-8")
