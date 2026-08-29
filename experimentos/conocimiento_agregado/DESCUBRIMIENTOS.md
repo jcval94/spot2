@@ -23,6 +23,7 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D015 | SUPPORTED | Condicionada al historial observable, la inquiry actual y el match Lead↔Spot aportan poca señal incremental promedio en T2, aunque recuperan valor en el último T2. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
 | D016 | INCONCLUSIVE | `availability_snapshot_age_days` aparece predictiva, pero su dirección es sospechosa y puede estar capturando estructura temporal/cobertura en lugar de disponibilidad accionable. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
 | D017 | SUPPORTED | La baja concordancia entre rankings del multi-head y RF indica que las conclusiones más robustas son por familias, no por ranking exacto de variables individuales. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D018 | PROPOSAL | La superioridad arquitectónica del multi-head frente a especialistas tabulares fuertes sigue abierta y requiere un benchmark equivalente multi-etapa. | [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -333,3 +334,17 @@ Sin embargo, ambos modelos señalan variables de tiempo/progreso/historial como 
 **Interpretación:** las conclusiones de negocio deben apoyarse en bloques de información y ablations, no en afirmar que una variable individual es universalmente “la #1”.
 
 Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D018 — Benchmark arquitectónico fuerte pendiente
+
+**Estado:** PROPOSAL.
+
+D003 mostró que el multi-head supera al pooled neural y a regresiones separadas, pero D013 encontró que un Random Forest T2 ya supera ligeramente al head T2.
+
+**Pregunta abierta:** ¿la ventaja del multi-head se mantiene frente a especialistas tabulares fuertes y frente a un pooled CatBoost con stage como variable, manteniendo idénticos target, población, features y split?
+
+**Experimento diseñado:** E005 compara Multi-Head, pooled NN, regresión separada, Random Forest, ExtraTrees, LightGBM, CatBoost especializado, CatBoost pooled y un híbrido elegido sólo con validation.
+
+**Criterio:** la decisión primaria será macro Average Precision con IC95% bootstrap por lead.
+
+Evidencia / experimento: [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md).
