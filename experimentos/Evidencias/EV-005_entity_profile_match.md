@@ -1,6 +1,6 @@
 # EV-005 — Lead × Spot × Broker
 
-**Estado de evidencia:** empírica, future holdout.
+**Estado de evidencia:** empírica legacy; metodología superseded por EV-006.
 
 **Experimento:** [entity_profile_match](../entity_profile_match/)
 
@@ -20,6 +20,8 @@ Perfiles + interacciones no mejoran perfiles marginales fuera de muestra:
 
 ## Caveats
 
+- `profile_clustering_v2` identificó look-ahead en la construcción histórica del perfil de broker de esta primera versión; por ello no debe tratarse como evidencia gobernada definitiva.
+- La metodología corregida está en [EV-006](EV-006_profile_clustering_v2.md).
 - Primera versión de perfiles con clusters muy dominantes en Lead/Spot.
 - Algunas combinaciones tienen n pequeño.
 - `scheduled_visit` es proxy, no cierre.
