@@ -1,30 +1,19 @@
-name: Experiment harness CI
+name: Experiment governance CI
 
 on:
   push:
     branches:
       - main
-      - feature/spot2-experiment-harness
-    paths:
-      - ".agents/skills/**"
-      - "experimentos/_sistema/harness/**"
-      - "experimentos/_sistema/tests/test_experiment_harness.py"
-      - ".github/workflows/experiment-harness.yml"
   pull_request:
     branches:
       - main
-    paths:
-      - ".agents/skills/**"
-      - "experimentos/_sistema/harness/**"
-      - "experimentos/_sistema/tests/test_experiment_harness.py"
-      - ".github/workflows/experiment-harness.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate-harness:
+  validate-experiment-governance:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -37,9 +26,11 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run harness unit tests
-        run: python -m unittest discover -s experimentos/_sistema/tests -p "test_experiment_harness.py" -v
+      - name: Run harness and sandbox tests
+        run: python -m unittest discover -s experimentos/_sistema/tests -p "test_*.py" -v
 
       - name: Validate example experiment contract
         run: |
-          python experimentos/_sistema/harness/experiment_harness.py validate             --spec experimentos/_sistema/harness/example_spec.json             --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/_sistema/harness/example_spec.json \
+            --repo-root .
