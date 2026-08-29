@@ -1,0 +1,120 @@
+{
+  "experiment_id": "E006_physical_location_spot",
+  "parent_experiment": "E002_lead_facets",
+  "question": "Does separating the current unified Spot profile into a Physical Space Archetype and a Location Profile improve future lead prioritization while preserving interpretability?",
+  "hypothesis": "A decomposition of Spot into physical and location profiles will improve or preserve future ranking quality while producing clearer, more actionable clusters than a single Spot profile dominated by geography.",
+  "primary_change": "replace the unified spot_profile with separate physical_space_profile and location_profile in the treatment arm",
+  "secondary_changes": [
+    "run a full relational/data-completeness gate before modeling",
+    "add the same backward as-of availability state and snapshot-lag features to both A and B arms",
+    "report inquiry-level metrics and lead-level robustness",
+    "pre-register a randomized online A/B protocol with sticky lead-level assignment"
+  ],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy for commercial progress)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "The public candidate data has no visit timestamp or true sale. The recorded scheduled_visit response is treated as the observed proxy outcome; the online protocol requires 30-day lead-level outcome maturation."
+  },
+  "population": {
+    "eligibility": "Inquiries after the frozen early profile-calibration window; the final 20% by inquiry_at is held out for future evaluation.",
+    "exclusions": [
+      "The first 30% of inquiries remain reserved for profile calibration and are not used to fit the predictive A/B models."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv",
+    "data/candidate/csv/market_context.csv",
+    "experimentos/profile_clustering_v2/results/lead_assignments.csv",
+    "experimentos/profile_clustering_v2/results/spot_assignments.csv",
+    "experimentos/profile_clustering_v2/results/broker_assignments.csv",
+    "experimentos/profile_clustering_v2/results/summary.json"
+  ],
+  "features": {
+    "inherited": [
+      "persona_profile",
+      "need_profile",
+      "broker_profile"
+    ],
+    "added": [
+      "physical_space_profile",
+      "location_profile",
+      "availability_state_asof",
+      "availability_lag_bucket"
+    ],
+    "removed": [
+      "unified spot_profile from treatment arm only; retained unchanged in control arm"
+    ]
+  },
+  "validation": {
+    "strategy": "offline temporal A/B backtest plus pre-registered online randomized A/B design",
+    "time_column": "inquiry_at",
+    "split_description": "Offline: reuse the parent profile cutoff and final-20% future test cutoff; train only between those cutoffs and score the untouched future period. A and B use the exact same rows and common features. Online: 50/50 sticky randomization by lead_id, stratified by search_sector, search_modality and user_type."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "physical_space_profile",
+        "source": "spots + spot_attributes static physical fields",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "spot listing fields available by inquiry_at; clusterer fitted only on spots created before the frozen profile cutoff",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Mutable current-state spot fields days_on_market, total_inquiries, total_views and is_active are excluded. Physical profiles exclude geography."
+      },
+      {
+        "element": "location_profile",
+        "source": "spots state/municipality/settlement/corridor/region/lat/lon",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "spot listing fields available by inquiry_at; clusterer fitted only on spots created before the frozen profile cutoff",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "The profile uses only listing location fields and is frozen before predictive training."
+      },
+      {
+        "element": "availability_state_asof",
+        "source": "availability_snapshot",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "latest snapshot_date <= inquiry_at",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Backward as-of join explicitly forbids future availability snapshots; the audit reports coverage and snapshot lag."
+      },
+      {
+        "element": "inherited_persona_need_broker_profiles",
+        "source": "profile_clustering_v2 frozen assignments",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "profile calibration window ending before predictive train/test",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Assignments are inherited from the frozen profile experiment; broker profiles were constructed from the early calibration window."
+      }
+    ]
+  }
+}

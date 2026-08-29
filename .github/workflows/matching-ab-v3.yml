@@ -1,0 +1,147 @@
+name: Matching A-B suite v3
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "experimentos/matching_ab_v3/**"
+      - "data/candidate/**"
+      - "experimentos/profile_clustering_v2/results/**"
+      - "experimentos/_sistema/harness/**"
+      - ".github/workflows/matching-ab-v3.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "experimentos/matching_ab_v3/**"
+      - "data/candidate/**"
+      - "experimentos/profile_clustering_v2/results/**"
+      - "experimentos/_sistema/harness/**"
+      - ".github/workflows/matching-ab-v3.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  audit-and-ab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy scikit-learn tabulate
+
+      - name: Materialize and validate experiment source
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, zlib
+          root = Path("experimentos/matching_ab_v3")
+          packed = "".join(
+              (root / f".run_suite.py.zlib.b64.part{i}").read_text().strip()
+              for i in range(3)
+          )
+          src = zlib.decompress(base64.b64decode(packed)).decode("utf-8")
+          src = src.replace("E004", "E006").replace("E005", "E007")
+          src = src.replace(
+              "missing.mean() < 0.05",
+              "(missing.sum() / max(1, mask.sum())) < 0.05"
+          )
+          (root / "run_suite.py").write_text(src, encoding="utf-8")
+          PY
+          python -m py_compile experimentos/matching_ab_v3/run_suite.py
+
+      - name: Validate governed experiment contracts
+        run: |
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/matching_ab_v3/specs/E006_physical_location_spot.json \
+            --parent-spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json \
+            --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/matching_ab_v3/specs/E007_compatibility_routing.json \
+            --parent-spec experimentos/matching_ab_v3/specs/E006_physical_location_spot.json \
+            --repo-root .
+
+      - name: Run relational audit and A-B backtests
+        run: python experimentos/matching_ab_v3/run_suite.py
+
+      - name: Fail on critical data-quality gate
+        run: |
+          test ! -f experimentos/matching_ab_v3/results/FAILED_DATA_QUALITY_GATE.txt
+
+      - name: Finalize harness records
+        run: |
+          mkdir -p "$RUNNER_TEMP/spot2_harness"
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
+            --spec experimentos/matching_ab_v3/specs/E006_physical_location_spot.json \
+            --results experimentos/matching_ab_v3/results/E006_physical_location_spot_results.json \
+            --parent-spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json \
+            --parent-results experimentos/profile_clustering_v2/results/E002_lead_facets_results.json \
+            --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
+            --spec experimentos/matching_ab_v3/specs/E007_compatibility_routing.json \
+            --results experimentos/matching_ab_v3/results/E007_compatibility_routing_results.json \
+            --parent-spec experimentos/matching_ab_v3/specs/E006_physical_location_spot.json \
+            --parent-results experimentos/matching_ab_v3/results/E006_physical_location_spot_results.json \
+            --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+
+      - name: Validate required outputs
+        run: |
+          test -s experimentos/matching_ab_v3/README.md
+          test -s experimentos/matching_ab_v3/EVIDENCIA.md
+          test -s experimentos/matching_ab_v3/results/data_quality_summary.csv
+          test -s experimentos/matching_ab_v3/results/relationship_checks.csv
+          test -s experimentos/matching_ab_v3/results/content_consistency_checks.csv
+          test -s experimentos/matching_ab_v3/results/column_completeness.csv
+          test -s experimentos/matching_ab_v3/results/model_metrics.csv
+          test -s experimentos/matching_ab_v3/results/bootstrap_deltas.csv
+          test -s experimentos/matching_ab_v3/results/online_ab_protocols.json
+          test -s experimentos/matching_ab_v3/results/power_analysis.csv
+
+      - name: Publish report in job summary
+        if: always()
+        run: |
+          if [ -f experimentos/matching_ab_v3/README.md ]; then
+            cat experimentos/matching_ab_v3/README.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Commit reproducible outputs
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/matching_ab_v3/run_suite.py experimentos/matching_ab_v3/README.md experimentos/matching_ab_v3/results/
+          git rm -f experimentos/matching_ab_v3/.run_suite.py.zlib.b64.part*
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+          else
+            git commit -m "Add matching A-B audit results [skip ci]"
+            git push
+          fi
+
+      - name: Upload complete experiment artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: matching-ab-v3
+          path: |
+            experimentos/matching_ab_v3/README.md
+            experimentos/matching_ab_v3/EVIDENCIA.md
+            experimentos/matching_ab_v3/run_suite.py
+            experimentos/matching_ab_v3/specs/
+            experimentos/matching_ab_v3/results/
+            ${{ runner.temp }}/spot2_harness/
+          if-no-files-found: warn
+          retention-days: 30

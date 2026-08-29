@@ -1,0 +1,104 @@
+{
+  "experiment_id": "E007_compatibility_routing",
+  "parent_experiment": "E006_physical_location_spot",
+  "question": "Do explicit regularized compatibility interactions between Lead Need, Physical Space, Location and Broker improve future prioritization beyond the same profiles used only as marginal effects?",
+  "hypothesis": "A treatment model with pre-specified compatibility interactions will improve average precision and top-decile lift relative to the same marginal profiles without interactions, especially in Need × Physical Space and Need × Broker combinations.",
+  "primary_change": "add explicit regularized compatibility interactions to the treatment arm while holding population, target, split and marginal profiles fixed",
+  "secondary_changes": [
+    "evaluate supported future compatibility cells with shrinkage and minimum support",
+    "report paired bootstrap uncertainty and lead-level robustness",
+    "pre-register a randomized routing A/B protocol using sticky lead-level assignment"
+  ],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy for commercial progress)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "The public candidate data has no visit timestamp or true sale. The offline outcome is a proxy; causal lift is reserved for the online randomized experiment."
+  },
+  "population": {
+    "eligibility": "Exactly the same eligible inquiries and temporal partitions as E006.",
+    "exclusions": [
+      "Profile calibration rows remain excluded from predictive fitting; A and B use identical train/test rows."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv",
+    "data/candidate/csv/market_context.csv",
+    "experimentos/profile_clustering_v2/results/lead_assignments.csv",
+    "experimentos/profile_clustering_v2/results/spot_assignments.csv",
+    "experimentos/profile_clustering_v2/results/broker_assignments.csv",
+    "experimentos/profile_clustering_v2/results/summary.json"
+  ],
+  "features": {
+    "inherited": [
+      "persona_profile",
+      "need_profile",
+      "physical_space_profile",
+      "location_profile",
+      "broker_profile",
+      "availability_state_asof",
+      "availability_lag_bucket"
+    ],
+    "added": [
+      "persona_x_need",
+      "need_x_physical",
+      "need_x_location",
+      "need_x_broker",
+      "physical_x_broker",
+      "need_x_physical_x_broker"
+    ],
+    "removed": []
+  },
+  "validation": {
+    "strategy": "offline temporal A/B backtest plus pre-registered online randomized A/B design",
+    "time_column": "inquiry_at",
+    "split_description": "Offline A/B: exact same train and untouched future test rows in both arms; only interaction terms differ. Online A/B: 50/50 sticky assignment by lead_id, stratified by search_sector, search_modality and user_type, analyzed by intention-to-treat after the fixed 30-day window."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "compatibility_interactions",
+        "source": "derived only from E006 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at inquiry_at",
+        "status": "ALLOW",
+        "evidence": "No response outcome, future snapshot or post-inquiry signal is introduced; the treatment differs only by pre-specified crossed categorical terms."
+      },
+      {
+        "element": "availability_state_asof",
+        "source": "availability_snapshot",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "latest snapshot_date <= inquiry_at",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Inherited unchanged from E006 and checked by the same data-quality/leakage gate."
+      }
+    ]
+  }
+}
