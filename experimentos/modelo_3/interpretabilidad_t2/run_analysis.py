@@ -299,6 +299,7 @@ def human_feature(feature: str) -> str:
 def build_report(
     mh_imp: pd.DataFrame,
     family_imp: pd.DataFrame,
+    robustness: pd.DataFrame,
     direction: pd.DataFrame,
     fidelity: dict,
     concordance: dict,
@@ -362,6 +363,21 @@ def build_report(
             f"| {row.family} | {row.ap_drop_mean:+.4f} | {row.auc_drop_mean:+.4f} | "
             f"{FAMILY_EXPLANATION.get(row.family, row.family)} |"
         )
+
+    robustness_top = (
+        robustness.sort_values(["cohort", "ap_drop_mean"], ascending=[True, False])
+        .groupby("cohort", as_index=False)
+        .first()
+    )
+    lines += [
+        "", "## Robustez: una sola observación T2 por lead", "",
+        "Para comprobar que el resultado no sea sólo consecuencia de que los leads más activos generan más snapshots, repetimos la permutación por familia usando el primer y el último T2 de cada lead.",
+        "",
+        "| Cohorte | Familia dominante | ΔAP | ΔAUC |",
+        "|---|---|---:|---:|",
+    ]
+    for row in robustness_top.itertuples():
+        lines.append(f"| {row.cohort} | {row.family} | {row.ap_drop_mean:+.4f} | {row.auc_drop_mean:+.4f} |")
 
     lines += [
         "", "## ¿Coincide el Random Forest?", "",
@@ -433,6 +449,24 @@ def main() -> None:
     family_imp = family_imp.rename(columns={"feature": "family"})
     family_imp.to_csv(RESULTS / "family_importance.csv", index=False)
 
+    robustness_parts = [family_imp.assign(cohort="all_t2")]
+    for cohort_name, cohort in [
+        ("first_t2_per_lead", t2_test.sort_values(["lead_id", "score_time"]).drop_duplicates("lead_id", keep="first")),
+        ("last_t2_per_lead", t2_test.sort_values(["lead_id", "score_time"]).drop_duplicates("lead_id", keep="last")),
+    ]:
+        cohort = cohort.reset_index(drop=True)
+        cohort_imp, _ = multihead_permutation_importance(
+            model,
+            prep,
+            cohort,
+            cohort["target_30d"].to_numpy(dtype=np.int64),
+            FAMILIES,
+        )
+        cohort_imp = cohort_imp.rename(columns={"feature": "family"})
+        robustness_parts.append(cohort_imp.assign(cohort=cohort_name))
+    robustness = pd.concat(robustness_parts, ignore_index=True)
+    robustness.to_csv(RESULTS / "family_importance_robustness.csv", index=False)
+
     rf = make_rf_pipeline()
     rf.fit(t2_train[CAT_FEATURES + NUM_FEATURES], t2_train["target_30d"].to_numpy(dtype=np.int64))
     rf_pred = rf.predict_proba(t2_test[CAT_FEATURES + NUM_FEATURES])[:, 1]
@@ -496,7 +530,7 @@ def main() -> None:
     plot_ranked(mh_imp, CHARTS / "multihead_feature_importance.png")
     plot_family(family_imp, CHARTS / "family_importance.png")
 
-    report = build_report(mh_imp, family_imp, direction, fidelity, concordance)
+    report = build_report(mh_imp, family_imp, robustness, direction, fidelity, concordance)
     (RESULTS / "REPORT.md").write_text(report, encoding="utf-8")
     print(report)
 
