@@ -1,0 +1,115 @@
+name: Modelo 3 benchmark specialists
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "experimentos/modelo_3/benchmark_specialists/**"
+      - "experimentos/modelo_3/*.py"
+      - "experimentos/modelo_3/experiment_spec.json"
+      - "data/candidate/**"
+      - "experimentos/_sistema/harness/**"
+      - ".github/workflows/modelo3-benchmark-specialists.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experimentos/modelo_3/benchmark_specialists/**"
+      - "experimentos/modelo_3/*.py"
+      - "experimentos/modelo_3/experiment_spec.json"
+      - "data/candidate/**"
+      - "experimentos/_sistema/harness/**"
+      - ".github/workflows/modelo3-benchmark-specialists.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/modelo_3/benchmark_specialists/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/modelo_3/benchmark_specialists/requirements.txt
+
+      - name: Validate experiment contract and comparability
+        run: |
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/modelo_3/benchmark_specialists/experiment_spec.json \
+            --parent-spec experimentos/modelo_3/experiment_spec.json \
+            --repo-root .
+
+      - name: Run benchmark
+        run: python experimentos/modelo_3/benchmark_specialists/run_experiment.py
+
+      - name: Finalize traceable record
+        run: |
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
+            --spec experimentos/modelo_3/benchmark_specialists/experiment_spec.json \
+            --results experimentos/modelo_3/benchmark_specialists/results/harness_results.json \
+            --parent-spec experimentos/modelo_3/experiment_spec.json \
+            --parent-results experimentos/modelo_3/results/harness_results.json \
+            --repo-root . \
+            --output-dir experimentos/Evidencias/harness_records
+
+      - name: Validate required outputs
+        run: |
+          test -s experimentos/modelo_3/benchmark_specialists/results/REPORT.md
+          test -s experimentos/modelo_3/benchmark_specialists/results/metrics_by_stage.csv
+          test -s experimentos/modelo_3/benchmark_specialists/results/model_ranking.csv
+          test -s experimentos/modelo_3/benchmark_specialists/results/bootstrap_deltas_vs_multihead.csv
+          test -s experimentos/modelo_3/benchmark_specialists/results/validation_stage_selection.json
+          test -s experimentos/modelo_3/benchmark_specialists/results/summary.json
+          test -s experimentos/modelo_3/benchmark_specialists/results/harness_results.json
+          test -s experimentos/modelo_3/benchmark_specialists/results/charts/macro_average_precision.png
+          test -s experimentos/modelo_3/benchmark_specialists/results/charts/stage_average_precision.png
+          test -s experimentos/Evidencias/harness_records/E005_multihead_vs_specialists/record.json
+
+      - name: Publish summary
+        if: always()
+        run: |
+          if [ -f experimentos/modelo_3/benchmark_specialists/results/REPORT.md ]; then
+            cat experimentos/modelo_3/benchmark_specialists/results/REPORT.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Commit reproducible results
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/modelo_3/benchmark_specialists/results/
+          git add experimentos/Evidencias/harness_records/E005_multihead_vs_specialists/
+          if git diff --cached --quiet; then
+            echo "No result changes to commit."
+          else
+            git commit -m "Add Modelo 3 specialist benchmark results [skip ci]"
+            git push
+          fi
+
+      - name: Upload benchmark artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: modelo3-benchmark-specialists
+          path: |
+            experimentos/modelo_3/benchmark_specialists/results/
+            experimentos/Evidencias/harness_records/E005_multihead_vs_specialists/
+          if-no-files-found: warn
+          retention-days: 30
