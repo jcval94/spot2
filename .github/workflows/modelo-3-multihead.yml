@@ -68,6 +68,7 @@ jobs:
 
       - name: Validate required outputs
         run: |
+          test -s experimentos/modelo_3/EVIDENCIA.md
           test -s experimentos/modelo_3/results/summary.md
           test -s experimentos/modelo_3/results/summary.json
           test -s experimentos/modelo_3/results/metrics_by_stage.csv
@@ -104,6 +105,7 @@ jobs:
         with:
           name: modelo-3-multihead-artifacts
           path: |
+            experimentos/modelo_3/EVIDENCIA.md
             experimentos/modelo_3/results/
             experimentos/modelo_3/artifacts/
             experimentos/Evidencias/harness_records/E003_modelo_3_multihead/
