@@ -49,10 +49,104 @@
     "contamination": 0.03,
     "lead_flags": 155,
     "spot_flags": 94,
-    "inquiry_flags": 685
+    "inquiry_flags": 685,
+    "univariate_overlap": [
+      {
+        "entity": "inquiry",
+        "isolation_forest_flag": false,
+        "n": 21891,
+        "share_with_any_univariate_extreme": 0.0372755927093326
+      },
+      {
+        "entity": "inquiry",
+        "isolation_forest_flag": true,
+        "n": 685,
+        "share_with_any_univariate_extreme": 0.41897810218978104
+      },
+      {
+        "entity": "lead",
+        "isolation_forest_flag": false,
+        "n": 4845,
+        "share_with_any_univariate_extreme": 0.03673890608875129
+      },
+      {
+        "entity": "lead",
+        "isolation_forest_flag": true,
+        "n": 155,
+        "share_with_any_univariate_extreme": 0.25806451612903225
+      },
+      {
+        "entity": "spot",
+        "isolation_forest_flag": false,
+        "n": 2906,
+        "share_with_any_univariate_extreme": 0.05196145905024088
+      },
+      {
+        "entity": "spot",
+        "isolation_forest_flag": true,
+        "n": 94,
+        "share_with_any_univariate_extreme": 0.46808510638297873
+      }
+    ]
   },
   "broker_ge50": {
     "min_rate": 0.09859154929577464,
     "max_rate": 0.32786885245901637
-  }
+  },
+  "current_state_temporal_consistency": {
+    "observation_end": "2026-07-13T17:35:37",
+    "days_on_market_exceeds_elapsed_count": 373,
+    "days_on_market_exceeds_elapsed_rate": 0.12433333333333334,
+    "implied_end_more_than_365d_after_observation_count": 17,
+    "implied_end_more_than_365d_after_observation_rate": 0.005666666666666667,
+    "implied_end_minus_observation_p50_days": -273.2330671296296,
+    "implied_end_minus_observation_p95_days": 112.3169328703701,
+    "implied_end_minus_observation_p99_days": 308.2869328703699,
+    "implied_end_minus_observation_max_days": 694.2669328703704,
+    "total_inquiries_exact_observed_match_rate": 0.07066666666666667
+  },
+  "availability_snapshot_gaps": {
+    "n_gaps": 27000.0,
+    "min_days": 1.0,
+    "p05_days": 2.0,
+    "median_days": 21.0,
+    "p95_days": 97.0,
+    "p99_days": 155.0,
+    "max_days": 319.0,
+    "same_day_gaps": 0.0
+  },
+  "iforest_proxy_tail_diagnostic": [
+    {
+      "anomaly_tail": 0.01,
+      "threshold_percentile": 0.99,
+      "n_top": 234,
+      "top_scheduled_visit_rate": 0.1794871794871795,
+      "rest_scheduled_visit_rate": 0.19935547399516607,
+      "rate_delta": -0.019868294507986578
+    },
+    {
+      "anomaly_tail": 0.03,
+      "threshold_percentile": 0.97,
+      "n_top": 685,
+      "top_scheduled_visit_rate": 0.19124087591240876,
+      "rest_scheduled_visit_rate": 0.19939701247087843,
+      "rate_delta": -0.008156136558469668
+    },
+    {
+      "anomaly_tail": 0.05,
+      "threshold_percentile": 0.95,
+      "n_top": 1135,
+      "top_scheduled_visit_rate": 0.19383259911894274,
+      "rest_scheduled_visit_rate": 0.1994309966885873,
+      "rate_delta": -0.005598397569644559
+    },
+    {
+      "anomaly_tail": 0.1,
+      "threshold_percentile": 0.9,
+      "n_top": 2264,
+      "top_scheduled_visit_rate": 0.19522968197879859,
+      "rest_scheduled_visit_rate": 0.19958645135880268,
+      "rate_delta": -0.004356769380004094
+    }
+  ]
 }
