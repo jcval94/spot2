@@ -114,6 +114,14 @@
         "status": "CONDITIONAL",
         "condition_satisfied": true,
         "evidence": "Assignments are inherited from the frozen profile experiment; broker profiles were constructed from the early calibration window."
+      },
+      {
+        "element": "availability_lag_bucket",
+        "source": "derived from inquiries.inquiry_at - latest availability_snapshot.snapshot_date <= inquiry_at",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "inquiry_at using only the backward as-of snapshot",
+        "status": "ALLOW",
+        "evidence": "The lag bucket is a deterministic transformation of the already-reviewed backward as-of snapshot age; no future snapshot is eligible."
       }
     ]
   }
