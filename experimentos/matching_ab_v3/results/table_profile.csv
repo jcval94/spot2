@@ -1,0 +1,7 @@
+table,rows,columns,exact_duplicate_rows,pk,pk_nulls,pk_duplicates,pk_distinct
+leads,5000,20,0,lead_id,0,0,5000
+spots,3000,25,0,spot_id,0,0,3000
+spot_attributes,3000,12,0,spot_id,0,0,3000
+inquiries,22576,13,0,inquiry_id,0,0,22576
+availability_snapshot,30000,6,0,snapshot_id,0,0,30000
+market_context,500,10,0,state+municipality+corridor+sector+month,0,0,500

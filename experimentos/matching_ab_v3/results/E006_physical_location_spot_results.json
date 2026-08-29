@@ -1,0 +1,156 @@
+{
+  "experiment_id": "E006_physical_location_spot",
+  "metrics": {
+    "roc_auc": 0.4984549324764821,
+    "average_precision": 0.2098092284098022,
+    "brier": 0.16517115232438553,
+    "log_loss": 0.5129078140929567,
+    "lift_top_10pct": 1.0012453535105759,
+    "recall_top_20pct": 0.19722814498933902,
+    "lead_level_ap": 0.3751999362491275,
+    "lead_level_auc": 0.5469022388090752,
+    "lead_level_n": 2065.0,
+    "lead_level_visit_rate": 0.34334140435835353
+  },
+  "segment_metrics": [
+    {
+      "model": "E006_B",
+      "segment": "search_sector",
+      "value": "Industrial",
+      "n": 1162,
+      "roc_auc": 0.47947867029725433,
+      "average_precision": 0.19620538652003505,
+      "brier": 0.1574106950579729,
+      "log_loss": 0.49513796356420514,
+      "lift_top_10pct": 1.0546857272520989,
+      "recall_top_20pct": 0.2079646017699115
+    },
+    {
+      "model": "E006_B",
+      "segment": "search_sector",
+      "value": "Land",
+      "n": 724,
+      "roc_auc": 0.5311334243541641,
+      "average_precision": 0.2640567217597407,
+      "brier": 0.17818906335911178,
+      "log_loss": 0.542486924357421,
+      "lift_top_10pct": 1.1877614633746205,
+      "recall_top_20pct": 0.23353293413173654
+    },
+    {
+      "model": "E006_B",
+      "segment": "search_sector",
+      "value": "Office",
+      "n": 1220,
+      "roc_auc": 0.48174679487179484,
+      "average_precision": 0.20321488169854857,
+      "brier": 0.16907831679873264,
+      "log_loss": 0.5224987163027857,
+      "lift_top_10pct": 0.9230769230769231,
+      "recall_top_20pct": 0.17307692307692307
+    },
+    {
+      "model": "E006_B",
+      "segment": "search_sector",
+      "value": "Retail",
+      "n": 1410,
+      "roc_auc": 0.5111313840155945,
+      "average_precision": 0.20920045362253653,
+      "brier": 0.1615016084206453,
+      "log_loss": 0.5040655373461099,
+      "lift_top_10pct": 0.9473684210526316,
+      "recall_top_20pct": 0.2
+    },
+    {
+      "model": "E006_B",
+      "segment": "search_modality",
+      "value": "both",
+      "n": 968,
+      "roc_auc": 0.5051239878542509,
+      "average_precision": 0.2212240359623373,
+      "brier": 0.16912375340668487,
+      "log_loss": 0.5216884407281163,
+      "lift_top_10pct": 1.1514670896114194,
+      "recall_top_20pct": 0.21153846153846154
+    },
+    {
+      "model": "E006_B",
+      "segment": "search_modality",
+      "value": "rent",
+      "n": 2287,
+      "roc_auc": 0.4860386891567621,
+      "average_precision": 0.206639241795733,
+      "brier": 0.16376578662555258,
+      "log_loss": 0.5098634661662965,
+      "lift_top_10pct": 1.0221133881434996,
+      "recall_top_20pct": 0.19829424307036247
+    },
+    {
+      "model": "E006_B",
+      "segment": "search_modality",
+      "value": "sale",
+      "n": 1261,
+      "roc_auc": 0.5072911877394636,
+      "average_precision": 0.2081490337739511,
+      "brier": 0.16468578634941733,
+      "log_loss": 0.511688763439061,
+      "lift_top_10pct": 0.8369384861375088,
+      "recall_top_20pct": 0.20689655172413793
+    },
+    {
+      "model": "E006_B",
+      "segment": "user_type",
+      "value": "broker",
+      "n": 1677,
+      "roc_auc": 0.49365878285347126,
+      "average_precision": 0.21026018998797924,
+      "brier": 0.16325299915235553,
+      "log_loss": 0.5085165210865163,
+      "lift_top_10pct": 1.0185860058309038,
+      "recall_top_20pct": 0.1924198250728863
+    },
+    {
+      "model": "E006_B",
+      "segment": "user_type",
+      "value": "developer",
+      "n": 206,
+      "roc_auc": 0.5666359588515277,
+      "average_precision": 0.23983066362152247,
+      "brier": 0.15261299353326435,
+      "log_loss": 0.48249950062064745,
+      "lift_top_10pct": 1.2576312576312576,
+      "recall_top_20pct": 0.28205128205128205
+    },
+    {
+      "model": "E006_B",
+      "segment": "user_type",
+      "value": "investor",
+      "n": 970,
+      "roc_auc": 0.513362469059406,
+      "average_precision": 0.2218876113446503,
+      "brier": 0.16518148395173676,
+      "log_loss": 0.5126774884017854,
+      "lift_top_10pct": 1.188118811881188,
+      "recall_top_20pct": 0.22772277227722773
+    },
+    {
+      "model": "E006_B",
+      "segment": "user_type",
+      "value": "tenant_direct",
+      "n": 1663,
+      "roc_auc": 0.48548078707600145,
+      "average_precision": 0.20603119453367855,
+      "brier": 0.16865503801406356,
+      "log_loss": 0.5212371748070471,
+      "lift_top_10pct": 0.8439054095199432,
+      "recall_top_20pct": 0.1807909604519774
+    }
+  ],
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "Offline A/B is a temporal backtest, not randomized causal evidence.",
+    "scheduled_visit is a proxy, not a true sale.",
+    "Market context is audited but excluded because publication timing is unknown."
+  ],
+  "next_experiment": "E007_compatibility_routing"
+}

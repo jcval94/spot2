@@ -1,0 +1,133 @@
+{
+  "E006_online_ab": {
+    "status": "PRE_REGISTERED_NOT_RUN",
+    "randomization_unit": "lead_id",
+    "allocation": "50/50 sticky",
+    "stratification": [
+      "search_sector",
+      "search_modality",
+      "user_type"
+    ],
+    "control": "Current routing/ranking using unified Spot profile plus identical common features.",
+    "treatment": "Replace unified Spot profile with Physical Space Archetype + Location Profile.",
+    "exposure": "First eligible ranking/routing served after assignment; lead remains in arm for 30 days.",
+    "primary_outcome": "lead-level any scheduled_visit within 30 days of first exposure",
+    "secondary_outcomes": [
+      "lead-level any accepted_or_scheduled response",
+      "time_to_first_positive_response",
+      "fallback_use_rate if instrumented"
+    ],
+    "guardrails": [
+      "sample_ratio_mismatch",
+      "eligibility_violations",
+      "availability_asof_coverage",
+      "availability_snapshot_lag",
+      "unavailable_spot_recommendation_rate",
+      "broker_workload_concentration",
+      "no_result_rate"
+    ],
+    "analysis": "Intention-to-treat at lead level; fixed 30-day horizon; two-sided alpha=0.05; 95% CI; no peeking/optional stopping.",
+    "power_reference": [
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.01,
+        "relative_lift": 0.02912552891396336,
+        "n_per_arm": 35633,
+        "total_n": 71266
+      },
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.015,
+        "relative_lift": 0.04368829337094504,
+        "n_per_arm": 15889,
+        "total_n": 31778
+      },
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.02,
+        "relative_lift": 0.05825105782792672,
+        "n_per_arm": 8966,
+        "total_n": 17932
+      },
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.025,
+        "relative_lift": 0.0728138222849084,
+        "n_per_arm": 5756,
+        "total_n": 11512
+      },
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.03,
+        "relative_lift": 0.08737658674188986,
+        "n_per_arm": 4010,
+        "total_n": 8019
+      }
+    ]
+  },
+  "E007_online_ab": {
+    "status": "PRE_REGISTERED_NOT_RUN",
+    "randomization_unit": "lead_id",
+    "allocation": "50/50 sticky",
+    "stratification": [
+      "search_sector",
+      "search_modality",
+      "user_type"
+    ],
+    "control": "E006 treatment representation used only as marginal effects.",
+    "treatment": "Same marginal profiles plus pre-specified regularized compatibility interactions.",
+    "exposure": "First eligible routing decision after assignment; lead remains in arm for 30 days.",
+    "primary_outcome": "lead-level any scheduled_visit within 30 days of first exposure",
+    "secondary_outcomes": [
+      "positive_response_rate",
+      "time_to_first_positive_response",
+      "fallback_use_rate if instrumented"
+    ],
+    "guardrails": [
+      "sample_ratio_mismatch",
+      "eligibility_violations",
+      "availability_asof_coverage",
+      "unavailable_spot_recommendation_rate",
+      "broker_workload_concentration",
+      "no_result_rate"
+    ],
+    "analysis": "Intention-to-treat at lead level; fixed horizon; alpha=0.05; 95% CI; multiplicity only for secondary metrics; no causal claim from offline backtest.",
+    "power_reference": [
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.01,
+        "relative_lift": 0.02912552891396336,
+        "n_per_arm": 35633,
+        "total_n": 71266
+      },
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.015,
+        "relative_lift": 0.04368829337094504,
+        "n_per_arm": 15889,
+        "total_n": 31778
+      },
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.02,
+        "relative_lift": 0.05825105782792672,
+        "n_per_arm": 8966,
+        "total_n": 17932
+      },
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.025,
+        "relative_lift": 0.0728138222849084,
+        "n_per_arm": 5756,
+        "total_n": 11512
+      },
+      {
+        "baseline_rate": 0.34334140435835353,
+        "absolute_mde": 0.03,
+        "relative_lift": 0.08737658674188986,
+        "n_per_arm": 4010,
+        "total_n": 8019
+      }
+    ]
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "experiment_id": "E007_compatibility_routing",
+  "metrics": {
+    "roc_auc": 0.49846238145692523,
+    "average_precision": 0.21170639622042342,
+    "brier": 0.16627114642408813,
+    "log_loss": 0.5168312910394786,
+    "lift_top_10pct": 1.033199992452403,
+    "recall_top_20pct": 0.2068230277185501,
+    "lead_level_ap": 0.42699266201372266,
+    "lead_level_auc": 0.5899002916567853,
+    "lead_level_n": 2065.0,
+    "lead_level_visit_rate": 0.34334140435835353
+  },
+  "segment_metrics": [
+    {
+      "model": "E007_B",
+      "segment": "search_sector",
+      "value": "Industrial",
+      "n": 1162,
+      "roc_auc": 0.4897511534679676,
+      "average_precision": 0.19950983069039915,
+      "brier": 0.15899955276975172,
+      "log_loss": 0.5006951799081556,
+      "lift_top_10pct": 0.8789047727100824,
+      "recall_top_20pct": 0.1902654867256637
+    },
+    {
+      "model": "E007_B",
+      "segment": "search_sector",
+      "value": "Land",
+      "n": 724,
+      "roc_auc": 0.49917221212870494,
+      "average_precision": 0.25117207202076414,
+      "brier": 0.18018152912850338,
+      "log_loss": 0.5499062117418811,
+      "lift_top_10pct": 1.1877614633746205,
+      "recall_top_20pct": 0.20958083832335328
+    },
+    {
+      "model": "E007_B",
+      "segment": "search_sector",
+      "value": "Office",
+      "n": 1220,
+      "roc_auc": 0.4683213141025641,
+      "average_precision": 0.19993741091634676,
+      "brier": 0.17066643462668787,
+      "log_loss": 0.5278302173946073,
+      "lift_top_10pct": 0.8461538461538463,
+      "recall_top_20pct": 0.19615384615384615
+    },
+    {
+      "model": "E007_B",
+      "segment": "search_sector",
+      "value": "Retail",
+      "n": 1410,
+      "roc_auc": 0.5313138401559454,
+      "average_precision": 0.22589171585953505,
+      "brier": 0.16131811319087574,
+      "log_loss": 0.5036293253606134,
+      "lift_top_10pct": 1.263157894736842,
+      "recall_top_20pct": 0.23859649122807017
+    },
+    {
+      "model": "E007_B",
+      "segment": "search_modality",
+      "value": "both",
+      "n": 968,
+      "roc_auc": 0.5118168016194332,
+      "average_precision": 0.2378128044988099,
+      "brier": 0.16970970081684075,
+      "log_loss": 0.5241772814821586,
+      "lift_top_10pct": 1.007533703409992,
+      "recall_top_20pct": 0.22115384615384615
+    },
+    {
+      "model": "E007_B",
+      "segment": "search_modality",
+      "value": "rent",
+      "n": 2287,
+      "roc_auc": 0.4970421349171164,
+      "average_precision": 0.20301596046834194,
+      "brier": 0.16471128858928202,
+      "log_loss": 0.5130203850754115,
+      "lift_top_10pct": 0.8730551857059059,
+      "recall_top_20pct": 0.18976545842217485
+    },
+    {
+      "model": "E007_B",
+      "segment": "search_modality",
+      "value": "sale",
+      "n": 1261,
+      "roc_auc": 0.4906704980842912,
+      "average_precision": 0.2098172111914684,
+      "brier": 0.16646057879206358,
+      "log_loss": 0.5181037915876996,
+      "lift_top_10pct": 1.1793224122846715,
+      "recall_top_20pct": 0.210727969348659
+    },
+    {
+      "model": "E007_B",
+      "segment": "user_type",
+      "value": "broker",
+      "n": 1677,
+      "roc_auc": 0.4865187668556393,
+      "average_precision": 0.2121943747002241,
+      "brier": 0.16457337444254,
+      "log_loss": 0.5134340669862066,
+      "lift_top_10pct": 1.1349958350687215,
+      "recall_top_20pct": 0.22448979591836735
+    },
+    {
+      "model": "E007_B",
+      "segment": "user_type",
+      "value": "developer",
+      "n": 206,
+      "roc_auc": 0.5362352218639643,
+      "average_precision": 0.203899322749586,
+      "brier": 0.15391640827273026,
+      "log_loss": 0.4863579621645621,
+      "lift_top_10pct": 0.7545787545787546,
+      "recall_top_20pct": 0.1282051282051282
+    },
+    {
+      "model": "E007_B",
+      "segment": "user_type",
+      "value": "investor",
+      "n": 970,
+      "roc_auc": 0.5212329826732673,
+      "average_precision": 0.23207430558557204,
+      "brier": 0.1654215047975259,
+      "log_loss": 0.5139015291181331,
+      "lift_top_10pct": 1.2376237623762374,
+      "recall_top_20pct": 0.23267326732673269
+    },
+    {
+      "model": "E007_B",
+      "segment": "user_type",
+      "value": "tenant_direct",
+      "n": 1663,
+      "roc_auc": 0.4926130698812653,
+      "average_precision": 0.2064789245925483,
+      "brier": 0.1700092053838003,
+      "log_loss": 0.5257408036968894,
+      "lift_top_10pct": 0.8720355898372746,
+      "recall_top_20pct": 0.18361581920903955
+    }
+  ],
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "Offline interaction lift is associative, not causal.",
+    "Cells are shrunk and require minimum support, but multiple exploratory cells are still hypothesis-generating.",
+    "Online randomized routing is required before production causal claims."
+  ],
+  "next_experiment": "Run the pre-registered online A/B if operational instrumentation is available."
+}
