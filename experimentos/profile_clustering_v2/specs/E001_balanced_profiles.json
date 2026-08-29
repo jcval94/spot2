@@ -1,0 +1,103 @@
+{
+  "experiment_id": "E001_balanced_profiles",
+  "parent_experiment": null,
+  "question": "Can multiple unsupervised clustering families produce non-degenerate, interpretable Lead, Spot and Broker profiles that carry future scheduled-visit signal?",
+  "hypothesis": "A balance-aware unsupervised benchmark can avoid the ~90% dominant Lead/Spot clusters while preserving stable separation and useful future lift.",
+  "primary_change": "Replace K-Means-only entity profiling with outcome-free multi-method clustering selection based on separation, balance and stability.",
+  "secondary_changes": [
+    "Freeze all profile discovery in an early temporal calibration window to remove broker-profile look-ahead.",
+    "Add cluster-level interpretability signals."
+  ],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy for commercial progress)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "The public data has no visit timestamp; the recorded inquiry response is treated as the observed proxy outcome and this limitation is reported."
+  },
+  "population": {
+    "eligibility": "Inquiries after a frozen early profile-calibration window; the final 20% by inquiry_at is held out for future evaluation.",
+    "exclusions": [
+      "The first 30% of inquiries are reserved only for unsupervised profile calibration and are not used to fit the predictive models."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv"
+  ],
+  "validation": {
+    "strategy": "temporal",
+    "time_column": "inquiry_at",
+    "split_description": "First 30% of inquiries calibrate/freeze unsupervised profiles; next 50% train the predictive model; final 20% are an untouched future test."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "features": {
+    "inherited": [],
+    "added": [
+      "lead_profile_v2",
+      "spot_profile_v2",
+      "broker_profile_v2",
+      "profile_interactions"
+    ],
+    "removed": []
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "lead_profile_v2",
+        "source": "leads fields excluding lead_score_internal",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "leads.created_at <= inquiry_at",
+        "status": "ALLOW",
+        "evidence": "Profile uses lead-declared fields and prior-history fields present on the lead row; the clusterer is fitted only in the early calibration window."
+      },
+      {
+        "element": "spot_profile_v2",
+        "source": "spots + spot_attributes excluding current-state accumulators",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "spot listing fields available by the inquiry timestamp",
+        "status": "ALLOW",
+        "evidence": "Profile excludes days_on_market, total_inquiries, total_views and is_active; clusterer is fitted in the early calibration window and then frozen."
+      },
+      {
+        "element": "broker_profile_v2",
+        "source": "spots and inquiries from the first 30% temporal calibration window",
+        "scoring_time": "inquiries.inquiry_at for predictive train/test rows",
+        "information_available_at": "strictly before the predictive train window begins",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Broker portfolio/response history is computed only in the early calibration window and frozen before any predictive training or test row."
+      },
+      {
+        "element": "profile_interactions",
+        "source": "derived from lead_profile_v2, spot_profile_v2 and broker_profile_v2",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles",
+        "status": "ALLOW",
+        "evidence": "Interactions contain no new information beyond the reviewed profile IDs."
+      }
+    ]
+  }
+}

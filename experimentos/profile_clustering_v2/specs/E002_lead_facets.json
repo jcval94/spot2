@@ -1,0 +1,96 @@
+{
+  "experiment_id": "E002_lead_facets",
+  "parent_experiment": "E001_balanced_profiles",
+  "question": "Does separating who the lead is (Persona) from what the lead needs (Search Need) improve future prioritization relative to a single Lead profile?",
+  "hypothesis": "Lead Persona and Search Need are more interpretable and improve future average precision and top-decile lift when modeled separately with Spot and Broker profiles.",
+  "primary_change": "Replace the single Lead profile with two unsupervised facets: Lead Persona and Search Need.",
+  "secondary_changes": [],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy for commercial progress)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "The public data has no visit timestamp; the recorded inquiry response is treated as the observed proxy outcome and this limitation is reported."
+  },
+  "population": {
+    "eligibility": "Inquiries after a frozen early profile-calibration window; the final 20% by inquiry_at is held out for future evaluation.",
+    "exclusions": [
+      "The first 30% of inquiries are reserved only for unsupervised profile calibration and are not used to fit the predictive models."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv"
+  ],
+  "validation": {
+    "strategy": "temporal",
+    "time_column": "inquiry_at",
+    "split_description": "First 30% of inquiries calibrate/freeze unsupervised profiles; next 50% train the predictive model; final 20% are an untouched future test."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "features": {
+    "inherited": [
+      "spot_profile_v2",
+      "broker_profile_v2"
+    ],
+    "added": [
+      "lead_persona_profile",
+      "search_need_profile",
+      "facet_interactions"
+    ],
+    "removed": [
+      "lead_profile_v2",
+      "profile_interactions"
+    ]
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "lead_persona_profile",
+        "source": "leads.user_type, company_size, industry, source and prior-history fields",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "leads.created_at <= inquiry_at",
+        "status": "ALLOW",
+        "evidence": "All fields are part of the lead record and the clusterer is fitted/frozen in the early calibration window."
+      },
+      {
+        "element": "search_need_profile",
+        "source": "leads search sector, modality, area, budget and preferred geography",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "leads.created_at <= inquiry_at",
+        "status": "ALLOW",
+        "evidence": "These are lead-declared search requirements known before the inquiry."
+      },
+      {
+        "element": "facet_interactions",
+        "source": "derived from reviewed Persona, Search Need, Spot and Broker profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles",
+        "status": "ALLOW",
+        "evidence": "No post-inquiry response information is introduced."
+      }
+    ]
+  }
+}

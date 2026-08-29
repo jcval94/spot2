@@ -1,0 +1,87 @@
+{
+  "experiment_id": "E003_inquiry_intent",
+  "parent_experiment": "E002_lead_facets",
+  "question": "Does a T1 Inquiry Intent profile add future scheduled-visit signal beyond Persona, Search Need, Spot and Broker profiles?",
+  "hypothesis": "An unsupervised profile of channel, visit request, urgency, message length, requested area/budget and inquiry timing improves future average precision and lift.",
+  "primary_change": "Add an unsupervised Inquiry Intent profile and its interactions at T1.",
+  "secondary_changes": [],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy for commercial progress)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "The public data has no visit timestamp; the recorded inquiry response is treated as the observed proxy outcome and this limitation is reported."
+  },
+  "population": {
+    "eligibility": "Inquiries after a frozen early profile-calibration window; the final 20% by inquiry_at is held out for future evaluation.",
+    "exclusions": [
+      "The first 30% of inquiries are reserved only for unsupervised profile calibration and are not used to fit the predictive models."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv"
+  ],
+  "validation": {
+    "strategy": "temporal",
+    "time_column": "inquiry_at",
+    "split_description": "First 30% of inquiries calibrate/freeze unsupervised profiles; next 50% train the predictive model; final 20% are an untouched future test."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "features": {
+    "inherited": [
+      "spot_profile_v2",
+      "broker_profile_v2",
+      "lead_persona_profile",
+      "search_need_profile",
+      "facet_interactions"
+    ],
+    "added": [
+      "inquiry_intent_profile",
+      "intent_interactions"
+    ],
+    "removed": []
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "inquiry_intent_profile",
+        "source": "inquiries fields available at inquiry creation: channel, message_length, requested area/budgets, urgency_days, asked_visit and inquiry timestamp",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "inquiries.inquiry_at",
+        "status": "ALLOW",
+        "evidence": "The profile excludes broker_response and broker_response_hours; its clusterer is fitted only on the early calibration window and frozen."
+      },
+      {
+        "element": "intent_interactions",
+        "source": "derived from inquiry_intent_profile and previously reviewed profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "inquiries.inquiry_at",
+        "status": "ALLOW",
+        "evidence": "No future broker response data is introduced."
+      }
+    ]
+  }
+}
