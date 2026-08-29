@@ -83,14 +83,6 @@
     "check_status": "PASS",
     "items": [
       {
-        "element": "compatibility_interactions",
-        "source": "derived only from E006 point-in-time-safe profile IDs",
-        "scoring_time": "inquiries.inquiry_at",
-        "information_available_at": "same as component profiles at inquiry_at",
-        "status": "ALLOW",
-        "evidence": "No response outcome, future snapshot or post-inquiry signal is introduced; the treatment differs only by pre-specified crossed categorical terms."
-      },
-      {
         "element": "availability_state_asof",
         "source": "availability_snapshot",
         "scoring_time": "inquiries.inquiry_at",
@@ -98,6 +90,54 @@
         "status": "CONDITIONAL",
         "condition_satisfied": true,
         "evidence": "Inherited unchanged from E006 and checked by the same data-quality/leakage gate."
+      },
+      {
+        "element": "persona_x_need",
+        "source": "deterministic categorical cross of persona_profile + need_profile",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at inquiry_at",
+        "status": "ALLOW",
+        "evidence": "No new source data is introduced. The feature is a deterministic cross of E006 profiles already reviewed as point-in-time safe."
+      },
+      {
+        "element": "need_x_physical",
+        "source": "deterministic categorical cross of need_profile + physical_space_profile",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at inquiry_at",
+        "status": "ALLOW",
+        "evidence": "No new source data is introduced. The feature is a deterministic cross of E006 profiles already reviewed as point-in-time safe."
+      },
+      {
+        "element": "need_x_location",
+        "source": "deterministic categorical cross of need_profile + location_profile",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at inquiry_at",
+        "status": "ALLOW",
+        "evidence": "No new source data is introduced. The feature is a deterministic cross of E006 profiles already reviewed as point-in-time safe."
+      },
+      {
+        "element": "need_x_broker",
+        "source": "deterministic categorical cross of need_profile + broker_profile",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at inquiry_at",
+        "status": "ALLOW",
+        "evidence": "No new source data is introduced. The feature is a deterministic cross of E006 profiles already reviewed as point-in-time safe."
+      },
+      {
+        "element": "physical_x_broker",
+        "source": "deterministic categorical cross of physical_space_profile + broker_profile",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at inquiry_at",
+        "status": "ALLOW",
+        "evidence": "No new source data is introduced. The feature is a deterministic cross of E006 profiles already reviewed as point-in-time safe."
+      },
+      {
+        "element": "need_x_physical_x_broker",
+        "source": "deterministic categorical cross of need_profile + physical_space_profile + broker_profile",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at inquiry_at",
+        "status": "ALLOW",
+        "evidence": "No new source data is introduced. The feature is a deterministic cross of E006 profiles already reviewed as point-in-time safe."
       }
     ]
   }
