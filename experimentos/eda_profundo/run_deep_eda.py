@@ -364,7 +364,7 @@ def iforest_univariate_overlap(
     for keys, g in scored.groupby(groups, dropna=False):
         transformed = pd.DataFrame(index=g.index)
         for col in features:
-            s = pd.to_numeric(g[col], errors="coerce")
+            s = pd.to_numeric(g[col], errors="coerce").astype(float)
             if col in log_features:
                 s = np.log1p(s.clip(lower=0))
             transformed[col] = s
@@ -409,7 +409,119 @@ def aggregate_iforest_overlap(overlap: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(out)
 
 
-def make_figures(data, cohort, rel, market_cov, av_traj, if_summary, matches, broker):
+
+def current_state_consistency(data: dict[str, pd.DataFrame]) -> tuple[pd.DataFrame, pd.DataFrame]:
+    spots = data["spots"].copy()
+    inquiries = data["inquiries"]
+    availability = data["availability_snapshot"]
+    observation_end = max(inquiries["inquiry_at"].max(), availability["snapshot_date"].max())
+    implied_end = spots["created_at"] + pd.to_timedelta(
+        pd.to_numeric(spots["days_on_market"], errors="coerce"), unit="D"
+    )
+    delta = (implied_end - observation_end).dt.total_seconds() / 86400.0
+    elapsed = (observation_end - spots["created_at"]).dt.total_seconds() / 86400.0
+    days = pd.to_numeric(spots["days_on_market"], errors="coerce")
+
+    observed_inquiries = inquiries.groupby("spot_id").size()
+    current_counts = pd.to_numeric(spots["total_inquiries"], errors="coerce")
+    observed_counts = spots["spot_id"].map(observed_inquiries).fillna(0)
+
+    metrics = pd.DataFrame([
+        ["observation_end", observation_end.isoformat()],
+        ["days_on_market_exceeds_elapsed_count", int((days > elapsed).sum())],
+        ["days_on_market_exceeds_elapsed_rate", float((days > elapsed).mean())],
+        ["implied_end_more_than_365d_after_observation_count", int((delta > 365).sum())],
+        ["implied_end_more_than_365d_after_observation_rate", float((delta > 365).mean())],
+        ["implied_end_minus_observation_p50_days", float(delta.median())],
+        ["implied_end_minus_observation_p95_days", float(delta.quantile(.95))],
+        ["implied_end_minus_observation_p99_days", float(delta.quantile(.99))],
+        ["implied_end_minus_observation_max_days", float(delta.max())],
+        ["total_inquiries_exact_observed_match_rate", float(current_counts.eq(observed_counts).mean())],
+    ], columns=["metric", "value"])
+
+    gaps = []
+    for _, g in availability.sort_values(["spot_id","snapshot_date"]).groupby("spot_id"):
+        d = g["snapshot_date"].diff().dt.total_seconds().div(86400).dropna()
+        gaps.extend(d.tolist())
+    gap_series = pd.Series(gaps, dtype=float)
+    gap_summary = pd.DataFrame([{
+        "n_gaps": len(gap_series),
+        "min_days": gap_series.min(),
+        "p05_days": gap_series.quantile(.05),
+        "median_days": gap_series.median(),
+        "p95_days": gap_series.quantile(.95),
+        "p99_days": gap_series.quantile(.99),
+        "max_days": gap_series.max(),
+        "same_day_gaps": int(gap_series.eq(0).sum()),
+    }])
+    return metrics, gap_summary
+
+
+def missingness_semantics(data: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    inquiries = data["inquiries"].copy()
+    inquiries["scheduled_visit"] = inquiries["broker_response"].eq("scheduled_visit")
+    inquiries["urgency_missing"] = inquiries["urgency_days"].isna()
+    inquiries["response_hours_missing"] = inquiries["broker_response_hours"].isna()
+    rows = []
+
+    for dimension, flag in [
+        ("urgency_missing_by_channel", "urgency_missing"),
+        ("urgency_missing_by_broker_response", "urgency_missing"),
+        ("response_hours_missing_by_broker_response", "response_hours_missing"),
+    ]:
+        group_col = "channel" if dimension.endswith("channel") else "broker_response"
+        for key, g in inquiries.groupby(group_col, dropna=False):
+            rows.append({
+                "diagnostic": dimension,
+                "group": key,
+                "n": len(g),
+                "rate": float(g[flag].mean()),
+            })
+
+    for flag_name in ["urgency_missing", "response_hours_missing"]:
+        for flag, g in inquiries.groupby(flag_name):
+            rows.append({
+                "diagnostic": f"scheduled_visit_by_{flag_name}",
+                "group": str(bool(flag)),
+                "n": len(g),
+                "rate": float(g["scheduled_visit"].mean()),
+            })
+    return pd.DataFrame(rows)
+
+
+def iforest_proxy_tail_diagnostic(inq_score: pd.DataFrame) -> pd.DataFrame:
+    d = inq_score.copy()
+    d["scheduled_visit"] = d["broker_response"].eq("scheduled_visit").astype(int)
+    rows = []
+    for tail in [.01, .03, .05, .10]:
+        threshold = 1.0 - tail
+        top = d["anomaly_percentile_within_group"].ge(threshold)
+        rows.append({
+            "anomaly_tail": tail,
+            "threshold_percentile": threshold,
+            "n_top": int(top.sum()),
+            "top_scheduled_visit_rate": float(d.loc[top, "scheduled_visit"].mean()),
+            "rest_scheduled_visit_rate": float(d.loc[~top, "scheduled_visit"].mean()),
+            "rate_delta": float(
+                d.loc[top, "scheduled_visit"].mean() - d.loc[~top, "scheduled_visit"].mean()
+            ),
+        })
+    return pd.DataFrame(rows)
+
+
+def current_state_distribution(data: dict[str, pd.DataFrame]) -> pd.Series:
+    spots = data["spots"]
+    observation_end = max(
+        data["inquiries"]["inquiry_at"].max(),
+        data["availability_snapshot"]["snapshot_date"].max(),
+    )
+    implied = spots["created_at"] + pd.to_timedelta(
+        pd.to_numeric(spots["days_on_market"], errors="coerce"), unit="D"
+    )
+    return (implied - observation_end).dt.total_seconds() / 86400.0
+
+
+def make_figures(data, cohort, rel, market_cov, av_traj, if_summary, matches, broker, if_tail):
     leads, inquiries, spots = data["leads"], data["inquiries"], data["spots"]
     hist(leads["target_area_sqm"], "01_lead_target_area_log_hist.svg", "Lead target area", True)
     hist(inquiries["requested_area_sqm"], "02_inquiry_requested_area_log_hist.svg", "Inquiry requested area", True)
@@ -435,6 +547,9 @@ def make_figures(data, cohort, rel, market_cov, av_traj, if_summary, matches, br
     heatmap(spots[spot_cols].corr(),"Spot numeric correlations","17_spot_correlation_heatmap.svg")
     market_cols=["avg_price_sqm_mxn","recent_occupancy_rate","absorption_velocity_days","recent_inquiry_volume","similar_available_spots"]
     heatmap(data["market_context"][market_cols].corr(),"Market-context correlations","18_market_correlation_heatmap.svg")
+    delta = current_state_distribution(data).dropna()
+    fig,ax=plt.subplots(figsize=(8.6,4.7)); ax.hist(delta,bins=55,color="#2563EB",edgecolor="white"); ax.axvline(0,color="#D4A017",ls="--",label="observation end"); ax.legend(frameon=False); style(ax,"Spot days_on_market implied end vs observation end","positive values imply a future end beyond observed data"); save(fig,"19_days_on_market_temporal_consistency.svg")
+    fig,ax=plt.subplots(figsize=(8.6,4.7)); pos=np.arange(len(if_tail)); w=.36; ax.bar(pos-w/2,if_tail["top_scheduled_visit_rate"],w,label="anomaly tail",color="#2563EB"); ax.bar(pos+w/2,if_tail["rest_scheduled_visit_rate"],w,label="rest",color="#D4A017"); ax.set_xticks(pos,[f"top {x:.0%}" for x in if_tail["anomaly_tail"]]); ax.yaxis.set_major_formatter(lambda v,p:f"{v:.0%}"); ax.legend(frameon=False); style(ax,"Scheduled visit across anomaly-score tails","outcome is inspected only after outcome-free anomaly fitting"); save(fig,"20_iforest_tail_proxy_diagnostic.svg")
 
 
 def main():
@@ -469,16 +584,23 @@ def main():
     ], ignore_index=True)
     if_overlap_agg = aggregate_iforest_overlap(if_overlap)
     correlations = selected_correlations(data)
+    current_state, availability_gaps = current_state_consistency(data)
+    missingness_diag = missingness_semantics(data)
+    if_tail = iforest_proxy_tail_diagnostic(inq_score)
     cohort=cohort_dynamics(leads,inquiries); rel=deterministic_relationships(leads,inquiries,spots); market_cov=market_panel(data["market_context"]); av=availability_trajectories(data["availability_snapshot"]); matches=match_rates(leads,inquiries,spots); broker=broker_summary(spots,inquiries)
     numeric.to_csv(RESULTS/"numeric_summary.csv",index=False); outliers.to_csv(RESULTS/"stratified_outliers.csv",index=False); rel.to_csv(RESULTS/"deterministic_relationships.csv",index=False); cohort.to_csv(RESULTS/"cohort_dynamics.csv",index=False); market_cov.to_csv(RESULTS/"market_panel_coverage.csv",index=False); av.to_csv(RESULTS/"availability_trajectories.csv",index=False); matches.to_csv(RESULTS/"match_bucket_rates.csv",index=False); broker.to_csv(RESULTS/"broker_summary.csv",index=False); if_sum.to_csv(RESULTS/"iforest_summary.csv",index=False)
     correlations.to_csv(RESULTS/"selected_correlations.csv", index=False)
     if_overlap.to_csv(RESULTS/"iforest_univariate_overlap_by_group.csv", index=False)
     if_overlap_agg.to_csv(RESULTS/"iforest_univariate_overlap.csv", index=False)
+    current_state.to_csv(RESULTS/"current_state_temporal_consistency.csv", index=False)
+    availability_gaps.to_csv(RESULTS/"availability_snapshot_gap_summary.csv", index=False)
+    missingness_diag.to_csv(RESULTS/"missingness_semantics.csv", index=False)
+    if_tail.to_csv(RESULTS/"iforest_proxy_tail_diagnostic.csv", index=False)
     lead_score.loc[lead_score["isolation_forest_flag"]].head(250).to_csv(RESULTS/"iforest_lead_anomalies.csv",index=False)
     spot_score.loc[spot_score["isolation_forest_flag"]].head(250).to_csv(RESULTS/"iforest_spot_anomalies.csv",index=False)
     inq_score.loc[inq_score["isolation_forest_flag"]].head(500).to_csv(RESULTS/"iforest_inquiry_anomalies.csv",index=False)
     q=inq_score.copy(); q["scheduled_visit"]=q["broker_response"].eq("scheduled_visit").astype(int); q.groupby("isolation_forest_flag")["scheduled_visit"].agg(["size","mean"]).reset_index().to_csv(RESULTS/"iforest_inquiry_proxy_diagnostic.csv",index=False)
-    make_figures(data,cohort,rel,market_cov,av,if_sum,matches,broker)
+    make_figures(data,cohort,rel,market_cov,av,if_sum,matches,broker,if_tail)
     summary={
         "scope":"deep EDA only; no model fitting or automatic row deletion",
         "datasets":{k:len(v) for k,v in data.items()},
@@ -494,6 +616,9 @@ def main():
             "univariate_overlap": if_overlap_agg.to_dict(orient="records"),
         },
         "broker_ge50":{"min_rate":broker.loc[broker.n>=50,"rate"].min(),"max_rate":broker.loc[broker.n>=50,"rate"].max()},
+        "current_state_temporal_consistency": dict(zip(current_state["metric"], current_state["value"])),
+        "availability_snapshot_gaps": availability_gaps.iloc[0].to_dict(),
+        "iforest_proxy_tail_diagnostic": if_tail.to_dict(orient="records"),
     }
     (RESULTS/"summary.json").write_text(json.dumps(summary,indent=2,ensure_ascii=False,default=str)+"\n",encoding="utf-8")
     print(json.dumps(summary,indent=2,ensure_ascii=False,default=str))
