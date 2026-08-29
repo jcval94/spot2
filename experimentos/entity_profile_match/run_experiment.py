@@ -90,7 +90,7 @@ def preprocess(cat, num):
 def cluster_entity(name, ref, all_df, cat, num, prefix):
     cols = cat + num
     prep = preprocess(cat, num)
-   xr = prep.fit_transform(ref[cols])
+    xr = prep.fit_transform(ref[cols])
     trials = []
     models = {}
     for k in range(3, 9):
