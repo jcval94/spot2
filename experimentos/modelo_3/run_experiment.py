@@ -19,7 +19,7 @@ from models import (
 EXPERIMENT_ID = "E003_modelo_3_multihead"
 ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(__file__).resolve().parent / "results"
-ART = ROOT / "artifacts" / "modelo_3"
+ART = Path(__file__).resolve().parent / "artifacts"
 OUT.mkdir(parents=True, exist_ok=True)
 ART.mkdir(parents=True, exist_ok=True)
 
