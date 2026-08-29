@@ -1,0 +1,5 @@
+stage,scoring_definition,eligible_rows,share_of_all_leads,proxy_positive_rate
+T0,lead creation,4836,0.9672,0.41873449131513646
+T1,first inquiry,4794,0.9588,0.4453483521068002
+T2,"second inquiry, excluding prior scheduled visit",3314,0.6628,0.38805069402534703
+T3,"third inquiry, excluding prior scheduled visit",2251,0.4502,0.33140826299422477

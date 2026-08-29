@@ -1,0 +1,10 @@
+check,value,severity
+inquiries -> leads orphan rows,0,critical_if_nonzero
+inquiries -> spots orphan rows,0,critical_if_nonzero
+spot_attributes -> spots orphan rows,0,critical_if_nonzero
+availability -> spots orphan rows,0,critical_if_nonzero
+inquiries before lead creation,0,critical_if_nonzero
+inquiries before spot creation,0,critical_if_nonzero
+inquiry modality incompatibilities,0,high_if_nonzero
+exact lead-market context coverage at lead month,0.23014888337468983,coverage_not_failure
+T1 as-of availability snapshot coverage,0.8496036712557363,coverage_not_failure
