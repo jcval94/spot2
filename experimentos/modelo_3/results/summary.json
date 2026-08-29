@@ -1,0 +1,55 @@
+{
+  "experiment_id": "E003_modelo_3_multihead",
+  "architecture": {
+    "backbone": [
+      128,
+      64
+    ],
+    "heads": {
+      "0": "T0_cold",
+      "1": "T1_first_inquiry",
+      "2": "T2_engaged"
+    },
+    "horizon_days": 30
+  },
+  "population": {
+    "eligible_snapshots": 19715,
+    "unique_leads": 4841,
+    "observation_end": "2026-07-14 13:01:24",
+    "censor_cutoff": "2026-06-14 13:01:24"
+  },
+  "comparison": {
+    "multihead_vs_pooled_macro_ap_delta": 0.011524784903379881,
+    "multihead_vs_pooled_macro_auc_delta": 0.006428919271262656,
+    "multihead_vs_pooled_macro_brier_delta": -0.0004894240005573758,
+    "multihead_vs_separate_logistic_macro_ap_delta": 0.009657519600559772
+  },
+  "conclusion": "SUPPORTED",
+  "reason": "multi-head improves macro AP vs pooled by +0.012, with ROC-AUC delta +0.006.",
+  "macro_metrics": {
+    "multihead_calibrated": {
+      "roc_auc": 0.5329981674817652,
+      "average_precision": 0.5083124259581422,
+      "brier": 0.24890188780266745,
+      "log_loss": 0.691181491451835,
+      "lift_top_10pct": 1.1178214611335295,
+      "recall_top_20pct": 0.22053933183807836
+    },
+    "pooled_calibrated": {
+      "roc_auc": 0.5265692482105025,
+      "average_precision": 0.4967876410547623,
+      "brier": 0.24939131180322482,
+      "log_loss": 0.6920408194734852,
+      "lift_top_10pct": 1.078912332579721,
+      "recall_top_20pct": 0.20587354845711392
+    },
+    "separate_logistic": {
+      "roc_auc": 0.5032401392763237,
+      "average_precision": 0.4986549063575824,
+      "brier": 0.28111970207906434,
+      "log_loss": 0.7683919006096976,
+      "lift_top_10pct": 1.101101930663999,
+      "recall_top_20pct": 0.21756570379481244
+    }
+  }
+}

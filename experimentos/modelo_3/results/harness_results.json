@@ -1,0 +1,45 @@
+{
+  "experiment_id": "E003_modelo_3_multihead",
+  "metrics": {
+    "roc_auc": 0.5329981674817652,
+    "average_precision": 0.5083124259581422,
+    "brier": 0.24890188780266745,
+    "log_loss": 0.691181491451835,
+    "lift_top_10pct": 1.1178214611335295,
+    "recall_top_20pct": 0.22053933183807836
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.5141773646602883,
+      "average_precision": 0.5026447422576382,
+      "brier": 0.25128221896342134,
+      "log_loss": 0.695725143825457,
+      "lift_top_10pct": 0.9709237989850039,
+      "recall_top_20pct": 0.2116991643454039
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.4901427822897564,
+      "average_precision": 0.5075105460587273,
+      "brier": 0.25124079681759054,
+      "log_loss": 0.6956412751172341,
+      "lift_top_10pct": 0.9928977272727273,
+      "recall_top_20pct": 0.20170454545454544
+    },
+    "T2_engaged": {
+      "roc_auc": 0.5946743554952509,
+      "average_precision": 0.5147819895580609,
+      "brier": 0.24418264762699052,
+      "log_loss": 0.6821780554128138,
+      "lift_top_10pct": 1.3896428571428572,
+      "recall_top_20pct": 0.24821428571428572
+    }
+  },
+  "conclusion": "SUPPORTED",
+  "caveats": [
+    "scheduled_visit is a supervised proxy for commercial conversion, not the hidden final outcome",
+    "the dataset is synthetic, so architecture conclusions need production validation",
+    "T2 contains repeated pre-conversion scoring events; train/test isolation is enforced at lead level",
+    "broker response timing is used only to establish when historical information became observable"
+  ],
+  "next_experiment": "Compare the winning stage architecture with a lead-by-spot ranking model and head-specific Growth thresholds."
+}

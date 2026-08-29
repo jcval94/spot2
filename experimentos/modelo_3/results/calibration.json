@@ -1,0 +1,36 @@
+{
+  "multihead": {
+    "T0_cold": {
+      "intercept": -0.8181280493736267,
+      "coefficient": -0.7250245809555054,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": 0.35342341661453247,
+      "coefficient": 0.6623645424842834,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": -0.027175147086381912,
+      "coefficient": 0.959105908870697,
+      "status": "platt"
+    }
+  },
+  "pooled": {
+    "T0_cold": {
+      "intercept": -2.209397315979004,
+      "coefficient": -2.458068609237671,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": 0.05680613964796066,
+      "coefficient": 0.2431548535823822,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": 0.6833762526512146,
+      "coefficient": 2.069469928741455,
+      "status": "platt"
+    }
+  }
+}
