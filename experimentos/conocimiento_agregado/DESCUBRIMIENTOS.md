@@ -88,7 +88,9 @@ Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
 
 ## D005 — La “química” Lead × Spot × Broker no está demostrada
 
-**Estado:** NOT_SUPPORTED.
+**Estado:** NOT_SUPPORTED, con evidencia legacy superseded metodológicamente por D006.
+
+La primera versión fue útil como exploración, pero la iteración posterior detectó look-ahead en la construcción histórica del perfil del broker. Sus resultados deben leerse como antecedente y no como prueba gobernada final.
 
 En test futuro:
 
