@@ -41,17 +41,18 @@ x=iq.merge(
 pd.crosstab(x.search_sector,x.sector_name,margins=True).to_csv(OUT/"lead_spot_sector_cross.csv")
 pd.crosstab(x.search_modality,x.modality,margins=True).to_csv(OUT/"lead_spot_modality_cross.csv")
 
-geo=x.groupby("search_sector").apply(
-    lambda g: pd.Series({
+geo_rows=[]
+for sector,g in x.groupby("search_sector"):
+    mask=g.preferred_corridor.notna()
+    geo_rows.append({
+        "search_sector":sector,
         "n":len(g),
-        "same_sector_rate":g.search_sector.eq(g.sector_name).mean(),
-        "same_municipality_rate":g.preferred_municipality.eq(g.municipality).mean(),
-        "declared_corridor_n":int(g.preferred_corridor.notna().sum()),
-        "same_corridor_rate_when_declared":g.loc[g.preferred_corridor.notna(),"preferred_corridor"].eq(
-            g.loc[g.preferred_corridor.notna(),"corridor"]).mean()
-    }),include_groups=False
-).reset_index()
-geo.to_csv(OUT/"lead_spot_match_by_search_sector.csv",index=False)
+        "same_sector_rate":float(g.search_sector.eq(g.sector_name).mean()),
+        "same_municipality_rate":float(g.preferred_municipality.eq(g.municipality).mean()),
+        "declared_corridor_n":int(mask.sum()),
+        "same_corridor_rate_when_declared":float(g.loc[mask,"preferred_corridor"].eq(g.loc[mask,"corridor"]).mean()) if mask.any() else np.nan
+    })
+pd.DataFrame(geo_rows).to_csv(OUT/"lead_spot_match_by_search_sector.csv",index=False)
 
 # 3) Lead-declared need vs inquiry refinement.
 rows=[]
