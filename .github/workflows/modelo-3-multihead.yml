@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - "experimentos/modelo_3/run_experiment.py"
+      - "experimentos/modelo_3/*.py"
       - "experimentos/modelo_3/experiment_spec.json"
       - "experimentos/modelo_3/requirements.txt"
       - "data/candidate/**"
@@ -16,7 +16,7 @@ on:
     branches:
       - main
     paths:
-      - "experimentos/modelo_3/run_experiment.py"
+      - "experimentos/modelo_3/*.py"
       - "experimentos/modelo_3/experiment_spec.json"
       - "experimentos/modelo_3/requirements.txt"
       - "data/candidate/**"
