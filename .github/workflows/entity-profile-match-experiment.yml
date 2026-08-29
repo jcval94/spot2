@@ -47,6 +47,7 @@ jobs:
       - name: Validate required outputs
         run: |
           test -s experimentos/entity_profile_match/README.md
+          test -s experimentos/entity_profile_match/EVIDENCIA.md
           test -s experimentos/entity_profile_match/results/results.json
           test -s experimentos/entity_profile_match/results/model_metrics.csv
           test -s experimentos/entity_profile_match/results/top_combinations.csv
@@ -78,6 +79,7 @@ jobs:
           name: entity-profile-match-experiment
           path: |
             experimentos/entity_profile_match/README.md
+            experimentos/entity_profile_match/EVIDENCIA.md
             experimentos/entity_profile_match/results/
           if-no-files-found: warn
           retention-days: 30

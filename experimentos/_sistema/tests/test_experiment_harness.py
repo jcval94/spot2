@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from harness.experiment_harness import (
+from experimentos._sistema.harness.experiment_harness import (
     HarnessError,
     build_record,
     compare_with_parent,

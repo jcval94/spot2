@@ -10,7 +10,7 @@ on:
       - "experimentos/modelo_3/experiment_spec.json"
       - "experimentos/modelo_3/requirements.txt"
       - "data/candidate/**"
-      - "harness/**"
+      - "experimentos/_sistema/harness/**"
       - ".github/workflows/modelo-3-multihead.yml"
   pull_request:
     branches:
@@ -20,7 +20,7 @@ on:
       - "experimentos/modelo_3/experiment_spec.json"
       - "experimentos/modelo_3/requirements.txt"
       - "data/candidate/**"
-      - "harness/**"
+      - "experimentos/_sistema/harness/**"
       - ".github/workflows/modelo-3-multihead.yml"
 
 permissions:
@@ -51,7 +51,7 @@ jobs:
 
       - name: Validate experiment contract and leakage review
         run: |
-          python harness/experiment_harness.py validate \
+          python experimentos/_sistema/harness/experiment_harness.py validate \
             --spec experimentos/modelo_3/experiment_spec.json \
             --repo-root .
 
@@ -60,23 +60,24 @@ jobs:
 
       - name: Finalize traceable harness record
         run: |
-          python harness/experiment_harness.py finalize \
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
             --spec experimentos/modelo_3/experiment_spec.json \
             --results experimentos/modelo_3/results/harness_results.json \
             --repo-root . \
-            --output-dir artifacts/experiment_harness
+            --output-dir experimentos/Evidencias/harness_records
 
       - name: Validate required outputs
         run: |
+          test -s experimentos/modelo_3/EVIDENCIA.md
           test -s experimentos/modelo_3/results/summary.md
           test -s experimentos/modelo_3/results/summary.json
           test -s experimentos/modelo_3/results/metrics_by_stage.csv
           test -s experimentos/modelo_3/results/population_by_stage.csv
           test -s experimentos/modelo_3/results/calibration.json
           test -s experimentos/modelo_3/results/harness_results.json
-          test -s artifacts/modelo_3/multihead_model.pt
-          test -s artifacts/modelo_3/test_predictions.csv
-          test -s artifacts/experiment_harness/E003_modelo_3_multihead/record.json
+          test -s experimentos/modelo_3/artifacts/multihead_model.pt
+          test -s experimentos/modelo_3/artifacts/test_predictions.csv
+          test -s experimentos/Evidencias/harness_records/E003_modelo_3_multihead/record.json
 
       - name: Publish experiment summary
         if: always()
@@ -104,8 +105,9 @@ jobs:
         with:
           name: modelo-3-multihead-artifacts
           path: |
+            experimentos/modelo_3/EVIDENCIA.md
             experimentos/modelo_3/results/
-            artifacts/modelo_3/
-            artifacts/experiment_harness/E003_modelo_3_multihead/
+            experimentos/modelo_3/artifacts/
+            experimentos/Evidencias/harness_records/E003_modelo_3_multihead/
           if-no-files-found: warn
           retention-days: 30

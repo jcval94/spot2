@@ -7,14 +7,16 @@ on:
       - main
       - experiment/response-time-random-forest
     paths:
-      - "experiments/**"
+      - "experimentos/lead_attention/**"
+      - "experimentos/response_time_random_forest/**"
       - "data/candidate/**"
       - ".github/workflows/lead-attention-experiment.yml"
   pull_request:
     branches:
       - main
     paths:
-      - "experiments/**"
+      - "experimentos/lead_attention/**"
+      - "experimentos/response_time_random_forest/**"
       - "data/candidate/**"
       - ".github/workflows/lead-attention-experiment.yml"
 
@@ -38,24 +40,30 @@ jobs:
       - name: Install experiment dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r experiments/requirements.txt
+          pip install -r experimentos/lead_attention/requirements.txt
+          pip install -r experimentos/response_time_random_forest/requirements.txt
 
       - name: Run lead attention experiment
-        run: python experiments/lead_attention_experiment.py
+        run: python experimentos/lead_attention/run_experiment.py
 
       - name: Run response-time Random Forest experiment
-        run: python experiments/response_time_random_forest/run_experiment.py
+        run: python experimentos/response_time_random_forest/run_experiment.py
 
       - name: Publish experiment reports in job summary
         if: always()
         run: |
-          if [ -f experiments/lead_attention/results/report.md ]; then
-            cat experiments/lead_attention/results/report.md >> "$GITHUB_STEP_SUMMARY"
+          if [ -f experimentos/lead_attention/results/report.md ]; then
+            cat experimentos/lead_attention/results/report.md >> "$GITHUB_STEP_SUMMARY"
           fi
-          if [ -f experiments/response_time_random_forest/results/report.md ]; then
+          if [ -f experimentos/response_time_random_forest/results/report.md ]; then
             printf "\n\n---\n\n" >> "$GITHUB_STEP_SUMMARY"
-            cat experiments/response_time_random_forest/results/report.md >> "$GITHUB_STEP_SUMMARY"
+            cat experimentos/response_time_random_forest/results/report.md >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      - name: Validate evidence links
+        run: |
+          test -s experimentos/lead_attention/EVIDENCIA.md
+          test -s experimentos/response_time_random_forest/EVIDENCIA.md
 
       - name: Upload experiment results
         if: always()
@@ -63,7 +71,9 @@ jobs:
         with:
           name: spot2-experiments
           path: |
-            experiments/lead_attention/results/
-            experiments/response_time_random_forest/results/
+            experimentos/lead_attention/EVIDENCIA.md
+            experimentos/lead_attention/results/
+            experimentos/response_time_random_forest/EVIDENCIA.md
+            experimentos/response_time_random_forest/results/
           if-no-files-found: warn
           retention-days: 30

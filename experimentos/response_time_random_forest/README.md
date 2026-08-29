@@ -28,7 +28,7 @@ The experiment excludes known leakage-prone fields such as:
 
 All generated output stays in:
 
-`experiments/response_time_random_forest/results/`
+`experimentos/response_time_random_forest/results/`
 
 including:
 
@@ -43,5 +43,5 @@ including:
 Run:
 
 ```bash
-python experiments/response_time_random_forest/run_experiment.py
+python experimentos/response_time_random_forest/run_experiment.py
 ```

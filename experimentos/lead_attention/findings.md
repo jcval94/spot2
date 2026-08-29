@@ -1,6 +1,6 @@
 # Lead attention experiment — empirical findings
 
-Equivalent temporal analysis was executed against the same repository CSVs on 2026-08-29 while GitHub Actions returned no workflow runs for this private repo. The Actions workflow remains ready in .github/workflows/lead-attention-experiment.yml.
+Equivalent temporal analysis was executed against the repository CSVs on 2026-08-29. The reproducible workflow is `.github/workflows/lead-attention-experiment.yml`.
 
 ## Dataset used
 

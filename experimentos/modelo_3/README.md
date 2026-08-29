@@ -78,15 +78,15 @@ La decisión se basa en el conjunto de test; no se usa test para early stopping 
 
 \`\`\`bash
 pip install -r experimentos/modelo_3/requirements.txt
-python harness/experiment_harness.py validate \
+python experimentos/_sistema/harness/experiment_harness.py validate \
   --spec experimentos/modelo_3/experiment_spec.json \
   --repo-root .
 python experimentos/modelo_3/run_experiment.py
-python harness/experiment_harness.py finalize \
+python experimentos/_sistema/harness/experiment_harness.py finalize \
   --spec experimentos/modelo_3/experiment_spec.json \
   --results experimentos/modelo_3/results/harness_results.json \
   --repo-root . \
-  --output-dir artifacts/experiment_harness
+  --output-dir experimentos/Evidencias/harness_records
 \`\`\`
 
 ## Outputs
@@ -103,8 +103,8 @@ Persistidos en el repo por GitHub Actions cuando corre en \`main\`:
 
 Disponibles sólo como artifact del workflow:
 
-- \`artifacts/modelo_3/multihead_model.pt\`
-- \`artifacts/modelo_3/test_predictions.csv\`
+- \`experimentos/modelo_3/artifacts/multihead_model.pt\`
+- \`experimentos/modelo_3/artifacts/test_predictions.csv\`
 - registro final del experiment harness
 
 ## Limitación principal

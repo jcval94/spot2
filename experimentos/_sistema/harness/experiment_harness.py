@@ -450,7 +450,7 @@ def build_parser() -> argparse.ArgumentParser:
     finalize.add_argument("--parent-spec")
     finalize.add_argument("--parent-results")
     finalize.add_argument("--repo-root", default=".")
-    finalize.add_argument("--output-dir", default="artifacts/experiment_harness")
+    finalize.add_argument("--output-dir", default="experimentos/Evidencias/harness_records")
     finalize.set_defaults(func=_cmd_finalize)
 
     return parser
