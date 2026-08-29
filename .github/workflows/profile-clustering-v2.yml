@@ -8,7 +8,7 @@ on:
     paths:
       - "experimentos/profile_clustering_v2/**"
       - "data/candidate/**"
-      - "harness/**"
+      - "experimentos/_sistema/harness/**"
       - ".github/workflows/profile-clustering-v2.yml"
   pull_request:
     branches:
@@ -16,7 +16,7 @@ on:
     paths:
       - "experimentos/profile_clustering_v2/**"
       - "data/candidate/**"
-      - "harness/**"
+      - "experimentos/_sistema/harness/**"
       - ".github/workflows/profile-clustering-v2.yml"
 
 permissions:
@@ -43,25 +43,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas numpy scikit-learn
 
-      - name: Materialize experiment source
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import base64, zlib
-          root = Path("experimentos/profile_clustering_v2")
-          packed = "".join(
-              (root / f".run_experiments.py.zlib.b64.part{i}").read_text().strip()
-              for i in range(4)
-          )
-          (root / "run_experiments.py").write_bytes(zlib.decompress(base64.b64decode(packed)))
-          PY
-          python -m py_compile experimentos/profile_clustering_v2/run_experiments.py
+      - name: Validate experiment source
+        run: python -m py_compile experimentos/profile_clustering_v2/run_experiments.py
 
       - name: Validate experiment contracts
         run: |
-          python harness/experiment_harness.py validate --spec experimentos/profile_clustering_v2/specs/E001_balanced_profiles.json --repo-root .
-          python harness/experiment_harness.py validate --spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json --parent-spec experimentos/profile_clustering_v2/specs/E001_balanced_profiles.json --repo-root .
-          python harness/experiment_harness.py validate --spec experimentos/profile_clustering_v2/specs/E003_inquiry_intent.json --parent-spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate --spec experimentos/profile_clustering_v2/specs/E001_balanced_profiles.json --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate --spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json --parent-spec experimentos/profile_clustering_v2/specs/E001_balanced_profiles.json --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate --spec experimentos/profile_clustering_v2/specs/E003_inquiry_intent.json --parent-spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json --repo-root .
 
       - name: Run clustering benchmark
         run: python experimentos/profile_clustering_v2/run_experiments.py
@@ -69,13 +58,14 @@ jobs:
       - name: Finalize harness records
         run: |
           mkdir -p "$RUNNER_TEMP/spot2_harness"
-          python harness/experiment_harness.py finalize --spec experimentos/profile_clustering_v2/specs/E001_balanced_profiles.json --results experimentos/profile_clustering_v2/results/E001_balanced_profiles_results.json --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
-          python harness/experiment_harness.py finalize --spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json --results experimentos/profile_clustering_v2/results/E002_lead_facets_results.json --parent-spec experimentos/profile_clustering_v2/specs/E001_balanced_profiles.json --parent-results experimentos/profile_clustering_v2/results/E001_balanced_profiles_results.json --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
-          python harness/experiment_harness.py finalize --spec experimentos/profile_clustering_v2/specs/E003_inquiry_intent.json --results experimentos/profile_clustering_v2/results/E003_inquiry_intent_results.json --parent-spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json --parent-results experimentos/profile_clustering_v2/results/E002_lead_facets_results.json --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py finalize --spec experimentos/profile_clustering_v2/specs/E001_balanced_profiles.json --results experimentos/profile_clustering_v2/results/E001_balanced_profiles_results.json --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py finalize --spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json --results experimentos/profile_clustering_v2/results/E002_lead_facets_results.json --parent-spec experimentos/profile_clustering_v2/specs/E001_balanced_profiles.json --parent-results experimentos/profile_clustering_v2/results/E001_balanced_profiles_results.json --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py finalize --spec experimentos/profile_clustering_v2/specs/E003_inquiry_intent.json --results experimentos/profile_clustering_v2/results/E003_inquiry_intent_results.json --parent-spec experimentos/profile_clustering_v2/specs/E002_lead_facets.json --parent-results experimentos/profile_clustering_v2/results/E002_lead_facets_results.json --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
 
       - name: Validate outputs
         run: |
           test -s experimentos/profile_clustering_v2/README.md
+          test -s experimentos/profile_clustering_v2/EVIDENCIA.md
           test -s experimentos/profile_clustering_v2/results/clustering_benchmark.csv
           test -s experimentos/profile_clustering_v2/results/selected_clusterers.csv
           test -s experimentos/profile_clustering_v2/results/profile_interpretability.csv
@@ -95,7 +85,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add experimentos/profile_clustering_v2/run_experiments.py experimentos/profile_clustering_v2/README.md experimentos/profile_clustering_v2/results/
-          git rm -f experimentos/profile_clustering_v2/.run_experiments.py.zlib.b64.part*
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
@@ -110,6 +99,7 @@ jobs:
           name: profile-clustering-v2
           path: |
             experimentos/profile_clustering_v2/README.md
+            experimentos/profile_clustering_v2/EVIDENCIA.md
             experimentos/profile_clustering_v2/run_experiments.py
             experimentos/profile_clustering_v2/results/
             ${{ runner.temp }}/spot2_harness/
