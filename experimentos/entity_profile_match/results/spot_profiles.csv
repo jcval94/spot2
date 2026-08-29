@@ -1,0 +1,5 @@
+profile_id,profile_name,n_reference,share_reference,median_area_sqm,median_rent_price_sqm,median_sale_price_sqm
+S1,S1 · Office | rent | Single | mid-size,2546,0.9278425655976676,486.65,225.615,40229.325
+S2,S2 · Industrial | both | Single | large-area,120,0.043731778425655975,10853.75,164.05,28206.28
+S3,S3 · Industrial | rent | Single | large-area,64,0.023323615160349854,21519.4,139.43,
+S4,S4 · Industrial | both | Single | large-area,14,0.00510204081632653,42096.3,155.72,29244.754999999997

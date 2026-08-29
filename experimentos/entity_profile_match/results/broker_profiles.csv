@@ -1,0 +1,4 @@
+profile_id,profile_name,n_reference,share_reference,median_spots_pre,median_inquiries_pre,median_response_hours,median_scheduled_visit_rate_pre
+B1,B1 · Office | mid-speed | mid-visit | mid-book,153,0.51,9.0,59.0,8.9,0.19205059440419484
+B2,B2 · Industrial | mid-speed | mid-visit | large-book,136,0.4533333333333333,10.0,61.5,8.0,0.19511883465371838
+B3,B3 · Industrial | mid-speed | mid-visit | small-book,11,0.03666666666666667,6.0,36.0,8.55,0.18753912080504598
