@@ -1152,8 +1152,8 @@ def main() -> None:
     parser.add_argument("--repo-root", default=".", help="Repository root.")
     parser.add_argument(
         "--out-dir",
-        default="experimentos/EDA",
-        help="Output directory. Keep it under experimentos/EDA for this project.",
+        default="experimentos/eda_profundo/base_eda",
+        help="Output directory. Keep it under experimentos/eda_profundo/base_eda for this project.",
     )
     args = parser.parse_args()
 
