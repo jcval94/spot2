@@ -152,7 +152,7 @@ This does not make the experiment invalid. It prevents an invalid claim that a m
 
 This skill does not calculate metrics and does not create a second training framework.
 
-`harness/experiment_harness.py` owns:
+`experimentos/_sistema/harness/experiment_harness.py` owns:
 
 - contract validation;
 - leakage-contract validation;
