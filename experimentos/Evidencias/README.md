@@ -14,5 +14,6 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 | [EV-006](EV-006_profile_clustering_v2.md) | Clustering v2 / perfiles / compatibilidad | Empírica |
 | [EV-007](EV-007_geographic_enrichment.md) | Enriquecimiento geográfico | Conceptual + señal preliminar |
 | [EV-008](EV-008_llm_triage.md) | LLM triage | Conceptual |
+| [EV-009](EV-009_eda_profundo.md) | EDA profundo / distribuciones / outliers / drift | Empírica |
 
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.
