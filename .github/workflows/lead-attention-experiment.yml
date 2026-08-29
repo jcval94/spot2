@@ -9,6 +9,13 @@ on:
       - "experiments/**"
       - "data/candidate/**"
       - ".github/workflows/lead-attention-experiment.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experiments/**"
+      - "data/candidate/**"
+      - ".github/workflows/lead-attention-experiment.yml"
 
 permissions:
   contents: read
@@ -26,7 +33,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: "pip"
 
       - name: Install experiment dependencies
         run: |
