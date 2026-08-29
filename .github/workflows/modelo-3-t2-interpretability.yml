@@ -64,6 +64,7 @@ jobs:
           test -s experimentos/modelo_3/interpretabilidad_t2/results/rf_permutation_importance.csv
           test -s experimentos/modelo_3/interpretabilidad_t2/results/rf_impurity_importance.csv
           test -s experimentos/modelo_3/interpretabilidad_t2/results/family_importance.csv
+          test -s experimentos/modelo_3/interpretabilidad_t2/results/family_importance_robustness.csv
           test -s experimentos/modelo_3/interpretabilidad_t2/results/directionality.csv
           test -s experimentos/modelo_3/interpretabilidad_t2/results/rank_concordance.json
           test -s experimentos/modelo_3/interpretabilidad_t2/results/charts/multihead_feature_importance.png
