@@ -60,6 +60,9 @@ jobs:
       - name: Run relational audit and A-B backtests
         run: python experimentos/matching_ab_v3/run_suite.py
 
+      - name: Run deeper cross-table audit
+        run: python experimentos/matching_ab_v3/audit_details.py
+
       - name: Fail on critical data-quality gate
         run: |
           test ! -f experimentos/matching_ab_v3/results/FAILED_DATA_QUALITY_GATE.txt
@@ -92,6 +95,12 @@ jobs:
           test -s experimentos/matching_ab_v3/results/bootstrap_deltas.csv
           test -s experimentos/matching_ab_v3/results/online_ab_protocols.json
           test -s experimentos/matching_ab_v3/results/power_analysis.csv
+          test -s experimentos/matching_ab_v3/results/response_hours_by_response.csv
+          test -s experimentos/matching_ab_v3/results/lead_spot_sector_cross.csv
+          test -s experimentos/matching_ab_v3/results/lead_inquiry_need_consistency.csv
+          test -s experimentos/matching_ab_v3/results/spot_price_arithmetic_consistency.csv
+          test -s experimentos/matching_ab_v3/results/availability_coverage_by_month.csv
+          test -s experimentos/matching_ab_v3/results/market_context_coverage_by_sector.csv
 
       - name: Publish report in job summary
         if: always()
@@ -105,7 +114,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add experimentos/matching_ab_v3/run_suite.py experimentos/matching_ab_v3/README.md experimentos/matching_ab_v3/results/
+          git add experimentos/matching_ab_v3/run_suite.py experimentos/matching_ab_v3/audit_details.py experimentos/matching_ab_v3/README.md experimentos/matching_ab_v3/results/
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
@@ -122,6 +131,7 @@ jobs:
             experimentos/matching_ab_v3/README.md
             experimentos/matching_ab_v3/EVIDENCIA.md
             experimentos/matching_ab_v3/run_suite.py
+            experimentos/matching_ab_v3/audit_details.py
             experimentos/matching_ab_v3/specs/
             experimentos/matching_ab_v3/results/
             ${{ runner.temp }}/spot2_harness/
