@@ -7,16 +7,16 @@ on:
       - feature/spot2-experiment-harness
     paths:
       - ".agents/skills/**"
-      - "harness/**"
-      - "tests/test_experiment_harness.py"
+      - "experimentos/_sistema/harness/**"
+      - "experimentos/_sistema/tests/test_experiment_harness.py"
       - ".github/workflows/experiment-harness.yml"
   pull_request:
     branches:
       - main
     paths:
       - ".agents/skills/**"
-      - "harness/**"
-      - "tests/test_experiment_harness.py"
+      - "experimentos/_sistema/harness/**"
+      - "experimentos/_sistema/tests/test_experiment_harness.py"
       - ".github/workflows/experiment-harness.yml"
   workflow_dispatch:
 
@@ -38,8 +38,8 @@ jobs:
           python-version: "3.12"
 
       - name: Run harness unit tests
-        run: python -m unittest discover -s tests -p "test_experiment_harness.py" -v
+        run: python -m unittest discover -s experimentos/_sistema/tests -p "test_experiment_harness.py" -v
 
       - name: Validate example experiment contract
         run: |
-          python harness/experiment_harness.py validate             --spec harness/example_spec.json             --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate             --spec experimentos/_sistema/harness/example_spec.json             --repo-root .
