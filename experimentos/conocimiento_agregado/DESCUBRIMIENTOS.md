@@ -14,6 +14,10 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D006 | INCONCLUSIVE | Clustering balanceado produce perfiles mucho más interpretables, pero su lift predictivo sigue siendo pequeño e incierto. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D007 | PROPOSAL | Enriquecimiento geográfico externo tiene rutas plausibles, pero requiere joins point-in-time y validación incremental. | [EV-007](../Evidencias/EV-007_geographic_enrichment.md) |
 | D008 | PROPOSAL | El LLM es defendible como capa de triage/extracción operativa; no existe evidencia en estos datos de lift causal del LLM. | [EV-008](../Evidencias/EV-008_llm_triage.md) |
+| D009 | SUPPORTED | Separar Lead Persona de Search Need produce perfiles mucho más estables, balanceados y semánticamente claros, sin evidencia de lift incremental robusto. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
+| D010 | NOT_SUPPORTED | Inquiry Intent v1 no debe usarse como capa predictiva: aprende principalmente día de la semana y empeora AP/AUC/lift fuera de muestra. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
+| D011 | SUPPORTED | El perfil de Spot actual mezcla arquetipo físico con geografía; varios clusters son esencialmente regiones/estados. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
+| D012 | INCONCLUSIVE | Existen bolsillos locales de compatibilidad Lead/Need × Spot × Broker con lift descriptivo, pero no hay evidencia suficiente de una sinergia global generalizable. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -157,3 +161,90 @@ El uso defendible es:
 **No afirmar:** que el LLM incrementa conversión con la evidencia actual.
 
 Evidencia: [EV-008](../Evidencias/EV-008_llm_triage.md).
+
+
+## D009 — Persona y necesidad deben tratarse como facetas distintas
+
+**Estado:** SUPPORTED para calidad de representación; **no** para lift incremental.
+
+La descomposición de Lead en dos facetas produjo perfiles equilibrados y extremadamente estables:
+
+- Lead Persona: K-Means, K=3, cluster mínimo 11.2%, máximo 51.4%, ARI 0.999.
+- Search Need: K-Means, K=3, cluster mínimo 23.7%, máximo 46.3%, ARI 1.000.
+- Persona separa principalmente quién es el actor (tenant_direct, broker, mayor historial de búsquedas).
+- Search Need separa qué requiere (rent, sale, both, área/presupuesto).
+
+Predictivamente E002 obtuvo AP 0.215 frente a 0.212 de E001, pero el delta bootstrap de AP fue +0.0028 con IC95% [-0.0134, +0.0185]; el delta de AUC también cruza cero.
+
+**Interpretación:** para producto y feature engineering es más limpio representar **quién es el lead** y **qué necesita** por separado. Es una mejora semántica/estructural, no una mejora predictiva demostrada.
+
+**No demuestra:** que Persona + Need aumenten conversión, ni que sean entidades físicas nuevas; son dos facetas latentes de la misma fila de Lead.
+
+**Siguiente implicación:** conservar Persona y Search Need como features interpretables y evaluar sus interacciones con Spot/Broker sin convertirlas todavía en multiplicadores obligatorios del Opportunity Score.
+
+Evidencia: [EV-006](../Evidencias/EV-006_profile_clustering_v2.md).
+
+## D010 — Inquiry Intent v1 aprende calendario, no intención útil
+
+**Estado:** NOT_SUPPORTED.
+
+El clustering de Inquiry Intent quedó técnicamente balanceado (GMM, K=7, mínimo 6.5%, máximo 26.0%, ARI 0.737), pero seis de siete perfiles están dominados por el día de la semana. Sólo un perfil destaca de forma clara por área/presupuesto solicitados muy altos.
+
+Al añadir Inquiry Intent a E002:
+
+- AUC: 0.513 → 0.491.
+- AP: 0.215 → 0.203.
+- Lift@10%: 1.023x → 0.905x.
+- Delta AUC bootstrap: -0.020, IC95% [-0.044, +0.002].
+- Delta AP bootstrap: -0.0106, IC95% [-0.0261, +0.0036].
+- Delta Lift@10%: -0.142, IC95% [-0.361, +0.080].
+
+**Interpretación:** clusters diferenciados no son suficientes; pueden capturar una partición estadística estable pero irrelevante para negocio.
+
+**No demuestra:** que la información T1 de la inquiry sea inútil. Demuestra que **esta definición v1 del perfil** no aporta.
+
+**Siguiente implicación:** si se retesta Inquiry Intent, excluir weekday y centrar el espacio de clustering en asked_visit, urgency_days, canal, área/presupuesto solicitado, desviación contra Search Need y longitud del mensaje.
+
+Evidencia: [EV-006](../Evidencias/EV-006_profile_clustering_v2.md).
+
+## D011 — Spot mezcla “qué es” con “dónde está”
+
+**Estado:** SUPPORTED.
+
+El Spot balanceado usa Bisecting K-Means con K=7 (mínimo 9.5%, máximo 27.3%), pero la interpretabilidad muestra que varios perfiles están dominados por ubicación:
+
+- S2: CDMX / región centro.
+- S3: Bajío / Querétaro.
+- S5: Nuevo León / San Pedro Garza García.
+- S6: Estado de México / Naucalpan.
+- S7: Jalisco / Zapopan.
+- S4 es una excepción más física, distinguida por piso alto y mayor número de elevadores.
+
+**Interpretación:** el cluster actual de Spot representa parcialmente mercado/localización, no sólo tipo físico de inmueble.
+
+**No demuestra:** que geografía deba eliminarse. Geografía es claramente relevante para matching; el problema es confundirla con el arquetipo físico.
+
+**Siguiente implicación:** probar por separado **Physical Space Archetype** y **Location / Market Regime**, manteniendo disponibilidad como estado temporal directo.
+
+Evidencia: [EV-006](../Evidencias/EV-006_profile_clustering_v2.md).
+
+## D012 — Hay compatibilidades locales, pero no una “química” global demostrada
+
+**Estado:** INCONCLUSIVE.
+
+En el future test aparecen celdas descriptivamente atractivas:
+
+- L1 × S1 × B5: n=93, scheduled_visit 30.1%, tasa suavizada 27.3%, lift 1.31x.
+- N2 × S3: n=197, scheduled_visit 25.4%, lift 1.18x.
+- N1 × S5: n=157, scheduled_visit 24.8%, lift 1.16x.
+- N1 × S6: n=172, scheduled_visit 24.4%, lift 1.14x.
+
+Sin embargo, el modelo global de perfiles sólo alcanza lift@10% 1.033x (E001) y 1.023x (E002), y las mejoras entre representaciones no son robustas en bootstrap.
+
+**Interpretación:** sí existen **bolsillos locales de matching** que merecen estudio, especialmente Search Need × Spot, pero todavía no justifican un Compatibility Score multiplicativo general.
+
+**No demuestra:** causalidad, estabilidad futura de cada celda ni que el broker “cause” la diferencia observada.
+
+**Siguiente implicación:** usar las matrices Need × Spot y Need × Broker como hipótesis de routing, exigir soporte mínimo/intervalos de confianza y validar después con diseño online o cuasi-experimental.
+
+Evidencia: [EV-006](../Evidencias/EV-006_profile_clustering_v2.md).
