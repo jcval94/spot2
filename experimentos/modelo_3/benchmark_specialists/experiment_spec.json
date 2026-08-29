@@ -54,7 +54,7 @@
   "validation": {
     "strategy": "temporal lead-cohort train/validation/test",
     "time_column": "leads.created_at",
-    "split_description": "Chronological 70/15/15 split by lead creation; every T0/T1/T2 snapshot for a lead is assigned to the same partition. Validation controls early stopping, calibration and hybrid stage selection; test is untouched until final evaluation."
+    "split_description": "Chronological 70/15/15 split by lead creation; every T0/T1/T2 snapshot for a lead is assigned to the same partition. Validation controls early stopping and calibration; test is untouched until final evaluation."
   },
   "metrics": [
     "roc_auc",
