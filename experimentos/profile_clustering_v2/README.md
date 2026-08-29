@@ -28,9 +28,9 @@ Esto corrige el look-ahead del experimento anterior en los perfiles históricos 
 | profile_family | method | k | silhouette | min_cluster_share | max_cluster_share | normalized_entropy | stability_ari | balance_ok | selection_score |
 |---|---|---|---|---|---|---|---|---|---|
 | broker | bisecting | 7 | 0.023 | 0.070 | 0.220 | 0.974 | 0.443 | True | 0.290 |
-| inquiry_intent | gmm | 7 | 0.146 | 0.065 | 0.260 | 0.965 | 0.737 | True | 0.447 |
+| inquiry_intent | kmeans | 7 | 0.155 | 0.131 | 0.158 | 0.999 | 0.998 | True | 0.494 |
 | lead | kmeans | 6 | 0.098 | 0.075 | 0.437 | 0.866 | 0.659 | True | 0.368 |
-| lead_persona | kmeans | 3 | 0.091 | 0.112 | 0.514 | 0.869 | 0.999 | True | 0.402 |
+| lead_persona | bisecting | 7 | 0.115 | 0.084 | 0.228 | 0.956 | 1.000 | True | 0.445 |
 | search_need | kmeans | 3 | 0.062 | 0.237 | 0.463 | 0.964 | 1.000 | True | 0.394 |
 | spot | bisecting | 7 | 0.088 | 0.095 | 0.273 | 0.965 | 0.410 | True | 0.350 |
 
@@ -46,9 +46,13 @@ El criterio `balance_ok` exige simultáneamente **cluster mínimo >= 5%** y **cl
 | lead | L4 | 245 | 0.100 | prior_searches alto (44.00; +6.00 IQR) |
 | lead | L5 | 190 | 0.078 | preferred_state=Puebla (100%; +92%pp) / preferred_municipality=Puebla (100%; +92%pp) / preferred_corridor=angelopolis-lomas (92%; +85%pp) |
 | lead | L6 | 184 | 0.075 | preferred_state=Yucatán (100%; +92%pp) / preferred_municipality=Mérida (100%; +92%pp) / preferred_corridor=paseo-montejo (92%; +84%pp) |
-| lead_persona | P1 | 1261 | 0.514 | user_type=tenant_direct (62%; +22%pp) |
-| lead_persona | P2 | 916 | 0.374 | user_type=broker (87%; +51%pp) |
-| lead_persona | P3 | 274 | 0.112 | prior_searches alto (43.00; +5.86 IQR) |
+| lead_persona | P1 | 560 | 0.228 | source=organic (100%; +72%pp) / prior_inquiries bajo (0.00; -0.29 IQR) |
+| lead_persona | P2 | 498 | 0.203 | source=paid (100%; +74%pp) |
+| lead_persona | P3 | 488 | 0.199 | source=referral (80%; +59%pp) |
+| lead_persona | P4 | 268 | 0.109 | prior_searches alto (42.50; +5.79 IQR) |
+| lead_persona | P5 | 223 | 0.091 | has_converted_before=True (62%; +49%pp) / prior_inquiries alto (82.00; +11.43 IQR) |
+| lead_persona | P6 | 207 | 0.084 | source=email (100%; +90%pp) |
+| lead_persona | P7 | 207 | 0.084 | source=social (100%; +90%pp) / prior_inquiries bajo (0.00; -0.29 IQR) |
 | search_need | N1 | 1135 | 0.463 | search_modality=rent (99%; +50%pp) / min_budget_mxn_sale_total alto (22246852.63; +0.59 IQR) / max_budget_mxn_sale_total alto (29597585.10; +0.58 IQR) |
 | search_need | N2 | 735 | 0.300 | search_modality=sale (100%; +69%pp) |
 | search_need | N3 | 581 | 0.237 | search_modality=both (83%; +63%pp) / target_area_sqm alto (479.20; +0.20 IQR) |
@@ -66,13 +70,13 @@ El criterio `balance_ok` exige simultáneamente **cluster mínimo >= 5%** y **cl
 | broker | B5 | 38 | 0.127 | share_region_centro-norte alto (0.20; +2.15 IQR) / share_region_noreste bajo (0.00; -0.53 IQR) / share_modality_rent alto (0.50; +0.34 IQR) |
 | broker | B6 | 31 | 0.103 | share_region_sureste alto (0.20; +1.80 IQR) / share_region_occidente alto (0.17; +0.83 IQR) / share_region_noreste bajo (0.00; -0.53 IQR) |
 | broker | B7 | 21 | 0.070 | share_region_occidente alto (0.33; +1.67 IQR) / share_sector_name_industrial bajo (0.00; -1.04 IQR) / share_region_centro bajo (0.00; -1.00 IQR) |
-| inquiry_intent | I1 | 1760 | 0.260 | inquiry_weekday=Sunday (51%; +37%pp) |
-| inquiry_intent | I2 | 959 | 0.142 | inquiry_weekday=Saturday (100%; +85%pp) |
-| inquiry_intent | I3 | 944 | 0.139 | inquiry_weekday=Friday (100%; +85%pp) |
-| inquiry_intent | I4 | 934 | 0.138 | inquiry_weekday=Monday (100%; +85%pp) |
-| inquiry_intent | I5 | 915 | 0.135 | inquiry_weekday=Tuesday (100%; +86%pp) |
-| inquiry_intent | I6 | 820 | 0.121 | inquiry_weekday=Wednesday (100%; +87%pp) |
-| inquiry_intent | I7 | 440 | 0.065 | requested_area_sqm alto (7169.05; +7.99 IQR) / requested_budget_mxn_sale_total alto (49303772.84; +1.79 IQR) / requested_budget_mxn_rent_monthly alto (126020.36; +0.45 IQR) |
+| inquiry_intent | I1 | 1068 | 0.158 | inquiry_weekday=Saturday (96%; +81%pp) |
+| inquiry_intent | I2 | 993 | 0.147 | inquiry_weekday=Friday (100%; +85%pp) |
+| inquiry_intent | I3 | 978 | 0.144 | inquiry_weekday=Monday (100%; +85%pp) |
+| inquiry_intent | I4 | 958 | 0.141 | inquiry_weekday=Tuesday (100%; +86%pp) |
+| inquiry_intent | I5 | 953 | 0.141 | inquiry_weekday=Sunday (100%; +86%pp) |
+| inquiry_intent | I6 | 938 | 0.139 | inquiry_weekday=Thursday (100%; +86%pp) |
+| inquiry_intent | I7 | 884 | 0.131 | inquiry_weekday=Wednesday (100%; +86%pp) |
 
 Los nombres no se asignan con el target. `top_signals` compara cada cluster contra su población de calibración y muestra las características que más lo distinguen.
 
@@ -82,8 +86,8 @@ Los nombres no se asignan con el target. `top_signals` compara cada cluster cont
 |---|---|---|---|---|---|---|
 | global_baseline | 0.500 | 0.208 | 0.165 | 0.511 | 1.000 | 0.200 |
 | E001_balanced_profiles | 0.513 | 0.212 | 0.166 | 0.515 | 1.033 | 0.208 |
-| E002_lead_facets | 0.513 | 0.215 | 0.167 | 0.519 | 1.023 | 0.217 |
-| E003_inquiry_intent | 0.491 | 0.203 | 0.167 | 0.520 | 0.905 | 0.196 |
+| E002_lead_facets | 0.496 | 0.205 | 0.168 | 0.521 | 1.001 | 0.188 |
+| E003_inquiry_intent | 0.502 | 0.206 | 0.168 | 0.521 | 0.948 | 0.189 |
 
 - **E001**: Lead + Spot + Broker con clustering multi-método balanceado.
 - **E002**: separa Lead en **Lead Persona + Search Need**, manteniendo Spot + Broker.
@@ -93,10 +97,10 @@ Los nombres no se asignan con el target. `top_signals` compara cada cluster cont
 
 | comparison | delta_auc | delta_auc_low | delta_auc_high | delta_ap | delta_ap_low | delta_ap_high | delta_lift10 | delta_lift10_low | delta_lift10_high |
 |---|---|---|---|---|---|---|---|---|---|
-| E002_vs_E001 | 0.000 | -0.026 | 0.026 | 0.003 | -0.013 | 0.018 | 0.023 | -0.210 | 0.254 |
-| E003_vs_E002 | -0.020 | -0.044 | 0.002 | -0.011 | -0.026 | 0.004 | -0.142 | -0.361 | 0.080 |
+| E002_vs_E001 | -0.016 | -0.043 | 0.008 | -0.007 | -0.022 | 0.007 | -0.020 | -0.262 | 0.218 |
+| E003_vs_E002 | 0.007 | -0.014 | 0.028 | 0.002 | -0.012 | 0.014 | -0.060 | -0.251 | 0.170 |
 
-**Mejor modelo por Average Precision: E002_lead_facets**.
+**Mejor modelo por Average Precision: E001_balanced_profiles**.
 
 ## 3. Compatibilidad de perfiles
 
@@ -121,52 +125,52 @@ Los nombres no se asignan con el target. `top_signals` compara cada cluster cont
 
 | need_profile | spot_profile | n | scheduled_visit_rate | smoothed_visit_rate | lift_vs_global | expected_model_probability | residual_synergy |
 |---|---|---|---|---|---|---|---|
-| N2 | S5 | 155 | 0.232 | 0.227 | 1.094 | 0.151 | 0.076 |
-| N1 | S6 | 172 | 0.244 | 0.237 | 1.142 | 0.184 | 0.053 |
-| N2 | S4 | 159 | 0.208 | 0.208 | 0.999 | 0.172 | 0.036 |
-| N2 | S7 | 103 | 0.214 | 0.212 | 1.020 | 0.177 | 0.035 |
-| N1 | S3 | 337 | 0.214 | 0.213 | 1.026 | 0.182 | 0.031 |
-| N1 | S5 | 157 | 0.248 | 0.240 | 1.156 | 0.209 | 0.031 |
-| N1 | S4 | 317 | 0.211 | 0.211 | 1.016 | 0.182 | 0.029 |
-| N2 | S3 | 197 | 0.254 | 0.246 | 1.184 | 0.219 | 0.027 |
-| N3 | S1 | 314 | 0.226 | 0.224 | 1.079 | 0.205 | 0.019 |
-| N3 | S6 | 128 | 0.227 | 0.222 | 1.069 | 0.206 | 0.016 |
-| N2 | S1 | 322 | 0.193 | 0.194 | 0.935 | 0.179 | 0.015 |
+| N2 | S5 | 155 | 0.232 | 0.227 | 1.094 | 0.159 | 0.069 |
+| N1 | S6 | 172 | 0.244 | 0.237 | 1.142 | 0.188 | 0.050 |
+| N2 | S4 | 159 | 0.208 | 0.208 | 0.999 | 0.177 | 0.031 |
+| N1 | S4 | 317 | 0.211 | 0.211 | 1.016 | 0.181 | 0.030 |
+| N1 | S5 | 157 | 0.248 | 0.240 | 1.156 | 0.213 | 0.027 |
+| N1 | S3 | 337 | 0.214 | 0.213 | 1.026 | 0.187 | 0.026 |
+| N2 | S7 | 103 | 0.214 | 0.212 | 1.020 | 0.191 | 0.021 |
+| N3 | S6 | 128 | 0.227 | 0.222 | 1.069 | 0.201 | 0.021 |
+| N3 | S1 | 314 | 0.226 | 0.224 | 1.079 | 0.207 | 0.017 |
+| N2 | S3 | 197 | 0.254 | 0.246 | 1.184 | 0.230 | 0.016 |
+| N1 | S1 | 644 | 0.213 | 0.212 | 1.023 | 0.197 | 0.016 |
 | N1 | S7 | 250 | 0.188 | 0.191 | 0.918 | 0.176 | 0.015 |
 
 ### Inquiry Intent × Search Need
 
 | intent_profile | need_profile | n | scheduled_visit_rate | smoothed_visit_rate | lift_vs_global | expected_model_probability | residual_synergy |
 |---|---|---|---|---|---|---|---|
-| I7 | N1 | 111 | 0.207 | 0.207 | 0.998 | 0.148 | 0.060 |
-| I6 | N2 | 164 | 0.195 | 0.198 | 0.951 | 0.149 | 0.049 |
-| I5 | N1 | 333 | 0.219 | 0.218 | 1.049 | 0.179 | 0.039 |
-| I3 | N1 | 273 | 0.238 | 0.234 | 1.128 | 0.196 | 0.038 |
-| I6 | N3 | 156 | 0.237 | 0.231 | 1.113 | 0.197 | 0.035 |
-| I2 | N3 | 135 | 0.259 | 0.247 | 1.191 | 0.218 | 0.030 |
-| I6 | N1 | 321 | 0.215 | 0.214 | 1.031 | 0.187 | 0.027 |
-| I3 | N3 | 133 | 0.211 | 0.210 | 1.010 | 0.187 | 0.023 |
-| I4 | N2 | 192 | 0.240 | 0.234 | 1.127 | 0.215 | 0.019 |
-| I1 | N2 | 314 | 0.207 | 0.207 | 0.997 | 0.188 | 0.019 |
-| I4 | N3 | 164 | 0.226 | 0.222 | 1.069 | 0.204 | 0.018 |
-| I7 | N2 | 69 | 0.261 | 0.241 | 1.162 | 0.231 | 0.010 |
+| I4 | N1 | 342 | 0.222 | 0.221 | 1.063 | 0.170 | 0.051 |
+| I1 | N3 | 154 | 0.266 | 0.254 | 1.224 | 0.215 | 0.039 |
+| I2 | N1 | 290 | 0.231 | 0.228 | 1.099 | 0.192 | 0.036 |
+| I7 | N2 | 174 | 0.190 | 0.193 | 0.929 | 0.157 | 0.036 |
+| I6 | N2 | 176 | 0.256 | 0.247 | 1.188 | 0.212 | 0.035 |
+| I7 | N1 | 333 | 0.216 | 0.215 | 1.037 | 0.182 | 0.033 |
+| I1 | N1 | 286 | 0.224 | 0.222 | 1.068 | 0.196 | 0.026 |
+| I2 | N3 | 151 | 0.205 | 0.206 | 0.991 | 0.182 | 0.024 |
+| I7 | N3 | 168 | 0.220 | 0.218 | 1.049 | 0.195 | 0.022 |
+| I3 | N2 | 198 | 0.237 | 0.232 | 1.119 | 0.215 | 0.018 |
+| I6 | N1 | 291 | 0.196 | 0.197 | 0.950 | 0.182 | 0.016 |
+| I1 | N2 | 168 | 0.202 | 0.203 | 0.979 | 0.189 | 0.015 |
 
 ### Inquiry Intent × Broker
 
 | intent_profile | broker_profile | n | scheduled_visit_rate | smoothed_visit_rate | lift_vs_global | expected_model_probability | residual_synergy |
 |---|---|---|---|---|---|---|---|
-| I2 | B6 | 42 | 0.262 | 0.235 | 1.134 | 0.124 | 0.112 |
-| I4 | B7 | 35 | 0.314 | 0.257 | 1.239 | 0.153 | 0.104 |
-| I3 | B3 | 129 | 0.248 | 0.239 | 1.148 | 0.150 | 0.089 |
-| I7 | B3 | 40 | 0.225 | 0.216 | 1.042 | 0.130 | 0.086 |
-| I6 | B4 | 63 | 0.270 | 0.246 | 1.183 | 0.163 | 0.082 |
-| I6 | B7 | 38 | 0.184 | 0.196 | 0.945 | 0.115 | 0.082 |
-| I5 | B5 | 61 | 0.197 | 0.201 | 0.968 | 0.119 | 0.082 |
-| I6 | B2 | 84 | 0.250 | 0.236 | 1.138 | 0.175 | 0.062 |
-| I1 | B7 | 56 | 0.268 | 0.243 | 1.169 | 0.189 | 0.054 |
-| I3 | B5 | 59 | 0.254 | 0.235 | 1.134 | 0.186 | 0.049 |
-| I4 | B5 | 80 | 0.225 | 0.219 | 1.056 | 0.172 | 0.048 |
-| I3 | B1 | 144 | 0.264 | 0.252 | 1.212 | 0.204 | 0.047 |
+| I3 | B7 | 37 | 0.297 | 0.251 | 1.207 | 0.150 | 0.100 |
+| I1 | B6 | 55 | 0.236 | 0.224 | 1.080 | 0.129 | 0.096 |
+| I2 | B3 | 138 | 0.239 | 0.232 | 1.117 | 0.145 | 0.087 |
+| I7 | B7 | 38 | 0.184 | 0.196 | 0.945 | 0.117 | 0.079 |
+| I4 | B5 | 64 | 0.188 | 0.195 | 0.940 | 0.129 | 0.066 |
+| I7 | B4 | 71 | 0.239 | 0.228 | 1.098 | 0.167 | 0.061 |
+| I2 | B1 | 147 | 0.265 | 0.253 | 1.218 | 0.193 | 0.060 |
+| I7 | B2 | 90 | 0.256 | 0.241 | 1.159 | 0.189 | 0.052 |
+| I3 | B5 | 81 | 0.222 | 0.217 | 1.047 | 0.167 | 0.051 |
+| I1 | B1 | 107 | 0.243 | 0.233 | 1.124 | 0.183 | 0.050 |
+| I4 | B1 | 160 | 0.212 | 0.212 | 1.018 | 0.167 | 0.045 |
+| I3 | B3 | 100 | 0.250 | 0.238 | 1.145 | 0.194 | 0.044 |
 
 `residual_synergy` compara la tasa suavizada observada del grupo contra la probabilidad que ya esperaba el modelo correspondiente. Es una señal exploratoria; no implica causalidad.
 

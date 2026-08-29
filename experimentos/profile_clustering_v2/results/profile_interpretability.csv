@@ -5,9 +5,13 @@ L3,277,0.11301509587923296,preferred_state=Jalisco (100%; +88%pp) | preferred_mu
 L4,245,0.0999592003263974,prior_searches alto (44.00; +6.00 IQR),lead
 L5,190,0.07751937984496124,preferred_state=Puebla (100%; +92%pp) | preferred_municipality=Puebla (100%; +92%pp) | preferred_corridor=angelopolis-lomas (92%; +85%pp),lead
 L6,184,0.07507139942880457,preferred_state=Yucatán (100%; +92%pp) | preferred_municipality=Mérida (100%; +92%pp) | preferred_corridor=paseo-montejo (92%; +84%pp),lead
-P1,1261,0.514483884128927,user_type=tenant_direct (62%; +22%pp),lead_persona
-P2,916,0.3737250101999184,user_type=broker (87%; +51%pp),lead_persona
-P3,274,0.11179110567115463,prior_searches alto (43.00; +5.86 IQR),lead_persona
+P1,560,0.2284781721746226,source=organic (100%; +72%pp) | prior_inquiries bajo (0.00; -0.29 IQR),lead_persona
+P2,498,0.20318237454100369,source=paid (100%; +74%pp),lead_persona
+P3,488,0.19910240718074254,source=referral (80%; +59%pp),lead_persona
+P4,268,0.10934312525499797,prior_searches alto (42.50; +5.79 IQR),lead_persona
+P5,223,0.09098327213382293,has_converted_before=True (62%; +49%pp) | prior_inquiries alto (82.00; +11.43 IQR),lead_persona
+P6,207,0.08445532435740515,source=email (100%; +90%pp),lead_persona
+P7,207,0.08445532435740515,source=social (100%; +90%pp) | prior_inquiries bajo (0.00; -0.29 IQR),lead_persona
 N1,1135,0.4630762953896369,search_modality=rent (99%; +50%pp) | min_budget_mxn_sale_total alto (22246852.63; +0.59 IQR) | max_budget_mxn_sale_total alto (29597585.10; +0.58 IQR),search_need
 N2,735,0.2998776009791922,search_modality=sale (100%; +69%pp),search_need
 N3,581,0.23704610363117096,search_modality=both (83%; +63%pp) | target_area_sqm alto (479.20; +0.20 IQR),search_need
@@ -25,10 +29,10 @@ B4,46,0.15333333333333332,median_sale bajo (20568.96; -0.84 IQR) | median_rent b
 B5,38,0.12666666666666668,share_region_centro-norte alto (0.20; +2.15 IQR) | share_region_noreste bajo (0.00; -0.53 IQR) | share_modality_rent alto (0.50; +0.34 IQR),broker
 B6,31,0.10333333333333333,share_region_sureste alto (0.20; +1.80 IQR) | share_region_occidente alto (0.17; +0.83 IQR) | share_region_noreste bajo (0.00; -0.53 IQR),broker
 B7,21,0.07,share_region_occidente alto (0.33; +1.67 IQR) | share_sector_name_industrial bajo (0.00; -1.04 IQR) | share_region_centro bajo (0.00; -1.00 IQR),broker
-I1,1760,0.2598936798582398,inquiry_weekday=Sunday (51%; +37%pp),inquiry_intent
-I2,959,0.14161252215002954,inquiry_weekday=Saturday (100%; +85%pp),inquiry_intent
-I3,944,0.13939751919669227,inquiry_weekday=Friday (100%; +85%pp),inquiry_intent
-I4,934,0.1379208505611341,inquiry_weekday=Monday (100%; +85%pp),inquiry_intent
-I5,915,0.13511518015357354,inquiry_weekday=Tuesday (100%; +86%pp),inquiry_intent
-I6,820,0.12108682811577082,inquiry_weekday=Wednesday (100%; +87%pp),inquiry_intent
-I7,440,0.06497341996455995,requested_area_sqm alto (7169.05; +7.99 IQR) | requested_budget_mxn_sale_total alto (49303772.84; +1.79 IQR) | requested_budget_mxn_rent_monthly alto (126020.36; +0.45 IQR),inquiry_intent
+I1,1068,0.1577082102776137,inquiry_weekday=Saturday (96%; +81%pp),inquiry_intent
+I2,993,0.14663319551092735,inquiry_weekday=Friday (100%; +85%pp),inquiry_intent
+I3,978,0.14441819255759009,inquiry_weekday=Monday (100%; +85%pp),inquiry_intent
+I4,958,0.1414648552864737,inquiry_weekday=Tuesday (100%; +86%pp),inquiry_intent
+I5,953,0.14072652096869462,inquiry_weekday=Sunday (100%; +86%pp),inquiry_intent
+I6,938,0.13851151801535735,inquiry_weekday=Thursday (100%; +86%pp),inquiry_intent
+I7,884,0.1305375073833432,inquiry_weekday=Wednesday (100%; +86%pp),inquiry_intent
