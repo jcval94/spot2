@@ -180,8 +180,8 @@ def attach_availability(rows: pd.DataFrame, availability: pd.DataFrame) -> pd.Da
         right = availability[[
             "spot_id", "snapshot_date", "is_available", "days_until_available", "competing_inquiries_30d"
         ]].copy()
-        left["spot_id"] = pd.to_numeric(left["spot_id"], errors="coerce")
-        right["spot_id"] = pd.to_numeric(right["spot_id"], errors="coerce")
+        left["spot_id"] = pd.to_numeric(left["spot_id"], errors="raise").astype("int64")
+        right["spot_id"] = pd.to_numeric(right["spot_id"], errors="raise").astype("int64")
         matched = pd.merge_asof(
             left.sort_values(["score_time", "spot_id"]),
             right.sort_values(["snapshot_date", "spot_id"]),
