@@ -1,4 +1,6 @@
-# EDA — Spot2 multi-head opportunity model
+# EDA base — Spot2 multi-head opportunity model
+
+> Migrado a la estructura gobernada actual. La evidencia central de este EDA y su extensión profunda es [EV-009](../../Evidencias/EV-009_eda_profundo.md).
 
 ## Scope
 
@@ -252,12 +254,12 @@ A particularly useful diagnostic is that `spots.total_inquiries` exactly matches
 From the repository root:
 
 ```bash
-python experimentos/EDA/run_eda.py --repo-root . --out-dir experimentos/EDA
+python experimentos/eda_profundo/base_eda/run_eda.py --repo-root . --out-dir experimentos/eda_profundo/base_eda
 ```
 
 The script reads only `data/candidate/csv/` and writes results back into this folder.
 
-For a notebook entry point, open `experimentos/EDA/EDA.ipynb`.
+For a notebook entry point, open `experimentos/eda_profundo/base_eda/EDA.ipynb`.
 
 ## What this EDA supports — and what it does not
 
