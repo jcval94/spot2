@@ -54,8 +54,16 @@ jobs:
           test -s experimentos/eda_profundo/results/iforest_summary.csv
           test -s experimentos/eda_profundo/results/deterministic_relationships.csv
           test -s experimentos/eda_profundo/results/cohort_dynamics.csv
+          test -s experimentos/eda_profundo/results/selected_correlations.csv
+          test -s experimentos/eda_profundo/results/iforest_univariate_overlap.csv
+          test -s experimentos/eda_profundo/results/current_state_temporal_consistency.csv
+          test -s experimentos/eda_profundo/results/availability_snapshot_gap_summary.csv
+          test -s experimentos/eda_profundo/results/missingness_semantics.csv
+          test -s experimentos/eda_profundo/results/iforest_proxy_tail_diagnostic.csv
           test -s experimentos/eda_profundo/figures/08_area_ratio_clipping_hist.svg
           test -s experimentos/eda_profundo/figures/14_iforest_score_ranges.svg
+          test -s experimentos/eda_profundo/figures/19_days_on_market_temporal_consistency.svg
+          test -s experimentos/eda_profundo/figures/20_iforest_tail_proxy_diagnostic.svg
 
       - name: Publish summary
         if: always()
