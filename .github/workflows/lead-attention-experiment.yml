@@ -1,11 +1,11 @@
-name: Lead attention experiment
+name: Spot2 experiments
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-      - experiment/lead-attention-two-stage
+      - experiment/response-time-random-forest
     paths:
       - "experiments/**"
       - "data/candidate/**"
@@ -22,9 +22,9 @@ permissions:
   contents: read
 
 jobs:
-  experiment:
+  experiments:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -38,23 +38,32 @@ jobs:
       - name: Install experiment dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas numpy scikit-learn matplotlib
+          pip install -r experiments/requirements.txt
 
       - name: Run lead attention experiment
         run: python experiments/lead_attention_experiment.py
 
-      - name: Publish report in job summary
+      - name: Run response-time Random Forest experiment
+        run: python experiments/response_time_random_forest/run_experiment.py
+
+      - name: Publish experiment reports in job summary
         if: always()
         run: |
-          if [ -f artifacts/lead_attention/report.md ]; then
-            cat artifacts/lead_attention/report.md >> "$GITHUB_STEP_SUMMARY"
+          if [ -f experiments/lead_attention/results/report.md ]; then
+            cat experiments/lead_attention/results/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ -f experiments/response_time_random_forest/results/report.md ]; then
+            printf "\n\n---\n\n" >> "$GITHUB_STEP_SUMMARY"
+            cat experiments/response_time_random_forest/results/report.md >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Upload experiment artifacts
+      - name: Upload experiment results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lead-attention-experiment
-          path: artifacts/lead_attention/
+          name: spot2-experiments
+          path: |
+            experiments/lead_attention/results/
+            experiments/response_time_random_forest/results/
           if-no-files-found: warn
           retention-days: 30

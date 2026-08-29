@@ -16,7 +16,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 RANDOM_STATE = 42
 WINDOW_DAYS = 30
-OUT = Path("artifacts/lead_attention")
+OUT = Path(__file__).resolve().parent / "lead_attention" / "results"
 OUT.mkdir(parents=True, exist_ok=True)
 
 FORBIDDEN_T0 = {
