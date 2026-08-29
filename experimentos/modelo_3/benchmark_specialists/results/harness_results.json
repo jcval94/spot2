@@ -1,0 +1,45 @@
+{
+  "experiment_id": "E005_multihead_vs_specialists",
+  "metrics": {
+    "roc_auc": 0.5560594247798732,
+    "average_precision": 0.5174759183538802,
+    "brier": 0.24519900147235976,
+    "log_loss": 0.6837511783818315,
+    "lift_top_10pct": 1.1164467181249196,
+    "recall_top_20pct": 0.22003166865632048
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.4742718299624561,
+      "average_precision": 0.46834942044167627,
+      "brier": 0.2505442422756117,
+      "log_loss": 0.6942379346231876,
+      "lift_top_10pct": 0.8322203991300033,
+      "recall_top_20pct": 0.16991643454038996
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.5876915771548337,
+      "average_precision": 0.5628046568802058,
+      "brier": 0.2439602662388578,
+      "log_loss": 0.6809120453401162,
+      "lift_top_10pct": 1.1631087662337662,
+      "recall_top_20pct": 0.21875
+    },
+    "T2_engaged": {
+      "roc_auc": 0.6062148672223299,
+      "average_precision": 0.5212736777397583,
+      "brier": 0.2410924959026098,
+      "log_loss": 0.6761035551821909,
+      "lift_top_10pct": 1.354010989010989,
+      "recall_top_20pct": 0.2714285714285714
+    }
+  },
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "scheduled_visit is a supervised proxy rather than the hidden final commercial outcome",
+    "the dataset is synthetic",
+    "the validation-selected hybrid evaluates a model-selection strategy and may carry validation selection bias",
+    "multiple challenger families are tested, so small point differences are not treated as decisive without lead-level bootstrap support"
+  ],
+  "next_experiment": "Engineer explicit trajectory/progression and stalling features on the best stage architecture, then compare against this frozen benchmark."
+}

@@ -1,0 +1,121 @@
+{
+  "multihead_calibrated": {
+    "T0_cold": {
+      "intercept": -0.8181280493736267,
+      "coefficient": -0.7250245809555054,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": 0.35342341661453247,
+      "coefficient": 0.6623645424842834,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": -0.027175147086381912,
+      "coefficient": 0.959105908870697,
+      "status": "platt"
+    }
+  },
+  "pooled_nn_calibrated": {
+    "T0_cold": {
+      "intercept": -2.209397315979004,
+      "coefficient": -2.458068609237671,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": 0.05680613964796066,
+      "coefficient": 0.2431548535823822,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": 0.6833762526512146,
+      "coefficient": 2.069469928741455,
+      "status": "platt"
+    }
+  },
+  "specialist_random_forest_calibrated": {
+    "T0_cold": {
+      "intercept": -0.08912222734001461,
+      "coefficient": 0.12771924027418002,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": 0.06327150617989667,
+      "coefficient": 1.6042505298850553,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": -0.4668011437346871,
+      "coefficient": 1.4915076500355595,
+      "status": "platt"
+    }
+  },
+  "specialist_extra_trees_calibrated": {
+    "T0_cold": {
+      "intercept": -0.11171251106640917,
+      "coefficient": 0.07714801948118209,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": -0.057548005702244415,
+      "coefficient": 0.3685082984255068,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": -0.48377945828901014,
+      "coefficient": 1.2662834317656435,
+      "status": "platt"
+    }
+  },
+  "specialist_lightgbm_calibrated": {
+    "T0_cold": {
+      "intercept": 5.299104300643279,
+      "coefficient": 7.372787841920315,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": 0.2813574158029693,
+      "coefficient": 0.7415477469501354,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": 2.497620604935174,
+      "coefficient": 3.307911119757877,
+      "status": "platt"
+    }
+  },
+  "specialist_catboost_calibrated": {
+    "T0_cold": {
+      "intercept": 0.10817326051079913,
+      "coefficient": 0.24381775842071662,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": -0.08575646499806736,
+      "coefficient": 0.0019403957788948851,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": 0.6248718674922038,
+      "coefficient": 10.428879334952361,
+      "status": "platt"
+    }
+  },
+  "pooled_catboost_calibrated": {
+    "T0_cold": {
+      "intercept": -0.18442053275357762,
+      "coefficient": -0.06792787503305345,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": 0.9370557053039643,
+      "coefficient": 1.9553906810729653,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": 0.946348954105182,
+      "coefficient": 2.000991447773937,
+      "status": "platt"
+    }
+  }
+}

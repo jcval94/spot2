@@ -1,0 +1,28 @@
+{
+  "experiment_id": "E005_multihead_vs_specialists",
+  "conclusion": "INCONCLUSIVE",
+  "primary_metric": "macro_average_precision",
+  "best_specialist": "specialist_random_forest_calibrated",
+  "best_specialist_macro_ap": 0.5174759183538802,
+  "multihead_macro_ap": 0.5083124259581422,
+  "best_specialist_delta_ap_vs_multihead": 0.009163492395737993,
+  "best_specialist_delta_ap_ci95": [
+    -0.017280638718220248,
+    0.03940956821114902
+  ],
+  "best_specialist_probability_delta_gt_0": 0.76,
+  "validation_stage_selection": {
+    "T0_cold": "specialist_catboost_calibrated",
+    "T1_first_inquiry": "specialist_random_forest_calibrated",
+    "T2_engaged": "pooled_catboost_calibrated"
+  },
+  "test_population": {
+    "rows": 2723,
+    "unique_leads": 727,
+    "by_stage": {
+      "T0_cold": 727,
+      "T1_first_inquiry": 699,
+      "T2_engaged": 1297
+    }
+  }
+}
