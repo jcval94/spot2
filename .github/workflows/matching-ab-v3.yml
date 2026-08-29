@@ -43,25 +43,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas numpy scikit-learn tabulate
 
-      - name: Materialize and validate experiment source
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import base64, zlib
-          root = Path("experimentos/matching_ab_v3")
-          packed = "".join(
-              (root / f".run_suite.py.zlib.b64.part{i}").read_text().strip()
-              for i in range(3)
-          )
-          src = zlib.decompress(base64.b64decode(packed)).decode("utf-8")
-          src = src.replace("E004", "E006").replace("E005", "E007")
-          src = src.replace(
-              "missing.mean() < 0.05",
-              "(missing.sum() / max(1, mask.sum())) < 0.05"
-          )
-          (root / "run_suite.py").write_text(src, encoding="utf-8")
-          PY
-          python -m py_compile experimentos/matching_ab_v3/run_suite.py
+      - name: Validate experiment source
+        run: python -m py_compile experimentos/matching_ab_v3/run_suite.py
 
       - name: Validate governed experiment contracts
         run: |
@@ -123,7 +106,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add experimentos/matching_ab_v3/run_suite.py experimentos/matching_ab_v3/README.md experimentos/matching_ab_v3/results/
-          git rm -f experimentos/matching_ab_v3/.run_suite.py.zlib.b64.part*
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
