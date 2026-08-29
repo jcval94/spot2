@@ -80,8 +80,10 @@ def fit_logistic(train, test, target, categorical, numeric):
     y_test = test[target].astype(int)
 
     for c in categorical:
-        X_train[c] = X_train[c].fillna("__MISSING__").astype(str)
-        X_test[c] = X_test[c].fillna("__MISSING__").astype(str)
+        # Cast first so nullable boolean/categorical dtypes can safely accept
+        # a textual missing sentinel under pandas 3+.
+        X_train[c] = X_train[c].astype("string").fillna("__MISSING__")
+        X_test[c] = X_test[c].astype("string").fillna("__MISSING__")
 
     prep = ColumnTransformer([
         ("cat", Pipeline([
