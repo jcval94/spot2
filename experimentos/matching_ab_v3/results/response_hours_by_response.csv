@@ -1,0 +1,5 @@
+broker_response,n,response_hours_non_null,median_response_hours,min_response_hours,max_response_hours,response_hours_missing,non_null_rate
+accepted,10202,8680,8.5,0.5,95.9,1522,0.8508135659674574
+no_response,4483,3786,8.3,0.5,103.1,697,0.8445237564131162
+rejected,3395,2889,8.1,0.5,108.9,506,0.8509572901325478
+scheduled_visit,4496,3823,8.5,0.5,89.6,673,0.8503113879003559

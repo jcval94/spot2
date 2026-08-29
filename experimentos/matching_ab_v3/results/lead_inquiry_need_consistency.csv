@@ -1,0 +1,5 @@
+check,n_comparable,rate
+rent_requested_within_lead_budget,15358,0.8152754264878239
+sale_requested_within_lead_budget,10919,0.8104221998351497
+requested_area_vs_lead_target_median_ratio,22576,1.0534319979803888
+requested_area_within_0.5x_2x_lead_target,22576,0.6215892983699504
