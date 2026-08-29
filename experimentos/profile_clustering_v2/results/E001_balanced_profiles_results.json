@@ -1,0 +1,141 @@
+{
+  "experiment_id": "E001_balanced_profiles",
+  "metrics": {
+    "roc_auc": 0.5128801810638575,
+    "average_precision": 0.21228882000218147,
+    "brier": 0.16586501205075943,
+    "log_loss": 0.5151145871128842,
+    "lift_top_10pct": 1.033199992452403,
+    "recall_top_20pct": 0.20788912579957355
+  },
+  "segment_metrics": [
+    {
+      "segment": "search_sector",
+      "value": "Industrial",
+      "n": 1162,
+      "roc_auc": 0.4665139739807881,
+      "average_precision": 0.1815150528475959,
+      "brier": 0.16008377175930075,
+      "log_loss": 0.5036051064756909,
+      "lift_top_10pct": 0.7910142954390742,
+      "recall_top_20pct": 0.20353982300884957
+    },
+    {
+      "segment": "search_sector",
+      "value": "Land",
+      "n": 724,
+      "roc_auc": 0.507095324611101,
+      "average_precision": 0.23532830290190637,
+      "brier": 0.18050251613821836,
+      "log_loss": 0.5502685182958593,
+      "lift_top_10pct": 0.9502091706996965,
+      "recall_top_20pct": 0.20359281437125748
+    },
+    {
+      "segment": "search_sector",
+      "value": "Office",
+      "n": 1220,
+      "roc_auc": 0.5497415865384616,
+      "average_precision": 0.23989094210603779,
+      "brier": 0.16744793409883102,
+      "log_loss": 0.517444968566097,
+      "lift_top_10pct": 1.153846153846154,
+      "recall_top_20pct": 0.25384615384615383
+    },
+    {
+      "segment": "search_sector",
+      "value": "Retail",
+      "n": 1410,
+      "roc_auc": 0.5251555555555555,
+      "average_precision": 0.2146264955696353,
+      "brier": 0.16174379457608382,
+      "log_loss": 0.5045326757306327,
+      "lift_top_10pct": 1.1228070175438596,
+      "recall_top_20pct": 0.1824561403508772
+    },
+    {
+      "segment": "search_modality",
+      "value": "both",
+      "n": 968,
+      "roc_auc": 0.5372722672064777,
+      "average_precision": 0.24546386964628053,
+      "brier": 0.1689283966522874,
+      "log_loss": 0.5216576273098389,
+      "lift_top_10pct": 1.199444885011895,
+      "recall_top_20pct": 0.23557692307692307
+    },
+    {
+      "segment": "search_modality",
+      "value": "rent",
+      "n": 2287,
+      "roc_auc": 0.5056641591664497,
+      "average_precision": 0.20701713484052953,
+      "brier": 0.16467835494547525,
+      "log_loss": 0.5127759165824819,
+      "lift_top_10pct": 1.0008193592238435,
+      "recall_top_20pct": 0.2068230277185501
+    },
+    {
+      "segment": "search_modality",
+      "value": "sale",
+      "n": 1261,
+      "roc_auc": 0.5067586206896552,
+      "average_precision": 0.20565298437112678,
+      "brier": 0.16566558977122398,
+      "log_loss": 0.5143333631575931,
+      "lift_top_10pct": 0.9130238030591005,
+      "recall_top_20pct": 0.1839080459770115
+    },
+    {
+      "segment": "user_type",
+      "value": "broker",
+      "n": 1677,
+      "roc_auc": 0.5123196419283069,
+      "average_precision": 0.2045841269821327,
+      "brier": 0.1642217707518484,
+      "log_loss": 0.511257872695194,
+      "lift_top_10pct": 0.9021761765930862,
+      "recall_top_20pct": 0.20699708454810495
+    },
+    {
+      "segment": "user_type",
+      "value": "developer",
+      "n": 206,
+      "roc_auc": 0.5088284968524489,
+      "average_precision": 0.21829429361332214,
+      "brier": 0.1544429923891312,
+      "log_loss": 0.48849984775178446,
+      "lift_top_10pct": 1.5091575091575091,
+      "recall_top_20pct": 0.2564102564102564
+    },
+    {
+      "segment": "user_type",
+      "value": "investor",
+      "n": 970,
+      "roc_auc": 0.5198309870049505,
+      "average_precision": 0.22100461584370973,
+      "brier": 0.16585751427660014,
+      "log_loss": 0.5150308209467418,
+      "lift_top_10pct": 1.287128712871287,
+      "recall_top_20pct": 0.19306930693069307
+    },
+    {
+      "segment": "user_type",
+      "value": "tenant_direct",
+      "n": 1663,
+      "roc_auc": 0.5108052465978687,
+      "average_precision": 0.22315359614504243,
+      "brier": 0.1689413346902686,
+      "log_loss": 0.5223494635819229,
+      "lift_top_10pct": 0.9845563111066004,
+      "recall_top_20pct": 0.21468926553672316
+    }
+  ],
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "scheduled_visit is a proxy for commercial progress, not a true sale.",
+    "Profile discovery is frozen before predictive training; no future test outcomes are used.",
+    "Broker archetypes use only the early calibration window and are frozen afterwards."
+  ],
+  "next_experiment": "E002_lead_facets separates who the lead is from what the lead needs."
+}

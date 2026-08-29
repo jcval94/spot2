@@ -1,0 +1,140 @@
+{
+  "experiment_id": "E002_lead_facets",
+  "metrics": {
+    "roc_auc": 0.5127075136971853,
+    "average_precision": 0.2149752537464113,
+    "brier": 0.16698419266175069,
+    "log_loss": 0.5193448884689295,
+    "lift_top_10pct": 1.0225484461384606,
+    "recall_top_20pct": 0.21748400852878466
+  },
+  "segment_metrics": [
+    {
+      "segment": "search_sector",
+      "value": "Industrial",
+      "n": 1162,
+      "roc_auc": 0.5238730050676953,
+      "average_precision": 0.20345732060804467,
+      "brier": 0.15867039089326057,
+      "log_loss": 0.4986316027982936,
+      "lift_top_10pct": 0.8789047727100824,
+      "recall_top_20pct": 0.22566371681415928
+    },
+    {
+      "segment": "search_sector",
+      "value": "Land",
+      "n": 724,
+      "roc_auc": 0.47598340124060673,
+      "average_precision": 0.2407301192587149,
+      "brier": 0.1821006169269677,
+      "log_loss": 0.5573767954098441,
+      "lift_top_10pct": 1.3659256828808137,
+      "recall_top_20pct": 0.2215568862275449
+    },
+    {
+      "segment": "search_sector",
+      "value": "Office",
+      "n": 1220,
+      "roc_auc": 0.5369791666666668,
+      "average_precision": 0.22756629977005682,
+      "brier": 0.16939902646648983,
+      "log_loss": 0.5237952434678518,
+      "lift_top_10pct": 0.8846153846153846,
+      "recall_top_20pct": 0.2076923076923077
+    },
+    {
+      "segment": "search_sector",
+      "value": "Retail",
+      "n": 1410,
+      "roc_auc": 0.5007750487329434,
+      "average_precision": 0.21138473200864072,
+      "brier": 0.1639843694313867,
+      "log_loss": 0.5130358843734484,
+      "lift_top_10pct": 1.087719298245614,
+      "recall_top_20pct": 0.21052631578947367
+    },
+    {
+      "segment": "search_modality",
+      "value": "both",
+      "n": 968,
+      "roc_auc": 0.5399765941295547,
+      "average_precision": 0.2519665040042304,
+      "brier": 0.16900034041190673,
+      "log_loss": 0.5222911863451417,
+      "lift_top_10pct": 1.199444885011895,
+      "recall_top_20pct": 0.22596153846153846
+    },
+    {
+      "segment": "search_modality",
+      "value": "rent",
+      "n": 2287,
+      "roc_auc": 0.5133872129217185,
+      "average_precision": 0.20988529930371838,
+      "brier": 0.16553448882718694,
+      "log_loss": 0.5158494376725643,
+      "lift_top_10pct": 1.043407417063156,
+      "recall_top_20pct": 0.21961620469083157
+    },
+    {
+      "segment": "search_modality",
+      "value": "sale",
+      "n": 1261,
+      "roc_auc": 0.4885268199233716,
+      "average_precision": 0.2040702437157205,
+      "brier": 0.16806574829021714,
+      "log_loss": 0.5234226677132702,
+      "lift_top_10pct": 1.027151778441488,
+      "recall_top_20pct": 0.1685823754789272
+    },
+    {
+      "segment": "user_type",
+      "value": "broker",
+      "n": 1677,
+      "roc_auc": 0.5021111893033076,
+      "average_precision": 0.20463952552863587,
+      "brier": 0.16600752719563855,
+      "log_loss": 0.5170751990816449,
+      "lift_top_10pct": 0.9894835485214494,
+      "recall_top_20pct": 0.20116618075801748
+    },
+    {
+      "segment": "user_type",
+      "value": "developer",
+      "n": 206,
+      "roc_auc": 0.5452940273299555,
+      "average_precision": 0.20521449968202643,
+      "brier": 0.15435707288479095,
+      "log_loss": 0.486488758572179,
+      "lift_top_10pct": 1.006105006105006,
+      "recall_top_20pct": 0.1794871794871795
+    },
+    {
+      "segment": "user_type",
+      "value": "investor",
+      "n": 970,
+      "roc_auc": 0.5501108704620462,
+      "average_precision": 0.24575130399519243,
+      "brier": 0.1649018596008425,
+      "log_loss": 0.5130673544908869,
+      "lift_top_10pct": 1.188118811881188,
+      "recall_top_20pct": 0.28217821782178215
+    },
+    {
+      "segment": "user_type",
+      "value": "tenant_direct",
+      "n": 1663,
+      "roc_auc": 0.4942553292503442,
+      "average_precision": 0.21540164919039645,
+      "brier": 0.17074782328700908,
+      "log_loss": 0.5293652371279242,
+      "lift_top_10pct": 1.0689468520585947,
+      "recall_top_20pct": 0.2033898305084746
+    }
+  ],
+  "conclusion": "NOT_SUPPORTED",
+  "caveats": [
+    "Lead Persona and Search Need are latent facets derived from the same lead row, not new physical entities.",
+    "The comparison is temporal and directly comparable with E001."
+  ],
+  "next_experiment": "E003_inquiry_intent adds a T1 intent profile from the inquiry itself."
+}

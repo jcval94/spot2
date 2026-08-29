@@ -1,0 +1,34 @@
+profile_id,n_reference,share_reference,top_signals,profile_family
+L1,1070,0.4365565075479396,preferred_state=CDMX (27%; +14%pp) | preferred_municipality=Querétaro (18%; +9%pp),lead
+L2,485,0.19787841697266423,preferred_state=Estado de México (62%; +48%pp) | preferred_municipality=León (36%; +28%pp) | preferred_corridor=centro-leon (34%; +26%pp),lead
+L3,277,0.11301509587923296,preferred_state=Jalisco (100%; +88%pp) | preferred_municipality=Zapopan (52%; +46%pp) | preferred_corridor=andares-puerta-hierro (48%; +42%pp),lead
+L4,245,0.0999592003263974,prior_searches alto (44.00; +6.00 IQR),lead
+L5,190,0.07751937984496124,preferred_state=Puebla (100%; +92%pp) | preferred_municipality=Puebla (100%; +92%pp) | preferred_corridor=angelopolis-lomas (92%; +85%pp),lead
+L6,184,0.07507139942880457,preferred_state=Yucatán (100%; +92%pp) | preferred_municipality=Mérida (100%; +92%pp) | preferred_corridor=paseo-montejo (92%; +84%pp),lead
+P1,1261,0.514483884128927,user_type=tenant_direct (62%; +22%pp),lead_persona
+P2,916,0.3737250101999184,user_type=broker (87%; +51%pp),lead_persona
+P3,274,0.11179110567115463,prior_searches alto (43.00; +5.86 IQR),lead_persona
+N1,1135,0.4630762953896369,search_modality=rent (99%; +50%pp) | min_budget_mxn_sale_total alto (22246852.63; +0.59 IQR) | max_budget_mxn_sale_total alto (29597585.10; +0.58 IQR),search_need
+N2,735,0.2998776009791922,search_modality=sale (100%; +69%pp),search_need
+N3,581,0.23704610363117096,search_modality=both (83%; +63%pp) | target_area_sqm alto (479.20; +0.20 IQR),search_need
+S1,504,0.2731707317073171,region=noroeste (30%; +20%pp) | state=Yucatán (19%; +13%pp) | municipality=Mérida (19%; +13%pp),spot
+S2,277,0.15013550135501355,state=CDMX (100%; +83%pp) | region=centro (100%; +71%pp) | municipality=Cuauhtémoc (35%; +29%pp) | amenities_count alto (2.00; +0.33 IQR),spot
+S3,259,0.14037940379403793,region=bajío (100%; +83%pp) | state=Querétaro (66%; +55%pp) | municipality=Querétaro (66%; +55%pp),spot
+S4,252,0.13658536585365855,floor_level alto (15.00; +5.00 IQR) | elevators alto (9.50; +0.81 IQR),spot
+S5,191,0.1035230352303523,state=Nuevo León (100%; +88%pp) | region=noreste (100%; +88%pp) | municipality=San Pedro Garza García (53%; +47%pp),spot
+S6,187,0.1013550135501355,state=Estado de México (99%; +88%pp) | region=centro (100%; +71%pp) | municipality=Naucalpan de Juárez (54%; +48%pp),spot
+S7,175,0.0948509485094851,state=Jalisco (100%; +89%pp) | region=occidente (100%; +89%pp) | municipality=Zapopan (52%; +46%pp),spot
+B1,66,0.22,share_modality_sale alto (0.32; +0.48 IQR) | fast_rate bajo (0.32; -0.45 IQR) | share_region_centro alto (0.40; +0.40 IQR),broker
+B2,50,0.16666666666666666,share_region_centro alto (0.41; +0.45 IQR) | share_modality_rent alto (0.50; +0.34 IQR) | median_response_hours bajo (7.10; -0.30 IQR),broker
+B3,48,0.16,share_region_noroeste alto (0.20; +1.20 IQR) | share_region_norte alto (0.12; +0.94 IQR) | share_region_occidente alto (0.14; +0.71 IQR),broker
+B4,46,0.15333333333333332,median_sale bajo (20568.96; -0.84 IQR) | median_rent bajo (138.20; -0.75 IQR) | share_region_occidente alto (0.11; +0.56 IQR),broker
+B5,38,0.12666666666666668,share_region_centro-norte alto (0.20; +2.15 IQR) | share_region_noreste bajo (0.00; -0.53 IQR) | share_modality_rent alto (0.50; +0.34 IQR),broker
+B6,31,0.10333333333333333,share_region_sureste alto (0.20; +1.80 IQR) | share_region_occidente alto (0.17; +0.83 IQR) | share_region_noreste bajo (0.00; -0.53 IQR),broker
+B7,21,0.07,share_region_occidente alto (0.33; +1.67 IQR) | share_sector_name_industrial bajo (0.00; -1.04 IQR) | share_region_centro bajo (0.00; -1.00 IQR),broker
+I1,1760,0.2598936798582398,inquiry_weekday=Sunday (51%; +37%pp),inquiry_intent
+I2,959,0.14161252215002954,inquiry_weekday=Saturday (100%; +85%pp),inquiry_intent
+I3,944,0.13939751919669227,inquiry_weekday=Friday (100%; +85%pp),inquiry_intent
+I4,934,0.1379208505611341,inquiry_weekday=Monday (100%; +85%pp),inquiry_intent
+I5,915,0.13511518015357354,inquiry_weekday=Tuesday (100%; +86%pp),inquiry_intent
+I6,820,0.12108682811577082,inquiry_weekday=Wednesday (100%; +87%pp),inquiry_intent
+I7,440,0.06497341996455995,requested_area_sqm alto (7169.05; +7.99 IQR) | requested_budget_mxn_sale_total alto (49303772.84; +1.79 IQR) | requested_budget_mxn_rent_monthly alto (126020.36; +0.45 IQR),inquiry_intent

@@ -1,0 +1,8 @@
+candidate,status,why,tested
+Lead Persona,PROFILE,Separates actor characteristics from the commercial requirement; stable at T1.,True
+Search Need,PROFILE,Represents sector/modality/area/budget/geography requested; directly relevant to matching.,True
+Inquiry Intent,PROFILE_AT_T1,"Captures channel, visit intent, urgency and requested parameters; only exists after inquiry.",True
+Market Context,CONTEXT_NOT_ENTITY,"Potentially useful regime, but monthly timestamp does not prove publication availability; excluded from governed predictive test.",False
+Availability Snapshot,DIRECT_STATE,Use latest non-future availability directly; clustering would hide operational meaning.,False
+Spot Attributes,MERGED_INTO_SPOT,"1:1 extension of Spot, already included in Spot archetype.",True
+Geography,DIMENSION,"Useful for matching/context, but not a standalone behavioral entity.",False

@@ -1,0 +1,140 @@
+{
+  "experiment_id": "E003_inquiry_intent",
+  "metrics": {
+    "roc_auc": 0.4912042438927299,
+    "average_precision": 0.20309800537490963,
+    "brier": 0.1674889721236585,
+    "log_loss": 0.5202265152665729,
+    "lift_top_10pct": 0.9053814366850953,
+    "recall_top_20pct": 0.19616204690831557
+  },
+  "segment_metrics": [
+    {
+      "segment": "search_sector",
+      "value": "Industrial",
+      "n": 1162,
+      "roc_auc": 0.4729975039709553,
+      "average_precision": 0.18250992180353476,
+      "brier": 0.160356303584021,
+      "log_loss": 0.5042413071472484,
+      "lift_top_10pct": 0.6152333408970577,
+      "recall_top_20pct": 0.18141592920353983
+    },
+    {
+      "segment": "search_sector",
+      "value": "Land",
+      "n": 724,
+      "roc_auc": 0.5057138864103032,
+      "average_precision": 0.23656972278363234,
+      "brier": 0.18041412299628265,
+      "log_loss": 0.5497050057744984,
+      "lift_top_10pct": 1.0689853170371586,
+      "recall_top_20pct": 0.2275449101796407
+    },
+    {
+      "segment": "search_sector",
+      "value": "Office",
+      "n": 1220,
+      "roc_auc": 0.48057091346153846,
+      "average_precision": 0.20893972913836556,
+      "brier": 0.17133616320919792,
+      "log_loss": 0.5297354953969867,
+      "lift_top_10pct": 0.8461538461538463,
+      "recall_top_20pct": 0.18076923076923077
+    },
+    {
+      "segment": "search_sector",
+      "value": "Retail",
+      "n": 1410,
+      "roc_auc": 0.5069130604288499,
+      "average_precision": 0.2056527397705131,
+      "brier": 0.16340158097963076,
+      "log_loss": 0.5100360393430354,
+      "lift_top_10pct": 1.0175438596491229,
+      "recall_top_20pct": 0.19649122807017544
+    },
+    {
+      "segment": "search_modality",
+      "value": "both",
+      "n": 968,
+      "roc_auc": 0.48902454453441296,
+      "average_precision": 0.22250852271116398,
+      "brier": 0.1711840585020796,
+      "log_loss": 0.5284533808752412,
+      "lift_top_10pct": 1.007533703409992,
+      "recall_top_20pct": 0.1971153846153846
+    },
+    {
+      "segment": "search_modality",
+      "value": "rent",
+      "n": 2287,
+      "roc_auc": 0.4894909000494932,
+      "average_precision": 0.1951008091522119,
+      "brier": 0.16563973757077186,
+      "log_loss": 0.5156149972619152,
+      "lift_top_10pct": 0.8304671278665935,
+      "recall_top_20pct": 0.18336886993603413
+    },
+    {
+      "segment": "search_modality",
+      "value": "sale",
+      "n": 1261,
+      "roc_auc": 0.49600191570881225,
+      "average_precision": 0.20490429134333718,
+      "brier": 0.16800630424748106,
+      "log_loss": 0.5222748386349007,
+      "lift_top_10pct": 0.798895827676713,
+      "recall_top_20pct": 0.19157088122605365
+    },
+    {
+      "segment": "user_type",
+      "value": "broker",
+      "n": 1677,
+      "roc_auc": 0.47558800774539844,
+      "average_precision": 0.19078801965274053,
+      "brier": 0.166521969390643,
+      "log_loss": 0.5182898916803994,
+      "lift_top_10pct": 0.7275614327363599,
+      "recall_top_20pct": 0.1749271137026239
+    },
+    {
+      "segment": "user_type",
+      "value": "developer",
+      "n": 206,
+      "roc_auc": 0.5401504682941809,
+      "average_precision": 0.2413884450693494,
+      "brier": 0.15334214171812452,
+      "log_loss": 0.4864549059153493,
+      "lift_top_10pct": 1.2576312576312576,
+      "recall_top_20pct": 0.28205128205128205
+    },
+    {
+      "segment": "user_type",
+      "value": "investor",
+      "n": 970,
+      "roc_auc": 0.5057820235148515,
+      "average_precision": 0.2125906035472605,
+      "brier": 0.16707925468158735,
+      "log_loss": 0.5182953357141801,
+      "lift_top_10pct": 0.99009900990099,
+      "recall_top_20pct": 0.2079207920792079
+    },
+    {
+      "segment": "user_type",
+      "value": "tenant_direct",
+      "n": 1663,
+      "roc_auc": 0.49330903393714964,
+      "average_precision": 0.21264355354551992,
+      "brier": 0.17045550042529176,
+      "log_loss": 0.5274892413316277,
+      "lift_top_10pct": 0.9564261307892689,
+      "recall_top_20pct": 0.20056497175141244
+    }
+  ],
+  "conclusion": "NOT_SUPPORTED",
+  "caveats": [
+    "Inquiry Intent is an event-state profile available at T1, not a persistent customer entity.",
+    "scheduled_visit remains a proxy outcome."
+  ],
+  "next_experiment": "If supported, validate routing impact with an online or quasi-randomized experiment."
+}
