@@ -203,7 +203,7 @@ def make_pipeline(cat_cols, num_cols):
         remainder="drop",
     )
     rf = RandomForestClassifier(
-        n_estimators=500,
+        n_estimators=300,
         max_depth=10,
         min_samples_leaf=25,
         max_features="sqrt",
@@ -226,7 +226,7 @@ def fit_variant(train, test, include_response):
     return model, pred, metric_bundle(test["target"], pred), cat, num
 
 
-def raw_permutation_importance(model, X, y, features, scoring, repeats=12):
+def raw_permutation_importance(model, X, y, features, scoring, repeats=5):
     result = permutation_importance(
         model,
         X[features],
@@ -267,7 +267,7 @@ def add_segment_columns(d):
 
 
 def subgroup_analysis(model, test, features, min_n=50):
-    test = add_segment_columns(test)
+    test = add_segment_columns(test).reset_index(drop=True)
     p2 = counterfactual_predictions(model, test, features, CF_FAST_HOURS)
     p36 = counterfactual_predictions(model, test, features, CF_SLOW_HOURS)
 
@@ -291,7 +291,7 @@ def subgroup_analysis(model, test, features, min_n=50):
             if len(np.unique(y)) == 2:
                 base_auc = roc_auc_score(y, base_pred)
                 drops = []
-                for _ in range(8):
+                for _ in range(4):
                     xp = sub[features].copy()
                     xp[RESPONSE_FEATURE] = rng.permutation(
                         xp[RESPONSE_FEATURE].to_numpy()
@@ -424,13 +424,9 @@ def analyze_dataset(df, target_name):
     )
 
     features = full_cat + full_num
-    imp_auc = raw_permutation_importance(
+    importance = raw_permutation_importance(
         full_model, test, test["target"], features, "roc_auc"
     )
-    imp_ap = raw_permutation_importance(
-        full_model, test, test["target"], features, "average_precision"
-    )
-    importance = imp_auc.merge(imp_ap, on="feature", how="outer")
     importance["target"] = target_name
     importance["rank_auc"] = (
         importance["roc_auc_drop_mean"]
@@ -510,7 +506,7 @@ def main():
     payload = {
         "method": {
             "model": "RandomForestClassifier",
-            "n_estimators": 500,
+            "n_estimators": 300,
             "max_depth": 10,
             "min_samples_leaf": 25,
             "validation": "80/20 temporal split",
