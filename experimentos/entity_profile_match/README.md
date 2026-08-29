@@ -109,7 +109,7 @@ Los CSV de perfiles, asignaciones, selección de K, métricas y compatibilidades
 
     python experimentos/entity_profile_match/run_experiment.py
 
-GitHub Actions usa `.github/workflows/entity-profile-match-experiment.yml`. Los workflows son una excepción estructural porque GitHub sólo los reconoce dentro de `.github/workflows/`; el código, resultados y evidencia permanecen en `experimentos/`.
+GitHub Actions usa .github/workflows/entity-profile-match-experiment.yml. Es la única excepción fuera de experimentos porque GitHub sólo reconoce workflows dentro de .github/workflows.
 
 ## Uso recomendado
 
