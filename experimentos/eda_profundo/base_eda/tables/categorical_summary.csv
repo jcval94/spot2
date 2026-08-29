@@ -1,0 +1,30 @@
+table,column,n_unique,missing_rate,top_value,top_count,top_share_nonmissing
+leads,user_type,4,0,tenant_direct,1956,0.3912
+leads,company_size,4,0.0514,medium,1651,0.3480919249420198
+leads,industry,7,0.0302,retail,1217,0.2509795834192617
+leads,search_sector,4,0,Retail,1528,0.3056
+leads,search_modality,3,0,rent,2503,0.5006
+leads,preferred_state,12,0,Estado de México,701,0.1402
+leads,preferred_municipality,17,0,Querétaro,435,0.087
+leads,preferred_corridor,18,0.076,paseo-montejo,394,0.08528138528138528
+leads,source,6,0,organic,1463,0.2926
+inquiries,channel,5,0,web,6793,0.30089475549255845
+inquiries,broker_response,4,0,accepted,10202,0.4518958185683912
+spots,sector_name,4,0,Industrial,882,0.294
+spots,type_name,2,0,Single,2104,0.7013333333333334
+spots,state,12,0,CDMX,527,0.17566666666666667
+spots,municipality,17,0,Querétaro,324,0.108
+spots,settlement,15,0,Centro,523,0.17433333333333334
+spots,corridor,18,0,vasconcelos-calzada,187,0.06233333333333333
+spots,region,9,0,centro,849,0.283
+spots,title,1245,0,"Single Industrial en americana-chapultepec, Guadalajara",19,0.006333333333333333
+spots,description,856,0,Amplio espacio con buena iluminación natural.,98,0.03266666666666666
+spots,modality,3,0,rent,1192,0.3973333333333333
+spot_attributes,security_type,4,0,basic,1204,0.4013333333333333
+spot_attributes,building_status,4,0,good,1346,0.44866666666666666
+spot_attributes,floor_material,5,0.07866666666666666,concrete,976,0.35311143270622286
+spot_attributes,amenities,986,0,[],1136,0.37866666666666665
+market_context,state,12,0,CDMX,82,0.164
+market_context,municipality,17,0,Querétaro,56,0.112
+market_context,corridor,18,0,zona-rio-aguacaliente,33,0.066
+market_context,sector,4,0,Office,128,0.256

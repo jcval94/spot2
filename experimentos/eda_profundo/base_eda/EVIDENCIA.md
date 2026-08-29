@@ -1,0 +1,1 @@
+# Evidencia\n\nEste EDA base fue migrado desde la estructura anterior y forma parte de [EV-009 — EDA profundo](../../Evidencias/EV-009_eda_profundo.md).\n\nLos hallazgos reutilizables se consolidan en [DESCUBRIMIENTOS.md](../../conocimiento_agregado/DESCUBRIMIENTOS.md).\n
