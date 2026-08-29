@@ -21,4 +21,4 @@ Un especialista tabular no lineal puede superar al multi-head, especialmente en 
 
 Se hereda el pipeline point-in-time de E003. El único cambio primario es la familia de modelado.
 
-**Descubrimiento:** pendiente de la corrida.
+**Descubrimiento:** [D018](../conocimiento_agregado/DESCUBRIMIENTOS.md#d018--benchmark-arquitectónico-fuerte-pendiente).
