@@ -50,7 +50,7 @@ def numeric_summary(data: dict[str, pd.DataFrame]) -> pd.DataFrame:
     rows = []
     for table, df in data.items():
         for col in df.select_dtypes(include=[np.number, "bool"]).columns:
-            s = pd.to_numeric(df[col], errors="coerce")
+            s = pd.to_numeric(df[col], errors="coerce").astype(float)
             v = s.dropna()
             if v.empty:
                 continue
