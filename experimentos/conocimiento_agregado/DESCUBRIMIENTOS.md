@@ -18,6 +18,11 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D010 | NOT_SUPPORTED | Inquiry Intent v1 no debe usarse como capa predictiva: aprende principalmente día de la semana y empeora AP/AUC/lift fuera de muestra. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D011 | SUPPORTED | El perfil de Spot actual mezcla arquetipo físico con geografía; varios clusters son esencialmente regiones/estados. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D012 | INCONCLUSIVE | Existen bolsillos locales de compatibilidad Lead/Need × Spot × Broker con lift descriptivo, pero no hay evidencia suficiente de una sinergia global generalizable. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
+| D013 | SUPPORTED | Un Random Forest especializado en T2 supera ligeramente al head T2 actual; la superioridad del multi-head frente a especialistas no lineales queda abierta. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D014 | SUPPORTED | La señal T2 se interpreta mejor como trayectoria/progreso vs estancamiento que como efecto de la inquiry actual aislada. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D015 | SUPPORTED | Condicionada al historial observable, la inquiry actual y el match Lead↔Spot aportan poca señal incremental promedio en T2, aunque recuperan valor en el último T2. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D016 | INCONCLUSIVE | `availability_snapshot_age_days` aparece predictiva, pero su dirección es sospechosa y puede estar capturando estructura temporal/cobertura en lugar de disponibilidad accionable. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
+| D017 | SUPPORTED | La baja concordancia entre rankings del multi-head y RF indica que las conclusiones más robustas son por familias, no por ranking exacto de variables individuales. | [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -248,3 +253,83 @@ Sin embargo, el modelo global de perfiles sólo alcanza lift@10% 1.033x (E001) y
 **Siguiente implicación:** usar las matrices Need × Spot y Need × Broker como hipótesis de routing, exigir soporte mínimo/intervalos de confianza y validar después con diseño online o cuasi-experimental.
 
 Evidencia: [EV-006](../Evidencias/EV-006_profile_clustering_v2.md).
+
+
+## D013 — El multi-head todavía no gana contra especialistas no lineales
+
+**Estado:** SUPPORTED para la comparación T2 disponible.
+
+En el mismo test temporal T2:
+
+- Multi-head T2: ROC AUC 0.595, AP 0.515, Lift@10% 1.39x.
+- Random Forest T2: ROC AUC 0.609, AP 0.524, Lift@10% 1.43x.
+
+**Interpretación:** D003 sigue siendo válido frente al challenger pooled y las regresiones separadas, pero no debe generalizarse a “multi-head es la mejor familia”. Un especialista tabular no lineal ya produjo una mejora pequeña.
+
+**No demuestra:** que Random Forest sea definitivamente superior; fue un diagnóstico T2, no un benchmark exhaustivo multi-etapa.
+
+**Siguiente implicación:** comparar el mismo multi-head contra especialistas RF/ExtraTrees/CatBoost y un pooled tabular bajo idéntico split, target, features y calibración.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D014 — T2 captura trayectoria: progreso vs estancamiento
+
+**Estado:** SUPPORTED como interpretación predictiva.
+
+La familia `interaction_history` domina en todos los T2 (ΔAP +0.0638). La dominancia se conserva usando una sola observación por lead:
+
+- primer T2 por lead: ΔAP +0.0471;
+- último T2 por lead: ΔAP +0.0757.
+
+Además, más respuestas ya observadas no equivalen a mejor resultado futuro: leads con <=1 respuesta histórica tuvieron 49.2% de visita futura frente a 36.2% con >=2; patrones similares aparecen para respuestas aceptadas sin visita posterior.
+
+**Interpretación:** el modelo parece reconocer una trayectoria del funnel: la acumulación de interacciones sin visita puede ser señal de fricción o estancamiento, no sólo de intención.
+
+**No demuestra:** que provocar más o menos interacciones cause conversión; el patrón está condicionado por la definición pre-visita de T2.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D015 — La última inquiry aporta menos que la trayectoria acumulada
+
+**Estado:** SUPPORTED para este head y población T2.
+
+Permutation importance por familias sobre todos los T2:
+
+- `current_inquiry`: ΔAP -0.0024;
+- `lead_spot_match`: ΔAP -0.0012;
+- `interaction_history`: ΔAP +0.0638.
+
+En el último T2 por lead, la inquiry actual y el match sí recuperan señal (aprox. +0.0077 y +0.0074 AP), pero siguen muy por debajo del historial (+0.0757).
+
+**Interpretación:** una vez existe historia suficiente, el estado acumulado del proceso pesa más que una sola interacción.
+
+**No demuestra:** que inquiry o matching sean inútiles en T0/T1, ni que deban eliminarse del producto.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D016 — La edad del snapshot de disponibilidad requiere auditoría
+
+**Estado:** INCONCLUSIVE.
+
+`availability_snapshot_age_days` fue la tercera variable individual del head T2 por permutation importance (ΔAP +0.0070), pero el perfil descriptivo fue contraintuitivo: snapshots más viejos presentaron mayor tasa de visita futura que snapshots recientes.
+
+**Interpretación:** puede estar actuando como proxy de periodo, cobertura de inventario, corredor o mecanismo sintético de generación de datos, no como una palanca de disponibilidad.
+
+**No demostrar / no hacer:** no interpretar “información más vieja es mejor” ni usar la variable como regla operativa hasta realizar una auditoría temporal específica.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
+
+## D017 — Confiar en familias, no en el ranking exacto
+
+**Estado:** SUPPORTED.
+
+La concordancia de rankings fue modesta:
+
+- Spearman multi-head vs RF permutation: 0.245;
+- Spearman multi-head vs RF MDI: 0.259.
+
+Sin embargo, ambos modelos señalan variables de tiempo/progreso/historial como relevantes y el análisis por familias del propio head es estable al cambiar la muestra T2 por lead.
+
+**Interpretación:** las conclusiones de negocio deben apoyarse en bloques de información y ablations, no en afirmar que una variable individual es universalmente “la #1”.
+
+Evidencia: [EV-004](../Evidencias/EV-004_modelo_3_t2_interpretabilidad.md).
