@@ -1,0 +1,73 @@
+state,municipality,corridor,sector,rows,first_month,last_month,observed_months
+Baja California,Tijuana,zona-rio-aguacaliente,Industrial,5,2024-03-01,2026-04-01,5
+Baja California,Tijuana,zona-rio-aguacaliente,Land,9,2024-05-01,2026-06-01,9
+Baja California,Tijuana,zona-rio-aguacaliente,Office,12,2024-01-01,2026-04-01,12
+Baja California,Tijuana,zona-rio-aguacaliente,Retail,7,2024-03-01,2026-05-01,7
+CDMX,Benito Juárez,del-valle-narvarte,Industrial,7,2024-03-01,2026-05-01,7
+CDMX,Benito Juárez,del-valle-narvarte,Land,6,2024-03-01,2025-06-01,6
+CDMX,Benito Juárez,del-valle-narvarte,Office,10,2024-07-01,2026-04-01,10
+CDMX,Benito Juárez,del-valle-narvarte,Retail,5,2024-03-01,2026-06-01,5
+CDMX,Cuauhtémoc,roma-condesa,Industrial,6,2024-02-01,2026-04-01,6
+CDMX,Cuauhtémoc,roma-condesa,Land,5,2024-02-01,2026-04-01,5
+CDMX,Cuauhtémoc,roma-condesa,Office,5,2024-05-01,2025-09-01,5
+CDMX,Cuauhtémoc,roma-condesa,Retail,11,2024-03-01,2026-06-01,11
+CDMX,Miguel Hidalgo,polanco,Industrial,7,2024-03-01,2026-06-01,7
+CDMX,Miguel Hidalgo,polanco,Land,5,2024-04-01,2026-01-01,5
+CDMX,Miguel Hidalgo,polanco,Office,7,2024-01-01,2026-01-01,7
+CDMX,Miguel Hidalgo,polanco,Retail,8,2024-03-01,2026-03-01,8
+Chihuahua,Chihuahua,centro-chihuahua,Industrial,6,2024-12-01,2026-05-01,6
+Chihuahua,Chihuahua,centro-chihuahua,Land,6,2024-05-01,2026-03-01,6
+Chihuahua,Chihuahua,centro-chihuahua,Office,7,2024-01-01,2026-05-01,7
+Chihuahua,Chihuahua,centro-chihuahua,Retail,5,2024-02-01,2025-10-01,5
+Estado de México,Naucalpan de Juárez,lomas-verdes-satelite,Industrial,6,2024-01-01,2026-06-01,6
+Estado de México,Naucalpan de Juárez,lomas-verdes-satelite,Land,7,2024-02-01,2026-02-01,7
+Estado de México,Naucalpan de Juárez,lomas-verdes-satelite,Office,4,2024-07-01,2025-09-01,4
+Estado de México,Naucalpan de Juárez,lomas-verdes-satelite,Retail,6,2024-04-01,2026-04-01,6
+Estado de México,Toluca,metepec-toluca,Industrial,4,2025-08-01,2025-12-01,4
+Estado de México,Toluca,metepec-toluca,Land,10,2024-02-01,2026-04-01,10
+Estado de México,Toluca,metepec-toluca,Office,11,2024-02-01,2026-06-01,11
+Estado de México,Toluca,metepec-toluca,Retail,6,2024-01-01,2026-02-01,6
+Guanajuato,León,centro-leon,Industrial,7,2024-04-01,2026-04-01,7
+Guanajuato,León,centro-leon,Land,9,2024-03-01,2026-02-01,9
+Guanajuato,León,centro-leon,Office,5,2024-01-01,2026-06-01,5
+Guanajuato,León,centro-leon,Retail,6,2024-05-01,2026-04-01,6
+Jalisco,Guadalajara,americana-chapultepec,Industrial,5,2024-03-01,2025-09-01,5
+Jalisco,Guadalajara,americana-chapultepec,Land,6,2024-10-01,2025-12-01,6
+Jalisco,Guadalajara,americana-chapultepec,Office,6,2024-01-01,2026-05-01,6
+Jalisco,Guadalajara,americana-chapultepec,Retail,9,2024-03-01,2026-06-01,9
+Jalisco,Zapopan,andares-puerta-hierro,Industrial,11,2024-03-01,2026-06-01,11
+Jalisco,Zapopan,andares-puerta-hierro,Land,5,2024-09-01,2026-05-01,5
+Jalisco,Zapopan,andares-puerta-hierro,Office,8,2024-02-01,2026-05-01,8
+Jalisco,Zapopan,andares-puerta-hierro,Retail,7,2024-01-01,2025-10-01,7
+Nuevo León,Monterrey,macroplaza,Industrial,7,2025-01-01,2026-03-01,7
+Nuevo León,Monterrey,macroplaza,Land,7,2024-07-01,2026-06-01,7
+Nuevo León,Monterrey,macroplaza,Office,3,2024-09-01,2026-05-01,3
+Nuevo León,Monterrey,macroplaza,Retail,7,2024-04-01,2026-03-01,7
+Nuevo León,San Pedro Garza García,vasconcelos-calzada,Industrial,8,2024-05-01,2026-06-01,8
+Nuevo León,San Pedro Garza García,vasconcelos-calzada,Land,8,2024-03-01,2026-03-01,8
+Nuevo León,San Pedro Garza García,vasconcelos-calzada,Office,9,2024-02-01,2026-01-01,9
+Nuevo León,San Pedro Garza García,vasconcelos-calzada,Retail,5,2024-11-01,2025-11-01,5
+Puebla,Puebla,angelopolis-lomas,Industrial,6,2024-08-01,2026-03-01,6
+Puebla,Puebla,angelopolis-lomas,Land,7,2024-07-01,2026-06-01,7
+Puebla,Puebla,angelopolis-lomas,Office,8,2024-05-01,2026-06-01,8
+Puebla,Puebla,angelopolis-lomas,Retail,10,2024-01-01,2026-05-01,10
+Querétaro,Querétaro,centro-queretaro,Industrial,8,2024-01-01,2026-03-01,8
+Querétaro,Querétaro,centro-queretaro,Land,6,2024-01-01,2025-12-01,6
+Querétaro,Querétaro,centro-queretaro,Office,9,2024-01-01,2025-09-01,9
+Querétaro,Querétaro,centro-queretaro,Retail,5,2024-06-01,2026-02-01,5
+Querétaro,Querétaro,juriquilla-juncos,Industrial,4,2024-08-01,2026-01-01,4
+Querétaro,Querétaro,juriquilla-juncos,Land,8,2024-04-01,2026-01-01,8
+Querétaro,Querétaro,juriquilla-juncos,Office,9,2024-02-01,2026-06-01,9
+Querétaro,Querétaro,juriquilla-juncos,Retail,7,2024-01-01,2026-03-01,7
+San Luis Potosí,San Luis Potosí,lomas-carranza,Industrial,9,2025-02-01,2026-05-01,9
+San Luis Potosí,San Luis Potosí,lomas-carranza,Land,6,2024-02-01,2026-04-01,6
+San Luis Potosí,San Luis Potosí,lomas-carranza,Office,5,2024-09-01,2025-08-01,5
+San Luis Potosí,San Luis Potosí,lomas-carranza,Retail,7,2024-07-01,2025-09-01,7
+Sonora,Hermosillo,centenario-colosio,Industrial,11,2024-01-01,2026-05-01,11
+Sonora,Hermosillo,centenario-colosio,Land,7,2024-03-01,2025-10-01,7
+Sonora,Hermosillo,centenario-colosio,Office,5,2024-03-01,2026-03-01,5
+Sonora,Hermosillo,centenario-colosio,Retail,8,2024-02-01,2026-04-01,8
+Yucatán,Mérida,paseo-montejo,Industrial,9,2024-01-01,2026-02-01,9
+Yucatán,Mérida,paseo-montejo,Land,4,2025-01-01,2026-02-01,4
+Yucatán,Mérida,paseo-montejo,Office,5,2024-03-01,2024-11-01,5
+Yucatán,Mérida,paseo-montejo,Retail,6,2024-11-01,2026-05-01,6

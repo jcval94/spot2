@@ -1,0 +1,58 @@
+{
+  "scope": "deep EDA only; no model fitting or automatic row deletion",
+  "datasets": {
+    "leads": 5000,
+    "inquiries": 22576,
+    "spots": 3000,
+    "spot_attributes": 3000,
+    "market_context": 500,
+    "availability_snapshot": 30000
+  },
+  "cohort_start": {
+    "lead_month": "2025-01",
+    "n_leads": 293,
+    "inquiries_per_lead": 4.750853242320819,
+    "inquiries_within_30d_per_lead": 1.3651877133105803,
+    "median_first_inquiry_lag_days": 7.818425925925926,
+    "scheduled_visit_proxy_30d": 0.20136518771331058
+  },
+  "cohort_end": {
+    "lead_month": "2026-06",
+    "n_leads": 285,
+    "inquiries_per_lead": 4.417543859649123,
+    "inquiries_within_30d_per_lead": 4.417543859649123,
+    "median_first_inquiry_lag_days": 2.307164351851852,
+    "scheduled_visit_proxy_30d": 0.5649122807017544
+  },
+  "deterministic_relationships": {
+    "area_ratio_near_0_30": 0.35533309709425936,
+    "area_ratio_near_5_00": 0.21372253720765413,
+    "rent_request_exact_lead_max": 0.2515561144294247,
+    "sale_request_exact_lead_max": 0.24745822650517196,
+    "rent_total_identity_p99_rel_error": 5.045406679303743e-07,
+    "sale_total_identity_p99_rel_error": 2.8259479527957223e-09
+  },
+  "market_panel": {
+    "keys": 72,
+    "global_months": 30,
+    "min_months": "3",
+    "median_months": 7.0,
+    "max_months": "12",
+    "complete_keys": 0
+  },
+  "availability": {
+    "change_share": 0.9026666666666666,
+    "median_transitions": 4.0,
+    "median_snapshots": 10.0
+  },
+  "isolation_forest": {
+    "contamination": 0.03,
+    "lead_flags": 155,
+    "spot_flags": 94,
+    "inquiry_flags": 685
+  },
+  "broker_ge50": {
+    "min_rate": 0.09859154929577464,
+    "max_rate": 0.32786885245901637
+  }
+}

@@ -1,0 +1,3 @@
+isolation_forest_flag,size,mean
+False,21891,0.19939701247087843
+True,685,0.19124087591240876
