@@ -16,7 +16,7 @@ All six table pairs match on row count, ordered schema, per-column null counts a
 | availability_snapshot | 30,000 | 6 | PASS |
 | market_context | 500 | 10 | PASS |
 
-Physical SHA-256 and Git blob hashes are persisted in `data_audit.json`. Physical hashes are expected to differ across formats.
+Physical SHA-256 and Git blob hashes are persisted in `data_audit.json`. Physical hashes are expected to differ across formats. All 12 raw files (six CSV + six Parquet) were introduced together in commit `8f850cf152bbbefb2f0b8af897e4c94916c88bb6` (`Add files via upload`), alongside the assessment and feature dictionary.
 
 ## 2. Grain, keys and relational integrity
 
