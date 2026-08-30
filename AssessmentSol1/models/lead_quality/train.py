@@ -767,10 +767,12 @@ def main() -> None:
         base_pred, learned_pred, metric="lift_at_10pct",
         n_resamples=2000, seed=RANDOM_SEED + 12,
     )
+    # Base Rate has no ordering, so top-k Lift is undefined under tied
+    # probabilities and must not be a promotion gate. AP + proper scoring carry
+    # the terminal baseline comparison.
     learned_defensibly_better = (
         base_ap["ci95_low"] > 0
         and base_brier["delta"] <= 0
-        and base_lift["delta"] >= 0
     )
     selected_family = learned_family if learned_defensibly_better else "BASE_RATE"
 
@@ -825,7 +827,10 @@ def main() -> None:
             "paired_bootstrap": {
                 "average_precision": base_ap,
                 "brier": base_brier,
-                "lift_at_10pct": base_lift,
+                "lift_at_10pct": {
+                    **base_lift,
+                    "metric_validity": "DIAGNOSTIC_ONLY_BASE_RATE_HAS_TIED_SCORES",
+                },
             },
         },
         "logistic_config": LOGISTIC_CONFIG,
