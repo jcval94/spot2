@@ -710,7 +710,23 @@ def main() -> None:
         registry_gate=registry_gate,
     )
     model_path = artifact_dir / "development_champion_raw.joblib"
-    joblib.dump(fitted, model_path)
+    if isinstance(fitted, FittedLogistic):
+        serialized_model = {
+            "model_family": "LOGISTIC",
+            "features": fitted.features,
+            "numeric_features": fitted.numeric_features,
+            "categorical_features": fitted.categorical_features,
+            "preprocessor": fitted.preprocessor,
+            "model": fitted.model,
+        }
+    else:
+        serialized_model = {
+            "model_family": "CATBOOST",
+            "features": fitted.features,
+            "categorical_features": fitted.categorical_features,
+            "model": fitted.model,
+        }
+    joblib.dump(serialized_model, model_path)
 
     selection = {
         "status": "DEVELOPMENT_ARCHITECTURE_SELECTED",
