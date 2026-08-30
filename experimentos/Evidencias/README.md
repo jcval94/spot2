@@ -27,4 +27,6 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 
 | [EV-019](EV-019_operational_threshold_availability.md) | Operational threshold + explicit P(availability) | Empírica completa: temporal capacity frontier + purged availability CV |
 
+| [EV-020](EV-020_lead_opportunity_fallback_e2e.md) | Lead Opportunity Score + Fallback end-to-end | Empírica completa: K selection + OOF joint evaluation + final P85 confirmation |
+
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.
