@@ -109,4 +109,4 @@ Therefore the final probability does not impose an artificial monotonic decay fr
 - that the availability probability is causal;
 - that the complete Lead Opportunity Score formula or fallback @K performance is already closed.
 
-Related discoveries: D062 and D063.
+Related discoveries: D062 and D063 in [DESCUBRIMIENTOS.md](../conocimiento_agregado/DESCUBRIMIENTOS.md).
