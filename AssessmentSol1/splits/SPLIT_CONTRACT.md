@@ -24,6 +24,13 @@ The split is anchored on the deterministic **T1 first-inquiry `score_time`** and
 
 All folds are expanding-window and lead-isolated.
 
+
+## Post-freeze integrity note
+
+The partition boundaries above remain frozen. During P7, a temporary execution export encoded procedural-holdout targets before the frozen model config existed. The June partition is therefore permanently marked `CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE`.
+
+This does **not** authorize changing split dates or creating a replacement holdout. See `../models/lead_quality/HOLDOUT_INCIDENT.md`. June may be used only as non-pristine diagnostic evidence; true confirmation requires new/hidden data.
+
 ## Hard rules
 
 - Learned preprocessing fits on each fold's TRAIN rows only.
