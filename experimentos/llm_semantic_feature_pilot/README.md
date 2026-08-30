@@ -105,8 +105,58 @@ pip install -r experimentos/llm_semantic_feature_pilot/requirements.txt
 python experimentos/llm_semantic_feature_pilot/run_pilot.py
 ```
 
+## Resultado del piloto
+
+### V1 — detectó un problema de contrato
+
+100 registros reales procesados con `gpt-5-nano`:
+
+- input tokens: 12,564;
+- output tokens: 6,767;
+- costo estimado: **USD 0.003335**.
+
+La V1 produjo una contradicción de schema: 0/100 `incremental_issue=true`, pero simultáneamente 5 `new_rule_candidate=true` y 3 `requires_human_review=true`. Por eso esos campos no se aceptan para ABT.
+
+### V2 — schema reducido y flags derivados en Python
+
+La misma muestra de 100 se reejecutó con outputs independientes y menor output budget:
+
+- input tokens: 12,634;
+- output tokens: 4,869;
+- costo estimado: **USD 0.002579**;
+- reducción de output tokens vs V1: ~28%;
+- clean-control incremental issue rate: **0%**;
+- Rules-positive new-rule rate: **0%**;
+- new rule candidates: **0/100**;
+- residual actionable: **0/100**.
+
+Por estrato:
+
+- ambiguity challenge: 96% `residual_ambiguous`;
+- clean controls: 100% `no_residual_issue`;
+- Land semantic residual: 8% `residual_ambiguous`;
+- Rules-positive: 8% `residual_ambiguous`.
+
+La señal ambigua detectada por el LLM ya estaba cubierta por flags determinísticos (`rule_ambiguity_candidate_flag`, `rule_land_building_copy_flag` o sus interacciones).
+
+## Decisión
+
+**NOT_SUPPORTED para agregar variables LLM al ABT actual.**
+
+El piloto no encontró señal semántica accionable/nueva que justifique costo o complejidad adicional. En cumplimiento con el criterio del experimento, la información se implementa como un sidecar gratuito de reglas:
+
+`results/semantic_rule_sidecar_3000.csv`
+
+Variables nuevas sin API:
+
+- `rule_security_ambiguity_flag`;
+- `rule_retail_adaptive_use_flag`;
+- `rule_semantic_ambiguity_flag`;
+- `rule_semantic_signal_count`;
+- `rule_semantic_review_tier`.
+
+Estas variables deben evaluarse predictivamente como challenger antes de entrar al ABT principal.
+
 ## Estado actual
 
-**READY_FOR_100_API_PILOT / API KEY NOT AVAILABLE IN CURRENT RUNTIME.**
-
-No existe todavía un resultado LLM real y no se simula uno. El archivo final sólo debe llamarse `pilot_llm_results_100.csv` después de una respuesta real de la API.
+**PILOT EXECUTED / LLM FEATURES NOT PROMOTED.**
