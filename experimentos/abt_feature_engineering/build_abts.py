@@ -160,8 +160,12 @@ def project_abt(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
         "censor_cutoff",
     ]
     for optional in ["inquiry_id", "spot_id", "broker_id", "inquiry_number"]:
-        if optional in df.columns:
+        if optional in df.columns and optional not in features:
             meta.append(optional)
+
+    if len(meta + features) != len(set(meta + features)):
+        duplicated = sorted({c for c in meta + features if (meta + features).count(c) > 1})
+        raise AssertionError(f"Duplicate projected ABT columns: {duplicated}")
 
     missing = [c for c in features if c not in df.columns]
     if missing:
