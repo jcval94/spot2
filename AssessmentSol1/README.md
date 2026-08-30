@@ -1,6 +1,6 @@
 # AssessmentSol1 — clean-room definitive assessment
 
-Status: **PROMPT 7 Lead Quality champion frozen; global P4 runtime materialization gate still pending.**
+Status: **PRE-P8 AUDIT COMPLETE; P8 BLOCKED ONLY ON THE PROMPT-4 RUNTIME PASS.**
 
 This directory is the only writable home for the definitive Spot2 assessment. Historical experiments may be read as prior evidence but are not runtime dependencies.
 
@@ -13,7 +13,7 @@ This directory is the only writable home for the definitive Spot2 assessment. Hi
 - split contract: `SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30`;
 - point-in-time ABT architecture: implemented;
 - feature registry / ablation plan: frozen;
-- Lead Quality T1 champion: **BASE_RATE + PLATT**.
+- Lead Quality T1 champion: **BASE_RATE + RAW**.
 
 ## P7 result
 
@@ -25,9 +25,9 @@ No learned model demonstrated defendible superiority to Base Rate:
 - Logistic Lift@10% does not improve;
 - CatBoost fails the pre-registered promotion rule and shows repeated segment collapses.
 
-The final T1 champion is therefore a calibrated prior:
-- raw DEVELOPMENT prevalence: **0.2037546**;
-- Platt-calibrated probability: **0.2082788**;
+The final T1 champion is therefore a neutral prior:
+- DEVELOPMENT prevalence / final probability: **0.2037546**;
+- learned calibration: **not promoted** because gains were immaterial;
 - ranking capability: **none**.
 
 See `models/lead_quality/MODEL_SELECTION.md` and `FROZEN_MODEL_CONFIG.json`.
@@ -42,7 +42,7 @@ The incident is recorded in:
 
 Any June metric is diagnostic-only. True confirmation requires new/hidden data.
 
-## Remaining global reproducibility caveat
+## Pre-P8 gate
 
 `AssessmentSol1/abt/validate_abts.py` still needs to be executed in an environment with the project dependencies, especially Polars, to produce the authoritative P4 runtime manifest:
 
@@ -50,7 +50,9 @@ Any June metric is diagnostic-only. True confirmation requires new/hidden data.
 python AssessmentSol1/abt/validate_abts.py
 ```
 
-P7 rebuilt its T1 inputs from raw under the same frozen temporal rules, but that does not substitute for the repository-wide P4 materialization gate required before final assessment packaging.
+P7 rebuilt its T1 inputs from raw under the same frozen temporal rules, but that does not substitute for the repository-wide P4 materialization gate. **Prompt 8 must not start until this PASS exists.**
+
+See `evidence/PRE_P8_AUDIT.md` and `audit/PRE_P8_GATE_STATUS.json`.
 
 ## Clean-room rule
 
