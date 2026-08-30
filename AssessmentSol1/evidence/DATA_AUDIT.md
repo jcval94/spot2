@@ -70,7 +70,7 @@ No automatic trimming/removal is authorized by this audit.
 
 ## 5. Inquiries — broker response semantics
 
-`broker_response` and `broker_response_hours` are **AUDIT_ONLY in P1**. `broker_response_hours` is not used to build a feature or target.
+`broker_response` and `broker_response_hours` are **outcome-only fields**. They are prohibited as scoring/model features. In P2, `broker_response_hours` is permitted only to audit the reconstructed-event Target B alternative; the frozen primary Target A does not use it.
 
 Observed:
 - accepted: 10,202 rows; **1,522 missing hours**;
