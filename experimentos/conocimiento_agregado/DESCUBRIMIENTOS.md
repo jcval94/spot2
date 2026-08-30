@@ -14,17 +14,6 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D006 | INCONCLUSIVE | Clustering balanceado produce perfiles mucho más interpretables, pero su lift predictivo sigue siendo pequeño e incierto. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D007 | PROPOSAL | Enriquecimiento geográfico externo tiene rutas plausibles, pero requiere joins point-in-time y validación incremental. | [EV-007](../Evidencias/EV-007_geographic_enrichment.md) |
 | D008 | PROPOSAL | El LLM es defendible como capa de triage/extracción operativa; no existe evidencia en estos datos de lift causal del LLM. | [EV-008](../Evidencias/EV-008_llm_triage.md) |
-| D023 | INCONCLUSIVE | Separar Spot en Physical Space + Location mejora fuertemente la interpretabilidad, pero no demuestra lift predictivo frente al Spot unificado. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D024 | INCONCLUSIVE | Compatibility Routing mejora puntos lead-level y revela celdas atractivas, pero el delta AP pre-registrado sigue cruzando cero. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D025 | SUPPORTED | La integridad relacional es limpia, pero Availability exige backward as-of: un join directo por spot_id expande las inquiries ~10.02x. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D026 | SUPPORTED | Modalidad funciona como restricción dura; sector, municipio y corredor se comportan como preferencias blandas en el matching observado. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D027 | SUPPORTED | El Need evoluciona entre Lead e Inquiry: presupuesto y área se refinan materialmente en T1. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D028 | SUPPORTED | El missingness de presupuesto/precio es mayormente estructural por modalidad y la aritmética de precios del Spot es internamente consistente. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D029 | NOT_SUPPORTED | broker_response_hours no puede tratarse como un SLA limpio: su presencia no concuerda semánticamente con broker_response. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D030 | SUPPORTED | Availability es consistente pero su cobertura cambia drásticamente en el tiempo; debe tratarse como riesgo de coverage drift/censoring. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D031 | NOT_SUPPORTED | Market Context no está listo para uso histórico point-in-time: la cobertura exacta es ~23.8% y no existe semántica de publicación/effective time. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D032 | INCONCLUSIVE | Existen bolsillos locales de compatibilidad de hasta ~1.37x lift suavizado, pero no hay evidencia suficiente para un Compatibility Score global. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D033 | NOT_SUPPORTED | spots.total_inquiries no equivale al conteo de la tabla inquiries y no debe usarse como historial de eventos sin redefinir su semántica. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
 | D009 | INCONCLUSIVE | Search Need sí queda semánticamente limpio; Lead Persona actual está dominado por canal de adquisición/historial, por lo que la separación de facetas es correcta pero Persona necesita rediseño. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D010 | NOT_SUPPORTED | Inquiry Intent v1 no debe usarse como capa predictiva: aprende principalmente día de la semana y empeora AP/AUC/lift fuera de muestra. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D011 | SUPPORTED | El perfil de Spot actual mezcla arquetipo físico con geografía; varios clusters son esencialmente regiones/estados. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
@@ -39,6 +28,17 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D020 | SUPPORTED | Un CatBoost pooled con stage como variable supera robustamente al Multi-Head en AUC macro; en AP macro la ventaja aún es inconclusa. | [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md) |
 | D021 | INCONCLUSIVE | T2 sigue sin ganador robusto: CatBoost/RF mejoran algunos puntos estimados, pero los intervalos AP/AUC vs Multi-Head cruzan cero. | [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md) |
 | D022 | INCONCLUSIVE | El híbrido seleccionado sólo con validation obtiene el mayor macro AP puntual, pero su mejora vs Multi-Head no es estadísticamente robusta. | [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md) |
+| D023 | INCONCLUSIVE | Separar Spot en Physical Space + Location mejora fuertemente la interpretabilidad, pero no demuestra lift predictivo frente al Spot unificado. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D024 | INCONCLUSIVE | Compatibility Routing mejora puntos lead-level y revela celdas atractivas, pero el delta AP pre-registrado sigue cruzando cero. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D025 | SUPPORTED | La integridad relacional es limpia, pero Availability exige backward as-of: un join directo por spot_id expande las inquiries ~10.02x. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D026 | SUPPORTED | Modalidad funciona como restricción dura; sector, municipio y corredor se comportan como preferencias blandas en el matching observado. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D027 | SUPPORTED | El Need evoluciona entre Lead e Inquiry: presupuesto y área se refinan materialmente en T1. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D028 | SUPPORTED | El missingness de presupuesto/precio es mayormente estructural por modalidad y la aritmética de precios del Spot es internamente consistente. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D029 | NOT_SUPPORTED | broker_response_hours no puede tratarse como un SLA limpio: su presencia no concuerda semánticamente con broker_response. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D030 | SUPPORTED | Availability es consistente pero su cobertura cambia drásticamente en el tiempo; debe tratarse como riesgo de coverage drift/censoring. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D031 | NOT_SUPPORTED | Market Context no está listo para uso histórico point-in-time: la cobertura exacta es ~23.8% y no existe semántica de publicación/effective time. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D032 | INCONCLUSIVE | Existen bolsillos locales de compatibilidad de hasta ~1.37x lift suavizado, pero no hay evidencia suficiente para un Compatibility Score global. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D033 | NOT_SUPPORTED | spots.total_inquiries no equivale al conteo de la tabla inquiries y no debe usarse como historial de eventos sin redefinir su semántica. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
 
 ## D001 — El modelo debe ser dinámico
 
