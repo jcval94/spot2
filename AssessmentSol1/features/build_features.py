@@ -628,10 +628,10 @@ def build_feature_artifacts(
         < pl.lit(max_time.to_pydatetime())
     )
 
-    t1_path = out_dir / "t1_features_audit.parquet"
-    t1_spot_path = out_dir / "t1_features_with_selected_spot_challenger.parquet"
-    t2_path = out_dir / "t2_features_audit.parquet"
-    inv_path = out_dir / "inventory_features.parquet"
+    t1_path = out_dir / f"t1_features_{scope}_audit.parquet"
+    t1_spot_path = out_dir / f"t1_features_{scope}_with_selected_spot_challenger.parquet"
+    t2_path = out_dir / f"t2_features_{scope}_audit.parquet"
+    inv_path = out_dir / f"inventory_features_{scope}.parquet"
     pl.DataFrame(t1.to_dict("list")).write_parquet(t1_path)
     pl.DataFrame(t1_with_spot.to_dict("list")).write_parquet(t1_spot_path)
     pl.DataFrame(t2.drop(columns=["_strict_prior_max_time"]).to_dict("list")).write_parquet(t2_path)
@@ -656,7 +656,7 @@ def build_feature_artifacts(
             inv_path.name,
         ],
     }
-    (out_dir / "feature_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (out_dir / f"feature_manifest_{scope}.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
 
 
