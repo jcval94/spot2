@@ -25,12 +25,12 @@ Largest absolute prevalence-minus-prediction gaps among segments with N≥30:
 
 | Segment | N | Observed prevalence | Gap vs 0.20375 |
 |---|---:|---:|---:|
-| modality=both | ≥30 | 0.2923 | +0.0840 |
-| source=referral | ≥30 | 0.1346 | -0.0737 |
-| modality=rent | ≥30 | 0.1479 | -0.0604 |
-| sector=Retail | ≥30 | 0.1515 | -0.0568 |
-| sector=Office | ≥30 | 0.2500 | +0.0417 |
-| user_type=tenant_direct | ≥30 | 0.2500 | +0.0417 |
+| modality=both | 65 | 0.2923 | +0.0886 |
+| source=referral | 52 | 0.1346 | -0.0691 |
+| modality=rent | 142 | 0.1479 | -0.0559 |
+| sector=Retail | 99 | 0.1515 | -0.0522 |
+| sector=Office | 84 | 0.2500 | +0.0462 |
+| user_type=tenant_direct | 96 | 0.2500 | +0.0462 |
 
 These are diagnostic subgroup deviations, not sufficient evidence to build segment-specific models; doing so now would be a new post-result search.
 
