@@ -13,7 +13,7 @@ Intake-only Logistic does not beat Base Rate defensibly and the T0 target is str
 ## T2 — re-scoring
 Decision: **FUTURE_EXTENSION**.
 
-The 33 strict-prior trajectory features add only +0.005 AP macro and fail the frozen complexity gate.
+The 33 strict-prior trajectory features add only +0.0032 AP macro, improve AP in 2/4 folds, and fail the frozen complexity gate.
 
 ## Product implication
 
