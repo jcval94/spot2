@@ -195,3 +195,19 @@ El resultado válido puede ser cualquiera de estos:
 - **INCONCLUSIVE:** el labeled set o la ambigüedad del copy no permite decidir.
 
 El uso obligatorio de IA del assessment no justifica maquillar un resultado negativo.
+
+
+## Revision after semantic discovery
+
+Before the live OpenAI run, the plan was tightened:
+
+1. `contradiction` remains actionable when directly grounded.
+2. `semantic_cross_field_mismatch` is added for clear category/type vs copy coherence failures.
+3. `unsupported_claim`, `not_verifiable` and `ambiguous` do not count as positive QA predictions by default.
+4. Rules v1 remains frozen.
+5. Rules v2 is explicitly post-discovery.
+6. The original 200-row sample is discovery-only.
+7. Final broad evaluation uses a disjoint 240-row holdout.
+8. S001 precision is additionally assessed on a disjoint 100-row Land challenge set.
+
+The intended product pattern is now hybrid: periodic/sampled LLM semantic discovery -> human validation -> promote stable recurring patterns to deterministic rules.
