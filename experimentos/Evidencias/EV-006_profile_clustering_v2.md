@@ -84,3 +84,10 @@ La continuación de esta línea está en [EV-010](EV-010_matching_ab_v3.md) y [I
 - [D010 — Inquiry Intent aprende calendario](../conocimiento_agregado/DESCUBRIMIENTOS.md#d010--inquiry-intent-v1-aprende-calendario-no-intención-útil)
 - [D011 — Spot mezcla físico y geografía](../conocimiento_agregado/DESCUBRIMIENTOS.md#d011--spot-mezcla-qué-es-con-dónde-está)
 - [D012 — Compatibilidades locales sin química global demostrada](../conocimiento_agregado/DESCUBRIMIENTOS.md#d012--hay-compatibilidades-locales-pero-no-una-química-global-demostrada)
+
+
+## Evidencia visual añadida
+
+- [Cluster sizes core profiles](../profile_clustering_v2/results/charts/cluster_sizes_core_profiles.svg) — distribución completa de Lead, Spot, Broker e Intent sobre los assignments autoritativos.
+
+La figura hace visible que Intent queda prácticamente balanceado entre sus 7 perfiles, mientras Lead/Spot/Broker presentan concentraciones mayores pero sin colapso extremo.
