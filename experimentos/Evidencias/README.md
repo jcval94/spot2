@@ -20,6 +20,6 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 | [EV-012](EV-012_modelo_3_trajectory_cv.md) | Modelo 3 trajectory / progression CV | Empírica |
 | [EV-013](EV-013_matching_profiles_v4.md) | Semantic profiles + Dynamic Need + Broker Service + hierarchical matching | Empírica completa + gates negativos + cierre decision-ready |
 | [EV-014](EV-014_llm_inventory_quality.md) | LLM semantic inventory quality | Conceptual / plan experimental |
-| [EV-015](EV-015_llm_inventory_semantic_audit.md) | E015 semantic inventory audit | Empírica parcial: offline baseline completo, LLM pendiente |\n| [EV-016](EV-016_abt_feature_engineering.md) | ABT + Feature Engineering point-in-time | Implementación validada / benchmark predictivo pendiente |
+| [EV-015](EV-015_llm_inventory_semantic_audit.md) | E015 semantic inventory audit | Empírica parcial: offline baseline completo, LLM pendiente |\n| [EV-016](EV-016_abt_feature_engineering.md) | ABT + Feature Engineering point-in-time | Implementación validada / benchmark predictivo pendiente |\n| [EV-017](EV-017_llm_semantic_feature_pilot.md) | Low-cost LLM semantic feature pilot | Diseño + muestra 100 lista / API pendiente |
 
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.
