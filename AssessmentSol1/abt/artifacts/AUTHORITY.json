@@ -1,0 +1,11 @@
+{
+  "current_authority": "P4_ONLY_AFTER_RUNTIME_PASS",
+  "p4_required": [
+    "p4_qa_summary.json",
+    "p4_artifact_manifest.json"
+  ],
+  "p4_present": false,
+  "p4_runtime_gate_satisfied": false,
+  "existing_p3_artifacts": "SUPERSEDED_EVIDENCE_ONLY",
+  "downstream_rule": "Do not consume score_spine, lead_quality_*, candidate_spots, inventory_serviceability_state, qa_summary.json or artifact_manifest.json as current inputs."
+}
