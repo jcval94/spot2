@@ -143,3 +143,8 @@ From this commit onward:
 **A future model producing better Lift/AUC/AP under another label is not a valid reason to change this target.**
 
 A target change requires a new contract version and a non-model methodological bake-off triggered by business/source semantics, new authoritative instrumentation, or a discovered labeling defect.
+
+
+## Input-information assumption
+
+`spot_attributes` are now treated as immutable and historically usable at T1/T2 when the Spot already exists (`spots.created_at <= score_time`). This changes future feature eligibility, **not** the target decision: none of Targets A/B/C depends on `spot_attributes`.
