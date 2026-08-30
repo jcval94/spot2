@@ -57,6 +57,9 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D049 | NOT_SUPPORTED | Ningún stack nuevo demuestra ser reemplazo global de E007: mejora lift puntual, pero E007 conserva el mejor AP y ranking lead-level sin delta robusto en contra. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D050 | PROPOSAL | El mejor uso LLM actualmente justificable es auditar consistencia semántica entre el copy de listings y sus atributos estructurados; debe superar un baseline Rules-only antes de integrarse al negocio. | [EV-014](../Evidencias/EV-014_llm_inventory_quality.md) |
 | D051 | SUPPORTED | El copy sintético es extremadamente templated (12 oraciones únicas; 84.4% de filas reutilizan descripción exacta) y Rules-only ya marca 322/3,000 spots como candidatos, por lo que el LLM enfrenta un baseline fuerte. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |
+| D052 | SUPPORTED | El future test de matching ya fue consumido para discovery iterativo; puede reproducir resultados registrados, pero no confirmar nuevas celdas descubiertas después. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D053 | SUPPORTED | La arquitectura de segmentación decision-ready es Persona actual + Need T0 + Dynamic Need T1 + Physical + Location + Broker legacy, con Broker Service auxiliar y sin Broker Supply/Inquiry Intent. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D054 | SUPPORTED | En esta línea el cuello de botella dejó de ser el algoritmo de clustering: múltiples clusterers/K no producen lift global robusto; la ganancia útil vino de separar conceptos y estados T0→T1. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md), [EV-010](../Evidencias/EV-010_matching_ab_v3.md), [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -1051,3 +1054,71 @@ El baseline inicial de cuatro familias de claims detecta **330 conflictos candid
 **Siguiente implicación:** congelar la muestra humana de 200 listings y evaluar Rules-only vs LLM-only vs Rules+LLM antes de cualquier integración al fallback o Lead Opportunity Score.
 
 Evidencia: [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md).
+
+
+## D052 — El future test de matching ya no es un holdout confirmatorio para nuevas celdas
+
+**Estado:** SUPPORTED como restricción metodológica.
+
+El mismo future test de 4,516 inquiries / 2,065 Leads fue usado secuencialmente para:
+
+- E006/E007;
+- inspección de compatibility cells;
+- diseño de las hipótesis v4;
+- E008–E016;
+- nueva inspección de celdas, incluyendo DN4×LOC1×BSV1.
+
+**Interpretación:** la temporalidad de cada evaluación sigue siendo correcta, pero la muestra ya influyó en decisiones posteriores. Por tanto, una nueva celda encontrada ahora no puede validarse de forma independiente sobre ese mismo conjunto.
+
+**Implicación:** el test queda congelado para reproducibilidad. La confirmación de nuevos pockets exige nueva cohorte temporal o A/B online.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D053 — La arquitectura final de segmentación queda congelada
+
+**Estado:** SUPPORTED / DECISION-READY.
+
+La síntesis de EV-006, EV-010 y EV-013 deja como representación recomendada:
+
+- Persona actual P1–P7 como acquisition/history feature de referencia;
+- Search Need T0 N1–N3;
+- Dynamic Need T1 DN1–DN5;
+- Physical PH1–PH4;
+- Location LOC1–LOC7;
+- Broker legacy para benchmark global;
+- Broker Service BSV1–BSV3 como faceta auxiliar/experimental;
+- Availability backward-as-of.
+
+Se excluyen:
+
+- Inquiry Intent weekday;
+- Behavioral Persona BP como reemplazo del scoring;
+- Broker Supply clusters;
+- Market Context histórico actual;
+- response_hours como SLA;
+- total_inquiries como event history.
+
+**Ranking:** E007 permanece como referencia global; E012/E016 son challengers orientados a lift/routing.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).  
+Decisión: [DECISION_SEGMENTACION](../matching_profiles_v4/DECISION_SEGMENTACION.md).
+
+## D054 — Seguir buscando otro clustering ya no es la palanca principal
+
+**Estado:** SUPPORTED.
+
+A lo largo de la línea se probaron múltiples métodos y K, con selección outcome-free, balance y estabilidad. Cambiar algoritmo produjo perfiles más o menos balanceados, pero no una mejora global robusta de ranking.
+
+Los avances más útiles provinieron de **redefinir el concepto**:
+
+- separar Persona de Need;
+- separar Spot Physical de Location;
+- actualizar Need T0→T1;
+- separar Broker Service de Supply;
+- rechazar familias que sólo codificaban weekday o colapsaban.
+
+**Interpretación:** el cuello de botella ya no es “K-Means vs GMM vs Bisecting”, sino qué estado/faceta de negocio merece representarse y con qué información point-in-time.
+
+**Implicación:** cerrar búsqueda general de clusterer/K en esta línea. Nuevas iteraciones deben aportar nueva semántica, nueva fuente o nueva validación, no sólo otro algoritmo.
+
+Evidencia: [EV-006](../Evidencias/EV-006_profile_clustering_v2.md), [EV-010](../Evidencias/EV-010_matching_ab_v3.md), [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).

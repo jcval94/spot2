@@ -12,3 +12,11 @@ Trazabilidad autoritativa:
 - Result commit 969c953245a501310d676af3060c4c9f6c91d71b.
 
 La línea conserva explícitamente experimentos negativos (E008, E010, E013/E014) y no promociona celdas exploratorias como causalidad.
+
+
+## Cierre formal
+
+- [Decisión final](DECISION_SEGMENTACION.md)
+- [Crónica FL-003](../registro_flujo/segmentation_matching/README.md)
+- Descubrimientos de cierre: D052–D054.
+- Future test congelado para reproducción; nueva confirmación requiere nueva cohorte/A-B.

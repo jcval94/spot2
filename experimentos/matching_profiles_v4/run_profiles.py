@@ -890,7 +890,9 @@ def main():
 
     report = f"""# Matching profiles v4 — semantic profiles + dynamic need + clean broker + hierarchical matching
 
-**Diccionario final de perfiles y mejores combinaciones:** [INTERPRETABILIDAD.md](INTERPRETABILIDAD.md)
+**Diccionario final de perfiles y mejores combinaciones:** [INTERPRETABILIDAD.md](INTERPRETABILIDAD.md)  
+**Decisión congelada:** [DECISION_SEGMENTACION.md](DECISION_SEGMENTACION.md)  
+**Crónica de investigación:** [FL-003](../registro_flujo/segmentation_matching/README.md)
 
 ## Executive result
 

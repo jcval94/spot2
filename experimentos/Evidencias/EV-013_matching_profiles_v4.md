@@ -175,4 +175,38 @@ Otras celdas:
 
 ## 9. Descubrimientos relacionados
 
-[D038–D049](../conocimiento_agregado/DESCUBRIMIENTOS.md)
+- [D038–D049](../conocimiento_agregado/DESCUBRIMIENTOS.md)
+- [D052–D054](../conocimiento_agregado/DESCUBRIMIENTOS.md)
+
+## 10. Cierre de la línea
+
+**Estado de investigación:** **CLOSED / DECISION-READY**.
+
+La decisión consolidada vive en [DECISION_SEGMENTACION.md](../matching_profiles_v4/DECISION_SEGMENTACION.md) y la historia completa en [FL-003 — Segmentación, perfiles y Matching](../registro_flujo/segmentation_matching/README.md).
+
+### Holdout consumido para discovery
+
+El mismo future test fue usado para:
+
+- comparar E006/E007;
+- inspeccionar celdas de compatibilidad;
+- formular hipótesis que guiaron E008–E016;
+- volver a inspeccionar nuevas celdas.
+
+Por ello sigue siendo válido para **reproducir** EV-010/EV-013, pero ya no debe tratarse como conjunto independiente para **confirmar** una nueva regla descubierta después de estas iteraciones.
+
+### Decisión congelada
+
+- Persona actual + Search Need T0 + Dynamic Need T1.
+- Physical + Location para Spot.
+- Broker legacy como benchmark global; BSV como faceta auxiliar.
+- no Broker Supply clusters;
+- no Inquiry Intent weekday;
+- Availability backward-as-of.
+- E007 permanece como referencia global.
+- E012/E016 quedan como challengers orientados a lift/routing.
+- DN4×LOC1×BSV1 pasa a nueva cohorte/A-B; no más tuning sobre este holdout.
+
+### Por qué se cierra
+
+Los cambios adicionales que quedan —replicación temporal, A/B online, outcome comercial real, MLOps— requieren **nueva evidencia o productización**. No justifican seguir optimizando la misma muestra offline.
