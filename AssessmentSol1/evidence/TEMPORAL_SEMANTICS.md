@@ -27,13 +27,13 @@ The current inquiry's request fields are observed at `inquiry_at` and therefore 
 
 ### spot_attributes
 
-No attribute-level timestamp exists in raw data. For the definitive assessment, we adopt an **explicit contract assumption that all `spot_attributes` values are immutable over the life of the Spot**.
+No attribute-level timestamp exists in raw data. For the definitive assessment, AssessmentSol1 adopts an **explicit modeling assumption that all `spot_attributes` values are immutable over the life of the Spot**. The original assessment does not supply attribute version history or explicitly guarantee this immutability.
 
 Therefore the current delivered values are authorized at T1/T2 when the selected Spot itself already exists:
 
 `spots.created_at <= score_time`.
 
-This is an assumption supplied by the assessment owner, not temporal provenance inferred from raw data. We do not invent an attribute event/observation timestamp; the effective-time contract is simply “invariant from Spot creation.”
+This is an explicit modeling assumption adopted inside AssessmentSol1 after project review; it is **not stated in the original candidate package** and is not temporal provenance inferred from raw data. We do not invent an attribute event/observation timestamp; the effective-time contract is simply “invariant from Spot creation.”
 
 ### availability_snapshot
 
