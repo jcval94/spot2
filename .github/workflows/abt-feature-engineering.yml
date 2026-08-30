@@ -7,6 +7,10 @@ on:
     paths:
       - "experimentos/abt_feature_engineering/**"
       - ".github/workflows/abt-feature-engineering.yml"
+  pull_request:
+    paths:
+      - "experimentos/abt_feature_engineering/**"
+      - ".github/workflows/abt-feature-engineering.yml"
   workflow_dispatch:
 
 jobs:
