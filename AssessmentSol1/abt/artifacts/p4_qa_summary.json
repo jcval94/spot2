@@ -57,7 +57,6 @@
     "t0_one_row_per_lead": true,
     "t1_one_row_per_lead": true,
     "t2_second_plus_row_count": true,
-    "future_spot_count": 989568,
     "future_snapshot_count": 0,
     "same_timestamp_rows_excluded_from_history_design": true,
     "same_timestamp_pair_potential": 0,
@@ -67,11 +66,14 @@
     "split_unique_leads": 5000,
     "lineage_rows": 111,
     "lineage_unique_columns": 111,
-    "invalid_lineage_roles": 0
+    "invalid_lineage_roles": 0,
+    "future_spot_rejected_by_existence_gate": 989568,
+    "selected_future_spot_count": 0
   },
   "caveats": [
     "Exact Polars materialization code path was not executed in this environment.",
     "Availability snapshot_date is date-only; same-day observability remains conditional on the documented business-date assumption.",
     "Spot structural/attribute historical use remains under explicit AssessmentSol1 invariance assumptions."
-  ]
+  ],
+  "gate_interpretation": "989,568 index hits referenced Spots created after a historical score_time and were rejected before candidate selection; selected future-Spot rows = 0."
 }
