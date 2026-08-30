@@ -60,7 +60,8 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D052 | SUPPORTED | El future test de matching ya fue consumido para discovery iterativo; puede reproducir resultados registrados, pero no confirmar nuevas celdas descubiertas después. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D053 | SUPPORTED | La arquitectura de segmentación decision-ready es Persona actual + Need T0 + Dynamic Need T1 + Physical + Location + Broker legacy, con Broker Service auxiliar y sin Broker Supply/Inquiry Intent. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D054 | SUPPORTED | En esta línea el cuello de botella dejó de ser el algoritmo de clustering: múltiples clusterers/K no producen lift global robusto; la ganancia útil vino de separar conceptos y estados T0→T1. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md), [EV-010](../Evidencias/EV-010_matching_ab_v3.md), [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D055 | SUPPORTED | La revisión semántica cross-field revela un patrón material Land × lenguaje de edificio/interiores: 230 casos, 182 incrementales sobre Rules v1; esto justifica semantic rule discovery, no superioridad del LLM. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |
+| D055 | SUPPORTED | La revisión semántica cross-field revela un patrón material Land × lenguaje de edificio/interiores: 230 casos, 182 incrementales sobre Rules v1; esto justifica semantic rule discovery, no superioridad del LLM. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) || D056 | SUPPORTED / NOT_SUPPORTED | GPT-5 nano es estable y extremadamente barato para semantic discovery, pero su specificity de 28% en el challenge S001 no soporta usarlo como QA gate automático. | [EV-016](../Evidencias/EV-016_llm_gpt5nano_live.md) |
+
 
 ## D001 — El modelo debe ser dinámico
 
@@ -1154,3 +1155,33 @@ Sobre 3,000 spots:
 **Corrección metodológica:** final evaluation pasa a un holdout disjunto de 240 listings y un challenge set Land de 100 filas para precision del patrón.
 
 Evidencia: [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md).
+
+
+## D056 — GPT-5 nano sirve para discovery, no para QA automático
+
+**Estado:** SUPPORTED como semantic discovery tool; NOT_SUPPORTED como automatic catalog-quality gate.
+
+E015 ejecutó `gpt-5-nano` sobre un holdout limpio de 240 listings y un challenge disjunto de 100 listings Land.
+
+Operación:
+- 340/340 respuestas válidas;
+- 0 errores;
+- costo acumulado observado: USD 0.053522;
+- hard budget: USD 1.70.
+
+En el holdout:
+- 194/240 fueron marcados accionables;
+- 84 incrementales vs Rules v1;
+- 77 incrementales vs Rules v2.
+
+En el challenge S001:
+- sensitivity 76%;
+- specificity 28%;
+- precision vs discovery pattern 51.35%;
+- 36 falsos positivos sobre 50 controles.
+
+**Interpretación:** nano tiene sensibilidad útil para encontrar candidatos semánticos y es casi gratis, pero sobre-alerta demasiado. Los 77 incrementales vs Rules v2 no deben presentarse como verdaderos positivos sin gold labels humanos.
+
+**Decisión:** conservar nano para discovery/triage semántico y no como gate autónomo. El siguiente challenger debe usar exactamente el mismo holdout, challenge, schema y actionability contract para aislar el efecto de un modelo más capaz.
+
+Evidencia: [EV-016](../Evidencias/EV-016_llm_gpt5nano_live.md).
