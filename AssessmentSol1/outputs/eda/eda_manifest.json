@@ -15,13 +15,27 @@
     "asked_visit_development.csv",
     "inventory_summary.csv",
     "demand_inventory_sector_gap.csv",
-    "drift_metrics.csv"
+    "drift_metrics.csv",
+    "t1_proxy_rate_by_segment.csv"
   ],
   "point_in_time_guards": {
     "candidate_spot_created_at_lte_score_time": true,
     "availability_join": "latest snapshot_date <= score_time",
     "missing_snapshot": "UNKNOWN",
     "market_context": "EDA_ONLY",
-    "raw_spot_prices": "EDA_ONLY_UNVERSIONED"
+    "raw_spot_prices": "EDA_ONLY_UNVERSIONED",
+    "availability_same_day_semantics": "CONDITIONAL_BUSINESS_DATE_ASSUMPTION; previous-day-only sensitivity audited"
+  },
+  "narrative_only_files": [
+    "market_context_highlights.csv"
+  ],
+  "post_selection_audit": {
+    "selection_authority": false,
+    "calibration_already_consumed_for_frozen_role": true,
+    "june_status": "DIAGNOSTIC_ONLY_NON_PRISTINE",
+    "files": [
+      "pre_p8_temporal_audit.csv"
+    ],
+    "evidence": "../../evidence/POST_SELECTION_DRIFT_AUDIT.md"
   }
 }
