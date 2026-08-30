@@ -1,0 +1,38 @@
+{
+  "contract_version": "0.1.0",
+  "phase": "PROMPT_0",
+  "stage_score_times": {
+    "T0": "leads.created_at",
+    "T1": "first inquiries.inquiry_at for lead_id",
+    "T2": "current second-or-later inquiries.inquiry_at, while pre-known-visit"
+  },
+  "source_policy": {
+    "leads": {
+      "default": "KNOWN_AT_T0_IF_CAPTURED_AT_CREATED_AT",
+      "blocked": ["lead_score_internal"],
+      "audit_or_conditional": ["prior_searches", "prior_inquiries", "has_converted_before"]
+    },
+    "inquiries": {
+      "current_request_fields": "KNOWN_AT_INQUIRY_AT",
+      "current_broker_response": "FUTURE_BLOCKED",
+      "prior_response": "KNOWN_ONLY_IF_RESPONSE_EVENT_TIME_LE_SCORE_TIME"
+    },
+    "spots": {
+      "descriptive_fields": "CONDITIONAL_ON_SPOT_CREATED_AND_FIELD_IMMUTABILITY",
+      "blocked_current_state": ["days_on_market", "total_inquiries", "total_views", "is_active"]
+    },
+    "spot_attributes": {
+      "policy": "CONDITIONAL_NO_EFFECTIVE_TIMESTAMP"
+    },
+    "availability_snapshot": {
+      "policy": "BACKWARD_ASOF_ONLY",
+      "join": "max(snapshot_date) where snapshot_date <= score_time for spot_id",
+      "stale_gt_90d": "UNKNOWN_FOR_SERVICEABILITY",
+      "competing_inquiries_30d": "CONDITIONAL_PENDING_WINDOW_SEMANTICS"
+    },
+    "market_context": {
+      "policy": "BLOCKED_UNTIL_PUBLICATION_OR_EFFECTIVE_TIME_IS_PROVEN"
+    }
+  },
+  "final_holdout_language": "procedural final holdout when historically inspected; never pristine unseen holdout"
+}
