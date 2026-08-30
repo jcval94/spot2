@@ -1,0 +1,87 @@
+table,column,role,valid_stage,action,missing_semantics,treatment,leakage_status,llm_relevance,notes
+leads,lead_id,primary_key,T0/T1/T2,KEY_ONLY,none,none,ALLOW as key; BLOCK as predictor,none,Unit of isolation and joins.
+leads,user_type,categorical,T0/T1/T2,USE,none,categorical native/one-hot,ALLOW,low,Lead type; never confuse broker lead with spots.broker_id.
+leads,company_size,categorical,T0/T1/T2,USE_DERIVED,real missing ~5%,fill __UNKNOWN__; retain missing state,ALLOW,low,Do not mode-impute away unknownness.
+leads,industry,categorical,T0/T1/T2,USE_DERIVED,real missing ~3%,fill __UNKNOWN__; optional industry×sector,ALLOW,low,Unknown is its own state.
+leads,search_sector,categorical,T0/T1/T2,USE,none,categorical; soft matching preference,ALLOW,low,"Observed exact sector match ~70%, not a hard constraint."
+leads,search_modality,categorical,T0/T1/T2,USE,none,categorical; defines budget applicability; hard matching rule,ALLOW,none,rent/sale/both.
+leads,target_area_sqm,numeric,T0/T1/T2,USE_DERIVED,none,raw + log1p; sector-aware interpretation,ALLOW,none,Heavy tail; avoid global winsorization.
+leads,min_budget_mxn_rent_monthly,numeric,T0/T1/T2,USE_DERIVED,structural for sale; real missing ~3-4% when applicable,applicability flag; open lower bound=0 when applicable+missing; raw/log derived,ALLOW,none,Never global-median impute structural N/A.
+leads,max_budget_mxn_rent_monthly,numeric,T0/T1/T2,USE_DERIVED,structural for sale; complete when applicable,raw/log1p; midpoint/width/headroom derivations,ALLOW,none,Monthly MXN.
+leads,min_budget_mxn_sale_total,numeric,T0/T1/T2,USE_DERIVED,structural for rent; real missing ~3-4% when applicable,applicability flag; open lower bound=0 when applicable+missing; raw/log derived,ALLOW,none,Never mix with rent units.
+leads,max_budget_mxn_sale_total,numeric,T0/T1/T2,USE_DERIVED,structural for rent; complete when applicable,raw/log1p; midpoint/width/headroom derivations,ALLOW,none,Total purchase MXN.
+leads,preferred_state,categorical,T0/T1/T2,USE,none,categorical; geographic hierarchy feature,ALLOW,none,Soft preference.
+leads,preferred_municipality,categorical,T0/T1/T2,USE,none,categorical; geographic match flag,ALLOW,none,Corridor is not a strict child hierarchy.
+leads,preferred_corridor,categorical,T0/T1/T2,USE_DERIVED,real missing ~7.6%,fill __UNSPECIFIED__; geographic_specificity flag,ALLOW,none,Do not infer a corridor silently from municipality.
+leads,source,categorical,T0/T1/T2,USE,none,categorical; monitor drift,ALLOW,none,"Acquisition source is associative, not causal."
+leads,prior_searches,count,T0/T1/T2,USE_DERIVED,none,raw + log1p + zero flag,CONDITIONAL on true pre-created history,none,Must mean activity before leads.created_at.
+leads,prior_inquiries,count,T0/T1/T2,USE_DERIVED,none,raw + log1p + zero flag,CONDITIONAL on true pre-created history,none,Must mean activity before leads.created_at.
+leads,has_converted_before,boolean,T0/T1/T2,USE,none,boolean,CONDITIONAL on truly historical semantics,none,Historical conversion only.
+leads,lead_score_internal,legacy_score,audit only,BLOCK,none,none,BLOCK,none,"Use only as external benchmark, never as model input."
+leads,created_at,timestamp,T0/T1/T2,KEY_DERIVE,none,score time T0; month/weekday; split/censoring anchor,ALLOW,none,Primary temporal anchor.
+spots,spot_id,primary_key,T1/T2,KEY_ONLY,none,join key only,ALLOW as key; BLOCK as predictor,none,"Links inquiries, attrs, availability."
+spots,broker_id,entity_key,T1/T2,DERIVE_HISTORY,none,grouping key for point-in-time broker history; raw id excluded,CONDITIONAL,none,Avoid broker memorization/look-ahead.
+spots,sector_name,categorical,T1/T2,USE,none,categorical; sector gates physical attributes,ALLOW,medium,"LLM may audit semantic coherence with copy, not replace category."
+spots,type_name,categorical,T1/T2,USE,none,categorical,ALLOW,low,Single/Subspace.
+spots,state,categorical,T1/T2,USE,none,categorical + match flags,ALLOW,none,Spot geography.
+spots,municipality,categorical,T1/T2,USE,none,categorical + match flags,ALLOW,none,Soft preference match.
+spots,settlement,categorical,T1/T2,USE,none,categorical,ALLOW,none,Micro-location.
+spots,corridor,categorical,T1/T2,USE,none,categorical + match flags,ALLOW,none,"Commercial polygon, not strict municipality hierarchy."
+spots,region,categorical,T1/T2,USE,none,categorical,ALLOW,none,Coarse geography.
+spots,lat,numeric_geo,T1/T2,USE_DERIVED,none,raw coordinates; future distance/accessibility features,ALLOW,none,Coordinates validated in plausible Mexico bounds.
+spots,lon,numeric_geo,T1/T2,USE_DERIVED,none,raw coordinates; future distance/accessibility features,ALLOW,none,Pair with lat.
+spots,title,text,T1/T2 semantic sidecar,SIDE_CAR,none,exclude from default ABT; semantic QA/extraction only,ALLOW if derived only from contemporaneous listing copy,high,Highly redundant with structured fields; useful for LLM cross-field audit.
+spots,description,text,T1/T2 semantic sidecar,SIDE_CAR,none,exclude from default ABT; Rules/LLM semantic QA only,ALLOW if derived only from contemporaneous listing copy,high,Only 12 unique sentences compose current synthetic copy; embeddings risk template learning.
+spots,area_sqm,numeric,T1/T2,USE_DERIVED,none,raw + log1p; sector-aware ratios,ALLOW,none,Heavy tail is largely structural by sector.
+spots,price_sqm_mxn_rent,numeric,T1/T2,USE_DERIVED,structural for sale,raw + log1p; never impute across modality,ALLOW,none,MXN/m²/month.
+spots,price_sqm_mxn_sale,numeric,T1/T2,USE_DERIVED,structural for rent,raw + log1p; never impute across modality,ALLOW,none,MXN/m² sale.
+spots,price_total_mxn_rent,numeric,T1/T2,USE_DERIVED,structural for sale,raw + log1p; affordability ratio; effective monthly cost,ALLOW,none,Arithmetic consistency with area×price_sqm is near exact.
+spots,price_total_mxn_sale,numeric,T1/T2,USE_DERIVED,structural for rent,raw + log1p; affordability ratio,ALLOW,none,Total purchase MXN.
+spots,maintenance_cost_mxn,numeric,T1/T2,USE_DERIVED,structural for sale,raw + log1p; rent+maintenance effective monthly cost,ALLOW,none,Monthly cost.
+spots,modality,categorical,T1/T2,USE,none,categorical; hard compatibility rule,ALLOW,none,Observed modality compatibility is 100%.
+spots,days_on_market,mutable_current_state,none default,RECONSTRUCT,none,replace with score_time - spots.created_at,BLOCK raw,none,Current snapshot leaks future in historical scoring.
+spots,total_inquiries,mutable_current_state,none default,RECONSTRUCT,none,replace with spot_hist_prior_inquiries as-of score time,BLOCK raw,none,Only ~7% exact agreement with inquiries table; semantics not event count.
+spots,total_views,mutable_current_state,none default,BLOCK,none,no safe reconstruction from available data,BLOCK,none,No views event table exists.
+spots,is_active,mutable_current_state,none default,REPLACE,none,replace with backward-as-of availability state,BLOCK raw,none,Historical state not reconstructable from this current field.
+spots,created_at,timestamp,T1/T2,DERIVE,none,spot_age_at_score_days,ALLOW,none,Validate created_at <= inquiry time.
+spot_attributes,spot_id,foreign_key,T1/T2,KEY_ONLY,none,1:1 join key,ALLOW as key; BLOCK as predictor,none,Must cover all spots exactly once.
+spot_attributes,natural_light,boolean,T1/T2,USE_GATED,none,boolean; gate built-environment attributes for Land,ALLOW,high,LLM/Rules can cross-check copy claims.
+spot_attributes,luminaires,count,T1/T2,USE_GATED_DERIVED,none,raw + log1p + density/100sqm; gate for Land,ALLOW,low,Zero is meaningful.
+spot_attributes,charging_ports,count,T1/T2,USE_GATED_DERIVED,real missing ~20%; zero distinct from unknown,retain NaN + missing flag + density; gate for Land,ALLOW,low,Never coerce null to zero without indicator.
+spot_attributes,security_type,categorical,T1/T2,USE_GATED,none,categorical; gate for Land,ALLOW,high,Cross-field security copy QA candidate.
+spot_attributes,floor_level,numeric_ordinal,T1/T2,USE_GATED_DERIVED,none,raw + ground/low/mid/high bucket; gate for Land,ALLOW,low,Avoid assuming linear floor effect.
+spot_attributes,elevators,count,T1/T2,USE_GATED_DERIVED,none,raw + log1p + density/1000sqm; gate for Land,ALLOW,medium,Land values are physically suspicious; exclude from default Land representation.
+spot_attributes,vertical_height_m,numeric,T1/T2,USE_GATED_DERIVED,real missing ~15%; sector-dependent,retain NaN + missing flag; gate Land; sector-aware interpretation,ALLOW,medium,Industrial median materially differs from Office/Retail; Land observed values mostly 0.
+spot_attributes,parking_spaces,count,T1/T2,USE_DERIVED,none,raw + log1p + density/1000sqm,ALLOW,high,Copy can be checked against parking claim/amenity.
+spot_attributes,building_status,categorical,T1/T2,USE_GATED,none,categorical; gate for Land,ALLOW,high,Readiness/remodeling copy conflicts are QA candidates.
+spot_attributes,floor_material,categorical,T1/T2,USE_GATED,real missing ~7.9%,retain unknown/missing; gate for Land,ALLOW,medium,Building-specific semantics weak for Land.
+spot_attributes,amenities,json_list,T1/T2,PARSE,none,parse JSON; amenities_count + 12 fixed multi-hot flags,ALLOW,low,Do not one-hot 986 raw list combinations; no LLM needed for structured JSON.
+inquiries,inquiry_id,primary_key,T1/T2,KEY_ONLY,none,metadata/order tie-breaker only,ALLOW as key; BLOCK as predictor,none,One interaction row.
+inquiries,lead_id,foreign_key,T1/T2,KEY_ONLY,none,join/isolation key,ALLOW as key; BLOCK as predictor,none,FK to leads.
+inquiries,spot_id,foreign_key,T1/T2,KEY_ONLY_DERIVE,none,join to spot; never raw numeric predictor,ALLOW as key; BLOCK as predictor,none,FK to spots.
+inquiries,inquiry_at,timestamp,T1/T2,KEY_DERIVE,none,score time; hour/weekday; history cutoff,ALLOW,none,T1/T2 scoring timestamp.
+inquiries,channel,categorical,T1/T2,USE,none,categorical,ALLOW,low,Available when inquiry arrives.
+inquiries,message_length,numeric_text_proxy,T1/T2,USE_DERIVED,none,raw + log1p,ALLOW,medium,"Only weak proxy; LLM would need raw message text, which is absent."
+inquiries,requested_area_sqm,numeric,T1/T2,USE_DERIVED,none,raw + log1p; ratios/deltas vs T0 and spot,ALLOW,none,Represents dynamic need refinement.
+inquiries,requested_budget_mxn_rent_monthly,numeric,T1/T2,USE_DERIVED,structural by lead modality,raw + log1p; ratio vs initial budget and spot effective monthly cost,ALLOW,none,Do not impute sale inquiries with rent values.
+inquiries,requested_budget_mxn_sale_total,numeric,T1/T2,USE_DERIVED,structural by lead modality,raw + log1p; ratio vs initial budget and spot sale price,ALLOW,none,Do not mix purchase and rent units.
+inquiries,urgency_days,numeric,T1/T2,USE_DERIVED,real missing ~30.6%,retain NaN + missing flag + business buckets,ALLOW,high if raw text existed,"Missing means not stated, not median urgency."
+inquiries,asked_visit,boolean,T1/T2,USE,none,boolean,ALLOW,medium if raw text existed,Lead intent at inquiry time; distinct from scheduled_visit outcome.
+inquiries,broker_response,future_outcome,target/history only,BLOCK_CURRENT,none,current row blocked; prior realized statuses may feed T2/broker/spot history,BLOCK current; CONDITIONAL historical,none,scheduled_visit is target proxy; never current T1 feature.
+inquiries,broker_response_hours,post_inquiry_timing,history only,BLOCK_CURRENT_CLEAN_HISTORY,semantically inconsistent: no_response often has hours; responded rows can miss hours,derive response_event_at only for accepted/rejected/scheduled_visit with non-null hours; historical only,BLOCK current; CONDITIONAL historical,none,Never treat as clean SLA.
+availability_snapshot,snapshot_id,primary_key,T1/T2,KEY_ONLY,none,metadata only,ALLOW as key; BLOCK as predictor,none,One snapshot observation.
+availability_snapshot,spot_id,foreign_key,T1/T2,KEY_ONLY,none,as-of join key,ALLOW as key; BLOCK as predictor,none,Never raw join by spot_id alone.
+availability_snapshot,snapshot_date,timestamp,T1/T2,KEY_DERIVE,none,latest snapshot_date <= score_time; derive age/freshness,CONDITIONAL; backward as-of required,none,Raw spot join expands inquiries ~10x.
+availability_snapshot,is_available,boolean,T1/T2,USE_ASOF,none,boolean after backward as-of,CONDITIONAL,none,Point-in-time state only.
+availability_snapshot,days_until_available,numeric,T1/T2,USE_ASOF_DERIVED,none,raw + log1p + now/30/60/90/>90 buckets,CONDITIONAL,none,Consistent with is_available in source.
+availability_snapshot,competing_inquiries_30d,count,T1/T2,USE_ASOF_DERIVED,none,raw + log1p after backward as-of,CONDITIONAL,none,Assumed retrospective to snapshot date.
+market_context,state,join_key,experimental only,CONDITIONAL,none,join key only,CONDITIONAL publication semantics,none,Default ABT excludes market context.
+market_context,municipality,join_key,experimental only,CONDITIONAL,none,join key only,CONDITIONAL publication semantics,none,Exact coverage is low.
+market_context,corridor,join_key,experimental only,CONDITIONAL,none,join key only,CONDITIONAL publication semantics,none,Exact coverage ~23.8%.
+market_context,sector,join_key,experimental only,CONDITIONAL,none,join key only,CONDITIONAL publication semantics,none,Match to lead/spot sector.
+market_context,month,temporal_key,experimental only,CONDITIONAL,none,never same-month by default; require published/effective semantics or prior closed period,CONDITIONAL/UNKNOWN,none,Month key alone does not establish information availability.
+market_context,similar_available_spots,count,experimental only,CONDITIONAL_DERIVED,none,raw/log1p; potential supply-depth metric,CONDITIONAL/UNKNOWN,none,Exclude default until publication semantics exist.
+market_context,avg_price_sqm_mxn,numeric,experimental only,CONDITIONAL_DERIVED,none,raw/log1p; rent context only,CONDITIONAL/UNKNOWN,none,Rent monthly price per m²; not sale price context.
+market_context,recent_occupancy_rate,rate,experimental only,CONDITIONAL,none,raw or logit for linear models,CONDITIONAL/UNKNOWN,none,Potential market tightness.
+market_context,absorption_velocity_days,numeric,experimental only,CONDITIONAL_DERIVED,none,raw/log1p,CONDITIONAL/UNKNOWN,none,Potential market velocity.
+market_context,recent_inquiry_volume,count,experimental only,CONDITIONAL_DERIVED,none,raw/log1p; candidate demand/supply pressure ratio,CONDITIONAL/UNKNOWN,none,Exclude default until time semantics are defensible.
