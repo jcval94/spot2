@@ -125,3 +125,40 @@ This EDA is intentionally decision-oriented. It does not authorize a feature mer
 5. Keep future exposure counts, Availability coverage, candidate depth, Spot attributes and selected-Spot context outside LeadQuality core.
 6. Reject historical price compatibility under the current temporal contract.
 7. Do not use Market Context or raw current-state Spot fields as model features.
+
+
+## Pre-P8 assessment-alignment additions
+
+### Finding EDA-12 — Proxy conversion differs descriptively by segment, but not enough to rescue T1 ranking
+
+- **claim:** The frozen T1 scheduled-visit proxy has visible segment differences, especially by sector, but these are descriptive rather than evidence for segment-specific models.
+- **metric:** Industrial **24.35%**, Land **21.07%**, Retail **19.35%**, Office **17.71%** in DEVELOPMENT. By channel, web **21.45%** vs phone **17.95%** (phone N=234).
+- **population:** 4,368 mature T1 DEVELOPMENT leads.
+- **time_period:** score_time < 2026-05-01.
+- **artifact:** `outputs/eda/t1_proxy_rate_by_segment.csv`.
+- **evidence_strength:** STRONG_DESCRIPTIVE.
+- **limitation:** this is the candidate-visible scheduled-visit proxy, not hidden commercial conversion; P7 showed no stable multivariable ranking lift.
+
+This satisfies the business need to understand where observed proxy rates differ without creating post-result segment models.
+
+### Finding EDA-13 — Market Context is useful for business narrative, not historical scoring
+
+- **claim:** The supplied market table contains interpretable corridor/sector differences that help explain marketplace conditions.
+- **metric:** among descriptive highlights, Retail in `centro-chihuahua` averages ~**74 days** absorption; Retail in `del-valle-narvarte` ~**81 days**. Several Industrial corridor/sector cells show mean occupancy near **0.88–0.90** but slower mean absorption around **150–185 days**.
+- **population:** delivered `market_context` extract aggregated by state × municipality × corridor × sector.
+- **time_period:** all delivered months; narrative only.
+- **artifact:** `outputs/eda/market_context_highlights.csv`.
+- **evidence_strength:** MODERATE_DESCRIPTIVE.
+- **limitation:** `month` is not a publication/effective timestamp; these aggregates remain EDA_ONLY and cannot enter historical modeling.
+
+### Finding EDA-14 — Do not overclaim seasonality from the delivered horizon
+
+- **claim:** Monthly T1 volume varies materially, but the sample is too short and confounded by process/coverage drift to justify a strong recurring-seasonality claim.
+- **metric:** DEVELOPMENT first-inquiry counts range from **166** to **325** per month; first-inquiry lag and Inventory coverage also move strongly over calendar time.
+- **population:** T1 DEVELOPMENT.
+- **time_period:** 2025-01 through 2026-04.
+- **artifact:** `outputs/eda/monthly_t1_development.csv`, `evidence/DRIFT_FINDINGS.md`.
+- **evidence_strength:** STRONG_FOR_CAUTION.
+- **limitation:** ~16 months and synthetic-generation/process effects are insufficient to identify a durable annual seasonal cycle.
+
+The business conclusion is temporal nonstationarity, especially in Inventory/coverage, rather than a claimed seasonal law.
