@@ -14,7 +14,7 @@
           "claim_type": {"type": "string"},
           "evidence_text": {"type": "string"},
           "structured_field": {"type": ["string", "null"]},
-          "structured_value": {},
+          "structured_value": {"type": ["string", "number", "boolean", "null"]},
           "classification": {
             "type": "string",
             "enum": ["consistent", "contradiction", "unsupported_claim", "ambiguous", "not_verifiable"]
