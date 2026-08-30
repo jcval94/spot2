@@ -1,0 +1,101 @@
+{
+  "experiment_id": "E020_lead_opportunity_fallback_e2e",
+  "parent_experiment": "E019_operational_threshold_availability",
+  "question": "Can the frozen Lead Quality and Inventory Availability components be integrated into one Lead Opportunity Score with a governed fallback policy that improves prioritization of serviceable conversion opportunities?",
+  "hypothesis": "A multiplicative Lead Opportunity Score and bounded top-3 fallback policy will increase the concentration of serviceable scheduled-visit opportunities at the frozen P85 capacity, while exposing the tradeoff against conversion-only ranking.",
+  "primary_change": "integrate Lead Quality and Inventory Availability end-to-end and freeze the fallback recommendation policy",
+  "secondary_changes": [
+    "define joint_success as scheduled_visit_30d AND confirmed_serviceable",
+    "freeze bounded geographic/area/budget fallback constraints",
+    "freeze K=3 using folds 1-3 and report fold 4 as the final confirmation"
+  ],
+  "scoring_time": {
+    "stage": "T1/T2",
+    "timestamp_definition": "same T1/T2 score_time used by Modelo 3; T0 retains no high-priority routing gate"
+  },
+  "target": {
+    "conversion_proxy": "scheduled_visit within 30 days",
+    "joint_operational_proxy": "scheduled_visit_30d AND confirmed_serviceable at score time",
+    "confirmed_serviceable": "current requested spot is available as-of OR at least one final top-3 fallback recommendation is available as-of"
+  },
+  "population": {
+    "eligibility": "T1/T2 OOF rows from pooled_catboost_trajectory",
+    "capacity": "top 15% within fold and stage",
+    "fallback_trigger": "current requested spot not confirmed available as-of"
+  },
+  "data_sources": [
+    "experimentos/modelo_3/trajectory_cv/results/oof_predictions.csv",
+    "experimentos/E019_operational_threshold_availability/results/availability_cv_metrics.csv",
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "features": {
+    "lead_quality": ["pooled_catboost_trajectory OOF probability"],
+    "inventory": ["E019 fold-specific P(availability within 30d)", "backward-as-of current availability"],
+    "fallback_constraints": [
+      "same sector",
+      "compatible modality",
+      "spot.created_at <= score_time",
+      "observed backward-as-of availability snapshot",
+      "area ratio 0.5 to 2.0",
+      "price total <= 1.5x relevant budget",
+      "corridor -> municipality -> state geographic hierarchy"
+    ]
+  },
+  "validation": {
+    "lead_quality": "existing 4-fold temporal OOF predictions",
+    "fallback_k_selection": "K chosen from folds 1-3; fold 4 used as final confirmation",
+    "combined_score": "metrics computed independently inside each fold and stage; raw scores are never rank-mixed across folds"
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct",
+    "lift_top_15pct",
+    "recall_top_15pct",
+    "fallback_coverage_at_3",
+    "full_list_at_3",
+    "no_result_rate",
+    "confirmed_serviceable_rate",
+    "joint_positive_count"
+  ],
+  "decision_rule": {
+    "fallback": "prefer K=3 if design folds materially improve complete-list coverage versus K=5 while preserving bounded business constraints",
+    "combined": "promote the combined score if it consistently improves the joint operational proxy; conversion-only degradation must be retained as a guardrail rather than hidden"
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "Lead Quality score",
+        "status": "ALLOW",
+        "evidence": "OOF temporal prediction from E007 trajectory CV"
+      },
+      {
+        "element": "availability state",
+        "status": "ALLOW",
+        "evidence": "latest snapshot_date <= score_time"
+      },
+      {
+        "element": "spot catalog",
+        "status": "ALLOW",
+        "evidence": "candidate requires spot.created_at <= score_time"
+      },
+      {
+        "element": "fallback ranking",
+        "status": "ALLOW",
+        "evidence": "uses lead/request data and point-in-time inventory only"
+      },
+      {
+        "element": "future scheduled_visit",
+        "status": "TARGET_ONLY",
+        "evidence": "used only through the existing 30-day conversion proxy"
+      }
+    ]
+  }
+}
