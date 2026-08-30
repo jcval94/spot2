@@ -33,7 +33,7 @@ PR #9, #19 and #20 are open as of this assessment pass. Their executed artifacts
 
 | Promote Parquet as canonical runtime format after CSV parity | P1 raw audit + raw commit provenance | AssessmentSol1 branch; raw commit `8f850cf` | ACCEPT | executed audit | yes | low | use Parquet only; CSV remains independent parity reference |
 | Treat `spots.days_on_market,total_inquiries,total_views,is_active` as backtest features | P1 raw audit | AssessmentSol1 P1 | REJECT | executed audit | yes | critical | FORBIDDEN; rebuild new as-of measures from raw events only where semantics support it |
-| Treat `spot_attributes` as historically known static data | P1 temporal ontology | AssessmentSol1 P1 | PENDING | executed audit | n/a | high | block until immutability/creation-time provenance is proven |
+| Treat `spot_attributes` as historically known static data | explicit assessment-owner assumption + P1 1:1/raw audit | AssessmentSol1 P1/P2 revision | ACCEPT_WITH_ASSUMPTION | contract decision | yes under assumption | medium assumption risk | authorize T1/T2 when `spots.created_at <= score_time`; do not claim raw timestamp provenance |
 | Join Availability by nearest timestamp | P1 availability audit | AssessmentSol1 P1 | REJECT | executed audit | yes | critical | backward as-of only; nearest selects future snapshot in 34.36% of inquiries |
 | Use `availability.competing_inquiries_30d` as point-in-time feature | P1 temporal ontology | AssessmentSol1 P1 | PENDING | executed audit | n/a | high | block until trailing-window/effective-time semantics are proven |
 | Use Market Context in historical model | P1 market audit | AssessmentSol1 P1 | REJECT | executed audit | yes | high | EDA_ONLY until publication/effective timestamp exists |
