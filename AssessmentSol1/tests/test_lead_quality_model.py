@@ -41,7 +41,9 @@ def test_prediction_populations_are_physically_separate() -> None:
     hold = pd.read_csv(pred / "procedural_holdout_predictions.csv")
 
     assert set(dev["population"]) == {"DEVELOPMENT_OOF"}
-    assert set(cal["population"]) == {"CALIBRATION"}\n    assert cal["probability"].nunique() == 1\n    assert abs(cal["probability"].iloc[0] - 0.20375457875457875) < 1e-12
+    assert set(cal["population"]) == {"CALIBRATION"}
+    assert cal["probability"].nunique() == 1
+    assert abs(cal["probability"].iloc[0] - 0.20375457875457875) < 1e-12
     assert set(hold["population"]) == {"DIAGNOSTIC_ONLY_NON_PRISTINE"}
     assert set(dev["lead_id"]).isdisjoint(set(cal["lead_id"]))
     assert set(dev["lead_id"]).isdisjoint(set(hold["lead_id"]))
