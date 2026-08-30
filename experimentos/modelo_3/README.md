@@ -1,4 +1,7 @@
-# Modelo 3 — Shared backbone + heads por etapa
+# Modelo 3 — scoring dinámico por etapa
+
+> **Estado actual:** este directorio nació como experimento Multi-Head, pero E005–E007 muestran que el Multi-Head ya no es la arquitectura líder. La decisión actual está en [DECISION_ARQUITECTURA.md](DECISION_ARQUITECTURA.md). El código original se conserva como baseline y evidencia histórica.
+
 
 Este experimento prueba una arquitectura supervisada dinámica para \`Lead Quality\` en Spot2. En vez de entrenar un único clasificador con \`stage\` como una columna, el modelo aprende una **representación compartida** y usa una salida distinta para cada momento del funnel.
 
@@ -13,7 +16,7 @@ Este experimento prueba una arquitectura supervisada dinámica para \`Lead Quali
 
 La misma corrida compara tres alternativas:
 
-1. \`multihead_calibrated\`: backbone compartido + tres heads. **Modelo principal.**
+1. \`multihead_calibrated\`: backbone compartido + tres heads. **Baseline histórico de E003; ya no es la recomendación final tras E006/E007.**
 2. \`pooled_calibrated\`: un solo modelo que recibe \`stage\` como one-hot. Challenger directo a la pregunta "¿basta con una variable de etapa?".
 3. \`separate_logistic\`: tres regresiones logísticas independientes. Baseline de baja complejidad.
 
@@ -110,3 +113,13 @@ Disponibles sólo como artifact del workflow:
 ## Limitación principal
 
 \`scheduled_visit\` es un proxy supervisado observable, no el outcome final oculto del assessment. El resultado decide cuál arquitectura describe mejor este dataset sintético; no demuestra causalidad sobre cómo mover leads entre etapas.
+
+
+## Evolución posterior
+
+- [benchmark_specialists/](benchmark_specialists/) — E005, challengers tabulares fuertes.
+- [architecture_cv/](architecture_cv/) — E006, rolling temporal CV que confirma la ventaja de modelos tabulares.
+- [trajectory_cv/](trajectory_cv/) — E007, trajectory/progression features bajo los mismos folds.
+- [DECISION_ARQUITECTURA.md](DECISION_ARQUITECTURA.md) — recomendación consolidada actual.
+
+La evidencia central final está en [EV-011](../Evidencias/EV-011_modelo_3_architecture_cv.md) y [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md).

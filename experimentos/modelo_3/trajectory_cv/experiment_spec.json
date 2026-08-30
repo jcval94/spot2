@@ -1,0 +1,87 @@
+{
+  "experiment_id": "E007_trajectory_progression_cv",
+  "parent_experiment": "E006_architecture_rolling_cv",
+  "question": "Do explicit point-in-time trajectory and progression features improve dynamic Lead Quality scoring under the same rolling temporal CV folds?",
+  "hypothesis": "Trajectory features that encode timing, unresolved interactions, revisits and constraint changes will improve T2 Average Precision, especially for pooled CatBoost and stage-specialized tree models.",
+  "primary_change": "add explicit point-in-time trajectory/progression and stalling features",
+  "secondary_changes": [
+    "evaluate trajectory features on Multi-Head, specialist Random Forest, specialist CatBoost and pooled CatBoost",
+    "select an exploratory trajectory hybrid per fold using validation only"
+  ],
+  "scoring_time": {
+    "stage": "T0/T1/T2",
+    "timestamp_definition": "T0=leads.created_at; T1=first inquiries.inquiry_at; T2=second and later inquiries.inquiry_at while no scheduled_visit has already occurred"
+  },
+  "target": {
+    "event": "future scheduled_visit response event",
+    "horizon_days": 30,
+    "anchor": "scoring_time",
+    "censoring": "right"
+  },
+  "population": {
+    "eligibility": "Scoring snapshots with a complete 30-day future observation window; T1/T2 generated only before a known scheduled visit.",
+    "exclusions": [
+      "Right-censored scoring snapshots.",
+      "Dynamic snapshots after an already observed scheduled visit.",
+      "Current/future broker-response information from model inputs.",
+      "Latest 5% of lead cohorts not used as an outer test block in this four-fold CV."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "features": {
+    "inherited": [
+      "lead_intake_features",
+      "current_inquiry_features",
+      "current_spot_static_features",
+      "lead_spot_compatibility_features",
+      "availability_asof_features",
+      "historical_interactions_asof_features"
+    ],
+    "added": [
+      "trajectory_progression_features"
+    ],
+    "removed": []
+  },
+  "validation": {
+    "strategy": "four-fold rolling-origin temporal cross-validation by lead cohort",
+    "time_column": "leads.created_at",
+    "split_description": "Each fold trains on an expanding historical lead cohort, uses the immediately following 10% cohort for validation, and the next 10% cohort for test. Test cohorts are disjoint across folds and all snapshots for a lead remain in the same partition within each fold."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "T0_cold",
+    "T1_first_inquiry",
+    "T2_engaged"
+  ],
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "trajectory_progression_features",
+        "source": "current inquiry plus strictly prior inquiries and responses whose response_event_at <= score_time",
+        "scoring_time": "T1/T2 inquiry_at",
+        "information_available_at": "score_time",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Current inquiry timestamp/payload may be used, but current broker response is excluded. Prior response-derived fields include only response events realized on or before score_time. First-inquiry comparisons use inquiry data already observed by the current score_time."
+      }
+    ]
+  }
+}
