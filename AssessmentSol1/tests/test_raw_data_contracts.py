@@ -259,3 +259,22 @@ def test_raw_fingerprints_match_frozen_manifest() -> None:
         assert observed[table]["parquet_sha256"]
         assert observed[table]["csv_git_blob_sha1"]
         assert observed[table]["parquet_git_blob_sha1"]
+
+
+def test_spot_attributes_are_authorized_under_immutability_assumption() -> None:
+    registry = pl.read_csv(
+        REPO_ROOT / "AssessmentSol1" / "evidence" / "temporal_column_registry.csv"
+    )
+    attrs = registry.filter(pl.col("source") == "spot_attributes")
+    assert attrs.height == frames_width("spot_attributes")
+    assert set(attrs["known_at_T1"].to_list()) == {
+        "YES_IF_SPOT_CREATED_LE_SCORE_TIME"
+    }
+    assert set(attrs["known_at_T2"].to_list()) == {
+        "YES_IF_SPOT_CREATED_LE_SCORE_TIME"
+    }
+    assert set(attrs["point_in_time_reconstructable"].to_list()) == {
+        "YES_UNDER_IMMUTABILITY_ASSUMPTION"
+    }
+    non_key = attrs.filter(pl.col("column") != "spot_id")
+    assert set(non_key["mutable"].to_list()) == {"NO_ASSUMED_IMMUTABLE"}
