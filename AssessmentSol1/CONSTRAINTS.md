@@ -33,3 +33,12 @@ Truly new confirmation requires a new post-freeze cohort or external hidden eval
 ## Phase-0 prohibitions
 
 Do not train models, optimize FE, select target definitions by model performance, or inspect/open a final test in this phase.
+
+
+## Frozen target doctrine
+
+The P2 primary target is frozen before feature engineering/modeling. A later model producing better AUC/AP/Lift under another label is **not** a valid reason to redefine the target.
+
+Changing the target requires a new versioned target contract and a non-model methodological bake-off triggered by business-definition change, new authoritative outcome/timestamp instrumentation, proven source-semantic change, or a discovered labeling defect.
+
+Raw `broker_response` and `broker_response_hours` are outcome-only fields: they may be read for label/audit construction but are forbidden as scoring features.
