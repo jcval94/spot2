@@ -103,3 +103,8 @@ Después de identificar el mínimo conjunto útil, pasar a:
 - [EV-011](../Evidencias/EV-011_modelo_3_architecture_cv.md)
 - [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md)
 - [Descubrimientos acumulados](../conocimiento_agregado/DESCUBRIMIENTOS.md)
+
+
+## Cierre de la línea
+
+La investigación arquitectónica se considera **CLOSED / DECISION-READY**. La cronología, decisiones descartadas, incidencias y criterios de reapertura están documentados en [registro_flujo/modelo_3](../registro_flujo/modelo_3/).

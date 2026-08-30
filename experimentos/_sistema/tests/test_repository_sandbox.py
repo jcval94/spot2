@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 EXPERIMENTS = ROOT / "experimentos"
 FORBIDDEN_ROOT_DIRS = {"experiments", "harness", "tests", "artifacts"}
-SYSTEM_DIRS = {"_sistema", "Evidencias", "conocimiento_agregado"}
+SYSTEM_DIRS = {"_sistema", "Evidencias", "conocimiento_agregado", "registro_flujo"}
 
 
 class RepositorySandboxTests(unittest.TestCase):
