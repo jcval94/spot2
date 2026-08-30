@@ -50,5 +50,8 @@
       "committed_sample_git_blob_sha1": "75fc9ef892e99206e7d0f900a4e8b47cd06e73bd"
     }
   },
-  "raw_fingerprint_reference": "AssessmentSol1/config/raw_source_manifest.json"
+  "raw_fingerprint_reference": "AssessmentSol1/config/raw_source_manifest.json",
+  "authority_status": "SUPERSEDED_P3_EVIDENCE_ONLY",
+  "downstream_use": "FORBIDDEN",
+  "superseded_by": "Prompt 4 P4 object set: abt_t0/abt_t1/abt_t2/inventory_candidates + p4_qa_summary.json + p4_artifact_manifest.json"
 }
