@@ -1,0 +1,105 @@
+name: E021 final canonical assessment
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - experiment/e021-final-canonical-assessment
+    paths:
+      - "experimentos/E021_final_canonical_assessment/**"
+      - "experimentos/abt_feature_engineering/**"
+      - "experimentos/E019_operational_threshold_availability/**"
+      - "experimentos/E020_lead_opportunity_fallback_e2e/**"
+      - "data/candidate/**"
+      - ".github/workflows/e021-final-canonical-assessment.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experimentos/E021_final_canonical_assessment/**"
+      - "experimentos/abt_feature_engineering/**"
+      - "experimentos/E019_operational_threshold_availability/**"
+      - "experimentos/E020_lead_opportunity_fallback_e2e/**"
+      - "data/candidate/**"
+      - ".github/workflows/e021-final-canonical-assessment.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  canonical-assessment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/E021_final_canonical_assessment/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/E021_final_canonical_assessment/requirements.txt
+
+      - name: Validate canonical PIT invariants
+        run: pytest -q experimentos/abt_feature_engineering/tests
+
+      - name: Smoke-build canonical ABTs
+        run: |
+          python experimentos/abt_feature_engineering/build_abts.py --repo-root .
+          cat experimentos/abt_feature_engineering/results/abt_summary.csv
+
+      - name: Refresh availability calibration evidence
+        run: python experimentos/E019_operational_threshold_availability/run_experiment.py
+
+      - name: Run E021 canonical benchmark
+        run: python experimentos/E021_final_canonical_assessment/run_experiment.py
+
+      - name: Validate required E021 outputs
+        run: |
+          test -s experimentos/E021_final_canonical_assessment/results/oof_predictions.csv
+          test -s experimentos/E021_final_canonical_assessment/results/fold_metrics.csv
+          test -s experimentos/E021_final_canonical_assessment/results/cv_mean_metrics.csv
+          test -s experimentos/E021_final_canonical_assessment/results/paired_bootstrap.csv
+          test -s experimentos/E021_final_canonical_assessment/results/error_analysis_summary.csv
+          test -s experimentos/E021_final_canonical_assessment/results/error_examples.csv
+          test -s experimentos/E021_final_canonical_assessment/results/end_to_end/joint_core_metrics_reproduced.csv
+          test -s experimentos/E021_final_canonical_assessment/results/end_to_end/final_fold_p85_reproduced.csv
+          test -s experimentos/E021_final_canonical_assessment/results/REPORT.md
+          test -s experimentos/E021_final_canonical_assessment/results/summary.json
+
+      - name: Publish report
+        if: always()
+        run: |
+          if [ -f experimentos/E021_final_canonical_assessment/results/REPORT.md ]; then
+            cat experimentos/E021_final_canonical_assessment/results/REPORT.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Commit reproducible E021 results
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/E021_final_canonical_assessment/results/
+          if git diff --cached --quiet; then
+            echo "No E021 result changes to commit."
+          else
+            git commit -m "Add E021 canonical assessment results [skip ci]"
+            git push
+          fi
+
+      - name: Upload E021 artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e021-final-canonical-assessment
+          path: experimentos/E021_final_canonical_assessment/results/
+          if-no-files-found: warn
+          retention-days: 30
