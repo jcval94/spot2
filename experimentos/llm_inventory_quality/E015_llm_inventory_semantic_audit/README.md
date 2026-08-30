@@ -54,3 +54,20 @@ python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/
 ## Regla de interpretación
 
 Un flag es una **inconsistencia candidata**, no una afirmación de que el texto o el campo estructurado sea necesariamente correcto. La acción recomendada es revisión de catálogo, no corrección automática.
+
+
+## Semantic v2 revision
+
+After a manual simulation of the intended LLM reasoning, E015 was revised before any live API evaluation.
+
+Changes:
+- add `semantic_cross_field_mismatch` as an explicit class;
+- treat `unsupported_claim`, `not_verifiable` and `ambiguous` as informational, not actionable by default;
+- freeze Rules v1;
+- create Rules v2 as a post-discovery challenger using S001 (Land × building/interior copy);
+- move final evaluation to a disjoint 240-row holdout;
+- add a 100-row Land semantic challenge set for S001 precision.
+
+The original 200-row labeling sample is now a discovery sample, not the final holdout.
+
+See [SEMANTIC_V2_REPORT.md](results/SEMANTIC_V2_REPORT.md).
