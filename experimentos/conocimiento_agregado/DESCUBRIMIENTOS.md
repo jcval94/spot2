@@ -65,7 +65,8 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D057 | SUPPORTED | El LLM no se justifica como tratamiento general de las 86 variables actuales: los campos estructurados se resuelven determinísticamente y el piloto sobre listing copy no encontró señal accionable nueva. Raw inquiry text sigue siendo una fuente futura no probada. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md), [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
 | D058 | SUPPORTED | El diseño Rules-first + LLM residual fue el correcto: permitió probar 100 registros a costo mínimo sin pagar por claims/contradicciones que ya podían resolverse gratis. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
 | D059 | NOT_SUPPORTED | El piloto real no justifica features LLM en el ABT: V2 costó USD 0.002579, tuvo 0/25 issues en clean controls, pero 0/100 new-rule candidates y 0/100 residual actionable. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
-| D060 | SUPPORTED | El valor reutilizable del piloto es un semantic rule sidecar gratuito: 890/3,000 spots tienen ≥1 señal; 429 presentan ambigüedad semántica y las reglas reemplazan la dependencia LLM para este dataset. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
+| D060 | SUPPORTED | El valor reutilizable del piloto es un semantic rule sidecar gratuito: 890/3,000 spots tienen ≥1 señal; 429 presentan ambigüedad semántica y las reglas reemplazan la dependencia LLM para este dataset. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) || D061 | SUPPORTED / NOT_SUPPORTED | E015 confirma que GPT-5 nano es estable y casi gratis para semantic discovery, pero specificity 28% en S001 no soporta usarlo como QA gate; los incrementales broad-audit deben tratarse como candidatos, no true positives. | [EV-018](../Evidencias/EV-018_llm_inventory_nano_live.md) |
+
 
 ## D001 — El modelo debe ser dinámico
 
@@ -1279,3 +1280,33 @@ Review tiers:
 **Implicación:** evaluar estas variables Rules-only como challenger predictivo por ablación antes de incorporarlas al ABT canónico. No asumir que una inconsistencia semántica aumenta o reduce `scheduled_visit` sin evidencia predictiva.
 
 Evidencia: [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md).
+
+
+## D061 — GPT-5 nano: discovery sí, automatic gate no
+
+**Estado:** SUPPORTED como semantic discovery; NOT_SUPPORTED como QA gate autónomo.
+
+E015 ejecutó un broad semantic audit sobre:
+- holdout limpio N=240;
+- challenge Land S001 N=100.
+
+Operación:
+- 340/340 outputs válidos;
+- 0 errores;
+- costo acumulado USD 0.053522.
+
+Holdout:
+- 194/240 actionable;
+- +84 candidatos vs Rules v1;
+- +77 candidatos vs Rules v2.
+
+Challenge S001:
+- sensitivity 76%;
+- specificity 28%;
+- precision vs patrón 51.35%.
+
+**Interpretación:** el modelo encuentra señal semántica, pero el exceso de falsos positivos impide usar sus flags como gate automático. Esto reconcilia con D059: al exigir semántica residual estrictamente incremental sobre reglas gratuitas, no apareció una nueva familia accionable robusta.
+
+**Siguiente implicación:** probar un modelo un escalón más capaz manteniendo exactamente el mismo benchmark; si mejora specificity sin destruir sensitivity y sigue dentro de presupuesto, la limitación era capacidad del modelo. Si no, el problema es principalmente taxonomía/prompt/data.
+
+Evidencia: [EV-018](../Evidencias/EV-018_llm_inventory_nano_live.md).
