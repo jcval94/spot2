@@ -3,6 +3,7 @@ name: ABT feature engineering validation
 on:
   push:
     branches:
+      - main
       - experiment/abt-feature-engineering-v1
     paths:
       - "experimentos/abt_feature_engineering/**"
