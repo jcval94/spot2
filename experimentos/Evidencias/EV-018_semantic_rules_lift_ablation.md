@@ -129,3 +129,8 @@ Trazabilidad: [RUN_HISTORY.md](../semantic_rules_lift_ablation/results/RUN_HISTO
 - el target sigue siendo proxy `scheduled_visit`;
 - el dataset es sintético;
 - el resultado responde a Lead Quality ranking, no al valor operacional de Catalog QA.
+
+
+## Conocimiento acumulado
+
+Este resultado queda registrado como **D061** en [DESCUBRIMIENTOS.md](../conocimiento_agregado/DESCUBRIMIENTOS.md).
