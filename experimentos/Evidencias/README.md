@@ -19,5 +19,6 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 | [EV-011](EV-011_modelo_3_architecture_cv.md) | Modelo 3 rolling temporal CV | Empírica |
 | [EV-012](EV-012_modelo_3_trajectory_cv.md) | Modelo 3 trajectory / progression CV | Empírica |
 | [EV-013](EV-013_matching_profiles_v4.md) | Semantic profiles + Dynamic Need + Broker Service + hierarchical matching | Empírica completa + gates negativos |
+| [EV-014](EV-014_llm_inventory_quality.md) | LLM semantic inventory quality | Conceptual / plan experimental |
 
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.

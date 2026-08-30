@@ -13,7 +13,7 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D005 | NOT_SUPPORTED | Los perfiles Lead × Spot × Broker iniciales no muestran sinergia robusta fuera de muestra. | [EV-005](../Evidencias/EV-005_entity_profile_match.md) |
 | D006 | INCONCLUSIVE | Clustering balanceado produce perfiles mucho más interpretables, pero su lift predictivo sigue siendo pequeño e incierto. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D007 | PROPOSAL | Enriquecimiento geográfico externo tiene rutas plausibles, pero requiere joins point-in-time y validación incremental. | [EV-007](../Evidencias/EV-007_geographic_enrichment.md) |
-| D008 | PROPOSAL | El LLM es defendible como capa de triage/extracción operativa; no existe evidencia en estos datos de lift causal del LLM. | [EV-008](../Evidencias/EV-008_llm_triage.md) |
+| D008 | PROPOSAL | El LLM de triage sigue siendo una visión de producto plausible, pero no se selecciona como uso principal del assessment porque falta raw inquiry text para evaluarlo honestamente. | [EV-008](../Evidencias/EV-008_llm_triage.md) |
 | D009 | INCONCLUSIVE | Search Need sí queda semánticamente limpio; Lead Persona actual está dominado por canal de adquisición/historial, por lo que la separación de facetas es correcta pero Persona necesita rediseño. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D010 | NOT_SUPPORTED | Inquiry Intent v1 no debe usarse como capa predictiva: aprende principalmente día de la semana y empeora AP/AUC/lift fuera de muestra. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D011 | SUPPORTED | El perfil de Spot actual mezcla arquetipo físico con geografía; varios clusters son esencialmente regiones/estados. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
@@ -55,6 +55,7 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D047 | INCONCLUSIVE | DN4×LOC1×BSV1 establece un nuevo máximo local: 1.510x lift suavizado (N=60), pero es exploratorio y sujeto a multiple testing. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D048 | SUPPORTED | La transición Need T0→T1 es asimétrica: N1/renta permanece DN1 en 99.8%, mientras N2/N3 se fragmentan en regímenes de presupuesto/área. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D049 | NOT_SUPPORTED | Ningún stack nuevo demuestra ser reemplazo global de E007: mejora lift puntual, pero E007 conserva el mejor AP y ranking lead-level sin delta robusto en contra. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D050 | PROPOSAL | El mejor uso LLM actualmente justificable es auditar consistencia semántica entre el copy de listings y sus atributos estructurados; debe superar un baseline Rules-only antes de integrarse al negocio. | [EV-014](../Evidencias/EV-014_llm_inventory_quality.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -196,6 +197,8 @@ El uso defendible es:
 - razón transparente de prioridad.
 
 **No afirmar:** que el LLM incrementa conversión con la evidencia actual.
+
+**Decisión posterior:** conservar esta idea como Product Vision, no como implementación principal. La reevaluación del uso obligatorio de IA está documentada en [registro_flujo/llm_use_case](../registro_flujo/llm_use_case/) y conduce a D050 como caso actualmente preferido.
 
 Evidencia: [EV-008](../Evidencias/EV-008_llm_triage.md).
 
@@ -995,3 +998,28 @@ Los nuevos modelos mejoran concentración top-decile en punto, pero los deltas d
 
 Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
 
+
+
+## D050 — El mejor uso LLM actual es auditar la calidad semántica del inventario
+
+**Estado:** PROPOSAL.
+
+La reevaluación del caso de uso de IA descartó como **uso principal por diseño, no por resultado experimental**, dos rutas:
+
+- Broker Copilot / triage: no existe raw inquiry text para demostrar la parte semántica con los datos del candidato;
+- LLM-assisted fallback reranking/explanation: sector, modalidad, presupuesto, área, ubicación y disponibilidad son mayormente estructurados, por lo que un ranking determinístico y templates pueden resolver gran parte del problema sin un LLM.
+
+En cambio, `spots.title` y `spots.description` sí contienen lenguaje libre. Un spot-check manual detectó casos candidatos donde el copy y `spot_attributes` entran en conflicto, por ejemplo claims de iluminación natural frente a `natural_light=false` o claims de seguridad 24/7 frente a `security_type=none`.
+
+**Hipótesis:** un LLM puede normalizar paráfrasis y detectar inconsistencias semánticas adicionales a un baseline Rules-only.
+
+**Baseline obligatorio:** reglas explícitas de alta precisión.
+
+**Evaluación obligatoria:** labels humanos; comparar Rules-only vs LLM-only vs Rules+LLM en precision, recall, F1, falsos positivos y cobertura incremental.
+
+**No demuestra todavía:** que el LLM sea superior a reglas, que el texto sea la fuente correcta cuando existe conflicto, ni que los flags deban modificar automáticamente el Lead Opportunity Score.
+
+**Siguiente implicación:** implementar `E015_llm_inventory_semantic_audit` con OpenAI Responses API directa, output estructurado y una cola de Catalog QA como primera integración potencial.
+
+Evidencia: [EV-014](../Evidencias/EV-014_llm_inventory_quality.md).  
+Evolución de la decisión: [registro_flujo/llm_use_case](../registro_flujo/llm_use_case/).
