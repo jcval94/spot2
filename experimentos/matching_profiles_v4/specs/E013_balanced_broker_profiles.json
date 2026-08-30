@@ -1,0 +1,102 @@
+{
+  "experiment_id": "E013_balanced_broker_profiles",
+  "parent_experiment": "E012_dynamic_need_strong_baseline",
+  "question": "Can a compressed, winsorized and strictly balanced Broker Supply + Service segmentation improve over the legacy Broker without the 98% cluster collapse?",
+  "hypothesis": "Dominant specialization, diversity/entropy and robust scale features will yield balanced Broker profiles and preserve or improve AP/lift.",
+  "primary_change": "replace legacy broker_profile with strictly balanced broker_supply_balanced_profile and broker_service_balanced_profile",
+  "secondary_changes": [
+    "winsorize scale features",
+    "compress high-dimensional shares into dominant categories plus entropy",
+    "fail hard if selected Broker profile is unbalanced"
+  ],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "Public candidate data has no true sale timestamp; offline result is associative."
+  },
+  "population": {
+    "eligibility": "Same E006/E007 temporal population and untouched future test.",
+    "exclusions": [
+      "Profile-calibration rows excluded from predictive fit."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv",
+    "experimentos/profile_clustering_v2/results/lead_assignments.csv",
+    "experimentos/profile_clustering_v2/results/broker_assignments.csv",
+    "experimentos/matching_ab_v3/results/spot_decomposed_assignments.csv"
+  ],
+  "validation": {
+    "strategy": "same temporal train/future-test; outcome-free cluster selection; paired cluster-bootstrap by lead_id",
+    "time_column": "inquiry_at",
+    "split_description": "Identical E006 future test; model family/hyperparameters held fixed."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "features": {
+    "inherited": [
+      "persona_profile",
+      "need_profile",
+      "dynamic_need_profile",
+      "need_transition",
+      "physical_space_profile",
+      "location_profile",
+      "availability_state_asof",
+      "availability_lag_bucket"
+    ],
+    "added": [
+      "broker_supply_balanced_profile",
+      "broker_service_balanced_profile"
+    ],
+    "removed": [
+      "broker_profile"
+    ]
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "broker_supply_balanced_profile",
+        "source": "pre-cutoff Spot specialization only",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "frozen before predictive train/test",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "No mutable current-state spot aggregates; uses dominant sector/modality/region, diversity and robust log scale."
+      },
+      {
+        "element": "broker_service_balanced_profile",
+        "source": "pre-cutoff broker inquiry outcome/channel mix",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "strictly pre-cutoff history",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "broker_response_hours is excluded; only past outcomes and inquiry characteristics are used."
+      }
+    ]
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "experiment_id": "E012_dynamic_need_strong_baseline",
+  "parent_experiment": "E006_physical_location_spot",
+  "question": "Does Dynamic Need improve the strong E006 baseline when the harmful E008 Persona redesign is not carried forward?",
+  "hypothesis": "Adding semantic T1 need and T0→T1 transition directly to E006 will recover more top-decile lift and possibly AP while preserving the stronger original Persona.",
+  "primary_change": "add dynamic_need_profile and need_transition directly to E006 strong baseline",
+  "secondary_changes": [
+    "branch from E006 rather than E009 to isolate Dynamic Need from E008 regression"
+  ],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "Public candidate data has no true sale timestamp; offline result is associative."
+  },
+  "population": {
+    "eligibility": "Same E006/E007 temporal population and untouched future test.",
+    "exclusions": [
+      "Profile-calibration rows excluded from predictive fit."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv",
+    "experimentos/profile_clustering_v2/results/lead_assignments.csv",
+    "experimentos/profile_clustering_v2/results/broker_assignments.csv",
+    "experimentos/matching_ab_v3/results/spot_decomposed_assignments.csv"
+  ],
+  "validation": {
+    "strategy": "same temporal train/future-test; outcome-free cluster selection; paired cluster-bootstrap by lead_id",
+    "time_column": "inquiry_at",
+    "split_description": "Identical E006 future test; model family/hyperparameters held fixed."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "features": {
+    "inherited": [
+      "persona_profile",
+      "need_profile",
+      "physical_space_profile",
+      "location_profile",
+      "broker_profile",
+      "availability_state_asof",
+      "availability_lag_bucket"
+    ],
+    "added": [
+      "dynamic_need_profile",
+      "need_transition"
+    ],
+    "removed": []
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "dynamic_need_profile",
+        "source": "T1 inquiry request fields and point-in-time deltas to T0 need",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "at inquiry_at",
+        "status": "ALLOW",
+        "evidence": "Explicitly excludes weekday and all broker response outcome fields."
+      },
+      {
+        "element": "need_transition",
+        "source": "need_profile + dynamic_need_profile",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "at inquiry_at",
+        "status": "ALLOW",
+        "evidence": "Deterministic cross of reviewed T0/T1 need states."
+      }
+    ]
+  }
+}

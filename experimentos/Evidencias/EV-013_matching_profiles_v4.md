@@ -8,6 +8,9 @@ Experimentos:
 - [E009 Dynamic Need T1](../matching_profiles_v4/specs/E009_dynamic_need_t1.json)
 - [E010 Clean Broker Profiles](../matching_profiles_v4/specs/E010_clean_broker_profiles.json)
 - [E011 Hierarchical Matching](../matching_profiles_v4/specs/E011_hierarchical_matching.json)
+- [E012 Dynamic Need Strong Baseline](../matching_profiles_v4/specs/E012_dynamic_need_strong_baseline.json)
+- [E013 Balanced Broker Profiles](../matching_profiles_v4/specs/E013_balanced_broker_profiles.json)
+- [E014 Hierarchical Matching v2](../matching_profiles_v4/specs/E014_hierarchical_matching_v2.json)
 
 ## Objetivo
 
@@ -17,6 +20,8 @@ Resolver los cuatro pendientes de segmentación identificados tras EV-010 sin me
 2. representar Need como estado T0→T1;
 3. reconstruir Broker sin `broker_response_hours`;
 4. probar compatibilidad jerárquica sobre los nuevos perfiles.
+5. ramificar de vuelta al baseline fuerte cuando una mejora intermedia perjudique el resultado.
+6. exigir balance explícito en Broker y reintentar la jerarquía sólo sobre la rama fuerte.
 
 ## Guardrails
 
@@ -31,4 +36,4 @@ Resolver los cuatro pendientes de segmentación identificados tras EV-010 sin me
 
 ## Descubrimientos relacionados
 
-- [D038–D041](../conocimiento_agregado/DESCUBRIMIENTOS.md)
+- [D038–D044](../conocimiento_agregado/DESCUBRIMIENTOS.md)

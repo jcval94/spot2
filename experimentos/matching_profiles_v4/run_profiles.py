@@ -261,6 +261,141 @@ def cluster_numeric_profiles(df, prefix, family):
     interp = describe_profiles(d, f"{family}_profile", [], cols, family)
     return d[["broker_id", f"{family}_profile"]], bench, interp
 
+
+def _entropy_from_cols(row, cols):
+    vals = pd.to_numeric(row[cols], errors="coerce").fillna(0).to_numpy(float)
+    vals = vals[vals > 0]
+    if len(vals) <= 1:
+        return 0.0
+    p = vals / vals.sum()
+    return float(-(p * np.log(p)).sum() / np.log(len(cols)))
+
+def _dominant_from_cols(row, cols, prefix):
+    vals = pd.to_numeric(row[cols], errors="coerce").fillna(0)
+    if float(vals.sum()) <= 0:
+        return "none"
+    col = str(vals.idxmax())
+    return col[len(prefix) + 1:] if col.startswith(prefix + "_") else col
+
+def _winsorize(df, cols, qlo=.02, qhi=.98):
+    z = df.copy()
+    for c in cols:
+        lo, hi = z[c].quantile(qlo), z[c].quantile(qhi)
+        if pd.notna(lo) and pd.notna(hi) and hi > lo:
+            z[c] = z[c].clip(lo, hi)
+    return z
+
+def build_compact_broker_views(supply, service):
+    s = supply.copy()
+    sector_cols = [c for c in s.columns if c.startswith("sector_")]
+    modality_cols = [c for c in s.columns if c.startswith("modality_")]
+    region_cols = [c for c in s.columns if c.startswith("region_")]
+    s["dominant_sector"] = s.apply(lambda r: _dominant_from_cols(r, sector_cols, "sector"), axis=1)
+    s["dominant_modality"] = s.apply(lambda r: _dominant_from_cols(r, modality_cols, "modality"), axis=1)
+    s["dominant_region"] = s.apply(lambda r: _dominant_from_cols(r, region_cols, "region"), axis=1)
+    s["sector_entropy"] = s.apply(lambda r: _entropy_from_cols(r, sector_cols), axis=1)
+    s["modality_entropy"] = s.apply(lambda r: _entropy_from_cols(r, modality_cols), axis=1)
+    s["region_entropy"] = s.apply(lambda r: _entropy_from_cols(r, region_cols), axis=1)
+    for src, dst in [
+        ("n_spots", "log_n_spots"),
+        ("median_area", "log_median_area"),
+        ("median_rent", "log_median_rent"),
+        ("median_sale", "log_median_sale"),
+    ]:
+        s[dst] = np.log1p(pd.to_numeric(s[src], errors="coerce").clip(lower=0))
+    supply_cat = ["dominant_sector", "dominant_modality", "dominant_region"]
+    supply_num = [
+        "log_n_spots", "log_median_area", "log_median_rent", "log_median_sale",
+        "sector_entropy", "modality_entropy", "region_entropy"
+    ]
+    s = _winsorize(s, supply_num)
+
+    v = service.copy()
+    response_cols = ["scheduled_rate", "accepted_rate", "rejected_rate", "no_response_rate"]
+    channel_cols = [c for c in v.columns if c.startswith("channel_")]
+    v["dominant_response"] = v.apply(lambda r: _dominant_from_cols(r, response_cols, ""), axis=1)
+    # _dominant_from_cols with empty prefix returns the column name; simplify labels.
+    v["dominant_response"] = v["dominant_response"].str.replace("_rate", "", regex=False)
+    v["dominant_channel"] = v.apply(lambda r: _dominant_from_cols(r, channel_cols, "channel"), axis=1)
+    v["response_entropy"] = v.apply(lambda r: _entropy_from_cols(r, response_cols), axis=1)
+    v["channel_entropy"] = v.apply(lambda r: _entropy_from_cols(r, channel_cols), axis=1)
+    v["log_n_inquiries"] = np.log1p(pd.to_numeric(v["n_inquiries"], errors="coerce").clip(lower=0))
+    v["log_median_urgency"] = np.log1p(pd.to_numeric(v["median_urgency"], errors="coerce").clip(lower=0))
+    v["log_mean_message_length"] = np.log1p(pd.to_numeric(v["mean_message_length"], errors="coerce").clip(lower=0))
+    service_cat = ["dominant_response", "dominant_channel"]
+    service_num = [
+        "log_n_inquiries", "scheduled_rate", "accepted_rate", "rejected_rate",
+        "no_response_rate", "asked_visit_rate", "log_median_urgency",
+        "log_mean_message_length", "response_entropy", "channel_entropy"
+    ]
+    v = _winsorize(v, service_num)
+    return s[["broker_id"] + supply_cat + supply_num], supply_cat, supply_num, v[["broker_id"] + service_cat + service_num], service_cat, service_num
+
+def cluster_compact_broker(df, cat_cols, num_cols, prefix, family):
+    rid, aid, bench = select_clusterer(df, df, cat_cols, num_cols, prefix, family)
+    selected = bench[bench.selected].iloc[0]
+    if not bool(selected.balance_ok):
+        raise RuntimeError(
+            f"{family} failed strict balance gate: min={selected.min_cluster_share:.3f}, "
+            f"max={selected.max_cluster_share:.3f}"
+        )
+    d = df.copy()
+    profile_col = f"{family}_profile"
+    d[profile_col] = aid
+    interp = describe_profiles(d, profile_col, cat_cols, num_cols, family)
+    return d[["broker_id", profile_col]], bench, interp
+
+def add_interactions_v2(df):
+    z = df.copy()
+    pairs = {
+        "dynamic_need_x_physical_v2": ["dynamic_need_profile", "physical_profile"],
+        "dynamic_need_x_location_v2": ["dynamic_need_profile", "location_profile"],
+        "dynamic_need_x_broker_supply_v2": ["dynamic_need_profile", "broker_supply_balanced_profile"],
+        "dynamic_need_x_broker_service_v2": ["dynamic_need_profile", "broker_service_balanced_profile"],
+        "need_transition_x_physical_v2": ["need_transition", "physical_profile"],
+        "need_transition_x_broker_service_v2": ["need_transition", "broker_service_balanced_profile"],
+        "physical_x_broker_supply_v2": ["physical_profile", "broker_supply_balanced_profile"],
+        "location_x_broker_supply_v2": ["location_profile", "broker_supply_balanced_profile"],
+        "dynamic_need_x_physical_x_broker_service_v2": ["dynamic_need_profile", "physical_profile", "broker_service_balanced_profile"],
+    }
+    for name, cols in pairs.items():
+        z[name] = z[cols].astype(str).agg("x".join, axis=1)
+    return z, list(pairs)
+
+def compatibility_cells_v2(test, global_rate):
+    specs = [
+        (["dynamic_need_profile", "physical_profile"], "dynamic_need_x_physical_v2"),
+        (["dynamic_need_profile", "location_profile"], "dynamic_need_x_location_v2"),
+        (["dynamic_need_profile", "broker_supply_balanced_profile"], "dynamic_need_x_broker_supply_v2"),
+        (["dynamic_need_profile", "broker_service_balanced_profile"], "dynamic_need_x_broker_service_v2"),
+        (["need_transition", "physical_profile"], "need_transition_x_physical_v2"),
+        (["need_transition", "broker_service_balanced_profile"], "need_transition_x_broker_service_v2"),
+        (["physical_profile", "broker_supply_balanced_profile"], "physical_x_broker_supply_v2"),
+        (["location_profile", "broker_supply_balanced_profile"], "location_x_broker_supply_v2"),
+        (["dynamic_need_profile", "physical_profile", "broker_service_balanced_profile"], "dynamic_need_x_physical_x_broker_service_v2"),
+        (["dynamic_need_profile", "location_profile", "broker_service_balanced_profile"], "dynamic_need_x_location_x_broker_service_v2"),
+    ]
+    rows = []
+    for cols, label in specs:
+        for keys, g in test.groupby(cols):
+            if len(g) < MIN_CELL:
+                continue
+            if not isinstance(keys, tuple):
+                keys = (keys,)
+            k, n = int(g.visit.sum()), len(g)
+            smooth = (k + 30 * global_rate) / (n + 30)
+            lo, hi = wilson(k, n)
+            row = {
+                "interaction": label, "n": n, "visit_rate": k/n,
+                "smoothed_rate": smooth, "lift_vs_global": smooth/global_rate,
+                "wilson_low": lo, "wilson_high": hi, "wilson_low_lift": lo/global_rate
+            }
+            row.update(dict(zip(cols, keys)))
+            rows.append(row)
+    return pd.DataFrame(rows).sort_values(
+        ["lift_vs_global", "n"], ascending=[False, False]
+    ).reset_index(drop=True)
+
 def availability_features(iq, av):
     left = iq[["inquiry_id", "spot_id", "inquiry_at"]].sort_values(["inquiry_at", "spot_id"]).copy()
     right = av[["spot_id", "snapshot_date", "is_available"]].sort_values(["snapshot_date", "spot_id"]).copy()
@@ -422,23 +557,31 @@ def main():
     # 2) Dynamic T1 need, intentionally excluding weekday.
     dyn_assign, b2, i2 = build_dynamic_need(iq, leads, profile_cutoff)
 
-    # 3) Clean Broker profiles; response_hours is never referenced.
+    # 3) First clean Broker attempt; retained as E010 evidence even if clustering collapses.
     supply, service = build_broker_features(spots, iq, profile_cutoff)
     broker_supply, b3, i3 = cluster_numeric_profiles(supply, "BS", "broker_supply")
     broker_service, b4, i4 = cluster_numeric_profiles(service, "BV", "broker_service")
 
-    pd.concat([b1, b2, b3, b4], ignore_index=True).to_csv(
-        OUT / "clustering_benchmark.csv", index=False
+    # 4) Balanced Broker challenger: compress specialization, winsorize scale and enforce balance.
+    supply_c, supply_cat, supply_num, service_c, service_cat, service_num = build_compact_broker_views(supply, service)
+    broker_supply_bal, b5, i5 = cluster_compact_broker(
+        supply_c, supply_cat, supply_num, "BSP", "broker_supply_balanced"
     )
-    pd.concat([b1, b2, b3, b4], ignore_index=True).query("selected").to_csv(
-        OUT / "selected_clusterers.csv", index=False
+    broker_service_bal, b6, i6 = cluster_compact_broker(
+        service_c, service_cat, service_num, "BSV", "broker_service_balanced"
     )
-    interp = pd.concat([i1, i2, i3, i4], ignore_index=True)
+
+    all_bench = pd.concat([b1, b2, b3, b4, b5, b6], ignore_index=True)
+    all_bench.to_csv(OUT / "clustering_benchmark.csv", index=False)
+    all_bench.query("selected").to_csv(OUT / "selected_clusterers.csv", index=False)
+    interp = pd.concat([i1, i2, i3, i4, i5, i6], ignore_index=True)
     interp.to_csv(OUT / "profile_interpretability.csv", index=False)
     persona_assign.to_csv(OUT / "behavioral_persona_assignments.csv", index=False)
     dyn_assign.to_csv(OUT / "dynamic_need_assignments.csv", index=False)
     broker_supply.to_csv(OUT / "broker_supply_assignments.csv", index=False)
     broker_service.to_csv(OUT / "broker_service_assignments.csv", index=False)
+    broker_supply_bal.to_csv(OUT / "broker_supply_balanced_assignments.csv", index=False)
+    broker_service_bal.to_csv(OUT / "broker_service_balanced_assignments.csv", index=False)
 
     # Assemble one analysis table and assert one-row-per-inquiry preservation.
     x = iq.merge(la[["lead_id", "persona_profile", "need_profile"]], on="lead_id", how="left", validate="many_to_one")
@@ -448,6 +591,8 @@ def main():
     x = x.merge(old_b, on="broker_id", how="left", validate="many_to_one")
     x = x.merge(broker_supply, on="broker_id", how="left", validate="many_to_one")
     x = x.merge(broker_service, on="broker_id", how="left", validate="many_to_one")
+    x = x.merge(broker_supply_bal, on="broker_id", how="left", validate="many_to_one")
+    x = x.merge(broker_service_bal, on="broker_id", how="left", validate="many_to_one")
     x = x.merge(dyn_assign, on="inquiry_id", how="left", validate="one_to_one")
     x = x.merge(availability_features(iq, av), on="inquiry_id", how="left", validate="one_to_one")
     assert len(x) == len(iq)
@@ -457,7 +602,8 @@ def main():
     required = [
         "persona_profile", "need_profile", "behavioral_profile", "source",
         "dynamic_need_profile", "physical_profile", "location_profile",
-        "broker_profile", "broker_supply_profile", "broker_service_profile"
+        "broker_profile", "broker_supply_profile", "broker_service_profile",
+        "broker_supply_balanced_profile", "broker_service_balanced_profile"
     ]
     missing = x[required].isna().mean().rename("missing_rate").reset_index().rename(columns={"index": "feature"})
     missing.to_csv(OUT / "assignment_completeness.csv", index=False)
@@ -472,12 +618,12 @@ def main():
     cols = {
         "E006_parent_marginals": ["persona_profile"] + common,
         "E008_behavioral_persona": ["source", "behavioral_profile"] + common,
-        "E009_dynamic_need": [
+        "E009_dynamic_need_t1": [
             "source", "behavioral_profile", "need_profile", "dynamic_need_profile",
             "need_transition", "physical_profile", "location_profile", "broker_profile",
             "availability_state", "availability_lag_bucket"
         ],
-        "E010_clean_broker": [
+        "E010_clean_broker_profiles": [
             "source", "behavioral_profile", "need_profile", "dynamic_need_profile",
             "need_transition", "physical_profile", "location_profile",
             "broker_supply_profile", "broker_service_profile",
@@ -490,9 +636,36 @@ def main():
 
     train_h, interaction_cols = add_interactions(train)
     test_h, _ = add_interactions(test)
-    cols["E011_hierarchical_matching"] = cols["E010_clean_broker"] + interaction_cols
+    cols["E011_hierarchical_matching"] = cols["E010_clean_broker_profiles"] + interaction_cols
     pred["E011_hierarchical_matching"] = fit_score(
         train_h, test_h, cols["E011_hierarchical_matching"]
+    )
+
+    # Second branch: do not carry the E008 Persona regression into the strongest candidates.
+    cols["E012_dynamic_need_strong_baseline"] = [
+        "persona_profile", "need_profile", "dynamic_need_profile", "need_transition",
+        "physical_profile", "location_profile", "broker_profile",
+        "availability_state", "availability_lag_bucket"
+    ]
+    pred["E012_dynamic_need_strong_baseline"] = fit_score(
+        train, test, cols["E012_dynamic_need_strong_baseline"]
+    )
+
+    cols["E013_balanced_broker_profiles"] = [
+        "persona_profile", "need_profile", "dynamic_need_profile", "need_transition",
+        "physical_profile", "location_profile",
+        "broker_supply_balanced_profile", "broker_service_balanced_profile",
+        "availability_state", "availability_lag_bucket"
+    ]
+    pred["E013_balanced_broker_profiles"] = fit_score(
+        train, test, cols["E013_balanced_broker_profiles"]
+    )
+
+    train_h2, interaction_cols_v2 = add_interactions_v2(train)
+    test_h2, _ = add_interactions_v2(test)
+    cols["E014_hierarchical_matching_v2"] = cols["E013_balanced_broker_profiles"] + interaction_cols_v2
+    pred["E014_hierarchical_matching_v2"] = fit_score(
+        train_h2, test_h2, cols["E014_hierarchical_matching_v2"]
     )
 
     # Reproduce the old E007 treatment as a same-test external benchmark.
@@ -528,11 +701,17 @@ def main():
 
     comparisons = [
         ("E008_vs_E006", "E006_parent_marginals", "E008_behavioral_persona"),
-        ("E009_vs_E008", "E008_behavioral_persona", "E009_dynamic_need"),
-        ("E010_vs_E009", "E009_dynamic_need", "E010_clean_broker"),
-        ("E011_vs_E010", "E010_clean_broker", "E011_hierarchical_matching"),
+        ("E009_vs_E008", "E008_behavioral_persona", "E009_dynamic_need_t1"),
+        ("E010_vs_E009", "E009_dynamic_need_t1", "E010_clean_broker_profiles"),
+        ("E011_vs_E010", "E010_clean_broker_profiles", "E011_hierarchical_matching"),
         ("E011_vs_E007_old", "E007_old_compatibility", "E011_hierarchical_matching"),
         ("E011_vs_E006_parent", "E006_parent_marginals", "E011_hierarchical_matching"),
+        ("E012_vs_E006", "E006_parent_marginals", "E012_dynamic_need_strong_baseline"),
+        ("E012_vs_E007_old", "E007_old_compatibility", "E012_dynamic_need_strong_baseline"),
+        ("E013_vs_E012", "E012_dynamic_need_strong_baseline", "E013_balanced_broker_profiles"),
+        ("E014_vs_E013", "E013_balanced_broker_profiles", "E014_hierarchical_matching_v2"),
+        ("E014_vs_E007_old", "E007_old_compatibility", "E014_hierarchical_matching_v2"),
+        ("E014_vs_E006_parent", "E006_parent_marginals", "E014_hierarchical_matching_v2"),
     ]
     boot_rows = []
     for label, a, b in comparisons:
@@ -547,6 +726,11 @@ def main():
     cells["beats_prior_best_1_366x"] = cells.lift_vs_global > prior_best
     cells.to_csv(OUT / "top_compatibility_cells.csv", index=False)
 
+    cells_v2 = compatibility_cells_v2(test_h2, global_rate)
+    cells_v2["beats_old_EV010_1_366x"] = cells_v2.lift_vs_global > 1.366344422133438
+    cells_v2["beats_v4_first_pass_1_42685x"] = cells_v2.lift_vs_global > 1.42685
+    cells_v2.to_csv(OUT / "top_compatibility_cells_v2.csv", index=False)
+
     # Profile transitions are useful product diagnostics independent of the model.
     trans = pd.crosstab(
         x.loc[x.inquiry_at >= test_cutoff, "need_profile"],
@@ -558,15 +742,21 @@ def main():
     # Status per governed experiment comes only from its parent comparison.
     parent_cmp = {
         "E008_behavioral_persona": "E008_vs_E006",
-        "E009_dynamic_need": "E009_vs_E008",
-        "E010_clean_broker": "E010_vs_E009",
+        "E009_dynamic_need_t1": "E009_vs_E008",
+        "E010_clean_broker_profiles": "E010_vs_E009",
         "E011_hierarchical_matching": "E011_vs_E010",
+        "E012_dynamic_need_strong_baseline": "E012_vs_E006",
+        "E013_balanced_broker_profiles": "E013_vs_E012",
+        "E014_hierarchical_matching_v2": "E014_vs_E013",
     }
     next_map = {
-        "E008_behavioral_persona": "E009_dynamic_need",
-        "E009_dynamic_need": "E010_clean_broker",
-        "E010_clean_broker": "E011_hierarchical_matching",
-        "E011_hierarchical_matching": "Online randomized routing A/B if operationally available",
+        "E008_behavioral_persona": "E009_dynamic_need_t1",
+        "E009_dynamic_need_t1": "E010_clean_broker_profiles",
+        "E010_clean_broker_profiles": "E011_hierarchical_matching",
+        "E011_hierarchical_matching": "E012_dynamic_need_strong_baseline",
+        "E012_dynamic_need_strong_baseline": "E013_balanced_broker_profiles",
+        "E013_balanced_broker_profiles": "E014_hierarchical_matching_v2",
+        "E014_hierarchical_matching_v2": "Online randomized routing A/B if operationally available",
     }
     for eid, cmp_name in parent_cmp.items():
         row = boot.set_index("comparison").loc[cmp_name].to_dict()
@@ -585,10 +775,14 @@ def main():
         }
         (OUT / f"{eid}_results.json").write_text(jdump(result), encoding="utf-8")
 
-    selected = pd.concat([b1, b2, b3, b4], ignore_index=True).query("selected")
+    selected = pd.concat([b1, b2, b3, b4, b5, b6], ignore_index=True).query("selected")
     best_cells = cells.head(15)
+    best_cells_v2 = cells_v2.head(15)
     e011_vs_old = boot.set_index("comparison").loc["E011_vs_E007_old"]
     e011_vs_parent = boot.set_index("comparison").loc["E011_vs_E006_parent"]
+    e012_vs_parent = boot.set_index("comparison").loc["E012_vs_E006"]
+    e014_vs_old = boot.set_index("comparison").loc["E014_vs_E007_old"]
+    e014_vs_parent = boot.set_index("comparison").loc["E014_vs_E006_parent"]
 
     report = f"""# Matching profiles v4 — semantic profiles + dynamic need + clean broker + hierarchical matching
 
@@ -602,6 +796,9 @@ The ladder is intentionally incremental:
 2. E009: add a semantic T1 Dynamic Need and the T0→T1 transition.
 3. E010: replace legacy Broker with Supply + Historical Service profiles that never use broker_response_hours.
 4. E011: add pre-specified hierarchical compatibility interactions.
+5. E012: branch back to the strong E006 baseline and add Dynamic Need without carrying E008.
+6. E013: replace legacy Broker with strictly balanced compact Supply + Service profiles.
+7. E014: retry hierarchical matching on the stronger branch.
 
 ### Model metrics
 
@@ -614,6 +811,12 @@ The ladder is intentionally incremental:
 **E011 vs old E007:** ΔAP {e011_vs_old.delta_ap:+.4f} (95% CI {e011_vs_old.delta_ap_low:+.4f}, {e011_vs_old.delta_ap_high:+.4f}); ΔLift@10 {e011_vs_old.delta_lift10:+.3f}.
 
 **E011 vs E006 marginal parent:** ΔAP {e011_vs_parent.delta_ap:+.4f} (95% CI {e011_vs_parent.delta_ap_low:+.4f}, {e011_vs_parent.delta_ap_high:+.4f}).
+
+**E012 Dynamic Need on strong baseline vs E006:** ΔAP {e012_vs_parent.delta_ap:+.4f} (95% CI {e012_vs_parent.delta_ap_low:+.4f}, {e012_vs_parent.delta_ap_high:+.4f}); ΔLift@10 {e012_vs_parent.delta_lift10:+.3f}.
+
+**E014 v2 vs old E007:** ΔAP {e014_vs_old.delta_ap:+.4f} (95% CI {e014_vs_old.delta_ap_low:+.4f}, {e014_vs_old.delta_ap_high:+.4f}); ΔLift@10 {e014_vs_old.delta_lift10:+.3f}.
+
+**E014 v2 vs E006:** ΔAP {e014_vs_parent.delta_ap:+.4f} (95% CI {e014_vs_parent.delta_ap_low:+.4f}, {e014_vs_parent.delta_ap_high:+.4f}).
 
 ## Selected outcome-free clusterers
 
@@ -628,6 +831,10 @@ The ladder is intentionally incremental:
 Prior best from Matching A/B v3 was ~1.366x smoothed lift. The table below is exploratory and is not used to select the model.
 
 {best_cells.to_markdown(index=False)}
+
+## Top compatibility cells — balanced Broker / strong-baseline branch
+
+{best_cells_v2.to_markdown(index=False)}
 
 ## Guardrails
 

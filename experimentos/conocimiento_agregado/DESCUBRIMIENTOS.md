@@ -47,6 +47,9 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D039 | PROPOSAL | Un Dynamic Need T1 sin weekday puede capturar refinamiento de área/presupuesto y mejorar lift frente al Need T0 estático. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D040 | PROPOSAL | Broker Supply + Broker Service sin response_hours puede mejorar interpretabilidad y compatibilidad frente al Broker legacy. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D041 | PROPOSAL | Matching jerárquico sobre perfiles rediseñados puede superar el E007 flat compatibility y revelar pockets de lift más altos. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D042 | PROPOSAL | Dynamic Need debe probarse directamente sobre E006 para aislar su efecto del deterioro introducido por E008 Persona. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D043 | PROPOSAL | Broker Supply/Service necesita una versión compacta, winsorizada y con gate duro de balance antes de considerarse una segmentación válida. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D044 | PROPOSAL | La jerarquía v2 sólo debe evaluarse sobre la rama fuerte E012→E013 y compararse contra E007 en el mismo future test. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -813,5 +816,34 @@ E011 prueba interacciones pre-especificadas:
 y compara tanto contra su padre marginal E010 como contra el E007 flat compatibility anterior.
 
 Las celdas future-test se usarán sólo para descubrimiento, con N>=50 y shrinkage; no seleccionan el modelo.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+
+## D042 — Dynamic Need debe aislarse del rediseño de Persona
+
+**Estado:** PROPOSAL.
+
+La primera escalera mostró que E008 Persona puede deteriorar el baseline. E012 vuelve a E006 y añade únicamente Dynamic Need + transición T0→T1.
+
+**Objetivo:** saber si la señal dinámica era buena pero estaba siendo enmascarada por un cambio previo perjudicial.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D043 — Broker necesita un gate duro de balance
+
+**Estado:** PROPOSAL.
+
+El primer Broker Supply puede colapsar en un cluster dominante. E013 comprime la representación a especialización dominante, entropías/diversidad y escalas robustas winsorizadas.
+
+El experimento **falla** si el cluster seleccionado no cumple min share >=5% y max share <=65%.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D044 — La jerarquía debe probarse sólo sobre la rama fuerte
+
+**Estado:** PROPOSAL.
+
+E014 añade compatibilidades sólo después de E012 Dynamic Need y E013 Broker balanceado. Se compara contra su padre y contra E007 old compatibility sobre el mismo future test.
 
 Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).

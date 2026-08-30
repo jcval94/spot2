@@ -1,0 +1,162 @@
+{
+  "experiment_id": "E014_hierarchical_matching_v2",
+  "parent_experiment": "E013_balanced_broker_profiles",
+  "question": "Does hierarchical compatibility on Dynamic Need plus balanced Broker profiles outperform their marginal model and the old E007 flat compatibility?",
+  "hypothesis": "The stronger branch will improve top-decile lift and/or AP while exposing better supported local routing pockets.",
+  "primary_change": "add hierarchical interactions over Dynamic Need, Physical/Location and balanced Broker Supply/Service",
+  "secondary_changes": [
+    "benchmark against old E007 on the same future test",
+    "search local cells with N>=50 and shrinkage only after model fitting"
+  ],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "Public candidate data has no true sale timestamp; offline result is associative."
+  },
+  "population": {
+    "eligibility": "Same E006/E007 temporal population and untouched future test.",
+    "exclusions": [
+      "Profile-calibration rows excluded from predictive fit."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv",
+    "experimentos/profile_clustering_v2/results/lead_assignments.csv",
+    "experimentos/profile_clustering_v2/results/broker_assignments.csv",
+    "experimentos/matching_ab_v3/results/spot_decomposed_assignments.csv"
+  ],
+  "validation": {
+    "strategy": "same temporal train/future-test; outcome-free cluster selection; paired cluster-bootstrap by lead_id",
+    "time_column": "inquiry_at",
+    "split_description": "Identical E006 future test; model family/hyperparameters held fixed."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "features": {
+    "inherited": [
+      "persona_profile",
+      "need_profile",
+      "dynamic_need_profile",
+      "need_transition",
+      "physical_space_profile",
+      "location_profile",
+      "broker_supply_balanced_profile",
+      "broker_service_balanced_profile",
+      "availability_state_asof",
+      "availability_lag_bucket"
+    ],
+    "added": [
+      "dynamic_need_x_physical_v2",
+      "dynamic_need_x_location_v2",
+      "dynamic_need_x_broker_supply_v2",
+      "dynamic_need_x_broker_service_v2",
+      "need_transition_x_physical_v2",
+      "need_transition_x_broker_service_v2",
+      "physical_x_broker_supply_v2",
+      "location_x_broker_supply_v2",
+      "dynamic_need_x_physical_x_broker_service_v2"
+    ],
+    "removed": []
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "dynamic_need_x_physical_v2",
+        "source": "deterministic cross of E013 point-in-time profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as components at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome introduced."
+      },
+      {
+        "element": "dynamic_need_x_location_v2",
+        "source": "deterministic cross of E013 point-in-time profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as components at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome introduced."
+      },
+      {
+        "element": "dynamic_need_x_broker_supply_v2",
+        "source": "deterministic cross of E013 point-in-time profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as components at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome introduced."
+      },
+      {
+        "element": "dynamic_need_x_broker_service_v2",
+        "source": "deterministic cross of E013 point-in-time profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as components at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome introduced."
+      },
+      {
+        "element": "need_transition_x_physical_v2",
+        "source": "deterministic cross of E013 point-in-time profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as components at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome introduced."
+      },
+      {
+        "element": "need_transition_x_broker_service_v2",
+        "source": "deterministic cross of E013 point-in-time profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as components at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome introduced."
+      },
+      {
+        "element": "physical_x_broker_supply_v2",
+        "source": "deterministic cross of E013 point-in-time profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as components at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome introduced."
+      },
+      {
+        "element": "location_x_broker_supply_v2",
+        "source": "deterministic cross of E013 point-in-time profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as components at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome introduced."
+      },
+      {
+        "element": "dynamic_need_x_physical_x_broker_service_v2",
+        "source": "deterministic cross of E013 point-in-time profiles",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as components at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome introduced."
+      }
+    ]
+  }
+}
