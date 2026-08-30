@@ -1,0 +1,28 @@
+{
+  "gate": "PRE_P8",
+  "audited_at": "2026-08-30",
+  "status": "BLOCKED",
+  "blockers": [
+    {
+      "id": "P4_RUNTIME_GATE",
+      "severity": "BLOCKER",
+      "reason": "Prompt-4 p4_qa_summary.json and p4_artifact_manifest.json are not present; superseded P3 qa_summary PASS is not authority.",
+      "remediation": "Run python AssessmentSol1/abt/validate_abts.py in an environment with project dependencies and require status=PASS before P8."
+    }
+  ],
+  "non_blocking_permanent_caveats": [
+    {
+      "id": "HOLDOUT-001",
+      "severity": "HIGH",
+      "status": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE",
+      "remediation": "Do not reset or replace it. Use genuinely new/hidden evidence for final confirmation."
+    }
+  ],
+  "repaired_this_audit": [
+    "CAL-001 calibration PLATT->RAW",
+    "constant-score ranking metric semantics",
+    "Inventory stale-snapshot documentation",
+    "P3/P4 artifact authority",
+    "LLM/threshold/EDA alignment documentation"
+  ]
+}
