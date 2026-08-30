@@ -1207,7 +1207,8 @@
     "same_month_inquiry_coverage": 0.23843905031892276,
     "same_month_matches": 5383,
     "temporal_decision": "EDA_ONLY",
-    "reason": "month is a period label; no publication/observation/effective timestamp proves values were known at scoring time"
+    "reason": "month is a period label; no publication/observation/effective timestamp proves values were known at scoring time",
+    "distinct_months": 30
   },
   "gates": {
     "csv_parquet_parity": "PASS",
@@ -1219,5 +1220,90 @@
     "spot_attributes": "BLOCKED_PENDING_TEMPORAL_PROVENANCE",
     "broker_response_fields": "AUDIT_ONLY_P1",
     "target_built": false
+  },
+  "cardinalities": {
+    "inquiries_per_lead": {
+      "parents": 5000,
+      "min": 1,
+      "p50": 5,
+      "p90": 8,
+      "p95": 8,
+      "max": 8,
+      "mean": 4.5152
+    },
+    "inquiries_per_spot": {
+      "parents": 2998,
+      "min": 1,
+      "p50": 7,
+      "p90": 12,
+      "p95": 14,
+      "max": 22,
+      "mean": 7.530353569046031
+    },
+    "snapshots_per_spot": {
+      "parents": 3000,
+      "min": 1,
+      "p50": 10,
+      "p90": 16,
+      "p95": 17,
+      "max": 24,
+      "mean": 10
+    },
+    "spots_per_broker": {
+      "parents": 300,
+      "min": 1,
+      "p50": 10,
+      "p90": 14,
+      "p95": 16,
+      "max": 18,
+      "mean": 10
+    }
+  },
+  "temporal_source_classification": {
+    "leads": {
+      "class": "T0_INTAKE_SNAPSHOT_WITH_CONDITIONAL_HISTORY",
+      "blocked": [
+        "lead_score_internal"
+      ],
+      "conditional": [
+        "prior_searches",
+        "prior_inquiries",
+        "has_converted_before"
+      ]
+    },
+    "inquiries": {
+      "class": "EVENT_TABLE_WITH_POST_EVENT_RESPONSE_FIELDS",
+      "event_time": "inquiry_at",
+      "blocked_in_p1": [
+        "broker_response",
+        "broker_response_hours"
+      ]
+    },
+    "spots": {
+      "class": "MIXED_ENTITY_AND_UNVERSIONED_EXTRACT_STATE",
+      "forbidden_backtest": [
+        "days_on_market",
+        "total_inquiries",
+        "total_views",
+        "is_active"
+      ],
+      "other_fields": "CONDITIONAL_ON_IMMUTABILITY_OR_VERSION_PROOF"
+    },
+    "spot_attributes": {
+      "class": "UNVERSIONED_NO_TIMESTAMP",
+      "policy": "BLOCKED_PENDING_TEMPORAL_PROVENANCE"
+    },
+    "availability_snapshot": {
+      "class": "DATED_MUTABLE_STATE",
+      "effective_time_candidate": "snapshot_date",
+      "policy": "BACKWARD_ASOF_ONLY",
+      "blocked": [
+        "competing_inquiries_30d"
+      ]
+    },
+    "market_context": {
+      "class": "MONTHLY_AGGREGATE_WITHOUT_PUBLICATION_TIME",
+      "policy": "EDA_ONLY"
+    }
   }
 }
