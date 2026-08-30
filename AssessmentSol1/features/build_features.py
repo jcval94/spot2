@@ -581,13 +581,20 @@ def build_feature_artifacts(
     out_dir = ASSESSMENT_ROOT / "features" / "artifacts"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    t1_audit_pl, _ = build_t1(repo_root)
-    t2_audit_pl, t2_model_pl = build_t2(repo_root)
-    inventory_audit, _ = build_inventory_candidates(repo_root)
+    max_time = HOLDOUT_END if include_procedural_holdout else CALIBRATION_END
+    cutoff = max_time.to_pydatetime()
+    t1_audit_pl, _ = build_t1(
+        repo_root, max_score_time_exclusive=cutoff
+    )
+    t2_audit_pl, t2_model_pl = build_t2(
+        repo_root, max_score_time_exclusive=cutoff
+    )
+    inventory_audit, _ = build_inventory_candidates(
+        repo_root, max_score_time_exclusive=cutoff
+    )
 
     t1 = add_t1_deterministic_features(_to_pandas(t1_audit_pl))
     t1["score_time"] = pd.to_datetime(t1["score_time"], utc=True)
-    max_time = HOLDOUT_END if include_procedural_holdout else CALIBRATION_END
     t1 = t1.loc[t1["score_time"] < max_time].copy()
 
     selected = build_selected_spot_context(inventory_audit, t1)
