@@ -13,7 +13,7 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D005 | NOT_SUPPORTED | Los perfiles Lead × Spot × Broker iniciales no muestran sinergia robusta fuera de muestra. | [EV-005](../Evidencias/EV-005_entity_profile_match.md) |
 | D006 | INCONCLUSIVE | Clustering balanceado produce perfiles mucho más interpretables, pero su lift predictivo sigue siendo pequeño e incierto. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D007 | PROPOSAL | Enriquecimiento geográfico externo tiene rutas plausibles, pero requiere joins point-in-time y validación incremental. | [EV-007](../Evidencias/EV-007_geographic_enrichment.md) |
-| D008 | PROPOSAL | El LLM es defendible como capa de triage/extracción operativa; no existe evidencia en estos datos de lift causal del LLM. | [EV-008](../Evidencias/EV-008_llm_triage.md) |
+| D008 | PROPOSAL | El LLM de triage sigue siendo una visión de producto plausible, pero no se selecciona como uso principal del assessment porque falta raw inquiry text para evaluarlo honestamente. | [EV-008](../Evidencias/EV-008_llm_triage.md) |
 | D009 | INCONCLUSIVE | Search Need sí queda semánticamente limpio; Lead Persona actual está dominado por canal de adquisición/historial, por lo que la separación de facetas es correcta pero Persona necesita rediseño. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D010 | NOT_SUPPORTED | Inquiry Intent v1 no debe usarse como capa predictiva: aprende principalmente día de la semana y empeora AP/AUC/lift fuera de muestra. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D011 | SUPPORTED | El perfil de Spot actual mezcla arquetipo físico con geografía; varios clusters son esencialmente regiones/estados. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
@@ -197,6 +197,8 @@ El uso defendible es:
 - razón transparente de prioridad.
 
 **No afirmar:** que el LLM incrementa conversión con la evidencia actual.
+
+**Decisión posterior:** conservar esta idea como Product Vision, no como implementación principal. La reevaluación del uso obligatorio de IA está documentada en [registro_flujo/llm_use_case](../registro_flujo/llm_use_case/) y conduce a D050 como caso actualmente preferido.
 
 Evidencia: [EV-008](../Evidencias/EV-008_llm_triage.md).
 
