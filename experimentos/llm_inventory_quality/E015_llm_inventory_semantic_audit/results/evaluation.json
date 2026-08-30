@@ -1,6 +1,11 @@
 {
-  "n_rows": 200,
+  "n_rows": 240,
   "n_human_labeled": 0,
   "n_llm_predictions": 0,
-  "ready_for_final_evaluation": false
+  "ready_for_final_evaluation": false,
+  "actionable_llm_classes": [
+    "contradiction",
+    "semantic_cross_field_mismatch"
+  ],
+  "non_actionable_llm_findings": {}
 }
