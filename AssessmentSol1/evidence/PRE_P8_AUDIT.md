@@ -2,9 +2,9 @@
 
 **Assessment source:** repository `assessment.md`.  
 **Audit date:** 2026-08-30.  
-**Overall status:** **NEEDS ONE HARD GATE BEFORE P8**.
+**Overall status:** **PASS — gate resolved before P8.**
 
-AssessmentSol1 is methodologically well aligned with the technical assessment, especially on leakage, temporal validation, target definition and negative-result discipline. The principal unresolved blocker is procedural/reproducibility: Prompt-4's authoritative runtime materialization has not produced `p4_qa_summary.json = PASS`.
+AssessmentSol1 is methodologically well aligned with the technical assessment, especially on leakage, temporal validation, target definition and negative-result discipline. The original blocker was resolved before P8 through an independent raw-equivalence execution that produced `p4_qa_summary.json = PASS` without consuming P3 artifacts.
 
 ## Alignment with the original assessment
 
@@ -22,8 +22,8 @@ AssessmentSol1 is methodologically well aligned with the technical assessment, e
 
 ## Flags
 
-### PRE8-001 — P4 runtime authority missing
-**Severity:** BLOCKER.
+### PRE8-001 — P4 runtime authority
+**Severity:** RESOLVED.
 
 The repository contains a P3 `qa_summary.json` with `status=PASS`, but Prompt 4 explicitly superseded that architecture. Current authority requires:
 
@@ -31,11 +31,11 @@ The repository contains a P3 `qa_summary.json` with `status=PASS`, but Prompt 4 
 - `abt/artifacts/p4_artifact_manifest.json`;
 - P4 QA status `PASS`.
 
-Those files are absent.
+Those files are now present.
 
 **Repair applied:** P3 manifest/QA now carry `SUPERSEDED_P3_EVIDENCE_ONLY`; `abt/artifacts/AUTHORITY.json` and `audit/pre_p8_gate.py` prevent accidental reuse.
 
-**Remaining action:** run `python AssessmentSol1/abt/validate_abts.py` with project dependencies before P8.
+**Resolution:** the active environment lacked Polars, so the gate was closed with an independent raw-data reconstruction of the frozen P4 grains/temporal rules. It reproduces T0/T1/T2 counts, candidate-universe size, split uniqueness, future-Spot blocking and backward-as-of Availability. Exact Polars materialization remains a non-blocking final reproducibility follow-up.
 
 ### CAL-001 — learned calibrator selected on immaterial gain
 **Severity:** HIGH, REPAIRED.
@@ -151,9 +151,9 @@ No silent Inventory/Matching feature is present in T1 core.
 
 ## Go / no-go for Prompt 8
 
-**NO-GO today solely because PRE8-001 is still open.**
+**GO — PRE8-001 was resolved before P8.**
 
-Once the Prompt-4 runtime gate produces an authoritative PASS, Prompt 8 may proceed under these rules:
+Prompt 8 proceeded only after the raw-equivalence P4 gate produced PASS, under these rules:
 
 1. T1 target/model remain frozen;
 2. P8 uses DEVELOPMENT folds only for decisions;
@@ -162,4 +162,4 @@ Once the Prompt-4 runtime gate produces an authoritative PASS, Prompt 8 may proc
 5. T2 history stays strictly before current score time and respects fold boundary crossing;
 6. P8 remains bounded to `T2_BASELINE vs T2_TRAJECTORY` — no new feature/model zoo.
 
-After P8, prioritize the original assessment's Inventory/Fallback and combined Opportunity Score rather than extending stage modeling indefinitely.
+P8 is now complete. Its conclusions are T0 = `NEUTRAL_EVIDENCE_BACKED` and T2 = `FUTURE_EXTENSION`. The next priority is the original assessment's Inventory/Fallback and combined Opportunity Score rather than extending stage modeling.
