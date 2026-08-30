@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.1",
+  "contract_version": "0.1.2",
   "phase": "PROMPT_0",
   "stage_score_times": {
     "T0": "leads.created_at",
@@ -30,6 +30,34 @@
         "total_inquiries",
         "total_views",
         "is_active"
+      ],
+      "structural_candidate_guardrails": {
+        "fields": [
+          "sector_name",
+          "type_name",
+          "state",
+          "municipality",
+          "settlement",
+          "corridor",
+          "region",
+          "lat",
+          "lon",
+          "area_sqm",
+          "modality"
+        ],
+        "policy": "ASSUMED_STRUCTURAL_FROM_SPOT_CREATION",
+        "condition": "spots.created_at <= score_time",
+        "model_role": "POLICY_GUARDRAIL_NOT_LEADQUALITY_FEATURE"
+      },
+      "potentially_mutable_unversioned": [
+        "broker_id",
+        "title",
+        "description",
+        "price_sqm_mxn_rent",
+        "price_sqm_mxn_sale",
+        "price_total_mxn_rent",
+        "price_total_mxn_sale",
+        "maintenance_cost_mxn"
       ]
     },
     "spot_attributes": {
