@@ -1,0 +1,47 @@
+{
+  "status": "SUPPORTED / DECISION-READY",
+  "fallback": {
+    "k": 3,
+    "policy": "same sector + compatible modality + point-in-time inventory; corridor -> municipality -> state; area ratio 0.5-2.0; total price <= 1.5x budget",
+    "final_fold_cases": 598,
+    "coverage_at_3_any": 0.7591973244147158,
+    "full_list_at_3": 0.6237458193979933,
+    "no_result_rate": 0.24080267558528423,
+    "available_fallback_at_3": 0.7090301003344481
+  },
+  "lead_opportunity_score": {
+    "formula": "pooled_catboost_trajectory * p_inventory_top3",
+    "claim": "opportunity score, not a fully calibrated joint probability"
+  },
+  "joint_proxy_macro": {
+    "quality_only": {
+      "roc_auc": 0.5915486971056678,
+      "average_precision": 0.41201548906518115,
+      "brier": 0.22095302227629643,
+      "log_loss": 0.6319460233072742,
+      "lift_top_10pct": 1.3118599429737627,
+      "recall_top_20pct": 0.24742512763208302
+    },
+    "lead_opportunity_score": {
+      "roc_auc": 0.6601695671036991,
+      "average_precision": 0.4618800780004098,
+      "brier": 0.2099925489562363,
+      "log_loss": 0.6069237737816671,
+      "lift_top_10pct": 1.4499435865711845,
+      "recall_top_20pct": 0.2867323488756349
+    }
+  },
+  "final_fold_p85": {
+    "selected": 219,
+    "quality_only_joint_positives": 106,
+    "lead_opportunity_joint_positives": 114,
+    "joint_positive_gain": 8,
+    "joint_positive_relative_gain": 0.07547169811320754,
+    "quality_only_conversion_positives": 124,
+    "lead_opportunity_conversion_positives": 114,
+    "conversion_positive_delta": -10,
+    "quality_only_confirmed_serviceable_rate": 0.8904109589041096,
+    "lead_opportunity_confirmed_serviceable_rate": 1.0
+  },
+  "leakage_check": "PASS"
+}
