@@ -434,20 +434,64 @@ def main() -> None:
         if row["target_option"] == "A"
         and row["maturity_buffer_days"] == PRIMARY_MATURITY_DAYS
     )
+    contract = json.loads(
+        (root / "AssessmentSol1" / "target" / "target_contract.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    timed_realized = [
+        float(r["broker_response_hours"])
+        for r in inquiries
+        if r.get("broker_response") in {"accepted", "rejected", "scheduled_visit"}
+        and r.get("broker_response_hours") is not None
+    ]
+    scheduled = [r for r in inquiries if r.get("broker_response") == SCHEDULED]
+    scheduled_timed = [
+        r for r in scheduled if r.get("broker_response_hours") is not None
+    ]
     result = {
-        "primary_target_id": PRIMARY_TARGET_ID,
-        "primary_stage": PRIMARY_STAGE,
-        "primary_maturity_days": PRIMARY_MATURITY_DAYS,
+        "phase": "PROMPT_2",
+        "decision_rule": (
+            "No model performance metric was computed or used. Decision uses "
+            "business semantics, temporal identifiability, label coverage, "
+            "prevalence stability, censoring, and implementation feasibility."
+        ),
         "activity_horizon": _iso(activity_horizon(inquiries)),
-        "primary_audit": primary,
-        "model_performance_metrics_computed": False,
+        "primary_target": {
+            "id": PRIMARY_TARGET_ID,
+            "stage": PRIMARY_STAGE,
+            "maturity_buffer_days": PRIMARY_MATURITY_DAYS,
+            "audit": primary,
+            "freeze": True,
+            "immutable_due_to_future_model_performance": True,
+        },
+        "cohort_summary": cohort,
+        "response_timing_audit": {
+            "scheduled_visit_rows": len(scheduled),
+            "scheduled_visit_with_hours": len(scheduled_timed),
+            "scheduled_visit_missing_hours": len(scheduled) - len(scheduled_timed),
+            "scheduled_visit_timing_coverage": (
+                len(scheduled_timed) / len(scheduled)
+            ),
+            "realized_timed_rows": len(timed_realized),
+            "realized_response_hours_max": max(timed_realized),
+            "realized_timed_within_7d_rate": (
+                sum(h <= 168 for h in timed_realized) / len(timed_realized)
+            ),
+        },
+        "secondary_targets": contract["secondary_targets"],
+        "no_model_metrics": {
+            "AUC": "NOT_COMPUTED",
+            "AP": "NOT_COMPUTED",
+            "Lift": "NOT_COMPUTED",
+        },
     }
 
     if args.write:
         target_dir = root / "AssessmentSol1" / "target"
         write_csv(target_dir / "target_audit.csv", audit)
         write_csv(target_dir / "target_cohort_summary.csv", cohort)
-        (target_dir / "target_summary_runtime.json").write_text(
+        (target_dir / "target_summary.json").write_text(
             json.dumps(result, indent=2) + "\n", encoding="utf-8"
         )
 
