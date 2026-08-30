@@ -72,10 +72,28 @@ def build_all(repo_root: Path):
         .min()
         .rename("first_conversion_at")
     )
-    dyn = dyn.merge(first_conversion, on="lead_id", how="left")
+    first_ambiguous_conversion = (
+        inquiries_fe[
+            inquiries_fe["broker_response"].eq("scheduled_visit")
+            & inquiries_fe["response_event_at"].isna()
+        ]
+        .groupby("lead_id")["inquiry_at"]
+        .min()
+        .rename("first_ambiguous_conversion_inquiry_at")
+    )
+    dyn = (
+        dyn.merge(first_conversion, on="lead_id", how="left")
+        .merge(first_ambiguous_conversion, on="lead_id", how="left")
+    )
     dyn = dyn[
-        dyn["first_conversion_at"].isna()
-        | (dyn["inquiry_at"] < dyn["first_conversion_at"])
+        (
+            dyn["first_conversion_at"].isna()
+            | (dyn["inquiry_at"] < dyn["first_conversion_at"])
+        )
+        & (
+            dyn["first_ambiguous_conversion_inquiry_at"].isna()
+            | (dyn["inquiry_at"] < dyn["first_ambiguous_conversion_inquiry_at"])
+        )
     ].copy()
     dyn["stage_id"] = np.where(dyn["inquiry_number"].eq(1), 1, 2)
     dyn["stage"] = dyn["stage_id"].map(STAGES)
@@ -89,12 +107,18 @@ def build_all(repo_root: Path):
     dyn = add_target(dyn, inquiries_fe, HORIZON_DAYS)
 
     # Training-ready populations: complete 30-day observation window only.
-    t0_ready = t0[t0["is_right_censored"].eq(0)].copy()
+    t0_ready = t0[
+        t0["is_right_censored"].eq(0) & t0["label_time_ambiguous"].eq(0)
+    ].copy()
     t1_ready = dyn[
-        dyn["stage_id"].eq(1) & dyn["is_right_censored"].eq(0)
+        dyn["stage_id"].eq(1)
+        & dyn["is_right_censored"].eq(0)
+        & dyn["label_time_ambiguous"].eq(0)
     ].copy()
     t2_ready = dyn[
-        dyn["stage_id"].eq(2) & dyn["is_right_censored"].eq(0)
+        dyn["stage_id"].eq(2)
+        & dyn["is_right_censored"].eq(0)
+        & dyn["label_time_ambiguous"].eq(0)
     ].copy()
 
     # Stable chronological lead-cohort split shared by all stages.
