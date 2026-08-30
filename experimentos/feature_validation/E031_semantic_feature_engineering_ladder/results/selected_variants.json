@@ -26,7 +26,7 @@
     "average_precision": 0.5195297643543995,
     "ap_over_prevalence": 1.0227779691421368,
     "brier": 0.25423755365733797,
-    "log_loss": 0.7017416097707811,
+    "log_loss": 0.701741609770781,
     "lift_top_10pct": 1.096825396825397,
     "recall_top_20pct": 0.20512820512820512,
     "qualified_on_validation": false
