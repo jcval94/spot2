@@ -1,0 +1,6 @@
+sample_stratum,n,llm_incremental_issue_rate,llm_new_rule_candidate_rate,llm_human_review_rate,llm_mean_confidence
+ambiguity_challenge,25,0.96,0.0,0.0,64.92
+clean_control,25,0.0,0.0,0.0,87.60
+land_semantic_residual,25,0.08,0.0,0.0,83.32
+rules_positive,25,0.08,0.0,0.0,86.32
+TOTAL,100,0.28,0.0,0.0,80.54
