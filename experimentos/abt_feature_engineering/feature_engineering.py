@@ -216,6 +216,9 @@ def prepare_inquiries(inquiries: pd.DataFrame) -> pd.DataFrame:
     realized = d["broker_response"].isin(RESPONSE_STATUSES) & hours.notna()
     d["response_event_at"] = pd.NaT
     d.loc[realized, "response_event_at"] = d.loc[realized, "inquiry_at"] + pd.to_timedelta(hours[realized], unit="h")
+    d["response_time_ambiguous"] = (
+        d["broker_response"].eq("scheduled_visit") & hours.isna()
+    ).astype(float)
     d["response_semantic_inconsistency"] = (
         (d["broker_response"].eq("no_response") & hours.notna())
         | (d["broker_response"].isin(RESPONSE_STATUSES) & hours.isna())
@@ -441,24 +444,42 @@ def add_target(rows: pd.DataFrame, inquiries: pd.DataFrame, horizon_days: int = 
     scheduled = inquiries[
         inquiries["broker_response"].eq("scheduled_visit") & inquiries["response_event_at"].notna()
     ][["lead_id", "response_event_at"]]
+    ambiguous = inquiries[
+        inquiries["broker_response"].eq("scheduled_visit") & inquiries["response_event_at"].isna()
+    ][["lead_id", "inquiry_at"]]
     event_map = {
         k: np.sort(g["response_event_at"].to_numpy(dtype="datetime64[ns]"))
         for k, g in scheduled.groupby("lead_id")
     }
+    ambiguous_map = {
+        k: np.sort(g["inquiry_at"].to_numpy(dtype="datetime64[ns]"))
+        for k, g in ambiguous.groupby("lead_id")
+    }
     observation_end = max(inquiries["inquiry_at"].max(), inquiries["response_event_at"].max())
     cutoff = observation_end - pd.Timedelta(days=horizon_days)
     d["is_right_censored"] = (d["score_time"] > cutoff).astype(float)
-    ys = []
+
+    ys, ambiguous_flags = [], []
     for row in d.itertuples():
-        events = event_map.get(row.lead_id)
-        if events is None or len(events) == 0:
-            ys.append(0)
-            continue
         t = np.datetime64(pd.Timestamp(row.score_time).to_datetime64())
         end = np.datetime64((pd.Timestamp(row.score_time) + pd.Timedelta(days=horizon_days)).to_datetime64())
-        pos = np.searchsorted(events, t, side="right")
-        ys.append(int(pos < len(events) and events[pos] <= end))
+
+        events = event_map.get(row.lead_id)
+        positive = 0
+        if events is not None and len(events):
+            pos = np.searchsorted(events, t, side="right")
+            positive = int(pos < len(events) and events[pos] <= end)
+        ys.append(positive)
+
+        ambiguous_times = ambiguous_map.get(row.lead_id)
+        is_ambiguous = 0
+        if positive == 0 and ambiguous_times is not None and len(ambiguous_times):
+            pos = np.searchsorted(ambiguous_times, t, side="left")
+            is_ambiguous = int(pos < len(ambiguous_times) and ambiguous_times[pos] <= end)
+        ambiguous_flags.append(is_ambiguous)
+
     d["target_scheduled_visit_30d"] = ys
+    d["label_time_ambiguous"] = ambiguous_flags
     d["observation_end"] = observation_end
     d["censor_cutoff"] = cutoff
     return d
