@@ -199,3 +199,28 @@ def test_supply_history_replaces_current_totals_and_broker_id():
     assert second["broker_hist_realized_responses"] == 1
     assert third["broker_hist_prior_inquiries"] == 2
     assert third["broker_hist_scheduled_visits"] == 1
+
+
+def test_scheduled_visit_without_response_time_is_label_ambiguous():
+    from feature_engineering import add_target
+
+    q = pd.DataFrame(
+        {
+            "inquiry_id": [1],
+            "lead_id": [1],
+            "spot_id": [7],
+            "inquiry_at": pd.to_datetime(["2026-01-10 10:00"]),
+            "broker_response": ["scheduled_visit"],
+            "broker_response_hours": [np.nan],
+            "asked_visit": [True],
+            "message_length": [100],
+            "urgency_days": [5],
+        }
+    )
+    q = prepare_inquiries(q)
+    rows = pd.DataFrame(
+        {"lead_id": [1], "score_time": pd.to_datetime(["2026-01-01"])}
+    )
+    x = add_target(rows, q, horizon_days=30)
+    assert x.loc[0, "target_scheduled_visit_30d"] == 0
+    assert x.loc[0, "label_time_ambiguous"] == 1
