@@ -81,3 +81,8 @@ Eso requiere el siguiente benchmark temporal.
 - D035–D036: trayectoria T2.
 - D050–D055: LLM semantic inventory quality.
 - D056–D057: contrato ABT y frontera de features LLM.
+
+
+## Conocimiento acumulado
+
+Relacionado con [DESCUBRIMIENTOS.md](../conocimiento_agregado/DESCUBRIMIENTOS.md).
