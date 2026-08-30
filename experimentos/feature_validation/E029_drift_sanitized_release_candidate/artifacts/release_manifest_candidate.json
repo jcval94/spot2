@@ -2,7 +2,7 @@
   "experiment_id": "E029_drift_sanitized_release_candidate",
   "artifact_status": "FROZEN_AWAITING_PROSPECTIVE_GATE",
   "launch_eligible": false,
-  "github_sha": "9cd37c2330f3f07678d8028d31c7acb523b8536c",
+  "github_sha": "c057a4788185525393916cc1de3130429de76b27",
   "historical_data_end_score_time": "2026-06-14 12:54:00",
   "historical_target_observation_end": "2026-07-14 13:01:24",
   "historical_diagnostic_is_confirmatory": false,
@@ -13,7 +13,7 @@
     "n_encoded_features": 244,
     "calibration": {
       "status": "platt",
-      "intercept": 0.0006997844134938979,
+      "intercept": 0.0006997844134938639,
       "coefficient": 1.0040116285137617
     }
   },
@@ -31,7 +31,7 @@
   "hashes": {
     "preprocessor_sha256": "101ac844a096216ec404baf446489605d5079ded6c94cd90fe42c8694e401f7c",
     "model_sha256": "4d0965155d8b1dee0aeb097f8d25b80206de60af0e42e37d0c8ed7df6f852171",
-    "calibrator_sha256": "1c7265faab19377381b56940d13208a38a35d900d5d7c2c5d9ecc21b6ed9768e",
+    "calibrator_sha256": "ca8d59edf8c867b3566bdea8493d4dcf5d861e80453328d932fc51b614a58c20",
     "feature_schema_sha256": "e787a6821107f836e67d5c5d13c3aa0e182a49bd6ff36ab92463d3b6ad8a1cfc",
     "treatment_policy_sha256": "5c976002ae514cca648893411e7d5f89a2ab55b0577ca1cd58e286dcd7c5469a"
   },
