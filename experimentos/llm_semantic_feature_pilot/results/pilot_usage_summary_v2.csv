@@ -1,0 +1,7 @@
+batch_index,n_records,model,input_tokens,output_tokens,estimated_cost_usd
+0,20,gpt-5-nano,2649,955,0.000514
+1,20,gpt-5-nano,2464,942,0.000500
+2,20,gpt-5-nano,2575,1005,0.000531
+3,20,gpt-5-nano,2495,1018,0.000532
+4,20,gpt-5-nano,2451,949,0.000502
+TOTAL,100,gpt-5-nano,12634,4869,0.002579
