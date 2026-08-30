@@ -45,8 +45,8 @@ The June procedural holdout remains permanently non-pristine and diagnostic-only
 Decision: **NEUTRAL_EVIDENCE_BACKED**.
 
 T0 estimates a different quantity from T1. Intake-only Logistic does not provide stable discrimination:
-- macro AP 0.4803 → 0.4831;
-- macro AUC 0.4934;
+- macro AP 0.4803 → 0.4856;
+- macro AUC 0.4947;
 - Brier and Log Loss worsen.
 
 T0 should not deploy a predictive ranking model.
@@ -55,9 +55,9 @@ T0 should not deploy a predictive ranking model.
 Decision: **FUTURE_EXTENSION**.
 
 Adding the 33 strict-prior trajectory features gives:
-- AP 0.1807 → 0.1857;
-- delta AP +0.0050;
-- 3/4 folds positive;
+- AP 0.1864 → 0.1896;
+- delta AP +0.0032;
+- 2/4 folds positive;
 - Brier / Log Loss slightly worse.
 
 The effect is below the frozen +0.01 complexity gate. No T2 predictive model is recommended now.
