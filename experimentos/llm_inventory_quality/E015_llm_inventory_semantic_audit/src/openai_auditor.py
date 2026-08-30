@@ -42,13 +42,38 @@ def build_payload(row: dict[str, Any]) -> dict[str, Any]:
         "title": row.get("title"),
         "description": row.get("description"),
         "attributes": {
-            "natural_light": row.get("natural_light"),
-            "security_type": row.get("security_type"),
-            "parking_spaces": row.get("parking_spaces"),
-            "building_status": row.get("building_status"),
+            "natural_light": _parse_bool(row.get("natural_light")),
+            "security_type": row.get("security_type") or None,
+            "parking_spaces": _parse_number(row.get("parking_spaces")),
+            "building_status": row.get("building_status") or None,
             "amenities": amenities,
         },
     }
+
+
+def _parse_bool(value: Any) -> bool | None:
+    if isinstance(value, bool):
+        return value
+    if value is None or str(value).strip() == "":
+        return None
+    normalized = str(value).strip().lower()
+    if normalized == "true":
+        return True
+    if normalized == "false":
+        return False
+    return None
+
+
+def _parse_number(value: Any) -> int | float | None:
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return value
+    if value is None or str(value).strip() == "":
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return int(number) if number.is_integer() else number
 
 
 def input_hash(payload: dict[str, Any], model: str, prompt: str, schema: dict[str, Any]) -> str:
