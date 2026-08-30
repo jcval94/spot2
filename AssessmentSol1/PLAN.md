@@ -25,7 +25,7 @@ Development-only EDA, drift classification, 129-row FEATURE_REGISTRY, frozen fea
 
 ## P7 — Lead Quality T1 — COMPLETE WITH HOLDOUT-INTEGRITY INCIDENT
 
-Frozen champion: **BASE_RATE + PLATT**.
+Frozen champion: **BASE_RATE + RAW**.
 
 Why:
 - learned T1 ranking is not stable;
@@ -35,11 +35,17 @@ Why:
 - selected-Spot context remains challenger-only;
 - no post-result feature/model search was opened.
 
-The champion outputs a calibrated constant probability ~0.2083 and must not be presented as an individual ranking model.
+The champion outputs the DEVELOPMENT base rate ~0.2038 and must not be presented as an individual ranking model. Learned calibration was rejected after a methodological audit because its gain was immaterial.
 
 The June procedural holdout is considered consumed because of the documented pre-freeze execution-export incident. Its stored results are diagnostic-only.
 
-## P8 — T0 sensitivity + T2 trajectory challenger — NEXT
+## PRE-P8 AUDIT — COMPLETE; ONE BLOCKER OPEN
+
+Assessment alignment, drift, feature registry, metric semantics, Inventory timing assumptions and P7 calibration were audited. See `evidence/PRE_P8_AUDIT.md`.
+
+**Blocker:** authoritative Prompt-4 runtime artifacts are still absent. Run `python AssessmentSol1/abt/validate_abts.py` and require `p4_qa_summary.json = PASS` before continuing.
+
+## P8 — T0 sensitivity + T2 trajectory challenger — BLOCKED ON P4 RUNTIME PASS
 T1 must remain frozen. Evaluate T0 as a potentially neutral cold-start product and T2 only as BASELINE vs TRAJECTORY under strict boundary crossing rules.
 
 ## P9 — Inventory / opportunity integration
