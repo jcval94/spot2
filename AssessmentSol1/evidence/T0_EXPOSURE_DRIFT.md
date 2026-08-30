@@ -1,40 +1,44 @@
-# T0_EXPOSURE_DRIFT — PROMPT 8
+# T0_EXPOSURE_DRIFT — Cold Start
 
-Target: `T0_30D_INQUIRY_INITIATION_PROGRESS_V1`.  
-Score time: `leads.created_at`.
+**Decision:** `NEUTRAL_EVIDENCE_BACKED`.
 
-**T0 and T1 probabilities estimate different quantities.**
+T0 score time is `lead.created_at`. Only intake information is allowed as predictor input.
 
-This audit intentionally uses future 30-day inquiry exposure only to understand the T0 target. Exposure variables are never predictors.
+> **T0 and T1 probabilities estimate different quantities.**
 
-| Cohort | N | T0 target rate | Mean inquiries in 30d | Leads with ≥1 inquiry | Mean inquiries if exposed |
-|---|---:|---:|---:|---:|---:|
-| 2025H1 | 1,660 | 30.78% | 1.86 | 81.02% | 2.30 |
-| 2025H2 | 1,684 | 42.16% | 3.01 | 94.48% | 3.18 |
-| 2026Q1 | 828 | 52.90% | 3.87 | 97.95% | 3.95 |
-| 2026-Apr | 262 | 52.67% | 3.97 | 100.00% | 3.97 |
+T0 estimates whether at least one inquiry **initiated within 30 days of lead creation** eventually has `scheduled_visit`. T1 estimates whether the deterministic first inquiry itself eventually has `scheduled_visit`. Their probabilities must not be compared as interchangeable scores.
 
-## Finding
+## Temporal CV result
 
-The T0 target moves by roughly **+22 percentage points** from 2025H1 to 2026Q1/Apr while 30-day inquiry exposure roughly doubles.
+| Model | Macro ROC AUC | Macro AP | Brier | Log Loss |
+|---|---:|---:|---:|---:|
+| T0 Base Rate | 0.5000 | 0.4803 | **0.2631** | **0.7207** |
+| T0 Intake Logistic | 0.4947 | 0.4856 | 0.2642 | 0.7234 |
 
-This is consistent with the inherited concern that the T0 progress target is highly exposure-sensitive. It does not prove causality, but the direction and magnitude are large enough that calendar/process exposure is a major alternative explanation for apparent T0 predictability.
+The intake model changes AP by only **+0.0053**, remains below random-ranking AUC, and slightly worsens both proper probability scores. It fails the pre-registered T0 promotion rule.
 
-## Model result
+## Exposure drift
 
-Fold-specific Base Rate vs intake-only L2 Logistic:
+Future exposure is highly nonstationary:
 
-- macro AP: **0.4803 → 0.4831**;
-- macro AUC: **0.5000 → 0.4934**;
-- Brier: **0.2631 → 0.2665**;
-- Log Loss: **0.7207 → 0.7294**.
+| Cohort | Target rate | Mean inquiries in 30d | Leads with ≥1 inquiry | Mean inquiries if exposed |
+|---|---:|---:|---:|---:|
+| 2025H1 | 30.78% | 1.86 | 81.02% | 2.30 |
+| 2025H2 | 42.16% | 3.01 | 94.48% | 3.18 |
+| 2026Q1 | 52.90% | 3.87 | 97.95% | 3.95 |
+| 2026 Apr | 52.67% | 3.97 | 100.00% | 3.97 |
 
-The Logistic fails the pre-registered promotion rule on effect size, AUC and Brier.
+The target rate rises together with opportunity to generate inquiries. This is a **target/exposure mechanism**, not a legitimate T0 predictor.
 
-## Decision
+Future inquiry count, whether the lead will be exposed, requested Spots, Availability and downstream outcomes remain forbidden at T0.
 
-**NEUTRAL_EVIDENCE_BACKED.**
+## Operational conclusion
 
-T0 is useful as a cold-start stage and for communicating uncertainty, but the delivered intake information does not support a defensible discriminative ranking model under temporal validation.
+T0 does **not** justify a discriminative cold-start model with the supplied intake variables.
 
-No future exposure count is promoted as a predictor.
+A population prior may be reported for planning, but T0 should not be used to rank newly created leads. Additional pre-inquiry signals or an exposure-controlled target would be required before revisiting a predictive cold-start product.
+
+Evidence:
+- `models/t0/metrics/fold_metrics.csv`
+- `models/t0/metrics/macro_metrics.csv`
+- `models/t0/metrics/exposure_drift.csv`
