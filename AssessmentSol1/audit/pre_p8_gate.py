@@ -40,7 +40,7 @@ def run_gate() -> dict:
             )
 
     target = load_json(ROOT / "target" / "target_contract.json")
-    if target.get("primary", {}).get("id") != "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1":
+    if target.get("primary_target", {}).get("id") != "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1":
         issues.append({"id": "TARGET_FREEZE", "severity": "BLOCKER", "status": "FAIL"})
 
     split = load_json(ROOT / "splits" / "split_contract.json")
