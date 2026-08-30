@@ -55,6 +55,155 @@ FORBIDDEN_SPOT_BACKTEST = (
     "is_active",
 )
 
+COLUMN_TEMPORAL_CLASSIFICATION = {
+    "leads": {
+        "static_columns": [
+            "lead_id",
+            "user_type",
+            "company_size",
+            "industry",
+            "search_sector",
+            "search_modality",
+            "target_area_sqm",
+            "min_budget_mxn_rent_monthly",
+            "max_budget_mxn_rent_monthly",
+            "min_budget_mxn_sale_total",
+            "max_budget_mxn_sale_total",
+            "preferred_state",
+            "preferred_municipality",
+            "preferred_corridor",
+            "source",
+            "created_at"
+        ],
+        "mutable_columns": [],
+        "temporal_unknown_columns": [
+            "prior_searches",
+            "prior_inquiries",
+            "has_converted_before",
+            "lead_score_internal"
+        ],
+        "note": "Intake fields are treated as the delivered creation snapshot. Historical counters/internal score lack a separate observation/effective-time contract."
+    },
+    "inquiries": {
+        "static_columns": [
+            "inquiry_id",
+            "lead_id",
+            "spot_id",
+            "inquiry_at",
+            "channel",
+            "message_length",
+            "requested_area_sqm",
+            "requested_budget_mxn_rent_monthly",
+            "requested_budget_mxn_sale_total",
+            "urgency_days",
+            "asked_visit"
+        ],
+        "mutable_columns": [
+            "broker_response",
+            "broker_response_hours"
+        ],
+        "temporal_unknown_columns": [
+            "broker_response",
+            "broker_response_hours"
+        ],
+        "note": "Request fields are event facts at inquiry_at. Response fields arrive after inquiry and lack a reliable event/observation timestamp."
+    },
+    "spots": {
+        "static_columns": [
+            "spot_id",
+            "created_at"
+        ],
+        "mutable_columns": [
+            "days_on_market",
+            "total_inquiries",
+            "total_views",
+            "is_active"
+        ],
+        "temporal_unknown_columns": [
+            "broker_id",
+            "sector_name",
+            "type_name",
+            "state",
+            "municipality",
+            "settlement",
+            "corridor",
+            "region",
+            "lat",
+            "lon",
+            "title",
+            "description",
+            "area_sqm",
+            "price_sqm_mxn_rent",
+            "price_sqm_mxn_sale",
+            "price_total_mxn_rent",
+            "price_total_mxn_sale",
+            "maintenance_cost_mxn",
+            "modality"
+        ],
+        "note": "Descriptive/pricing fields may be stable in practice but have no version/effective timestamps, so historical mutability is not invented."
+    },
+    "spot_attributes": {
+        "static_columns": [
+            "spot_id"
+        ],
+        "mutable_columns": [],
+        "temporal_unknown_columns": [
+            "natural_light",
+            "luminaires",
+            "charging_ports",
+            "security_type",
+            "floor_level",
+            "elevators",
+            "vertical_height_m",
+            "parking_spaces",
+            "building_status",
+            "floor_material",
+            "amenities"
+        ],
+        "note": "No timestamp exists for attribute values; all non-key attributes remain temporally unknown pending provenance."
+    },
+    "availability_snapshot": {
+        "static_columns": [
+            "snapshot_id",
+            "spot_id",
+            "snapshot_date"
+        ],
+        "mutable_columns": [
+            "is_available",
+            "days_until_available",
+            "competing_inquiries_30d"
+        ],
+        "temporal_unknown_columns": [
+            "competing_inquiries_30d"
+        ],
+        "note": "State changes across snapshots. Snapshot_date is the only historical anchor; competing_inquiries_30d window direction is unproven."
+    },
+    "market_context": {
+        "static_columns": [
+            "state",
+            "municipality",
+            "corridor",
+            "sector",
+            "month"
+        ],
+        "mutable_columns": [
+            "similar_available_spots",
+            "avg_price_sqm_mxn",
+            "recent_occupancy_rate",
+            "absorption_velocity_days",
+            "recent_inquiry_volume"
+        ],
+        "temporal_unknown_columns": [
+            "similar_available_spots",
+            "avg_price_sqm_mxn",
+            "recent_occupancy_rate",
+            "absorption_velocity_days",
+            "recent_inquiry_volume"
+        ],
+        "note": "Month is a period label, not publication/effective time. Aggregates are EDA_ONLY."
+    }
+}
+
 AUDIT_DATE = pl.datetime(2026, 8, 30, 23, 59, 59)
 
 
@@ -334,6 +483,34 @@ def cardinality_summary(df: pl.DataFrame, key: str) -> dict[str, float | int]:
     }
 
 
+def date_validity_audit(frames: dict[str, pl.DataFrame]) -> dict[str, dict[str, int]]:
+    """Parse every declared raw time column and flag impossible/future dates."""
+    out: dict[str, dict[str, int]] = {}
+    for table, columns in TIME_COLUMNS.items():
+        for column in columns:
+            raw = frames[table][column]
+            if column in {"snapshot_date", "month"}:
+                parsed = raw.str.to_date(strict=False)
+                invalid = parsed.null_count() - raw.null_count()
+                before_2000 = parsed.filter(parsed < pl.date(2000, 1, 1)).len()
+                after_audit = parsed.filter(parsed > pl.date(2026, 8, 30)).len()
+            else:
+                parsed = raw.str.to_datetime(strict=False)
+                invalid = parsed.null_count() - raw.null_count()
+                before_2000 = parsed.filter(
+                    parsed < pl.datetime(2000, 1, 1, 0, 0, 0)
+                ).len()
+                after_audit = parsed.filter(
+                    parsed > pl.datetime(2026, 8, 30, 23, 59, 59)
+                ).len()
+            out[f"{table}.{column}"] = {
+                "invalid_parse": int(invalid),
+                "before_2000": int(before_2000),
+                "after_audit_date": int(after_audit),
+            }
+    return out
+
+
 def temporal_relational_checks(frames: dict[str, pl.DataFrame]) -> dict[str, int]:
     leads = frames["leads"].select(
         "lead_id",
@@ -536,6 +713,7 @@ def build_audit(repo_root: Path) -> dict:
             ),
             "spots_per_broker": cardinality_summary(frames["spots"], "broker_id"),
         },
+        "date_validity": date_validity_audit(frames),
         "temporal_relational_checks": temporal_relational_checks(frames),
         "market_context_audit": market_context_audit(
             frames["inquiries"], frames["spots"], frames["market_context"]
@@ -548,6 +726,7 @@ def build_audit(repo_root: Path) -> dict:
             "availability_snapshot": "DATED_MUTABLE_STATE_BACKWARD_ASOF_ONLY",
             "market_context": "MONTHLY_AGGREGATE_WITHOUT_PUBLICATION_TIME_EDA_ONLY",
         },
+        "column_temporality": COLUMN_TEMPORAL_CLASSIFICATION,
         "source_policy": {
             "spots_current_state": "FORBIDDEN_BACKTEST",
             "spot_attributes": "BLOCKED_PENDING_TEMPORAL_PROVENANCE",
