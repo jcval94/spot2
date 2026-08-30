@@ -77,6 +77,14 @@ Sensitivity using previous-day-only snapshots shows small impact in this dataset
 
 **Decision:** not a current blocker, but production needs ingestion/event timestamps or a documented snapshot SLA.
 
+
+### INV-003 — Historical price compatibility is not reconstructable
+**Severity:** MEDIUM, OPEN CAVEAT FOR INVENTORY/FALLBACK.
+
+The original assessment explicitly expects price/range compatibility in Inventory/Fallback. The delivered Spot prices are unversioned current/extract fields, so AssessmentSol1 correctly blocks them from historical point-in-time performance claims.
+
+**Consequence:** P9 may use current prices for a present-state recommendation demo, clearly labeled as current-serving logic, but historical backtest metrics must not pretend those prices were known unchanged at past score times. A defensible historical price-compatibility evaluation requires price version history/effective timestamps.
+
 ### GOV-001 — stale P3 artifacts looked authoritative
 **Severity:** MEDIUM, REPAIRED.
 
