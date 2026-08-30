@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+from datetime import datetime, timezone
 import polars as pl
 import pytest
 
@@ -28,13 +29,13 @@ def test_prediction_key_unique_synthetic() -> None:
 
 def test_no_future_snapshot() -> None:
     ok = pl.DataFrame({
-        "score_time": [pl.datetime(2026, 1, 2)],
-        "snapshot_time": [pl.datetime(2026, 1, 1)],
+        "score_time": [datetime(2026, 1, 2, tzinfo=timezone.utc)],
+        "snapshot_time": [datetime(2026, 1, 1, tzinfo=timezone.utc)],
     })
     validate.assert_no_future_snapshot(ok)
     bad = pl.DataFrame({
-        "score_time": [pl.datetime(2026, 1, 1)],
-        "snapshot_time": [pl.datetime(2026, 1, 2)],
+        "score_time": [datetime(2026, 1, 1, tzinfo=timezone.utc)],
+        "snapshot_time": [datetime(2026, 1, 2, tzinfo=timezone.utc)],
     })
     with pytest.raises(AssertionError):
         validate.assert_no_future_snapshot(bad)
@@ -42,8 +43,8 @@ def test_no_future_snapshot() -> None:
 
 def test_no_future_inquiry() -> None:
     bad = pl.DataFrame({
-        "score_time": [pl.datetime(2026, 1, 1)],
-        "hist_max_inquiry_time": [pl.datetime(2026, 1, 1)],
+        "score_time": [datetime(2026, 1, 1, tzinfo=timezone.utc)],
+        "hist_max_inquiry_time": [datetime(2026, 1, 1, tzinfo=timezone.utc)],
     })
     with pytest.raises(AssertionError):
         validate.assert_no_future_inquiry(bad)
@@ -105,3 +106,25 @@ def test_lineage_complete_for_minimal_artifact() -> None:
         {"prediction_key", "lead_id", "stage", "score_time"},
         ABT_DIR / "COLUMN_LINEAGE.csv",
     )
+
+
+def test_committed_abt_evidence_passes() -> None:
+    result = validate.validate_committed_evidence(REPO_ROOT)
+    assert result["status"] == "PASS"
+    assert result["score_spine_rows"] == 27576
+    assert result["audit_rows"] == 27576
+    assert result["model_ready_rows"] == 19298
+    assert result["candidate_full_rows"] == 1114990
+    assert result["inventory_full_rows"] == 1114990
+    assert result["future_inquiry_count"] == 0
+    assert result["future_snapshot_count"] == 0
+    assert result["forbidden_model_feature_count"] == 0
+
+
+def test_no_split_assignment_is_embedded_in_committed_abts() -> None:
+    audit_dir = ABT_DIR / "artifacts" / "lead_quality_audit_all_snapshots"
+    model_dir = ABT_DIR / "artifacts" / "lead_quality_model_ready"
+    audit_header = pl.read_csv(sorted(audit_dir.glob("part-*.csv"))[0], n_rows=1).columns
+    model_header = pl.read_csv(sorted(model_dir.glob("part-*.csv"))[0], n_rows=1).columns
+    assert not {"partition", "fold", "split"}.intersection(audit_header)
+    assert not {"partition", "fold", "split"}.intersection(model_header)
