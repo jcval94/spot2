@@ -1,0 +1,127 @@
+{
+  "experiment_id": "E006_architecture_rolling_cv",
+  "parent_experiment": "E005_multihead_vs_specialists",
+  "question": "Do the architecture findings from E005 persist across multiple forward temporal lead cohorts instead of a single holdout?",
+  "hypothesis": "The strong T1 Random Forest advantage and the macro AUC advantage of pooled CatBoost with stage will replicate across rolling temporal folds, while macro AP differences versus Multi-Head will remain smaller and less stable.",
+  "primary_change": "replace the single temporal holdout evaluation with rolling-origin temporal cross-validation by lead cohort",
+  "secondary_changes": [
+    "aggregate disjoint out-of-fold predictions across four temporal test cohorts",
+    "bootstrap deltas on OOF predictions by lead"
+  ],
+  "scoring_time": {
+    "stage": "T0/T1/T2",
+    "timestamp_definition": "T0=leads.created_at; T1=first inquiries.inquiry_at; T2=second and later inquiries.inquiry_at while no scheduled_visit has already occurred"
+  },
+  "target": {
+    "event": "future scheduled_visit response event",
+    "horizon_days": 30,
+    "anchor": "scoring_time",
+    "censoring": "right"
+  },
+  "population": {
+    "eligibility": "Scoring snapshots with a complete 30-day future observation window; T1/T2 generated only before a known scheduled visit.",
+    "exclusions": [
+      "Right-censored scoring snapshots.",
+      "Dynamic snapshots after an already observed scheduled visit.",
+      "Current/future broker-response information from model inputs.",
+      "Latest 5% of lead cohorts not used as an outer test block in this four-fold CV."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "features": {
+    "inherited": [
+      "lead_intake_features",
+      "current_inquiry_features",
+      "current_spot_static_features",
+      "lead_spot_compatibility_features",
+      "availability_asof_features",
+      "historical_interactions_asof_features"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "validation": {
+    "strategy": "four-fold rolling-origin temporal cross-validation by lead cohort",
+    "time_column": "leads.created_at",
+    "split_description": "Each fold trains on an expanding historical lead cohort, uses the immediately following 10% cohort for validation, and the next 10% cohort for test. Test cohorts are disjoint across folds and all snapshots for a lead remain in the same partition within each fold."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "T0_cold",
+    "T1_first_inquiry",
+    "T2_engaged"
+  ],
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "lead_intake_features",
+        "source": "leads",
+        "scoring_time": "T0/T1/T2",
+        "information_available_at": "leads.created_at",
+        "status": "ALLOW",
+        "evidence": "Inherited unchanged from E005; lead_score_internal remains blocked."
+      },
+      {
+        "element": "current_inquiry_features",
+        "source": "inquiries excluding broker_response and broker_response_hours",
+        "scoring_time": "T1/T2 inquiry_at",
+        "information_available_at": "inquiries.inquiry_at",
+        "status": "ALLOW",
+        "evidence": "Inherited unchanged from E005."
+      },
+      {
+        "element": "current_spot_static_features",
+        "source": "spots + spot_attributes",
+        "scoring_time": "T1/T2 inquiry_at",
+        "information_available_at": "spot listing / inquiry time",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Inherited unchanged from E005; mutable spot-state fields remain excluded."
+      },
+      {
+        "element": "lead_spot_compatibility_features",
+        "source": "derived point-in-time lead, inquiry and spot fields",
+        "scoring_time": "T1/T2 inquiry_at",
+        "information_available_at": "inquiry_at",
+        "status": "ALLOW",
+        "evidence": "Inherited unchanged from E005."
+      },
+      {
+        "element": "availability_asof_features",
+        "source": "availability_snapshot",
+        "scoring_time": "T1/T2 inquiry_at",
+        "information_available_at": "latest snapshot_date <= scoring_time",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Backward as-of join inherited unchanged from E005."
+      },
+      {
+        "element": "historical_interactions_asof_features",
+        "source": "prior inquiries and already-realized responses",
+        "scoring_time": "T2 inquiry_at",
+        "information_available_at": "strictly before or at scoring_time",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Inherited unchanged from E005; response_event_at must be <= scoring_time."
+      }
+    ]
+  }
+}

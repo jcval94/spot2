@@ -16,5 +16,7 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 | [EV-008](EV-008_llm_triage.md) | LLM triage | Conceptual |
 | [EV-009](EV-009_modelo_3_benchmark_specialists.md) | Modelo 3 vs especialistas | Empírica |
 | [EV-010](EV-010_matching_ab_v3.md) | Auditoría relacional + Matching A/B + interpretabilidad | Empírica completa + diseño online pre-registrado |
+| [EV-011](EV-011_modelo_3_architecture_cv.md) | Modelo 3 rolling temporal CV | Empírica |
+| [EV-012](EV-012_modelo_3_trajectory_cv.md) | Modelo 3 trajectory / progression CV | Empírica |
 
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.
