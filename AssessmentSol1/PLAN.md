@@ -21,13 +21,15 @@ Compared Target A (first-inquiry eventual scheduled_visit), Target B (E028-style
 
 Gate: target estimand and maturity are frozen before FE/modeling and may not be changed because another target later gives better model performance.
 
-## P3 — Splits and research-contamination-aware evaluation
+## P3 — Definitive point-in-time ABTs — COMPLETE
+
+Rebuilt the T0/T1/T2 score spine from raw, materialized Lead Quality audit/model-ready views, defined the Lead × Candidate Spot decision table and Inventory Serviceability state, and audited all point-in-time invariants. No historical ABT is a runtime input.
+
+Gate: 0 future inquiry-history rows, 0 future Availability snapshots, 0 forbidden model features, unique prediction keys, valid target statuses, complete lineage, and separate candidate/inventory grains.
+
+## P4 — Splits and research-contamination-aware evaluation
 
 Create development splits before FE/model fitting. Historical candidate periods are development/research-contaminated unless a protocol was frozen before their inspection. Reserve only a procedural final holdout if useful; true confirmation is new data/hidden evaluator.
-
-## P4 — Canonical ABTs
-
-Build T0/T1/T2 from raw tables under the frozen point-in-time contract. Produce an audit table and model-ready views. No historical ABT may be imported.
 
 ## P5 — Feature engineering
 
