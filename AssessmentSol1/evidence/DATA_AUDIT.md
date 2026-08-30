@@ -128,3 +128,17 @@ Decision: **BLOCKED_PENDING_TEMPORAL_PROVENANCE** for predictive backtests. It m
 ## Gate
 
 **PASS.** Every source/column has an explicit temporal status in `temporal_column_registry.csv`. Anything without a defensible event/observation/effective-time contract is blocked or EDA-only. No target is constructed in P1.
+
+
+## 10. Static, mutable and temporally unknown columns
+
+This classification is a **historical-data contract**, not a guess about what a production UI may allow users to edit.
+
+- **leads:** static intake snapshot = identifiers, search/request fields, source and `created_at`; temporal-unknown = `prior_searches`, `prior_inquiries`, `has_converted_before`, `lead_score_internal`.
+- **inquiries:** static event facts = IDs, `inquiry_at`, channel/request/intent fields; post-event mutable/late-observed = `broker_response`, `broker_response_hours`, whose exact timing is unknown.
+- **spots:** static-by-definition = `spot_id`, `created_at`; explicitly mutable/current-state = `days_on_market`, `total_inquiries`, `total_views`, `is_active`; all other listing/pricing/location/copy fields have **unknown historical mutability** because no versions/effective timestamps exist.
+- **spot_attributes:** only `spot_id` is static-by-definition; all attribute values have unknown historical mutability/availability because the table has no timestamp.
+- **availability_snapshot:** snapshot identity/date are static per record; availability state is mutable across snapshots; `competing_inquiries_30d` additionally has unknown window/effective semantics.
+- **market_context:** geographic/sector/month keys are static dimensions; monthly aggregates are mutable/recomputed measures with unknown publication/effective time and remain EDA_ONLY.
+
+The machine-readable lists are persisted under `column_temporality` in `data_audit.json`; the column-level authoritative policy remains `temporal_column_registry.csv`.
