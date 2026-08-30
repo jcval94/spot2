@@ -890,6 +890,8 @@ def main():
 
     report = f"""# Matching profiles v4 — semantic profiles + dynamic need + clean broker + hierarchical matching
 
+**Diccionario final de perfiles y mejores combinaciones:** [INTERPRETABILIDAD.md](INTERPRETABILIDAD.md)
+
 ## Executive result
 
 This suite keeps the same profile cutoff ({profile_cutoff}), predictive train window and untouched future test ({len(test):,} inquiries) as Matching A/B v3.

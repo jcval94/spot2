@@ -1,5 +1,7 @@
 # Matching profiles v4 — semantic profiles + dynamic need + clean broker + hierarchical matching
 
+**Diccionario final de perfiles y mejores combinaciones:** [INTERPRETABILIDAD.md](INTERPRETABILIDAD.md)
+
 ## Executive result
 
 This suite keeps the same profile cutoff (2025-09-29 12:58:37), predictive train window and untouched future test (4,516 inquiries) as Matching A/B v3.

@@ -43,15 +43,18 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D035 | SUPPORTED | Features explícitas de trayectoria mejoran T2 de forma robusta en pooled CatBoost y Multi-Head bajo los mismos folds temporales. | [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md) |
 | D036 | NOT_SUPPORTED | Las trajectory features no son universalmente beneficiosas: empeoran significativamente el AP T2 del Random Forest y no mejoran de forma robusta al CatBoost especialista. | [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md) |
 | D037 | INCONCLUSIVE | La selección de una familia distinta por etapa es inestable entre folds; la complejidad del híbrido no queda justificada frente a una base CatBoost más simple. | [EV-011](../Evidencias/EV-011_modelo_3_architecture_cv.md), [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md) |
-| D038 | PROPOSAL | Separar Acquisition Channel de Behavioral Maturity puede producir una Persona más interpretable y menos dominada por source. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D039 | PROPOSAL | Un Dynamic Need T1 sin weekday puede capturar refinamiento de área/presupuesto y mejorar lift frente al Need T0 estático. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D040 | PROPOSAL | Broker Supply + Broker Service sin response_hours puede mejorar interpretabilidad y compatibilidad frente al Broker legacy. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D041 | PROPOSAL | Matching jerárquico sobre perfiles rediseñados puede superar el E007 flat compatibility y revelar pockets de lift más altos. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D042 | PROPOSAL | Dynamic Need debe probarse directamente sobre E006 para aislar su efecto del deterioro introducido por E008 Persona. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D043 | PROPOSAL | Broker Supply/Service necesita una versión compacta, winsorizada y con gate duro de balance antes de considerarse una segmentación válida. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D044 | PROPOSAL | La jerarquía v2 sólo debe evaluarse sobre la rama fuerte E012→E013 y compararse contra E007 en el mismo future test. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D045 | PROPOSAL | Si Broker Supply no es clusterizable, Broker Service balanceado debe probarse como perfil adicional sobre E012 sin desechar el Broker legacy. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D046 | PROPOSAL | Dynamic Need × Physical/Location × Broker Service puede capturar la mejor señal local sin depender de un perfil Supply artificial. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D038 | NOT_SUPPORTED | Behavioral Persona queda más limpia semánticamente, pero sustituir Persona por source+BP empeora AP y Lift@10; no se recomienda como reemplazo del scoring. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D039 | INCONCLUSIVE | Dynamic Need T1 es estable e interpretable y mejora lift/recall en punto, pero el delta AP global sigue cruzando cero. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D040 | NOT_SUPPORTED | El primer Broker clean no mejora lift y su componente Supply colapsa 98.3% de brokers en un cluster. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D041 | INCONCLUSIVE | La primera jerarquía eleva métricas lead-level en punto, pero no supera robustamente a E007 y pierde AUC/AP global. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D042 | INCONCLUSIVE | Dynamic Need aislado sobre E006 sube Lift@10 a 1.108x y Recall@20 a 21.96%, pero AP +0.0013 no es robusto. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D043 | SUPPORTED | Broker Supply no forma clusters balanceados bajo dos representaciones: 98.3% dominante en v1 y 70.3%/3.7% en la versión compacta. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D044 | NOT_SUPPORTED | E014 no es elegible como tratamiento porque su padre E013 falla el representation gate de Broker Supply. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D045 | INCONCLUSIVE | Broker Service BSV1–BSV3 sí es balanceado/estable (ARI 0.948), pero su ganancia marginal de AP es ~0 y el lift mejora sólo en punto. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D046 | INCONCLUSIVE | La jerarquía Dynamic Need×Physical/Location×Broker Service eleva Lift@10 a 1.172x, pero no mejora AP robustamente ni desplaza a E007 globalmente. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D047 | INCONCLUSIVE | DN4×LOC1×BSV1 establece un nuevo máximo local: 1.510x lift suavizado (N=60), pero es exploratorio y sujeto a multiple testing. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D048 | SUPPORTED | La transición Need T0→T1 es asimétrica: N1/renta permanece DN1 en 99.8%, mientras N2/N3 se fragmentan en regímenes de presupuesto/área. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D049 | NOT_SUPPORTED | Ningún stack nuevo demuestra ser reemplazo global de E007: mejora lift puntual, pero E007 conserva el mejor AP y ranking lead-level sin delta robusto en contra. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -769,104 +772,226 @@ El híbrido tiene buenos puntos OOF, pero su composición depende del periodo.
 Evidencia: [EV-011](../Evidencias/EV-011_modelo_3_architecture_cv.md), [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md).
 
 
-## D038 — Persona debe separar adquisición de madurez conductual
+## D038 — Behavioral Persona mejora la semántica, no el scoring
 
-**Estado:** PROPOSAL.
+**Estado:** NOT_SUPPORTED como reemplazo predictivo.
 
-E008 reemplaza `persona_profile` por dos piezas explícitas:
+E008 excluyó `source` del clustering y separó explícitamente canal de adquisición de madurez conductual. El resultado es interpretable y estable:
 
-- `acquisition_channel = leads.source`;
-- `behavioral_profile` outcome-free con user type, company size, industry, prior searches/inquiries y conversión previa.
+- BP1: baja historia / mainstream.
+- BP2: manufacturing con baja historia.
+- BP3: alta madurez; prior inquiries altas y 85% con conversión previa.
+- GMM K=3, ARI=1.000, shares 59.0% / 26.3% / 14.8%.
 
-**Hipótesis:** reducir la mezcla semántica hará el perfil más interpretable y puede recuperar señal que el clustering de source estaba comprimiendo.
+Sin embargo, frente a E006:
 
-Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+- AP 0.2098 → 0.2027.
+- ΔAP -0.0071, IC95% [-0.0150,+0.0004].
+- Lift@10 1.001x → 0.937x.
 
-## D039 — Need debe evolucionar de T0 a T1 sin volver a aprender calendario
-
-**Estado:** PROPOSAL.
-
-E009 crea `dynamic_need_profile` con requested area/budget, urgency, asked_visit, channel, message length y deltas contra el Need inicial. Excluye explícitamente weekday.
-
-También añade `need_transition = Need_T0 -> Need_T1`.
-
-**Hipótesis:** la actualización de necesidad al momento de inquiry mejorará ranking/lift frente al Need T0 estático.
+**Interpretación:** la nueva BP es mejor para explicar madurez, pero pierde información útil del `persona_profile` actual para ranking. Conservarla como dimensión explicativa; no reemplazar el scoring.
 
 Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
 
-## D040 — Broker debe separarse en Supply y Service sin response_hours
+## D039 — Dynamic Need T1 es la nueva segmentación más informativa del Lead
 
-**Estado:** PROPOSAL.
+**Estado:** INCONCLUSIVE para mejora global; fuerte para representación.
 
-E010 sustituye el Broker legacy por:
+Dynamic Need excluye weekday y produce 5 perfiles con silhouette 0.620, ARI=1.000 y shares 65.0% / 12.9% / 11.5% / 5.4% / 5.3%.
 
-- Broker Supply: mix de sector/modalidad/región, área y precios históricos;
-- Broker Service: mix histórico de accepted/scheduled/rejected/no_response, asked_visit, urgency, message length y channel.
+- DN1: renta mainstream.
+- DN2: venta / presupuesto alto.
+- DN3: venta value + expansión moderada de área.
+- DN4: **stretch-space**: mucho más espacio solicitado con presupuesto bajo.
+- DN5: premium-budget + reducción de área.
 
-Todo queda congelado antes del profile cutoff y `broker_response_hours` se excluye por completo.
-
-Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
-
-## D041 — La siguiente compatibilidad debe ser jerárquica
-
-**Estado:** PROPOSAL.
-
-E011 prueba interacciones pre-especificadas:
-
-`Dynamic Need -> Physical/Location -> Broker Supply/Service`
-
-y compara tanto contra su padre marginal E010 como contra el E007 flat compatibility anterior.
-
-Las celdas future-test se usarán sólo para descubrimiento, con N>=50 y shrinkage; no seleccionan el modelo.
+Sobre la rama contaminada por E008, E009 recupera lift. Por eso el efecto se aisló posteriormente en E012.
 
 Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
 
+## D040 — El primer Broker limpio no funciona como reemplazo
 
-## D042 — Dynamic Need debe aislarse del rediseño de Persona
+**Estado:** NOT_SUPPORTED.
 
-**Estado:** PROPOSAL.
+E010 eliminó `broker_response_hours`, pero:
 
-La primera escalera mostró que E008 Persona puede deteriorar el baseline. E012 vuelve a E006 y añade únicamente Dynamic Need + transición T0→T1.
+- Broker Supply v1 concentra **98.3%** en BS1.
+- Lift@10 cae de 1.033x a 0.948x frente a E009.
+- ΔAP +0.00049 con IC95% [-0.00686,+0.00843].
 
-**Objetivo:** saber si la señal dinámica era buena pero estaba siendo enmascarada por un cambio previo perjudicial.
-
-Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
-
-## D043 — Broker necesita un gate duro de balance
-
-**Estado:** PROPOSAL.
-
-El primer Broker Supply puede colapsar en un cluster dominante. E013 comprime la representación a especialización dominante, entropías/diversidad y escalas robustas winsorizadas.
-
-El experimento **falla** si el cluster seleccionado no cumple min share >=5% y max share <=65%.
+**Interpretación:** quitar una variable problemática no basta; Supply disponible está demasiado dominado por un régimen común y los perfiles conjuntos no mejoran ranking.
 
 Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
 
-## D044 — La jerarquía debe probarse sólo sobre la rama fuerte
+## D041 — La primera jerarquía no supera al flat compatibility
 
-**Estado:** PROPOSAL.
+**Estado:** INCONCLUSIVE.
 
-E014 añade compatibilidades sólo después de E012 Dynamic Need y E013 Broker balanceado. Se compara contra su padre y contra E007 old compatibility sobre el mismo future test.
+E011 añadió interacciones sobre BP + Dynamic Need + Physical/Location + Broker Supply/Service.
+
+Vs E010:
+- ΔAP -0.00018, IC95% [-0.01113,+0.01151].
+- ΔLift@10 +0.064, IC95% [-0.119,+0.245].
+
+Vs E007:
+- ΔAP -0.00460, IC95% [-0.0224,+0.0126].
+- ΔLift@10 -0.024.
+
+Lead-level AP sube a 0.4198, pero E007 sigue en 0.4270.
+
+**Conclusión:** la idea jerárquica sigue siendo razonable, pero esta implementación no es un nuevo ganador.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D042 — Dynamic Need aislado mejora la concentración del top
+
+**Estado:** INCONCLUSIVE.
+
+E012 vuelve al baseline fuerte E006 y añade únicamente Dynamic Need + transición T0→T1.
+
+Resultados:
+
+- AP 0.20981 → **0.21135**.
+- Lift@10 1.001x → **1.108x**.
+- Recall@20 19.72% → **21.96%**.
+- ΔAP +0.00131, IC95% [-0.00690,+0.00881].
+- ΔLift@10 +0.0995, IC95% [-0.0753,+0.2735].
+- P(ΔRecall@20>0)=97.25%, aunque el IC95% toca prácticamente cero.
+
+**Interpretación:** Dynamic Need merece conservarse como challenger T1 y para routing, pero todavía no hay evidencia para declarar mejora global robusta.
 
 Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
 
+## D043 — Broker Supply no debe forzarse a clusters
 
-## D045 — Broker Service es la rama válida si Supply no clusteriza
+**Estado:** SUPPORTED.
 
-**Estado:** PROPOSAL.
+Se probaron dos representaciones outcome-free:
 
-E015 conserva E012 y el Broker legacy, y añade únicamente un Broker Service balanceado construido con historia pre-cutoff y sin `broker_response_hours`.
+1. Supply v1: 98.3% / 1.3% / 0.3%.
+2. Supply compact/winsorized: **70.3% / 26.0% / 3.7%**, ARI 0.949.
 
-**Hipótesis:** la heterogeneidad operacional del broker puede ser útil aunque su mix de Supply no forme clusters naturales.
+La segunda sigue violando el gate pre-registrado min>=5% y max<=65%.
+
+**Interpretación:** la falta de balance no es un simple problema de algoritmo ni de outliers. Con la información actual, Supply no sostiene arquetipos discretos suficientemente diferenciados.
+
+**Implicación:** usar descriptores continuos/directos de Supply o enriquecer los datos; no seguir moviendo K hasta fabricar balance.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D044 — E014 queda invalidado por dependencia de un perfil no elegible
+
+**Estado:** NOT_SUPPORTED.
+
+E014 dependía de E013, que requería **ambos** perfiles Broker balanceados. Broker Supply falló el gate, por lo que E013 y E014 no fueron científicamente elegibles como tratamientos.
+
+Sus archivos de resultados conservan métricas copiadas del padre sólo para registrar el harness immutable; **no representan una ejecución de tratamiento**.
 
 Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
 
-## D046 — La compatibilidad de servicio debe probarse sin Supply artificial
+## D045 — Broker Service sí es un perfil defendible, pero no mejora globalmente por sí solo
 
-**Estado:** PROPOSAL.
+**Estado:** INCONCLUSIVE.
 
-E016 prueba Dynamic Need × Physical/Location × Broker Service y compara contra E015, E006 y el E007 flat compatibility anterior.
+BSV:
+- Bisecting K=3.
+- shares 57.7% / 23.7% / 18.7%.
+- ARI **0.948**.
 
-**Hipótesis:** la combinación que produjo el nuevo pocket DN4×BV1 puede generalizar mejor usando un perfil Service balanceado y sin forzar Supply.
+Interpretación:
+- BSV1: servicio diversificado / mayor actividad.
+- BSV2: acceptance-heavy / menor volumen.
+- BSV3: mayor urgencia y mayor scheduled_visit histórico.
+
+E015 vs E012:
+- AP prácticamente idéntico: 0.211347 vs 0.211344.
+- ΔAP -0.00002, IC95% [-0.00062,+0.00059].
+- Lift@10 1.108x → 1.118x.
+
+**Conclusión:** BSV es una buena segmentación descriptiva y una dimensión útil de interacción, pero no un driver marginal global demostrado.
 
 Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D046 — La jerarquía de Service mejora lift puntual, no AP global
+
+**Estado:** INCONCLUSIVE.
+
+E016 añade Dynamic Need × Physical/Location × Broker Service sobre E015.
+
+- AP 0.21068.
+- Lift@10 **1.172x**.
+- Lead AP 0.4049.
+- Lead AUC 0.5730.
+- Lead Lift@10 **1.365x**.
+
+Vs E015:
+- ΔAP +0.00005, IC95% [-0.01072,+0.01108].
+- ΔLift@10 +0.0499, IC95% [-0.1548,+0.2474].
+
+Vs E007:
+- ΔAP -0.00097, IC95% [-0.01650,+0.01471].
+- ΔLift@10 +0.137, IC95% [-0.091,+0.370].
+
+**Interpretación:** concentra mejor positivos en el top en punto, pero paga con AUC/recall y no desplaza robustamente a E007.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D047 — DN4 × LOC1 × BSV1 es el mayor pocket local encontrado
+
+**Estado:** INCONCLUSIVE.
+
+Future test, N>=50 y shrinkage:
+
+- combinación: **DN4 × LOC1 × BSV1**;
+- N=60;
+- scheduled_visit raw **36.67%**;
+- smoothed **31.37%**;
+- lift suavizado **1.510x**;
+- Wilson lower rate / baseline **1.234x**.
+
+Interpretación:
+- DN4 = stretch-space, mucho más espacio con presupuesto bajo;
+- LOC1 = centro metropolitano CDMX–Naucalpan;
+- BSV1 = Broker Service diversificado/de mayor actividad.
+
+Supera el récord previo EV-010 (1.366x) y la primera pasada v4 DN4×BV1 (1.427x).
+
+**No prueba:** causalidad, family-wise significance ni estabilidad temporal independiente. La celda fue descubierta al inspeccionar múltiples combinaciones del future test.
+
+**Implicación:** candidata #1 para réplica/online routing A/B; no multiplicar el score por 1.51.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D048 — La actualización T0→T1 es especialmente valiosa para venta/flexible
+
+**Estado:** SUPPORTED.
+
+Matriz future:
+
+- N1/renta → DN1: **99.82%**.
+- N2/venta se divide entre DN1 33.3%, DN2 26.5%, DN3 23.8%, DN4 9.2%, DN5 7.2%.
+- N3/both se divide entre DN1 36.2%, DN2 23.3%, DN3 20.7%, DN4 11.7%, DN5 8.1%.
+
+**Interpretación:** la inquiry aporta poca reclasificación a renta, pero mucha resolución adicional para venta y flexible. El valor de Dynamic Need no es homogéneo por Need T0.
+
+**Implicación:** priorizar actualización T1 especialmente para N2/N3; N1 puede tratarse como estado más estable.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D049 — No hay un nuevo reemplazo global de E007
+
+**Estado:** NOT_SUPPORTED para la hipótesis de un nuevo ganador universal.
+
+Comparación de puntos:
+
+- E007: AP **0.21171**, Lead AP **0.4270**, Lead AUC **0.5899**.
+- E012: AP 0.21135, Lift@10 **1.108x**.
+- E015: AP 0.21134, Lift@10 **1.118x**.
+- E016: AP 0.21068, Lift@10 **1.172x**, Lead AP 0.4049.
+
+Los nuevos modelos mejoran concentración top-decile en punto, pero los deltas de AP/lift tienen intervalos que cruzan cero.
+
+**Conclusión:** no sustituir E007 sólo por lift@10. Conservar Dynamic Need/BSV como features y hypotheses de routing; decidir un cambio global únicamente con nueva validación temporal u online.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
