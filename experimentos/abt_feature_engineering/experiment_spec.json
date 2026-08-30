@@ -1,0 +1,138 @@
+{
+  "experiment_id": "E016_abt_feature_engineering_v1",
+  "parent_experiment": "E007_trajectory_progression_cv",
+  "question": "Can Spot2 build a canonical point-in-time ABT layer that treats structural missingness, mutable state, semantic inconsistencies and stage-specific information correctly before the next modeling iteration?",
+  "hypothesis": "A variable-aware T0/T1/T2 ABT contract will remove known leakage/semantic risks and expose better engineered representations without using future information.",
+  "primary_change": "replace generic preprocessing with a canonical point-in-time feature engineering and ABT layer",
+  "secondary_changes": [
+    "modality-aware budget treatment",
+    "point-in-time spot and broker historical profiles",
+    "Land gating for built-environment attributes",
+    "amenities JSON decomposition",
+    "strict response-event semantics",
+    "availability backward-as-of features",
+    "explicit variable treatment manifest for all 86 source columns"
+  ],
+  "scoring_time": {
+    "stage": "T0/T1/T2",
+    "timestamp_definition": "T0=leads.created_at; T1=first inquiry_at; T2=second and later inquiry_at before a scheduled_visit has already occurred"
+  },
+  "target": {
+    "event": "future scheduled_visit response event",
+    "horizon_days": 30,
+    "anchor": "score_time",
+    "censoring": "right"
+  },
+  "population": {
+    "eligibility": "Rows with a complete 30-day future observation window; dynamic rows only before an already-realized scheduled visit.",
+    "exclusions": [
+      "right-censored rows",
+      "dynamic rows after a realized scheduled visit",
+      "raw current/future broker response",
+      "raw mutable spot current-state fields",
+      "market_context from default feature sets",
+      "rows whose 30-day label can be affected by scheduled_visit with unknown response timestamp"
+    ]
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv",
+    "data/candidate/csv/market_context.csv"
+  ],
+  "features": {
+    "inherited": [
+      "E007 leakage-safe dynamic feature families"
+    ],
+    "added": [
+      "budget applicability/open-bound features",
+      "log and density transforms",
+      "dynamic need change features",
+      "spot effective monthly cost",
+      "spot historical inquiry profile as-of",
+      "broker historical service profile as-of",
+      "Land built-environment applicability gate",
+      "availability windows/freshness",
+      "amenity multi-hot features"
+    ],
+    "removed": [
+      "generic global treatment of structural NaN",
+      "raw broker_id as predictor",
+      "raw current spots.total_inquiries/days_on_market/total_views/is_active"
+    ]
+  },
+  "validation": {
+    "strategy": "chronological lead-cohort 70/15/15",
+    "time_column": "leads.created_at",
+    "split_description": "All T0/T1/T2 rows for a lead remain in the same split. This experiment prepares data only; model benchmarking is a subsequent experiment."
+  },
+  "metrics": [
+    "row_count",
+    "feature_count",
+    "positive_rate",
+    "null/applicability checks",
+    "leakage invariants"
+  ],
+  "segments": [
+    "T0_cold",
+    "T1_first_inquiry",
+    "T2_engaged"
+  ],
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN_PENDING_RUNTIME_ASSERTIONS",
+    "items": [
+      {
+        "element": "lead_score_internal",
+        "source": "leads",
+        "scoring_time": "all",
+        "information_available_at": "unknown legacy construction",
+        "status": "BLOCK",
+        "evidence": "Excluded from all stage feature contracts."
+      },
+      {
+        "element": "mutable spot state",
+        "source": "spots.days_on_market,total_inquiries,total_views,is_active",
+        "scoring_time": "T1/T2",
+        "information_available_at": "current snapshot only",
+        "status": "BLOCK",
+        "evidence": "Raw fields excluded; age/inquiries/availability are reconstructed point-in-time when possible."
+      },
+      {
+        "element": "current broker response",
+        "source": "inquiries",
+        "scoring_time": "T1/T2 current inquiry",
+        "information_available_at": "after inquiry",
+        "status": "BLOCK",
+        "evidence": "Current response fields are not in feature contracts."
+      },
+      {
+        "element": "historical broker/spot profiles",
+        "source": "prior inquiries plus realized prior responses",
+        "scoring_time": "T1/T2",
+        "information_available_at": "strictly before current inquiry or response_event_at <= score_time",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "add_supply_history_features applies as-of logic per current inquiry timestamp."
+      },
+      {
+        "element": "availability",
+        "source": "availability_snapshot",
+        "scoring_time": "T1/T2",
+        "information_available_at": "snapshot_date <= score_time",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "merge_asof(direction=backward) plus assertion that no future snapshot is used."
+      },
+      {
+        "element": "market_context",
+        "source": "market_context",
+        "scoring_time": "all",
+        "information_available_at": "unknown publication time",
+        "status": "UNKNOWN",
+        "evidence": "Excluded from default feature sets."
+      }
+    ]
+  }
+}
