@@ -43,6 +43,10 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D035 | SUPPORTED | Features explícitas de trayectoria mejoran T2 de forma robusta en pooled CatBoost y Multi-Head bajo los mismos folds temporales. | [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md) |
 | D036 | NOT_SUPPORTED | Las trajectory features no son universalmente beneficiosas: empeoran significativamente el AP T2 del Random Forest y no mejoran de forma robusta al CatBoost especialista. | [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md) |
 | D037 | INCONCLUSIVE | La selección de una familia distinta por etapa es inestable entre folds; la complejidad del híbrido no queda justificada frente a una base CatBoost más simple. | [EV-011](../Evidencias/EV-011_modelo_3_architecture_cv.md), [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md) |
+| D038 | PROPOSAL | Separar Acquisition Channel de Behavioral Maturity puede producir una Persona más interpretable y menos dominada por source. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D039 | PROPOSAL | Un Dynamic Need T1 sin weekday puede capturar refinamiento de área/presupuesto y mejorar lift frente al Need T0 estático. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D040 | PROPOSAL | Broker Supply + Broker Service sin response_hours puede mejorar interpretabilidad y compatibilidad frente al Broker legacy. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D041 | PROPOSAL | Matching jerárquico sobre perfiles rediseñados puede superar el E007 flat compatibility y revelar pockets de lift más altos. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -758,3 +762,56 @@ El híbrido tiene buenos puntos OOF, pero su composición depende del periodo.
 **Interpretación:** no hay base suficiente para operar un router de modelos por etapa. La opción más defendible por simplicidad/evidencia es mantener un CatBoost fuerte como base dinámica y usar especialistas sólo donde un override tenga estabilidad temporal demostrada.
 
 Evidencia: [EV-011](../Evidencias/EV-011_modelo_3_architecture_cv.md), [EV-012](../Evidencias/EV-012_modelo_3_trajectory_cv.md).
+
+
+## D038 — Persona debe separar adquisición de madurez conductual
+
+**Estado:** PROPOSAL.
+
+E008 reemplaza `persona_profile` por dos piezas explícitas:
+
+- `acquisition_channel = leads.source`;
+- `behavioral_profile` outcome-free con user type, company size, industry, prior searches/inquiries y conversión previa.
+
+**Hipótesis:** reducir la mezcla semántica hará el perfil más interpretable y puede recuperar señal que el clustering de source estaba comprimiendo.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D039 — Need debe evolucionar de T0 a T1 sin volver a aprender calendario
+
+**Estado:** PROPOSAL.
+
+E009 crea `dynamic_need_profile` con requested area/budget, urgency, asked_visit, channel, message length y deltas contra el Need inicial. Excluye explícitamente weekday.
+
+También añade `need_transition = Need_T0 -> Need_T1`.
+
+**Hipótesis:** la actualización de necesidad al momento de inquiry mejorará ranking/lift frente al Need T0 estático.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D040 — Broker debe separarse en Supply y Service sin response_hours
+
+**Estado:** PROPOSAL.
+
+E010 sustituye el Broker legacy por:
+
+- Broker Supply: mix de sector/modalidad/región, área y precios históricos;
+- Broker Service: mix histórico de accepted/scheduled/rejected/no_response, asked_visit, urgency, message length y channel.
+
+Todo queda congelado antes del profile cutoff y `broker_response_hours` se excluye por completo.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D041 — La siguiente compatibilidad debe ser jerárquica
+
+**Estado:** PROPOSAL.
+
+E011 prueba interacciones pre-especificadas:
+
+`Dynamic Need -> Physical/Location -> Broker Supply/Service`
+
+y compara tanto contra su padre marginal E010 como contra el E007 flat compatibility anterior.
+
+Las celdas future-test se usarán sólo para descubrimiento, con N>=50 y shrinkage; no seleccionan el modelo.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).

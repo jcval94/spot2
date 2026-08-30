@@ -1,0 +1,150 @@
+name: Matching profiles v4
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "experimentos/matching_profiles_v4/**"
+      - "data/candidate/**"
+      - "experimentos/profile_clustering_v2/results/**"
+      - "experimentos/matching_ab_v3/results/**"
+      - ".github/workflows/matching-profiles-v4.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "experimentos/matching_profiles_v4/**"
+      - "data/candidate/**"
+      - "experimentos/profile_clustering_v2/results/**"
+      - "experimentos/matching_ab_v3/results/**"
+      - ".github/workflows/matching-profiles-v4.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  profiles-and-matching:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy scikit-learn tabulate
+
+      - name: Validate source
+        run: python -m py_compile experimentos/matching_profiles_v4/run_profiles.py
+
+      - name: Verify inherited data-quality gate
+        run: |
+          python - <<'PY'
+          import pandas as pd
+          p="experimentos/matching_ab_v3/results/data_quality_summary.csv"
+          d=pd.read_csv(p)
+          bad=d[(d["severity"]=="CRITICAL") & (d["status"]=="FAIL")]
+          if len(bad):
+              raise SystemExit("Inherited critical data-quality failures:\n"+bad.to_string(index=False))
+          print("Inherited EV-010 data-quality gate: PASS")
+          PY
+
+      - name: Validate experiment contracts
+        run: |
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/matching_profiles_v4/specs/E008_behavioral_persona.json \
+            --parent-spec experimentos/matching_ab_v3/specs/E006_physical_location_spot.json \
+            --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/matching_profiles_v4/specs/E009_dynamic_need_t1.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E008_behavioral_persona.json \
+            --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/matching_profiles_v4/specs/E010_clean_broker_profiles.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E009_dynamic_need_t1.json \
+            --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/matching_profiles_v4/specs/E011_hierarchical_matching.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E010_clean_broker_profiles.json \
+            --repo-root .
+
+      - name: Run profile ladder and hierarchical matching
+        run: python experimentos/matching_profiles_v4/run_profiles.py
+
+      - name: Finalize harness records
+        run: |
+          mkdir -p "$RUNNER_TEMP/spot2_harness"
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
+            --spec experimentos/matching_profiles_v4/specs/E008_behavioral_persona.json \
+            --results experimentos/matching_profiles_v4/results/E008_behavioral_persona_results.json \
+            --parent-spec experimentos/matching_ab_v3/specs/E006_physical_location_spot.json \
+            --parent-results experimentos/matching_ab_v3/results/E006_physical_location_spot_results.json \
+            --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
+            --spec experimentos/matching_profiles_v4/specs/E009_dynamic_need_t1.json \
+            --results experimentos/matching_profiles_v4/results/E009_dynamic_need_t1_results.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E008_behavioral_persona.json \
+            --parent-results experimentos/matching_profiles_v4/results/E008_behavioral_persona_results.json \
+            --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
+            --spec experimentos/matching_profiles_v4/specs/E010_clean_broker_profiles.json \
+            --results experimentos/matching_profiles_v4/results/E010_clean_broker_profiles_results.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E009_dynamic_need_t1.json \
+            --parent-results experimentos/matching_profiles_v4/results/E009_dynamic_need_t1_results.json \
+            --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
+            --spec experimentos/matching_profiles_v4/specs/E011_hierarchical_matching.json \
+            --results experimentos/matching_profiles_v4/results/E011_hierarchical_matching_results.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E010_clean_broker_profiles.json \
+            --parent-results experimentos/matching_profiles_v4/results/E010_clean_broker_profiles_results.json \
+            --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+
+      - name: Validate outputs
+        run: |
+          test -s experimentos/matching_profiles_v4/README.md
+          test -s experimentos/matching_profiles_v4/EVIDENCIA.md
+          test -s experimentos/matching_profiles_v4/results/model_metrics.csv
+          test -s experimentos/matching_profiles_v4/results/bootstrap_deltas.csv
+          test -s experimentos/matching_profiles_v4/results/profile_interpretability.csv
+          test -s experimentos/matching_profiles_v4/results/selected_clusterers.csv
+          test -s experimentos/matching_profiles_v4/results/top_compatibility_cells.csv
+          test -s experimentos/matching_profiles_v4/results/need_t0_t1_transition_matrix.csv
+
+      - name: Job summary
+        if: always()
+        run: |
+          if [ -f experimentos/matching_profiles_v4/README.md ]; then
+            cat experimentos/matching_profiles_v4/README.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Commit reproducible outputs
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/matching_profiles_v4/README.md experimentos/matching_profiles_v4/results/
+          if git diff --cached --quiet; then
+            echo "No generated changes."
+          else
+            git commit -m "Add semantic matching profile results [skip ci]"
+            git push
+          fi
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: matching-profiles-v4
+          path: |
+            experimentos/matching_profiles_v4/
+            ${{ runner.temp }}/spot2_harness/
+          retention-days: 30

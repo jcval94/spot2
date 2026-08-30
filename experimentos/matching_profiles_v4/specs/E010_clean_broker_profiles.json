@@ -1,0 +1,102 @@
+{
+  "experiment_id": "E010_clean_broker_profiles",
+  "parent_experiment": "E009_dynamic_need_t1",
+  "question": "Do separate Broker Supply and historical Service profiles, built without broker_response_hours, improve ranking and broker interpretability?",
+  "hypothesis": "Separating what inventory a broker handles from its frozen historical outcome mix will outperform or preserve the legacy broker_profile while removing the ambiguous response-hours field.",
+  "primary_change": "replace broker_profile with broker_supply_profile plus broker_service_profile",
+  "secondary_changes": [
+    "broker_response_hours is never referenced",
+    "historical service outcomes are frozen strictly before profile cutoff"
+  ],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy for commercial progress)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "Public candidate data has no true sale timestamp. scheduled_visit is the observed proxy; offline results are associative."
+  },
+  "population": {
+    "eligibility": "Same population and temporal partitions as E006_physical_location_spot: profile calibration before 2025-09-29T12:58:37, predictive training until 2026-04-28T07:41:43, final 20% future test.",
+    "exclusions": [
+      "Profile-calibration inquiries are excluded from predictive fitting."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv",
+    "experimentos/profile_clustering_v2/results/lead_assignments.csv",
+    "experimentos/profile_clustering_v2/results/broker_assignments.csv",
+    "experimentos/matching_ab_v3/results/spot_decomposed_assignments.csv"
+  ],
+  "validation": {
+    "strategy": "outcome-free profile selection on frozen calibration data + same temporal predictive train and untouched future test; paired cluster-bootstrap by lead_id",
+    "time_column": "inquiry_at",
+    "split_description": "Clusterers use only information available before the frozen profile cutoff. Predictive models use the identical train/test rows across arms. Bootstrap resamples lead_id clusters."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "features": {
+    "inherited": [
+      "acquisition_channel",
+      "behavioral_profile",
+      "need_profile",
+      "dynamic_need_profile",
+      "need_transition",
+      "physical_space_profile",
+      "location_profile",
+      "availability_state_asof",
+      "availability_lag_bucket"
+    ],
+    "added": [
+      "broker_supply_profile",
+      "broker_service_profile"
+    ],
+    "removed": [
+      "broker_profile"
+    ]
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "broker_supply_profile",
+        "source": "spots created before profile cutoff: sector/modality/region mix, area and price medians",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "frozen pre-cutoff broker inventory history",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Mutable current-state fields days_on_market,total_inquiries,total_views,is_active are excluded."
+      },
+      {
+        "element": "broker_service_profile",
+        "source": "pre-cutoff inquiries joined to broker: scheduled/accepted/rejected/no_response rates, asked_visit, urgency, message length, channel mix",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "strictly historical inquiries before profile cutoff",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "broker_response_hours is explicitly excluded; outcomes are past-only and frozen before predictive train/test."
+      }
+    ]
+  }
+}

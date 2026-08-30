@@ -18,5 +18,6 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 | [EV-010](EV-010_matching_ab_v3.md) | Auditoría relacional + Matching A/B + interpretabilidad | Empírica completa + diseño online pre-registrado |
 | [EV-011](EV-011_modelo_3_architecture_cv.md) | Modelo 3 rolling temporal CV | Empírica |
 | [EV-012](EV-012_modelo_3_trajectory_cv.md) | Modelo 3 trajectory / progression CV | Empírica |
+| [EV-013](EV-013_matching_profiles_v4.md) | Semantic profiles + dynamic need + clean broker + hierarchical matching | Diseño registrado / empírica pendiente |
 
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.

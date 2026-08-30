@@ -1,0 +1,163 @@
+{
+  "experiment_id": "E011_hierarchical_matching",
+  "parent_experiment": "E010_clean_broker_profiles",
+  "question": "Do pre-specified hierarchical compatibility interactions over the redesigned profiles improve future ranking and top-decile lift beyond their marginal effects?",
+  "hypothesis": "Need T1 -> Physical/Location -> Broker Supply/Service interactions will outperform the same redesigned profiles used only as marginals and improve on the old E007 compatibility treatment.",
+  "primary_change": "add pre-specified hierarchical compatibility interactions over redesigned profiles",
+  "secondary_changes": [
+    "compare to E007 old compatibility as an external same-test benchmark",
+    "discover future-test cells with N>=50 and shrinkage, without using them to fit/select the model"
+  ],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy for commercial progress)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "Public candidate data has no true sale timestamp. scheduled_visit is the observed proxy; offline results are associative."
+  },
+  "population": {
+    "eligibility": "Same population and temporal partitions as E006_physical_location_spot: profile calibration before 2025-09-29T12:58:37, predictive training until 2026-04-28T07:41:43, final 20% future test.",
+    "exclusions": [
+      "Profile-calibration inquiries are excluded from predictive fitting."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv",
+    "experimentos/profile_clustering_v2/results/lead_assignments.csv",
+    "experimentos/profile_clustering_v2/results/broker_assignments.csv",
+    "experimentos/matching_ab_v3/results/spot_decomposed_assignments.csv"
+  ],
+  "validation": {
+    "strategy": "outcome-free profile selection on frozen calibration data + same temporal predictive train and untouched future test; paired cluster-bootstrap by lead_id",
+    "time_column": "inquiry_at",
+    "split_description": "Clusterers use only information available before the frozen profile cutoff. Predictive models use the identical train/test rows across arms. Bootstrap resamples lead_id clusters."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "features": {
+    "inherited": [
+      "acquisition_channel",
+      "behavioral_profile",
+      "need_profile",
+      "dynamic_need_profile",
+      "need_transition",
+      "physical_space_profile",
+      "location_profile",
+      "broker_supply_profile",
+      "broker_service_profile",
+      "availability_state_asof",
+      "availability_lag_bucket"
+    ],
+    "added": [
+      "behavioral_x_dynamic_need",
+      "need_transition_x_physical",
+      "dynamic_need_x_physical",
+      "dynamic_need_x_location",
+      "dynamic_need_x_broker_supply",
+      "dynamic_need_x_broker_service",
+      "physical_x_broker_supply",
+      "location_x_broker_supply",
+      "dynamic_need_x_physical_x_broker_supply"
+    ],
+    "removed": []
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "behavioral_x_dynamic_need",
+        "source": "deterministic cross of E010 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome is introduced; the interaction is derived from already reviewed profile IDs."
+      },
+      {
+        "element": "need_transition_x_physical",
+        "source": "deterministic cross of E010 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome is introduced; the interaction is derived from already reviewed profile IDs."
+      },
+      {
+        "element": "dynamic_need_x_physical",
+        "source": "deterministic cross of E010 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome is introduced; the interaction is derived from already reviewed profile IDs."
+      },
+      {
+        "element": "dynamic_need_x_location",
+        "source": "deterministic cross of E010 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome is introduced; the interaction is derived from already reviewed profile IDs."
+      },
+      {
+        "element": "dynamic_need_x_broker_supply",
+        "source": "deterministic cross of E010 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome is introduced; the interaction is derived from already reviewed profile IDs."
+      },
+      {
+        "element": "dynamic_need_x_broker_service",
+        "source": "deterministic cross of E010 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome is introduced; the interaction is derived from already reviewed profile IDs."
+      },
+      {
+        "element": "physical_x_broker_supply",
+        "source": "deterministic cross of E010 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome is introduced; the interaction is derived from already reviewed profile IDs."
+      },
+      {
+        "element": "location_x_broker_supply",
+        "source": "deterministic cross of E010 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome is introduced; the interaction is derived from already reviewed profile IDs."
+      },
+      {
+        "element": "dynamic_need_x_physical_x_broker_supply",
+        "source": "deterministic cross of E010 point-in-time-safe profile IDs",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as component profiles at T1",
+        "status": "ALLOW",
+        "evidence": "No new source data or outcome is introduced; the interaction is derived from already reviewed profile IDs."
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "experiment_id": "E009_dynamic_need_t1",
+  "parent_experiment": "E008_behavioral_persona",
+  "question": "Does a semantic T1 Dynamic Need profile plus the T0→T1 need transition improve ranking beyond the initial Search Need alone?",
+  "hypothesis": "Requested area/budget, urgency, visit request and channel observed at inquiry time refine demand enough to improve AP/lift without relying on weekday.",
+  "primary_change": "add dynamic_need_profile and need_transition at T1",
+  "secondary_changes": [
+    "explicitly exclude inquiry weekday",
+    "retain original need_profile so the transition remains interpretable"
+  ],
+  "scoring_time": {
+    "stage": "T1",
+    "timestamp_definition": "inquiries.inquiry_at"
+  },
+  "target": {
+    "event": "broker_response == scheduled_visit (proxy for commercial progress)",
+    "horizon_days": 30,
+    "anchor": "inquiries.inquiry_at",
+    "censoring": "Public candidate data has no true sale timestamp. scheduled_visit is the observed proxy; offline results are associative."
+  },
+  "population": {
+    "eligibility": "Same population and temporal partitions as E006_physical_location_spot: profile calibration before 2025-09-29T12:58:37, predictive training until 2026-04-28T07:41:43, final 20% future test.",
+    "exclusions": [
+      "Profile-calibration inquiries are excluded from predictive fitting."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv",
+    "experimentos/profile_clustering_v2/results/lead_assignments.csv",
+    "experimentos/profile_clustering_v2/results/broker_assignments.csv",
+    "experimentos/matching_ab_v3/results/spot_decomposed_assignments.csv"
+  ],
+  "validation": {
+    "strategy": "outcome-free profile selection on frozen calibration data + same temporal predictive train and untouched future test; paired cluster-bootstrap by lead_id",
+    "time_column": "inquiry_at",
+    "split_description": "Clusterers use only information available before the frozen profile cutoff. Predictive models use the identical train/test rows across arms. Bootstrap resamples lead_id clusters."
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "search_sector",
+    "search_modality",
+    "user_type"
+  ],
+  "features": {
+    "inherited": [
+      "acquisition_channel",
+      "behavioral_profile",
+      "need_profile",
+      "physical_space_profile",
+      "location_profile",
+      "broker_profile",
+      "availability_state_asof",
+      "availability_lag_bucket"
+    ],
+    "added": [
+      "dynamic_need_profile",
+      "need_transition"
+    ],
+    "removed": []
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "dynamic_need_profile",
+        "source": "inquiries.requested_area/budgets, urgency_days, asked_visit, channel, message_length plus deltas to T0 lead need",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same inquiry at scoring time",
+        "status": "ALLOW",
+        "evidence": "Uses only fields present at T1. inquiry_weekday and broker_response fields are explicitly excluded."
+      },
+      {
+        "element": "need_transition",
+        "source": "deterministic cross need_profile -> dynamic_need_profile",
+        "scoring_time": "inquiries.inquiry_at",
+        "information_available_at": "same as its T0 and T1 components",
+        "status": "ALLOW",
+        "evidence": "No additional data source; deterministic transition label."
+      }
+    ]
+  }
+}
