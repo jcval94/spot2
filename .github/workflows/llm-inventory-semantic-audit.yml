@@ -1,6 +1,9 @@
 name: LLM inventory semantic audit
 
 on:
+  push:
+    branches:
+      - "experiment/e015-live-gpt5nano"
   pull_request:
     paths:
       - "experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/**"
@@ -20,7 +23,7 @@ on:
       model:
         description: "OpenAI model for live mode"
         required: true
-        default: "gpt-5.6-luna"
+        default: "gpt-5-nano"
         type: string
       limit:
         description: "Maximum listings for live smoke/evaluation"
@@ -56,13 +59,16 @@ jobs:
             experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/
 
   live:
-    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live'
+    if: |
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'live') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/experiment/e015-live-gpt5nano')
     needs: offline
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
+      OPENAIKEY: ${{ secrets.OPENAIKEY }}
       OPENAIAPI: ${{ secrets.OPENAIAPI }}
-      OPENAI_MODEL: ${{ inputs.model }}
+      OPENAI_MODEL: ${{ github.event_name == 'push' && 'gpt-5-nano' || inputs.model }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -73,15 +79,45 @@ jobs:
       - name: Require API secret
         shell: bash
         run: |
-          if [ -z "$OPENAIAPI" ]; then
-            echo "OPENAIAPI secret is not configured."
+          if [ -z "$OPENAIKEY" ] && [ -z "$OPENAIAPI" ]; then
+            echo "Neither OPENAIKEY nor OPENAIAPI secret is configured."
             exit 1
           fi
-      - name: Run live semantic audit
+      - name: Smoke test 10 listings
         run: |
-          python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/run_live.py             --model "${{ inputs.model }}"             --limit "${{ inputs.limit }}"
-      - name: Evaluate available human labels
-        run: python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/evaluate.py
+          python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/run_live.py \
+            --model "$OPENAI_MODEL" \
+            --limit 10 \
+            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_smoke.jsonl
+      - name: Run clean holdout
+        run: |
+          python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/run_live.py \
+            --model "$OPENAI_MODEL" \
+            --input experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/labeling_holdout_v2.csv \
+            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl
+      - name: Run Land semantic challenge
+        run: |
+          python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/run_live.py \
+            --model "$OPENAI_MODEL" \
+            --input experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/semantic_challenge_v2.csv \
+            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2.jsonl
+      - name: Summarize holdout cost and overlap
+        run: |
+          python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/summarize_live.py \
+            --labels experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/labeling_holdout_v2.csv \
+            --predictions experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl \
+            --model "$OPENAI_MODEL" \
+            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2_summary.json
+      - name: Summarize semantic challenge
+        run: |
+          python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/summarize_live.py \
+            --labels experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/semantic_challenge_v2.csv \
+            --predictions experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2.jsonl \
+            --model "$OPENAI_MODEL" \
+            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2_summary.json
+      - name: Evaluation readiness
+        run: python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/evaluate.py \
+          --llm experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl
       - uses: actions/upload-artifact@v4
         with:
           name: e015-live-${{ inputs.model }}
