@@ -7,6 +7,7 @@ from pathlib import Path
 from src.io_utils import load_inventory, write_csv, write_json
 from src.make_holdout_v2 import run as make_holdout_v2
 from src.make_labeling_sample import run as make_labeling_sample
+from src.make_semantic_challenge_v2 import run as make_semantic_challenge_v2
 from src.profile_copy import run as profile_copy
 from src.rules import PATTERNS, audit_row
 from src.rules_v2 import audit_row_v2
@@ -17,6 +18,7 @@ HERE = Path(__file__).resolve().parent
 RESULTS = HERE / "results"
 DISCOVERY_SAMPLE = HERE / "labeling" / "labeling_sample.csv"
 HOLDOUT_V2 = HERE / "labeling" / "labeling_holdout_v2.csv"
+SEMANTIC_CHALLENGE_V2 = HERE / "labeling" / "semantic_challenge_v2.csv"
 
 
 def main() -> int:
@@ -127,6 +129,7 @@ def main() -> int:
 
     discovery_n = make_labeling_sample(DISCOVERY_SAMPLE)
     holdout_n = make_holdout_v2(HOLDOUT_V2)
+    semantic_challenge_n = make_semantic_challenge_v2(SEMANTIC_CHALLENGE_V2)
 
     combined = {
         "experiment_id": "E015_llm_inventory_semantic_audit",
@@ -136,6 +139,7 @@ def main() -> int:
         "semantic_discovery": semantic_summary,
         "discovery_sample_n": discovery_n,
         "clean_holdout_v2_n": holdout_n,
+        "semantic_challenge_v2_n": semantic_challenge_n,
         "llm_executed": False,
         "conclusion": "INCOMPLETE_LLM_PENDING",
     }
