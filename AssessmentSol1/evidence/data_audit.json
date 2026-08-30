@@ -1100,7 +1100,7 @@
     "realized_status_missing_hours": 2701,
     "scheduled_visit_missing_hours": 673,
     "scheduled_visit_missing_rate": 0.14968861209964412,
-    "policy": "AUDIT_ONLY; broker_response_hours not used for features or target in P1"
+    "policy": "OUTCOME_ONLY after P2; prohibited as model feature. broker_response_hours may be used only for Target B methodological audit; primary Target A ignores it."
   },
   "spots_current_state_audit": {
     "total_inquiries_exact_agreement": 212,
@@ -1218,7 +1218,7 @@
     "spots_current_state": "FORBIDDEN_BACKTEST",
     "market_context": "EDA_ONLY",
     "spot_attributes": "AUTHORIZED_IMMUTABLE_ASSUMPTION",
-    "broker_response_fields": "AUDIT_ONLY_P1",
+    "broker_response_fields": "OUTCOME_ONLY_PRIMARY_A_IGNORES_HOURS",
     "target_built": false,
     "every_source_has_explicit_temporal_semantics": "PASS"
   },
