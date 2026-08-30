@@ -5,283 +5,308 @@ import json
 from pathlib import Path
 import polars as pl
 
-FORBIDDEN_MODEL_COLUMNS = {
-    "lead_score_internal",
-    "broker_response",
-    "broker_response_hours",
-    "days_on_market",
-    "total_views",
-    "total_inquiries",
-    "is_active",
-    "similar_available_spots",
-    "avg_price_sqm_mxn",
-    "recent_occupancy_rate",
-    "absorption_velocity_days",
-    "recent_inquiry_volume",
-}
+from _common import (
+    CURRENT_INQUIRY_FEATURES,
+    FORBIDDEN_RAW_FEATURES,
+    HISTORY_FEATURES,
+    UNVERSIONED_SPOT_FIELDS,
+    ensure_output_dir,
+    load_inquiries,
+    load_leads,
+)
+from build_t0 import build_t0
+from build_t1 import build_t1
+from build_t2 import build_t2
+from build_inventory_candidates import build_inventory_candidates
+
+VALID_TARGET_STATUSES = {"POSITIVE", "NEGATIVE", "AMBIGUOUS", "CENSORED", "INELIGIBLE"}
+SPLIT_COLUMNS = {"split", "partition", "fold"}
 
 
-def sha256_file(path: Path) -> str:
+def _sha256(path: Path) -> str:
     h = hashlib.sha256()
-    with path.open("rb") as fh:
-        for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
 
 
-def assert_prediction_key_unique(df: pl.DataFrame) -> None:
-    if df["prediction_key"].null_count() or df["prediction_key"].n_unique() != df.height:
-        raise AssertionError("prediction_key is null or non-unique")
+def _assert_unique(df: pl.DataFrame, columns: list[str], name: str) -> None:
+    if df.group_by(columns).len().filter(pl.col("len") > 1).height:
+        raise AssertionError(f"{name}: duplicate grain {columns}")
 
 
-def assert_no_future_inquiry(df: pl.DataFrame) -> None:
-    if "hist_max_inquiry_time" in df.columns:
-        bad = df.filter(
-            pl.col("hist_max_inquiry_time").is_not_null()
-            & (pl.col("hist_max_inquiry_time") >= pl.col("score_time"))
-        )
-        if bad.height:
-            raise AssertionError("Historical inquiry at/after score_time")
-
-
-def assert_no_future_snapshot(df: pl.DataFrame) -> None:
-    bad = df.filter(
-        pl.col("snapshot_time").is_not_null()
-        & (pl.col("snapshot_time") > pl.col("score_time"))
-    )
-    if bad.height:
-        raise AssertionError("Future Availability snapshot")
-
-
-def assert_no_forbidden_model_feature(df: pl.DataFrame) -> None:
-    bad = FORBIDDEN_MODEL_COLUMNS.intersection(df.columns)
-    if bad:
-        raise AssertionError(f"Forbidden model columns: {sorted(bad)}")
-
-
-def assert_target_statuses(df: pl.DataFrame) -> None:
-    allowed = {"POSITIVE", "NEGATIVE", "AMBIGUOUS", "CENSORED", "INELIGIBLE"}
-    got = set(df["target_status"].drop_nulls().unique().to_list())
-    if not got.issubset(allowed):
-        raise AssertionError(f"Unknown target statuses: {sorted(got - allowed)}")
-    invalid_value = df.filter(
-        pl.col("target_status").is_in(["POSITIVE", "NEGATIVE"])
-        != pl.col("target_value").is_not_null()
-    )
-    if invalid_value.height:
-        raise AssertionError("target_value/status inconsistency")
-
-
-def assert_candidate_grain(df: pl.DataFrame) -> None:
-    dup = df.group_by("prediction_key", "candidate_spot_id").len().filter(
-        pl.col("len") > 1
-    )
-    if dup.height:
-        raise AssertionError("Candidate grain expansion")
-
-
-def assert_lineage_complete(
-    abt_columns: set[str], lineage_path: Path
-) -> None:
-    lineage = pl.read_csv(lineage_path)
-    registered = set(lineage["column"].to_list())
-    missing = abt_columns - registered
-    if missing:
-        raise AssertionError(f"Missing lineage: {sorted(missing)}")
-
-
-def assert_stage_observability(df: pl.DataFrame) -> None:
-    if df.filter((pl.col("stage") == "T0") & pl.col("current_inquiry_id").is_not_null()).height:
-        raise AssertionError("T0 has a current inquiry")
-    if df.filter((pl.col("stage") == "T1") & (pl.col("inquiry_number") != 1)).height:
-        raise AssertionError("T1 is not first inquiry")
-    if df.filter((pl.col("stage") == "T2") & (pl.col("inquiry_number") < 2)).height:
-        raise AssertionError("T2 inquiry number invalid")
-
-
-def assert_split_integrity(assignments: pl.DataFrame) -> None:
-    required = {"lead_id", "partition"}
-    if not required.issubset(assignments.columns):
-        raise AssertionError("Split assignment must include lead_id, partition")
-    per_lead = assignments.group_by("lead_id").agg(
-        pl.col("partition").n_unique().alias("n_partition")
-    )
-    if per_lead.filter(pl.col("n_partition") > 1).height:
-        raise AssertionError("Entity leakage: lead appears in multiple partitions")
-
-
-
-def _read_csv_shards(path: Path) -> pl.DataFrame:
-    files = sorted(path.glob("part-*.csv"))
-    if not files:
-        raise AssertionError(f"No CSV shards found under {path}")
-    return pl.concat(
-        [pl.read_csv(p, infer_schema_length=None) for p in files],
-        how="vertical_relaxed",
-    )
-
-
-def validate_committed_evidence(repo_root: Path) -> dict:
-    """Validate committed CSV evidence when full Parquet materialization is absent."""
-    out = repo_root / "AssessmentSol1" / "abt" / "artifacts"
-    spine = pl.read_csv(out / "score_spine.csv", infer_schema_length=None)
-    audit = _read_csv_shards(out / "lead_quality_audit_all_snapshots")
-    model = _read_csv_shards(out / "lead_quality_model_ready")
-    candidate_summary = _read_csv_shards(out / "candidate_spots_summary")
-    inventory_summary = _read_csv_shards(out / "inventory_state_summary")
-    candidate_sample = pl.read_csv(
-        out / "candidate_spots_sample.csv", infer_schema_length=None
-    )
-    inventory_sample = pl.read_csv(
-        out / "inventory_serviceability_sample.csv", infer_schema_length=None
-    )
-    qa = json.loads((out / "qa_summary.json").read_text())
-
-    for df in (spine, audit, model, candidate_sample, inventory_sample):
-        if "score_time" in df.columns:
-            df.with_columns(
-                pl.col("score_time").str.to_datetime(strict=True).alias("score_time")
-            )
-
-    audit = audit.with_columns(
-        pl.col("score_time").str.to_datetime(strict=True).alias("score_time"),
-        pl.col("hist_max_inquiry_time")
-        .str.to_datetime(strict=False)
-        .alias("hist_max_inquiry_time"),
-    )
-    inventory_sample = inventory_sample.with_columns(
-        pl.col("score_time").str.to_datetime(strict=True).alias("score_time"),
-        pl.col("snapshot_time")
-        .str.to_datetime(strict=False)
-        .alias("snapshot_time"),
-    )
-
-    assert_prediction_key_unique(spine)
-    assert_prediction_key_unique(audit)
-    assert_prediction_key_unique(model)
-    assert set(spine["prediction_key"].to_list()) == set(
-        audit["prediction_key"].to_list()
-    )
-    if not set(model["prediction_key"].to_list()).issubset(
-        set(audit["prediction_key"].to_list())
-    ):
-        raise AssertionError("model_ready contains keys absent from audit")
-
-    assert_no_future_inquiry(audit)
-    assert_no_forbidden_model_feature(model)
-    assert_target_statuses(audit)
-    assert_stage_observability(audit)
-    assert_candidate_grain(candidate_sample)
-    assert_candidate_grain(inventory_sample)
-    assert_no_future_snapshot(inventory_sample)
-
-    if candidate_summary["prediction_key"].n_unique() != spine.height:
-        raise AssertionError("Candidate summary does not cover every prediction_key")
-    if inventory_summary["prediction_key"].n_unique() != spine.height:
-        raise AssertionError("Inventory summary does not cover every prediction_key")
-    if int(candidate_summary["n_candidates"].sum()) != qa["candidate_spots"]["full_logical_rows"]:
-        raise AssertionError("Candidate full row-count reconciliation failed")
-    if int(inventory_summary["n_candidates"].sum()) != qa["inventory_serviceability"]["full_logical_rows"]:
-        raise AssertionError("Inventory full row-count reconciliation failed")
-
-    if any(c in audit.columns for c in ("partition", "fold", "split")):
-        raise AssertionError("Split assignment embedded in ABT audit")
-    if any(c in model.columns for c in ("partition", "fold", "split")):
-        raise AssertionError("Split assignment embedded in model_ready")
-
-    lineage_path = repo_root / "AssessmentSol1" / "abt" / "COLUMN_LINEAGE.csv"
-    artifact_columns = (
-        set(spine.columns)
-        | set(audit.columns)
-        | set(model.columns)
-        | set(candidate_sample.columns)
-        | set(inventory_sample.columns)
-    )
-    assert_lineage_complete(artifact_columns, lineage_path)
-
-    return {
-        "status": "PASS",
-        "mode": "COMMITTED_EVIDENCE",
-        "score_spine_rows": spine.height,
-        "audit_rows": audit.height,
-        "model_ready_rows": model.height,
-        "candidate_full_rows": int(candidate_summary["n_candidates"].sum()),
-        "inventory_full_rows": int(inventory_summary["n_candidates"].sum()),
-        "future_inquiry_count": 0,
-        "future_snapshot_count": 0,
-        "forbidden_model_feature_count": 0,
-        "split_assignment_embedded": False,
-    }
-
-
-def validate_all(repo_root: Path) -> dict:
-    out = repo_root / "AssessmentSol1" / "abt" / "artifacts"
-    audit = pl.read_parquet(out / "lead_quality_audit_all_snapshots.parquet")
-    model = pl.read_parquet(out / "lead_quality_model_ready.parquet")
-    candidates = pl.read_parquet(out / "candidate_spots.parquet")
-    inventory = pl.read_parquet(out / "inventory_serviceability_state.parquet")
-
-    assert_prediction_key_unique(audit)
-    assert_no_future_inquiry(audit)
-    assert_no_forbidden_model_feature(model)
-    assert_target_statuses(audit)
-    assert_stage_observability(audit)
-    assert_candidate_grain(candidates)
-    assert_candidate_grain(inventory)
-    assert_no_future_snapshot(inventory)
-    assert_lineage_complete(
-        set(audit.columns) | set(model.columns) | set(candidates.columns) | set(inventory.columns),
-        repo_root / "AssessmentSol1" / "abt" / "COLUMN_LINEAGE.csv",
-    )
-
+def _assert_target_contract(audit: pl.DataFrame, model: pl.DataFrame, name: str) -> None:
+    statuses = set(audit["target_status"].drop_nulls().to_list())
+    invalid = statuses - VALID_TARGET_STATUSES
+    if invalid:
+        raise AssertionError(f"{name}: invalid target statuses: {sorted(invalid)}")
     if model.filter(~pl.col("target_status").is_in(["POSITIVE", "NEGATIVE"])).height:
-        raise AssertionError("model_ready includes invalid labels")
+        raise AssertionError(f"{name}: model_ready contains non-binary/non-mature labels")
+    nonbinary = model.filter(~pl.col("target_value").is_in([0, 1])).height
+    if nonbinary:
+        raise AssertionError(f"{name}: model_ready target_value is not binary")
 
-    manifest = {}
-    for name in (
-        "score_spine.parquet",
-        "lead_quality_audit_all_snapshots.parquet",
-        "lead_quality_model_ready.parquet",
-        "candidate_spots.parquet",
-        "inventory_serviceability_state.parquet",
+
+def _assert_no_forbidden(df: pl.DataFrame, name: str) -> None:
+    forbidden = FORBIDDEN_RAW_FEATURES | UNVERSIONED_SPOT_FIELDS
+    overlap = sorted(set(df.columns).intersection(forbidden))
+    if overlap:
+        raise AssertionError(f"{name}: forbidden fields present: {overlap}")
+    market = [c for c in df.columns if c.startswith("market_")]
+    if market:
+        raise AssertionError(f"{name}: Market Context entered modeling path: {market}")
+
+
+def _assert_stage_observability(
+    t0_model: pl.DataFrame,
+    t1_model: pl.DataFrame,
+    t2_audit: pl.DataFrame,
+    t2_model: pl.DataFrame,
+) -> None:
+    if set(CURRENT_INQUIRY_FEATURES).intersection(t0_model.columns):
+        raise AssertionError("T0 contains inquiry payload")
+    if set(HISTORY_FEATURES).intersection(t0_model.columns):
+        raise AssertionError("T0 contains inquiry history")
+    if set(HISTORY_FEATURES).intersection(t1_model.columns):
+        raise AssertionError("T1 contains history despite being first inquiry")
+    for name, df in (("T0", t0_model), ("T1", t1_model), ("T2", t2_model)):
+        leaked_context = [
+            c
+            for c in df.columns
+            if c.startswith("matching_")
+            or c.startswith("inventory_")
+            or c in {
+                "availability_known",
+                "is_available_asof",
+                "days_until_available_asof",
+                "snapshot_age_days",
+                "freshness_bucket",
+                "availability_state",
+            }
+        ]
+        if leaked_context:
+            raise AssertionError(f"{name} LeadQuality model contains Matching/Inventory: {leaked_context}")
+    if t2_audit["audit_response_history_feature_used"].any():
+        raise AssertionError("T2 response history was enabled as a predictive feature")
+    allowed_stage = {
+        "ELIGIBLE",
+        "INELIGIBLE_PRIOR_SCHEDULED_VISIT_KNOWN",
+        "AMBIGUOUS_PRIOR_SCHEDULED_VISIT_TIME",
+    }
+    invalid_stage = set(t2_audit["stage_eligibility"].to_list()) - allowed_stage
+    if invalid_stage:
+        raise AssertionError(f"T2 invalid stage_eligibility values: {sorted(invalid_stage)}")
+    if t2_audit.filter(
+        pl.col("hist_max_inquiry_time").is_not_null()
+        & (pl.col("hist_max_inquiry_time") >= pl.col("score_time"))
+    ).height:
+        raise AssertionError("T2 includes same-time/future inquiry history")
+
+
+def _assert_inventory(inventory_audit: pl.DataFrame, inventory_model: pl.DataFrame) -> None:
+    _assert_unique(inventory_audit, ["score_id", "candidate_spot_id"], "inventory_candidates")
+    if inventory_audit.filter(pl.col("spot_created_at") > pl.col("score_time")).height:
+        raise AssertionError("Future Spot exists in candidate universe")
+    if inventory_audit.filter(
+        pl.col("snapshot_date_asof").is_not_null()
+        & (pl.col("snapshot_date_asof") > pl.col("score_time").dt.date())
+    ).height:
+        raise AssertionError("Future Availability snapshot selected")
+
+    missing = inventory_audit.filter(~pl.col("availability_known"))
+    if missing.filter(pl.col("is_available_asof").is_not_null()).height:
+        raise AssertionError("Missing snapshot was coerced into available/unavailable")
+    if missing.filter(pl.col("days_until_available_asof").is_not_null()).height:
+        raise AssertionError("Missing snapshot received days_until_available")
+    if missing.filter(pl.col("freshness_bucket") != "UNKNOWN").height:
+        raise AssertionError("Missing snapshot freshness must be UNKNOWN")
+    if missing.filter(pl.col("availability_state") != "UNKNOWN").height:
+        raise AssertionError("Missing snapshot availability_state must be UNKNOWN")
+    if "competing_inquiries_30d" in inventory_audit.columns or "competing_inquiries_30d" in inventory_model.columns:
+        raise AssertionError("competing_inquiries_30d entered P4 before semantic proof")
+    _assert_no_forbidden(inventory_model, "inventory_candidates_model_ready")
+
+
+def _load_lineage(repo_root: Path) -> pl.DataFrame:
+    path = repo_root / "AssessmentSol1" / "abt" / "COLUMN_LINEAGE.csv"
+    lineage = pl.read_csv(path)
+    required = {
+        "column",
+        "source",
+        "meaning",
+        "available_at",
+        "transform",
+        "role",
+        "stage",
+        "future_risk",
+        "justification",
+        "evidence",
+    }
+    missing = required - set(lineage.columns)
+    if missing:
+        raise AssertionError(f"COLUMN_LINEAGE missing required fields: {sorted(missing)}")
+    if lineage["column"].is_duplicated().any():
+        dupes = lineage.filter(pl.col("column").is_duplicated())["column"].unique().to_list()
+        raise AssertionError(f"COLUMN_LINEAGE column names must be unique: {dupes}")
+    return lineage
+
+
+def _assert_lineage_gate(
+    repo_root: Path,
+    outputs: dict[str, pl.DataFrame],
+) -> dict[str, list[str]]:
+    lineage = _load_lineage(repo_root)
+    known = set(lineage["column"].to_list())
+    all_columns = set().union(*(set(df.columns) for df in outputs.values()))
+    missing = sorted(all_columns - known)
+    if missing:
+        raise AssertionError(f"Columns without temporal lineage: {missing}")
+
+    lineage_rows = {r["column"]: r for r in lineage.to_dicts()}
+    feature_sets: dict[str, list[str]] = {}
+
+    for object_name in ("abt_t0_model_ready", "abt_t1_model_ready", "abt_t2_model_ready"):
+        df = outputs[object_name]
+        invalid_roles = []
+        model_features = []
+        for c in df.columns:
+            row = lineage_rows[c]
+            if row["role"] == "model_feature":
+                model_features.append(c)
+                if not row["available_at"] or str(row["available_at"]).upper().startswith("UNKNOWN"):
+                    raise AssertionError(f"{object_name}.{c}: model feature lacks temporal availability proof")
+            elif row["role"] in {"matching_feature", "inventory_feature", "audit_only", "forbidden"}:
+                invalid_roles.append((c, row["role"]))
+        if invalid_roles:
+            raise AssertionError(f"{object_name}: non-LeadQuality roles entered model view: {invalid_roles}")
+        feature_sets[object_name] = sorted(model_features)
+
+    inv_features = []
+    for c in outputs["inventory_candidates_model_ready"].columns:
+        row = lineage_rows[c]
+        if row["role"] == "forbidden":
+            raise AssertionError(f"inventory_candidates_model_ready.{c}: forbidden by lineage")
+        if row["role"] in {"matching_feature", "inventory_feature"}:
+            inv_features.append(c)
+            if not row["available_at"] or str(row["available_at"]).upper().startswith("UNKNOWN"):
+                raise AssertionError(f"inventory_candidates_model_ready.{c}: temporal availability unproven")
+    feature_sets["inventory_candidates_model_ready"] = sorted(inv_features)
+    return feature_sets
+
+
+def _assert_split_integrity(repo_root: Path, outputs: dict[str, pl.DataFrame]) -> str:
+    for name, df in outputs.items():
+        embedded = SPLIT_COLUMNS.intersection(df.columns)
+        if embedded:
+            raise AssertionError(f"{name}: split/fold assignment embedded in ABT: {sorted(embedded)}")
+
+    split_dir = repo_root / "AssessmentSol1" / "splits"
+    candidates = [
+        split_dir / "split_assignments.parquet",
+        split_dir / "split_assignments.csv",
+    ]
+    path = next((p for p in candidates if p.exists()), None)
+    if path is None:
+        return "EXTERNAL_SPLIT_NOT_YET_MATERIALIZED"
+    split = pl.read_parquet(path) if path.suffix == ".parquet" else pl.read_csv(path)
+    partition_col = next((c for c in ("split", "partition", "fold") if c in split.columns), None)
+    if "lead_id" not in split.columns or partition_col is None:
+        raise AssertionError("Split assignment must contain lead_id and split/partition/fold")
+    leakage = split.group_by("lead_id").agg(pl.col(partition_col).n_unique().alias("n")).filter(pl.col("n") > 1)
+    if leakage.height:
+        raise AssertionError("Split integrity failed: same lead appears in multiple partitions/folds")
+    return "PASS"
+
+
+def validate_all(repo_root: Path, materialize: bool = True) -> dict:
+    leads = load_leads(repo_root)
+    iq = load_inquiries(repo_root)
+
+    t0_audit, t0_model = build_t0(repo_root)
+    t1_audit, t1_model = build_t1(repo_root)
+    t2_audit, t2_model = build_t2(repo_root)
+    inv_audit, inv_model = build_inventory_candidates(repo_root)
+
+    _assert_unique(t0_audit, ["lead_id"], "abt_t0")
+    _assert_unique(t1_audit, ["lead_id"], "abt_t1")
+    _assert_unique(t1_audit, ["first_inquiry_id"], "abt_t1")
+    _assert_unique(t2_audit, ["inquiry_id"], "abt_t2")
+
+    expected_t1 = iq.filter(pl.col("inquiry_number") == 1).height
+    expected_t2 = iq.filter(pl.col("inquiry_number") >= 2).height
+    if t0_audit.height != leads.height:
+        raise AssertionError("T0 row explosion/loss relative to leads")
+    if t1_audit.height != expected_t1:
+        raise AssertionError("T1 row explosion/loss relative to deterministic first inquiries")
+    if t2_audit.height != expected_t2:
+        raise AssertionError("T2 row explosion/loss relative to second+ inquiries")
+
+    for name, audit, model in (
+        ("abt_t0", t0_audit, t0_model),
+        ("abt_t1", t1_audit, t1_model),
+        ("abt_t2", t2_audit, t2_model),
     ):
-        p = out / name
-        df = pl.read_parquet(p)
-        manifest[name] = {
-            "rows": df.height,
-            "columns": df.width,
-            "sha256": sha256_file(p),
-        }
+        _assert_target_contract(audit, model, name)
+        _assert_no_forbidden(model, f"{name}_model_ready")
+
+    _assert_stage_observability(t0_model, t1_model, t2_audit, t2_model)
+    _assert_inventory(inv_audit, inv_model)
+
+    outputs = {
+        "abt_t0_audit_all_rows": t0_audit,
+        "abt_t0_model_ready": t0_model,
+        "abt_t1_audit_all_rows": t1_audit,
+        "abt_t1_model_ready": t1_model,
+        "abt_t2_audit_all_rows": t2_audit,
+        "abt_t2_model_ready": t2_model,
+        "inventory_candidates_audit_all_rows": inv_audit,
+        "inventory_candidates_model_ready": inv_model,
+    }
+    feature_sets = _assert_lineage_gate(repo_root, outputs)
+    split_status = _assert_split_integrity(repo_root, outputs)
+
+    out = ensure_output_dir(repo_root)
+    manifest: dict[str, dict] = {}
+    if materialize:
+        for name, df in outputs.items():
+            path = out / f"{name}.parquet"
+            df.write_parquet(path)
+            manifest[path.name] = {
+                "rows": df.height,
+                "columns": df.width,
+                "sha256": _sha256(path),
+            }
 
     qa = {
         "status": "PASS",
-        "prediction_key_unique": True,
-        "future_snapshot_count": 0,
-        "future_inquiry_count": 0,
-        "forbidden_model_feature_count": 0,
-        "candidate_grain_duplicates": 0,
+        "contract": "P4_POINT_IN_TIME_ABTS_V1",
+        "raw_inputs_only": True,
+        "t0_rows": t0_audit.height,
+        "t1_rows": t1_audit.height,
+        "t2_rows": t2_audit.height,
+        "inventory_candidate_rows": inv_audit.height,
+        "future_inquiry_history_rows": 0,
+        "future_spot_rows": 0,
+        "future_availability_rows": 0,
+        "forbidden_model_columns": 0,
         "market_context_used": False,
-        "split_assignment_embedded": False,
+        "competing_inquiries_30d_used": False,
+        "t2_response_history_feature_used": False,
+        "t2_stage_response_gate": "TIMED_ONLY_WITH_UNTIMED_AS_AMBIGUOUS",
+        "split_integrity": split_status,
+        "feature_sets_from_lineage": feature_sets,
         "manifest": manifest,
     }
-    (out / "qa_summary.json").write_text(json.dumps(qa, indent=2) + "\n")
-    (out / "artifact_manifest.json").write_text(
-        json.dumps(manifest, indent=2) + "\n"
-    )
+    if materialize:
+        (out / "p4_qa_summary.json").write_text(json.dumps(qa, indent=2) + "\n")
+        (out / "p4_artifact_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return qa
 
 
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[2]
-    out = repo_root / "AssessmentSol1" / "abt" / "artifacts"
-    full = [
-        out / "lead_quality_audit_all_snapshots.parquet",
-        out / "lead_quality_model_ready.parquet",
-        out / "candidate_spots.parquet",
-        out / "inventory_serviceability_state.parquet",
-    ]
-    result = validate_all(repo_root) if all(p.exists() for p in full) else validate_committed_evidence(repo_root)
-    print(json.dumps(result, indent=2))
+    print(json.dumps(validate_all(repo_root, materialize=True), indent=2))
 
 
 if __name__ == "__main__":
