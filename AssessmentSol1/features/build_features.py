@@ -576,12 +576,19 @@ def build_inventory_feature_table(
 def build_feature_artifacts(
     repo_root: Path,
     *,
-    include_procedural_holdout: bool = False,
+    scope: str = "development",
 ) -> dict:
     out_dir = ASSESSMENT_ROOT / "features" / "artifacts"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    max_time = HOLDOUT_END if include_procedural_holdout else CALIBRATION_END
+    scope_cutoffs = {
+        "development": DEVELOPMENT_END,
+        "calibration_inclusive": CALIBRATION_END,
+        "holdout_inclusive": HOLDOUT_END,
+    }
+    if scope not in scope_cutoffs:
+        raise ValueError(f"Unknown feature-build scope: {scope}")
+    max_time = scope_cutoffs[scope]
     cutoff = max_time.to_pydatetime()
     t1_audit_pl, _ = build_t1(
         repo_root, max_score_time_exclusive=cutoff
@@ -632,7 +639,8 @@ def build_feature_artifacts(
 
     manifest = {
         "version": "FEATURE_ARTIFACTS_V1",
-        "include_procedural_holdout": include_procedural_holdout,
+        "scope": scope,
+        "procedural_holdout_included": scope == "holdout_inclusive",
         "max_score_time_exclusive": str(max_time),
         "t1_rows": len(t1),
         "t2_rows": len(t2),
@@ -655,18 +663,24 @@ def build_feature_artifacts(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--include-procedural-holdout",
-        action="store_true",
-        help="Use only after FROZEN_MODEL_CONFIG.json exists and holdout is intentionally consumed.",
+        "--scope",
+        choices=["development", "calibration_inclusive", "holdout_inclusive"],
+        default="development",
     )
     args = parser.parse_args()
+    if args.scope == "holdout_inclusive":
+        frozen = ASSESSMENT_ROOT / "models" / "lead_quality" / "FROZEN_MODEL_CONFIG.json"
+        if not frozen.exists():
+            raise RuntimeError(
+                "Procedural holdout is sealed: FROZEN_MODEL_CONFIG.json does not exist"
+            )
+        payload = json.loads(frozen.read_text())
+        if payload.get("status") != "FROZEN":
+            raise RuntimeError("Procedural holdout is sealed: model config is not FROZEN")
     repo_root = Path(__file__).resolve().parents[2]
     print(
         json.dumps(
-            build_feature_artifacts(
-                repo_root,
-                include_procedural_holdout=args.include_procedural_holdout,
-            ),
+            build_feature_artifacts(repo_root, scope=args.scope),
             indent=2,
         )
     )
