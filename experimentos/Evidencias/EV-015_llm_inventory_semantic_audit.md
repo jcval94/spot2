@@ -1,6 +1,6 @@
 # EV-015 — LLM Inventory Semantic Audit
 
-**Estado de evidencia:** empírica parcial. Fase 0–1 ejecutadas sobre el catálogo completo; comparación LLM pendiente.
+**Estado de evidencia:** empírica parcial. Fase 0–1 ejecutadas y reproducidas en CI; comparación LLM pendiente.
 
 **Experimento:** [E015_llm_inventory_semantic_audit](../llm_inventory_quality/E015_llm_inventory_semantic_audit/)
 
@@ -18,6 +18,13 @@
 - [Structured-output schema](../llm_inventory_quality/E015_llm_inventory_semantic_audit/schema/audit_response.schema.json)
 - [Rules code](../llm_inventory_quality/E015_llm_inventory_semantic_audit/src/rules.py)
 - [OpenAI client](../llm_inventory_quality/E015_llm_inventory_semantic_audit/src/openai_auditor.py)
+
+## Trazabilidad de ejecución
+
+- GitHub Actions: run `33289546496` — **success**.
+- Governance CI: run `33289546474` — **success**.
+- Artifact: `e015-offline-evidence`, id `9725519456`, digest `sha256:f98c46e99e6b71763b4b127723c24a45d900306697402b076a3b4151d9af9dd4`.
+- Unit tests, full offline rebuild and evaluation-readiness check passed.
 
 ## Hallazgos offline
 
