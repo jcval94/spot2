@@ -1,13 +1,16 @@
-# Features
+# Feature Engineering — current status
 
-No feature engineering optimization is performed in PROMPT 0.
+P5–6 is complete.
 
-This phase defines only information eligibility:
+Authoritative feature governance:
+- `FEATURE_REGISTRY.csv` — 129 registered entries;
+- `feature_groups.json`;
+- `ablation_plan.json`;
+- `FEATURE_POLICY.md`;
+- `STAGE_POLICY.md`.
 
-- known at score time;
-- conditionally known if source immutability/effective time is proven;
-- known but audit-only;
-- blocked because future;
-- blocked because effective-time semantics are unknown.
+T1 core is intake + current inquiry + deterministic refinement only. Matching/Inventory stay separate except the pre-registered E challenger. T2 trajectory contains strict-prior request history only.
 
-Learned encodings, clusters, target encodings and fitted preprocessing will be created later inside training folds only.
+Any learned transform must fit inside TRAIN folds. `llm_*`, response fields, Market Context, unproven historical counters and other forbidden fields cannot enter modeling.
+
+See `evidence/PRE_P8_AUDIT.md` for the latest reconciliation.
