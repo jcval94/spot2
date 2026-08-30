@@ -11,25 +11,51 @@ Gate: answer “What information is known at the exact scoring instant?” for T
 
 ## P1 — Raw-data integrity and source semantics — COMPLETE
 
-Re-profiled all six raw tables from scratch; validated CSV↔Parquet parity, physical fingerprints, keys, cardinalities, timestamp ordering, missingness, duplicates, outliers, modality structure, response inconsistencies, Availability as-of coverage and source temporal provenance. Parquet is canonical. No target was constructed.
+Re-profiled all six raw tables from scratch; validated CSV↔Parquet parity, physical fingerprints, keys, cardinalities, timestamp ordering, missingness, duplicates, outliers, modality structure, response inconsistencies, Availability as-of coverage and source temporal provenance. Parquet is canonical when present. No target was constructed.
 
 Gate: every raw column has explicit event/observation/effective-time semantics or is blocked/EDA-only.
 
 ## P2 — Target contract — COMPLETE
 
-Compared Target A (first-inquiry eventual scheduled_visit), Target B (E028-style 30d reconstructed response event), and Target C (30d inquiry-initiation progress) without training a model or using AUC/AP/Lift. Frozen the primary T1 target as `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1` with a 14-day historical maturity buffer. T0 has a separate secondary progress estimand; T2 outcome semantics are frozen but its point-in-time cohort gate is deferred to the ABT phase.
+Compared Target A (first-inquiry eventual scheduled_visit), Target B (E028-style 30d reconstructed response event), and Target C (30d inquiry-initiation progress) without training a model or using AUC/AP/Lift. Frozen the primary T1 target as `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1` with a 14-day historical maturity buffer. T0 has a separate secondary progress estimand; T2 outcome semantics are frozen.
 
 Gate: target estimand and maturity are frozen before FE/modeling and may not be changed because another target later gives better model performance.
 
-## P3 — Definitive point-in-time ABTs — COMPLETE
+## P3 — Definitive point-in-time ABTs / Prompt 4 refactor — IMPLEMENTED, RUNTIME GATE PENDING
 
-Rebuilt the T0/T1/T2 score spine from raw, materialized Lead Quality audit/model-ready views, defined the Lead × Candidate Spot decision table and Inventory Serviceability state, and audited all point-in-time invariants. No historical ABT is a runtime input.
+Prompt 4 supersedes the earlier combined score-spine design with four separate analytical objects:
 
-Gate: 0 future inquiry-history rows, 0 future Availability snapshots, 0 forbidden model features, unique prediction keys, valid target statuses, complete lineage, and separate candidate/inventory grains.
+1. `abt_t0` — one row per lead at intake;
+2. `abt_t1` — principal, one deterministic first inquiry per lead;
+3. `abt_t2` — challenger, one row per second-or-later inquiry with strict-prior request history only;
+4. `inventory_candidates` — separate `score_id × candidate_spot_id` Matching/Inventory table.
 
-## P4 — Splits and research-contamination-aware evaluation
+LeadQuality is physically separated from selected Spot, physical attributes, Matching and Availability. Availability uses backward as-of only; missing snapshots remain UNKNOWN. Market Context and `competing_inquiries_30d` are blocked. T2 broker-response history is not a predictive feature; timed prior scheduled visits are used only for cohort eligibility and untimed prior successes make stage membership ambiguous.
+
+Static gate implemented:
+
+- raw-only builder boundary;
+- unique-grain and row-explosion checks;
+- strict prior-inquiry checks;
+- no future Spot;
+- no future Availability;
+- forbidden feature checks;
+- stage observability;
+- external split-integrity check;
+- 111-row column lineage/role registry;
+- hard rejection of any promoted feature without demonstrated temporal availability.
+
+Runtime gate:
+
+`python AssessmentSol1/abt/validate_abts.py`
+
+must produce `p4_qa_summary.json` with `status = PASS` and a matching artifact manifest before P4 outputs are treated as authoritative.
+
+## P4 — Splits and research-contamination-aware evaluation — BLOCKED ON ABT RUNTIME PASS
 
 Create development splits before FE/model fitting. Historical candidate periods are development/research-contaminated unless a protocol was frozen before their inspection. Reserve only a procedural final holdout if useful; true confirmation is new data/hidden evaluator.
+
+Gate: no split/model fitting begins until the current Prompt-4 ABT runtime gate passes.
 
 ## P5 — Feature engineering
 
@@ -53,4 +79,4 @@ Use an LLM only where unstructured information exists and where deterministic ex
 
 ## P10 — Final reporting
 
-Produce notebook, one-pager, slides, figures, audit and reproducibility manifest. Do not relabel a research-contaminated period as unseen.
+Produce notebook, one-pager, HTML presentation, figures, audit and reproducibility manifest. Do not relabel a research-contaminated period as unseen.
