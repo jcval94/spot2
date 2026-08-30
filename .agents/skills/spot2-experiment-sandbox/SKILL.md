@@ -176,6 +176,14 @@ When legacy agent-generated work exists outside `experimentos/`, prefer migratin
 
 Do not rewrite scientific conclusions during a mechanical migration.
 
+## Multi-experiment research flow
+
+When a research line spans several governed experiments, changes its recommendation, or reaches closure, use `spot2-research-chronicle` and maintain:
+
+`experimentos/registro_flujo/<line_name>/`
+
+This registry documents chronology and decision evolution. It does **not** replace `Evidencias/` or `conocimiento_agregado/`.
+
 ## Fundamental rule
 
 Repository cleanliness and scientific traceability are both hard constraints.
