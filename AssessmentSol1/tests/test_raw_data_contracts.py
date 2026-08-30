@@ -16,6 +16,7 @@ from assessment_sol1.raw_audit import (
     pk_duplicate_rows,
     read_parquet_table,
     validate_temporal_registry,
+    validate_source_manifest,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -248,3 +249,13 @@ def test_spot_current_state_columns_are_forbidden() -> None:
     assert blocked.height == 4
     assert set(blocked["known_at_T1"].to_list()) == {"BLOCKED"}
     assert set(blocked["point_in_time_reconstructable"].to_list()) == {"NO"}
+
+
+def test_raw_fingerprints_match_frozen_manifest() -> None:
+    observed = validate_source_manifest(REPO_ROOT)
+    assert set(observed) == set(TABLES)
+    for table in TABLES:
+        assert observed[table]["csv_sha256"]
+        assert observed[table]["parquet_sha256"]
+        assert observed[table]["csv_git_blob_sha1"]
+        assert observed[table]["parquet_git_blob_sha1"]
