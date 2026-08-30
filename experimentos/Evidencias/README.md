@@ -23,3 +23,5 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 | [EV-015](EV-015_llm_inventory_semantic_audit.md) | E015 semantic inventory audit | Empírica parcial: offline baseline completo, LLM pendiente |
 
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.
+
+| [EV-016](EV-016_llm_gpt5nano_live.md) | GPT-5 nano live semantic audit | Empírica live completa / gold humano pendiente |
