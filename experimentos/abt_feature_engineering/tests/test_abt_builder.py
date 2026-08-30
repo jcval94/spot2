@@ -156,7 +156,7 @@ def test_land_building_attributes_are_gated_not_learned_as_real():
     x = engineer_spots(spots, attrs)
     assert x.loc[0, "built_environment_applicable"] == False
     assert pd.isna(x.loc[0, "model_elevators"])
-    assert pd.isna(x.loc[0, "model_floor_material"])
+    assert x.loc[0, "model_floor_material"] == "__NOT_APPLICABLE__"
     assert x.loc[0, "amenity_parking"] == 1
 
 
@@ -254,3 +254,33 @@ def test_manifest_covers_repository_source_columns():
     assert len(manifest) == 86
     assert not manifest.duplicated(["table", "column"]).any()
     assert actual == expected
+
+
+def test_unspecified_corridor_is_unknown_not_false_match():
+    from feature_engineering import add_match_features
+
+    rows = pd.DataFrame(
+        {
+            "spot_id": [1],
+            "preferred_state": ["CDMX"],
+            "preferred_municipality": ["X"],
+            "preferred_corridor": [np.nan],
+            "preferred_corridor_fe": ["__UNSPECIFIED__"],
+            "search_sector": ["Office"],
+            "search_modality": ["rent"],
+            "spot_state": ["CDMX"],
+            "spot_municipality": ["X"],
+            "spot_corridor": ["polanco"],
+            "spot_sector_name": ["Office"],
+            "spot_modality": ["rent"],
+            "requested_area_sqm": [100],
+            "spot_area_sqm": [100],
+            "requested_rent_budget": [10000],
+            "spot_effective_monthly_cost": [9000],
+            "requested_sale_budget": [np.nan],
+            "spot_price_total_mxn_sale": [np.nan],
+        }
+    )
+    x = add_match_features(rows)
+    assert pd.isna(x.loc[0, "same_corridor"])
+    assert x.loc[0, "same_municipality"] == True
