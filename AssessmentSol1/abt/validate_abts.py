@@ -203,6 +203,8 @@ def _assert_split_integrity(repo_root: Path, outputs: dict[str, pl.DataFrame]) -
 
     split_dir = repo_root / "AssessmentSol1" / "splits"
     candidates = [
+        split_dir / "split_assignments_t1.parquet",
+        split_dir / "split_assignments_t1.csv",
         split_dir / "split_assignments.parquet",
         split_dir / "split_assignments.csv",
     ]
@@ -210,12 +212,43 @@ def _assert_split_integrity(repo_root: Path, outputs: dict[str, pl.DataFrame]) -
     if path is None:
         return "EXTERNAL_SPLIT_NOT_YET_MATERIALIZED"
     split = pl.read_parquet(path) if path.suffix == ".parquet" else pl.read_csv(path)
+
+    if "lead_id" not in split.columns:
+        raise AssertionError("Split assignment must contain lead_id")
+    if split.group_by("lead_id").len().filter(pl.col("len") > 1).height:
+        raise AssertionError("Split integrity failed: duplicate lead assignment rows")
+
+    if "primary_partition" in split.columns:
+        allowed_partitions = {
+            "DEVELOPMENT",
+            "CALIBRATION",
+            "PROCEDURAL_HOLDOUT",
+            "POST_HOLDOUT_AUDIT",
+        }
+        invalid = set(split["primary_partition"].to_list()) - allowed_partitions
+        if invalid:
+            raise AssertionError(f"Invalid primary split partitions: {sorted(invalid)}")
+        fold_columns = sorted(c for c in split.columns if c.endswith("_role"))
+        for col in fold_columns:
+            bad = set(split[col].to_list()) - {"TRAIN", "VALIDATION", "NOT_USED"}
+            if bad:
+                raise AssertionError(f"Invalid fold roles in {col}: {sorted(bad)}")
+        return "PASS_SPLIT_V1"
+
     partition_col = next((c for c in ("split", "partition", "fold") if c in split.columns), None)
-    if "lead_id" not in split.columns or partition_col is None:
-        raise AssertionError("Split assignment must contain lead_id and split/partition/fold")
-    leakage = split.group_by("lead_id").agg(pl.col(partition_col).n_unique().alias("n")).filter(pl.col("n") > 1)
+    if partition_col is None:
+        raise AssertionError(
+            "Split assignment must contain primary_partition or split/partition/fold"
+        )
+    leakage = (
+        split.group_by("lead_id")
+        .agg(pl.col(partition_col).n_unique().alias("n"))
+        .filter(pl.col("n") > 1)
+    )
     if leakage.height:
-        raise AssertionError("Split integrity failed: same lead appears in multiple partitions/folds")
+        raise AssertionError(
+            "Split integrity failed: same lead appears in multiple partitions/folds"
+        )
     return "PASS"
 
 
