@@ -12,7 +12,7 @@ Four expanding-window folds were used. Selection authority is the macro average 
 
 | Variant | ROC AUC | AP | Log Loss | Brier | Lift@10% |
 |---|---:|---:|---:|---:|---:|
-| Base Rate | 0.5000 | 0.2083 | **0.5120** | **0.1650** | 1.154* |
+| Base Rate | 0.5000 | 0.2083 | **0.5120** | **0.1650** | N/A* |
 | Business Rule | 0.5001 | 0.2103 | 0.5276 | 0.1716 | 0.938 |
 | Logistic A — intake | 0.5039 | **0.2172** | 0.5257 | 0.1692 | 0.993 |
 | Logistic B — + inquiry | 0.5000 | 0.2121 | 0.5291 | 0.1703 | 0.978 |
@@ -21,7 +21,7 @@ Four expanding-window folds were used. Selection authority is the macro average 
 | Logistic E — selected Spot challenger | 0.4937 | 0.2194 | 0.5327 | 0.1712 | 1.016 |
 | CatBoost A | 0.4974 | 0.2097 | 0.5240 | 0.1689 | 0.803 |
 
-*Base Rate has tied probabilities. Its top-k metrics depend on deterministic tie ordering and do **not** represent ranking ability.
+*Base Rate has tied probabilities. Top-k ranking metrics are therefore reported as undefined.
 
 ## Frozen ablations
 
@@ -52,7 +52,7 @@ Logistic A vs Base Rate:
 
 - ΔAP = +0.00887, but **IC95% [-0.00374,+0.03393] crosses zero**.
 - ΔBrier = **+0.00423**, IC95% **[+0.00208,+0.00641]**: proper probability scoring is reliably worse.
-- ΔLift@10% = -0.161x, IC95% [-0.343,+0.323].
+- Lift@10% is not a valid Base-Rate comparison because all baseline scores tie; it is excluded from the terminal promotion gate.
 - Macro ROC AUC = 0.5039.
 
 This is not defensible evidence of ranking lift. The final champion is therefore **Base Rate**, not Logistic A.
