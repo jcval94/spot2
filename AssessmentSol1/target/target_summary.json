@@ -250,5 +250,10 @@
     "AUC": "NOT_COMPUTED",
     "AP": "NOT_COMPUTED",
     "Lift": "NOT_COMPUTED"
+  },
+  "input_information_assumptions": {
+    "spot_attributes_immutable": true,
+    "use_condition": "spots.created_at <= score_time",
+    "target_label_impact": "none"
   }
 }
