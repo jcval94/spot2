@@ -219,21 +219,28 @@ def build_oof(
     return pd.concat(parts, ignore_index=True), pd.DataFrame(fold_rows)
 
 
-def oof_metrics(oof: pd.DataFrame) -> pd.DataFrame:
+def cv_mean_metrics(fold_metrics: pd.DataFrame) -> pd.DataFrame:
     rows = []
-    for stage, g in oof.groupby("stage"):
-        y = g[TARGET].to_numpy(dtype=int)
-        for variant in ["baseline", "semantic_rules"]:
-            rows.append({"scope": stage, "variant": variant, "n": len(g), **metrics(y, g[variant].to_numpy())})
+    stage_summary = (
+        fold_metrics.groupby(["stage", "variant"], as_index=False)[
+            ["roc_auc", "average_precision", "lift_top_10pct", "recall_top_20pct"]
+        ].mean()
+    )
+    for row in stage_summary.itertuples():
+        rows.append({
+            "scope": row.stage,
+            "variant": row.variant,
+            "roc_auc": float(row.roc_auc),
+            "average_precision": float(row.average_precision),
+            "lift_top_10pct": float(row.lift_top_10pct),
+            "recall_top_20pct": float(row.recall_top_20pct),
+        })
 
-    # Macro = equal average across T1/T2, not row-weighted.
-    stage_df = pd.DataFrame(rows)
     for variant in ["baseline", "semantic_rules"]:
-        g = stage_df[stage_df["variant"].eq(variant)]
+        g = stage_summary[stage_summary["variant"].eq(variant)]
         rows.append({
             "scope": "MACRO",
             "variant": variant,
-            "n": int(len(oof)),
             "roc_auc": float(g["roc_auc"].mean()),
             "average_precision": float(g["average_precision"].mean()),
             "lift_top_10pct": float(g["lift_top_10pct"].mean()),
@@ -242,51 +249,90 @@ def oof_metrics(oof: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def scope_metric(df: pd.DataFrame, variant: str, scope: str, metric: str) -> float:
+def fold_point_delta(fold_metrics: pd.DataFrame, scope: str, metric: str) -> float:
     if scope == "MACRO":
-        values = []
+        vals = []
         for stage in STAGES.values():
-            g = df[df["stage"].eq(stage)]
-            values.append(metrics(g[TARGET].to_numpy(dtype=int), g[variant].to_numpy(dtype=float))[metric])
-        return float(np.mean(values))
-    g = df[df["stage"].eq(scope)]
-    return metrics(g[TARGET].to_numpy(dtype=int), g[variant].to_numpy(dtype=float))[metric]
+            vals.append(fold_point_delta(fold_metrics, stage, metric))
+        return float(np.mean(vals))
+    p = fold_metrics[fold_metrics["stage"].eq(scope)].pivot(
+        index="fold", columns="variant", values=metric
+    )
+    return float((p["semantic_rules"] - p["baseline"]).mean())
 
 
-def bootstrap_deltas(oof: pd.DataFrame) -> pd.DataFrame:
+def bootstrap_deltas(oof: pd.DataFrame, fold_metrics: pd.DataFrame) -> pd.DataFrame:
+    """Paired cluster bootstrap inside each temporal test fold.
+
+    Predictions from independently trained folds are not globally rank-comparable.
+    Therefore each bootstrap replicate computes the metric delta *within fold* and
+    aggregates fold deltas, rather than concatenating raw probabilities across folds.
+    """
     rng = np.random.default_rng(SEED + 2026)
-    lead_ids = oof["lead_id"].drop_duplicates().to_numpy()
-    lead_to_idx = {lead: np.flatnonzero(oof["lead_id"].to_numpy() == lead) for lead in lead_ids}
     scopes = ["MACRO", *STAGES.values()]
     metric_names = ["lift_top_10pct", "average_precision", "roc_auc", "recall_top_20pct"]
     samples = {(scope, metric): [] for scope in scopes for metric in metric_names}
 
+    fold_cache = {}
+    for fold in sorted(oof["fold"].unique()):
+        fdf = oof[oof["fold"].eq(fold)].reset_index(drop=True)
+        lead_ids = fdf["lead_id"].drop_duplicates().to_numpy()
+        lead_to_idx = {
+            lead: np.flatnonzero(fdf["lead_id"].to_numpy() == lead)
+            for lead in lead_ids
+        }
+        fold_cache[int(fold)] = (fdf, lead_ids, lead_to_idx)
+
     for _ in range(N_BOOT):
-        sampled = rng.choice(lead_ids, size=len(lead_ids), replace=True)
-        idx = np.concatenate([lead_to_idx[x] for x in sampled])
-        b = oof.iloc[idx].reset_index(drop=True)
-        for scope in scopes:
-            for metric in metric_names:
-                try:
-                    delta = (
-                        scope_metric(b, "semantic_rules", scope, metric)
-                        - scope_metric(b, "baseline", scope, metric)
-                    )
-                except ValueError:
+        fold_scope_deltas = {
+            (scope, metric): []
+            for scope in STAGES.values()
+            for metric in metric_names
+        }
+
+        for fold, (fdf, lead_ids, lead_to_idx) in fold_cache.items():
+            sampled = rng.choice(lead_ids, size=len(lead_ids), replace=True)
+            idx = np.concatenate([lead_to_idx[x] for x in sampled])
+            b = fdf.iloc[idx].reset_index(drop=True)
+
+            for stage in STAGES.values():
+                g = b[b["stage"].eq(stage)]
+                if g.empty:
                     continue
-                samples[(scope, metric)].append(delta)
+                y = g[TARGET].to_numpy(dtype=int)
+                for metric in metric_names:
+                    try:
+                        base = metrics(y, g["baseline"].to_numpy(dtype=float))[metric]
+                        rules = metrics(y, g["semantic_rules"].to_numpy(dtype=float))[metric]
+                    except ValueError:
+                        continue
+                    fold_scope_deltas[(stage, metric)].append(rules - base)
+
+        for stage in STAGES.values():
+            for metric in metric_names:
+                vals = fold_scope_deltas[(stage, metric)]
+                if vals:
+                    samples[(stage, metric)].append(float(np.mean(vals)))
+
+        for metric in metric_names:
+            stage_vals = []
+            valid = True
+            for stage in STAGES.values():
+                vals = fold_scope_deltas[(stage, metric)]
+                if not vals:
+                    valid = False
+                    break
+                stage_vals.append(float(np.mean(vals)))
+            if valid:
+                samples[("MACRO", metric)].append(float(np.mean(stage_vals)))
 
     rows = []
     for (scope, metric), vals in samples.items():
         arr = np.asarray(vals, dtype=float)
-        point = (
-            scope_metric(oof, "semantic_rules", scope, metric)
-            - scope_metric(oof, "baseline", scope, metric)
-        )
         rows.append({
             "scope": scope,
             "metric": metric,
-            "point_delta": float(point),
+            "point_delta": fold_point_delta(fold_metrics, scope, metric),
             "bootstrap_mean_delta": float(np.mean(arr)),
             "ci95_low": float(np.quantile(arr, 0.025)),
             "ci95_high": float(np.quantile(arr, 0.975)),
@@ -335,9 +381,9 @@ def write_report(metrics_df: pd.DataFrame, bootstrap: pd.DataFrame, coverage: pd
     lines = [
         "# E018 — Semantic Rules Lift Ablation", "",
         f"**Conclusion: {conclusion}.**", "",
-        "Question: does the free E017 semantic rule sidecar improve ranking lift over the canonical E016 ABT?",
+        "Question: does the free E017 semantic rule sidecar improve ranking lift over the canonical E016 ABT? Metrics are computed within each temporal test fold and then averaged; raw probabilities from different folds are never rank-mixed.",
         "",
-        "## OOF results", "",
+        "## Cross-validated fold-mean results", "",
         "| Scope | Variant | AP | AUC | Lift@10% | Recall@20% |",
         "|---|---|---:|---:|---:|---:|",
     ]
@@ -362,7 +408,7 @@ def write_report(metrics_df: pd.DataFrame, bootstrap: pd.DataFrame, coverage: pd
 
     lines += [
         "", "## Semantic coverage", "",
-        f"OOF rows with >=1 semantic signal: {(oof['rule_semantic_signal_count'] > 0).mean():.1%}.",
+        f"OOF diagnostic rows with >=1 semantic signal: {(oof['rule_semantic_signal_count'] > 0).mean():.1%}.",
         "",
         "The rule features are Spot-level and therefore only tested at T1/T2; T0 is unchanged by design.",
         "",
@@ -390,13 +436,13 @@ def main() -> None:
 
     global oof
     oof, fold_metrics = build_oof(abts_rules, feature_sets, lead_order)
-    metric_df = oof_metrics(oof)
-    boot = bootstrap_deltas(oof)
+    metric_df = cv_mean_metrics(fold_metrics)
+    boot = bootstrap_deltas(oof, fold_metrics)
     coverage = semantic_coverage(oof)
 
     oof.to_csv(RESULTS / "oof_predictions.csv", index=False)
     fold_metrics.to_csv(RESULTS / "fold_metrics.csv", index=False)
-    metric_df.to_csv(RESULTS / "oof_metrics.csv", index=False)
+    metric_df.to_csv(RESULTS / "cv_mean_metrics.csv", index=False)
     boot.to_csv(RESULTS / "paired_bootstrap.csv", index=False)
     coverage.to_csv(RESULTS / "semantic_coverage.csv", index=False)
 
