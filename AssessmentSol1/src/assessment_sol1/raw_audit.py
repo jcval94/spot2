@@ -320,6 +320,152 @@ def availability_audit(
     }
 
 
+
+def cardinality_summary(df: pl.DataFrame, key: str) -> dict[str, float | int]:
+    counts = df.group_by(key).len()["len"].sort()
+    return {
+        "parents": counts.len(),
+        "min": int(counts.min()),
+        "p50": int(counts.quantile(0.50, "nearest")),
+        "p90": int(counts.quantile(0.90, "nearest")),
+        "p95": int(counts.quantile(0.95, "nearest")),
+        "max": int(counts.max()),
+        "mean": float(counts.mean()),
+    }
+
+
+def temporal_relational_checks(frames: dict[str, pl.DataFrame]) -> dict[str, int]:
+    leads = frames["leads"].select(
+        "lead_id",
+        pl.col("created_at").str.to_datetime(strict=True).alias("lead_created"),
+    )
+    spots = frames["spots"].select(
+        "spot_id",
+        pl.col("created_at").str.to_datetime(strict=True).alias("spot_created"),
+    )
+    inquiries = (
+        frames["inquiries"]
+        .select(
+            "inquiry_id",
+            "lead_id",
+            "spot_id",
+            pl.col("inquiry_at").str.to_datetime(strict=True).alias("inquiry_at"),
+        )
+        .join(leads, on="lead_id", how="left")
+        .join(spots, on="spot_id", how="left")
+    )
+    av = (
+        frames["availability_snapshot"]
+        .select(
+            "snapshot_id",
+            "spot_id",
+            pl.col("snapshot_date")
+            .str.to_date(strict=True)
+            .cast(pl.Datetime)
+            .alias("snapshot_time"),
+            "is_available",
+            "days_until_available",
+        )
+        .join(spots, on="spot_id", how="left")
+    )
+    duplicate_spot_date_rows = int(
+        frames["availability_snapshot"]
+        .group_by("spot_id", "snapshot_date")
+        .len()
+        .filter(pl.col("len") > 1)
+        .select((pl.col("len") - 1).sum())
+        .item()
+        or 0
+    )
+    state_conflicts = frames["availability_snapshot"].filter(
+        (pl.col("is_available") & (pl.col("days_until_available") != 0))
+        | (~pl.col("is_available") & (pl.col("days_until_available") <= 0))
+    ).height
+    return {
+        "inquiry_before_lead_created": inquiries.filter(
+            pl.col("inquiry_at") < pl.col("lead_created")
+        ).height,
+        "inquiry_before_spot_created": inquiries.filter(
+            pl.col("inquiry_at") < pl.col("spot_created")
+        ).height,
+        "snapshot_before_spot_created": av.filter(
+            pl.col("snapshot_time") < pl.col("spot_created")
+        ).height,
+        "duplicate_spot_snapshot_date_rows": duplicate_spot_date_rows,
+        "availability_state_conflicts": state_conflicts,
+    }
+
+
+def market_context_audit(
+    inquiries: pl.DataFrame, spots: pl.DataFrame, market: pl.DataFrame
+) -> dict[str, float | int | str | None]:
+    iq = inquiries.select(
+        "inquiry_id",
+        "spot_id",
+        pl.col("inquiry_at").str.slice(0, 7).alias("_ym"),
+    ).join(
+        spots.select(
+            "spot_id",
+            pl.col("state").alias("_state"),
+            pl.col("municipality").alias("_municipality"),
+            pl.col("corridor").alias("_corridor"),
+            pl.col("sector_name").alias("_sector"),
+        ),
+        on="spot_id",
+        how="left",
+    ).with_columns((pl.col("_ym") + pl.lit("-01")).alias("_month"))
+
+    mk = market.select(
+        pl.col("state").alias("_state"),
+        pl.col("municipality").alias("_municipality"),
+        pl.col("corridor").alias("_corridor"),
+        pl.col("sector").alias("_sector"),
+        pl.col("month").alias("_month"),
+    ).unique()
+    matched = iq.join(
+        mk,
+        on=["_state", "_municipality", "_corridor", "_sector", "_month"],
+        how="inner",
+    ).height
+    return {
+        "publication_time_column": None,
+        "effective_time_column": None,
+        "same_month_matches": matched,
+        "same_month_inquiry_coverage": matched / inquiries.height,
+        "distinct_months": market["month"].n_unique(),
+        "temporal_decision": "EDA_ONLY",
+        "reason": (
+            "month is a period label; no publication/observation/effective "
+            "timestamp proves values were known at scoring time"
+        ),
+    }
+
+
+def build_schema_frame(frames: dict[str, pl.DataFrame]) -> pl.DataFrame:
+    rows: list[dict] = []
+    fk_lookup = {
+        (ct, cc): f"{pt}.{pc}"
+        for ct, cc, pt, pc in FKS
+    }
+    for table, df in frames.items():
+        for column, dtype in df.schema.items():
+            missing = df[column].null_count()
+            rows.append(
+                {
+                    "source": table,
+                    "column": column,
+                    "canonical_dtype": str(dtype),
+                    "row_count": df.height,
+                    "non_null_count": df.height - missing,
+                    "missing_count": missing,
+                    "missing_rate": missing / df.height,
+                    "distinct_count": df[column].drop_nulls().n_unique(),
+                    "is_pk": column in PKS[table],
+                    "fk": fk_lookup.get((table, column), ""),
+                }
+            )
+    return pl.DataFrame(rows)
+
 def validate_temporal_registry(repo_root: Path, frames: dict[str, pl.DataFrame]) -> None:
     path = repo_root / "AssessmentSol1" / "evidence" / "temporal_column_registry.csv"
     registry = pl.read_csv(path)
@@ -382,11 +528,34 @@ def build_audit(repo_root: Path) -> dict:
         "availability_audit": availability_audit(
             frames["inquiries"], frames["availability_snapshot"]
         ),
+        "cardinalities": {
+            "inquiries_per_lead": cardinality_summary(frames["inquiries"], "lead_id"),
+            "inquiries_per_spot": cardinality_summary(frames["inquiries"], "spot_id"),
+            "snapshots_per_spot": cardinality_summary(
+                frames["availability_snapshot"], "spot_id"
+            ),
+            "spots_per_broker": cardinality_summary(frames["spots"], "broker_id"),
+        },
+        "temporal_relational_checks": temporal_relational_checks(frames),
+        "market_context_audit": market_context_audit(
+            frames["inquiries"], frames["spots"], frames["market_context"]
+        ),
+        "temporal_source_classification": {
+            "leads": "T0_INTAKE_SNAPSHOT_WITH_CONDITIONAL_HISTORY",
+            "inquiries": "EVENT_TABLE_WITH_POST_EVENT_RESPONSE_FIELDS",
+            "spots": "MIXED_ENTITY_AND_UNVERSIONED_EXTRACT_STATE",
+            "spot_attributes": "UNVERSIONED_NO_TIMESTAMP",
+            "availability_snapshot": "DATED_MUTABLE_STATE_BACKWARD_ASOF_ONLY",
+            "market_context": "MONTHLY_AGGREGATE_WITHOUT_PUBLICATION_TIME_EDA_ONLY",
+        },
         "source_policy": {
             "spots_current_state": "FORBIDDEN_BACKTEST",
             "spot_attributes": "BLOCKED_PENDING_TEMPORAL_PROVENANCE",
             "market_context": "EDA_ONLY",
             "broker_response_fields": "AUDIT_ONLY_P1",
+            "availability_competing_inquiries_30d": (
+                "BLOCKED_UNTIL_WINDOW_DIRECTION_PROVEN"
+            ),
         },
     }
 
@@ -399,8 +568,11 @@ def main() -> None:
     root = args.repo_root.resolve()
     audit = build_audit(root)
     if args.write:
-        out = root / "AssessmentSol1" / "evidence" / "data_audit.json"
+        evidence = root / "AssessmentSol1" / "evidence"
+        out = evidence / "data_audit.json"
         out.write_text(json.dumps(audit, indent=2, ensure_ascii=False) + "\n")
+        frames = {t: read_parquet_table(root, t) for t in TABLES}
+        build_schema_frame(frames).write_csv(evidence / "data_schema.csv")
     print(json.dumps(audit["source_policy"], indent=2))
 
 
