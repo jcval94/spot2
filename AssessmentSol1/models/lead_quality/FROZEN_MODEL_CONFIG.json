@@ -28,7 +28,7 @@
     },
     "calibrator_artifact": {
       "algorithm": "git_blob_sha1",
-      "value": "3ec112b04b3db998974c3152ce0a5d14a829477a"
+      "value": "599341a0118e933cefead8ad9c997009d9f6b437"
     }
   },
   "feature_set": {
@@ -43,12 +43,11 @@
     "development_n": 4368
   },
   "calibrator": {
-    "method": "PLATT",
-    "fit_population": "CALIBRATION",
-    "fit_n": 312,
-    "logistic_intercept": -0.4672676514660003,
-    "logistic_coefficient": 0.6368817120332566,
-    "calibrated_constant_probability": 0.2082787838279435
+    "method": "RAW",
+    "fit_population": "NONE",
+    "fit_n": 0,
+    "reason": "Calibration OOF gains from Platt/Isotonic were <0.001 absolute and therefore not material under the frozen practical-tie rule.",
+    "calibrated_constant_probability": 0.20375457875457875
   },
   "random_seed": 20260830,
   "package_versions": {
@@ -75,7 +74,7 @@
       "used_for_selection": false
     }
   },
-  "champion_rationale": "No learned model demonstrated defensible superiority to the fold-specific base-rate baseline. Logistic A AP point estimate improved, but paired 95% CI crossed zero, Brier worsened with CI entirely above zero, and Lift@10 did not improve. The prompt's terminal gate therefore selects the simpler base-rate solution.",
+  "champion_rationale": "No learned model demonstrated defensible superiority to the fold-specific base-rate baseline. Logistic A AP point estimate improved, but paired 95% CI crossed zero, Brier worsened with CI entirely above zero, and Lift@10 did not improve. The prompt's terminal gate therefore selects the simpler base-rate solution. Calibration remains RAW because learned calibration gains were numerically positive but immaterial (<0.001), so simplicity wins under the pre-registered rule.",
   "holdout_integrity": {
     "pristine": false,
     "status": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE",
@@ -83,7 +82,16 @@
     "note": "A temporary execution export encoded procedural-holdout labels before this config existed. No holdout metric or individual label was inspected and no selection/calibration decision used holdout rows, but the procedural-final claim is invalidated."
   },
   "development_model_artifact": "models/lead_quality/artifacts/base_rate_champion.json",
-  "calibrator_artifact": "models/lead_quality/artifacts/platt_calibrator.json",
+  "calibrator_artifact": "models/lead_quality/artifacts/raw_calibrator.json",
   "procedural_holdout_consumed": true,
-  "procedural_holdout_evaluation_status": "DIAGNOSTIC_ONLY_NON_PRISTINE"
+  "procedural_holdout_evaluation_status": "DIAGNOSTIC_ONLY_NON_PRISTINE",
+  "post_holdout_methodological_corrections": [
+    {
+      "id": "CAL-001",
+      "type": "METHODOLOGICAL_INCONSISTENCY",
+      "decision_basis": "CALIBRATION only; no holdout result used",
+      "correction": "PLATT -> RAW",
+      "holdout_status_after_correction": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE"
+    }
+  ]
 }
