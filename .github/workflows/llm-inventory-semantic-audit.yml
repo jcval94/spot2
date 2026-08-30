@@ -5,9 +5,6 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches:
-      - "experiment/e015-live-gpt5nano"
   pull_request:
     paths:
       - "experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/**"
@@ -63,16 +60,14 @@ jobs:
             experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/
 
   live:
-    if: |
-      (github.event_name == 'workflow_dispatch' && inputs.mode == 'live') ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/experiment/e015-live-gpt5nano')
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live'
     needs: offline
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
       OPENAIKEY: ${{ secrets.OPENAIKEY }}
       OPENAIAPI: ${{ secrets.OPENAIAPI }}
-      OPENAI_MODEL: ${{ github.event_name == 'push' && 'gpt-5-nano' || inputs.model }}
+      OPENAI_MODEL: ${{ inputs.model }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
