@@ -212,3 +212,15 @@ Por ello sigue siendo válido para **reproducir** EV-010/EV-013, pero ya no debe
 ### Por qué se cierra
 
 Los cambios adicionales que quedan —replicación temporal, A/B online, outcome comercial real, MLOps— requieren **nueva evidencia o productización**. No justifican seguir optimizando la misma muestra offline.
+
+
+## Evidencia visual añadida
+
+- [Dynamic Need clustering sensitivity](../matching_profiles_v4/results/charts/cluster_sensitivity_dynamic_need.svg).
+- [Broker Service Balanced clustering sensitivity](../matching_profiles_v4/results/charts/cluster_sensitivity_broker_service_balanced.svg).
+- [Matching profile cluster sizes](../matching_profiles_v4/results/charts/cluster_sizes_matching_profiles.svg).
+- [T0→T1 transition heatmap](../matching_profiles_v4/results/charts/need_t0_t1_transition_heatmap.svg).
+- [Dynamic Need × Broker Service lift heatmap](../matching_profiles_v4/results/charts/dynamic_need_x_broker_service_heatmap_lift.svg).
+- [Need Transition × Physical Profile lift heatmap](../matching_profiles_v4/results/charts/need_transition_x_physical_heatmap_lift.svg).
+
+Las figuras de sensibilidad muestran explícitamente que selección de perfiles no depende sólo de silhouette: estabilidad, entropy y balance gates intervienen en la decisión. Los heatmaps mantienen visibles las celdas con soporte insuficiente en lugar de imputar lift cero.
