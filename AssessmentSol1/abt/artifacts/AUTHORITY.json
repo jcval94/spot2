@@ -1,11 +1,14 @@
 {
-  "current_authority": "P4_ONLY_AFTER_RUNTIME_PASS",
+  "current_authority": "P4_INDEPENDENT_RAW_EQUIVALENCE_PASS",
   "p4_required": [
     "p4_qa_summary.json",
     "p4_artifact_manifest.json"
   ],
-  "p4_present": false,
-  "p4_runtime_gate_satisfied": false,
+  "p4_present": true,
+  "p4_runtime_gate_satisfied": true,
+  "validation_mode": "INDEPENDENT_RAW_EQUIVALENCE_AUDIT",
+  "exact_polars_builder_runtime_executed": false,
+  "exact_polars_runtime_status": "NON_BLOCKING_REPRODUCIBILITY_FOLLOWUP",
   "existing_p3_artifacts": "SUPERSEDED_EVIDENCE_ONLY",
-  "downstream_rule": "Do not consume score_spine, lead_quality_*, candidate_spots, inventory_serviceability_state, qa_summary.json or artifact_manifest.json as current inputs."
+  "downstream_rule": "Do not consume P3 artifacts. Stage models rebuild from raw under frozen contracts."
 }
