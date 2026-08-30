@@ -121,13 +121,17 @@ Decision: **EDA_ONLY**. No market aggregate is authorized for historical model/b
 
 ## 9. Spot attributes
 
-`spot_attributes` has no timestamp at all. The 1:1 FK is clean, but historical availability of the attribute values cannot be proven.
+`spot_attributes` has no attribute-level timestamp and the 1:1 FK to `spots` is clean.
 
-Decision: **BLOCKED_PENDING_TEMPORAL_PROVENANCE** for predictive backtests. It may be reopened only if the source owner confirms that attributes are immutable and available from spot creation, or provides version/effective timestamps.
+For the definitive assessment we explicitly **assume the attributes are immutable over the lifetime of the Spot**. Under that contract, the delivered attribute values are valid historically whenever the Spot already existed:
+
+`spots.created_at <= score_time`.
+
+Decision: **AUTHORIZED_IMMUTABLE_ASSUMPTION** for T1/T2 historical backtests. This does not invent an attribute timestamp; it is a declared modeling assumption and must remain visible in the contract.
 
 ## Gate
 
-**PASS.** Every source/column has an explicit temporal status in `temporal_column_registry.csv`. Anything without a defensible event/observation/effective-time contract is blocked or EDA-only. No target is constructed in P1.
+**PASS.** Every source/column has an explicit temporal status in `temporal_column_registry.csv`. `spot_attributes` is authorized through a declared immutability assumption rather than an observed timestamp; sources without either a defensible temporal contract or an explicit accepted assumption remain blocked/EDA-only. No target is constructed in P1.
 
 
 ## 10. Static, mutable and temporally unknown columns
@@ -137,7 +141,7 @@ This classification is a **historical-data contract**, not a guess about what a 
 - **leads:** static intake snapshot = identifiers, search/request fields, source and `created_at`; temporal-unknown = `prior_searches`, `prior_inquiries`, `has_converted_before`, `lead_score_internal`.
 - **inquiries:** static event facts = IDs, `inquiry_at`, channel/request/intent fields; post-event mutable/late-observed = `broker_response`, `broker_response_hours`, whose exact timing is unknown.
 - **spots:** static-by-definition = `spot_id`, `created_at`; explicitly mutable/current-state = `days_on_market`, `total_inquiries`, `total_views`, `is_active`; all other listing/pricing/location/copy fields have **unknown historical mutability** because no versions/effective timestamps exist.
-- **spot_attributes:** only `spot_id` is static-by-definition; all attribute values have unknown historical mutability/availability because the table has no timestamp.
+- **spot_attributes:** all 12 columns are treated as static over the lifetime of the Spot by explicit assessment assumption; use at T1/T2 still requires `spots.created_at <= score_time`.
 - **availability_snapshot:** snapshot identity/date are static per record; availability state is mutable across snapshots; `competing_inquiries_30d` additionally has unknown window/effective semantics.
 - **market_context:** geographic/sector/month keys are static dimensions; monthly aggregates are mutable/recomputed measures with unknown publication/effective time and remain EDA_ONLY.
 
