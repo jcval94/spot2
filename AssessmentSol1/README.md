@@ -1,6 +1,6 @@
 # AssessmentSol1 — clean-room definitive assessment
 
-Status: **PROMPT 1 / raw-data audit + temporal ontology complete**.
+Status: **PROMPT 2 / target contract frozen before feature engineering**.
 
 This directory is the only runtime/home for the definitive Spot2 assessment. Historical experiments, pull requests, commits and evidence may be read to avoid repeating mistakes, but they are **not runtime dependencies**.
 
@@ -23,7 +23,7 @@ Historical code can be inspected to understand a decision, but any accepted logi
 
 ## Completed gates
 
-P0/P1 intentionally do **not**:
+P0/P1/P2 intentionally do **not**:
 
 - train a model;
 - optimize feature engineering;
@@ -38,7 +38,8 @@ They establish:
 3. CSV↔Parquet parity and Parquet as canonical runtime source;
 4. raw PK/FK/duplicate/missing/outlier/temporal audits;
 5. a column-level temporal ontology for all 86 raw columns;
-6. explicit blocking of temporally unsafe sources/fields.
+6. explicit blocking of temporally unsafe sources/fields;
+7. a non-model target bake-off and frozen T1 Lead Quality target.
 
 P1 evidence:
 
@@ -56,3 +57,16 @@ See:
 - [evidence/SOURCE_EVIDENCE_MAP.md](evidence/SOURCE_EVIDENCE_MAP.md)
 - [audit/SCORING_INSTANT_GATE.md](audit/SCORING_INSTANT_GATE.md)
 - [evidence/RESEARCH_CONTAMINATION.md](evidence/RESEARCH_CONTAMINATION.md)
+
+
+P2 target evidence:
+
+- [target/TARGET_OPTIONS.md](target/TARGET_OPTIONS.md)
+- [target/TARGET_DECISION.md](target/TARGET_DECISION.md)
+- [target/TARGET_CONTRACT.md](target/TARGET_CONTRACT.md)
+- [target/target_contract.json](target/target_contract.json)
+- [target/target_audit.csv](target/target_audit.csv)
+- [target/target_cohort_summary.csv](target/target_cohort_summary.csv)
+- [target/target_summary.json](target/target_summary.json)
+
+Frozen primary target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1` with 14-day historical maturity. No model performance metric was used to select it.
