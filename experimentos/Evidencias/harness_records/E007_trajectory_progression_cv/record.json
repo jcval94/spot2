@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-30T00:54:17.020058+00:00",
+  "git_sha": "22d46e516fc62e815dc78d107a10a5477dedce2c",
+  "experiment_id": "E007_trajectory_progression_cv",
+  "parent_experiment": "E006_architecture_rolling_cv",
+  "primary_change": "add explicit point-in-time trajectory/progression and stalling features",
+  "spec_sha256": "c4e9935807fecb936f439dbe33bd3caad746d3ed7968cfed10c97d9f64698953",
+  "data_fingerprints": [
+    {
+      "path": "data/candidate/csv/leads.csv",
+      "sha256": "0df1e893137d5a56afb73df9870a794597aa35eb9f9ca14f89ae69615f3b65a4"
+    },
+    {
+      "path": "data/candidate/csv/inquiries.csv",
+      "sha256": "e0a59bc558e0aa4df4141751c63c4e0193e3681b771aac2f5439ebd90b752eb6"
+    },
+    {
+      "path": "data/candidate/csv/spots.csv",
+      "sha256": "e5e3640430567b2430ab5e37dba28f30c6186693f184c4c3e744018d689f7b0c"
+    },
+    {
+      "path": "data/candidate/csv/spot_attributes.csv",
+      "sha256": "a22c42f5bcf9c3b7b07c5c65d0926d43474cc82702389c8322bd1f37f3953fe9"
+    },
+    {
+      "path": "data/candidate/csv/availability_snapshot.csv",
+      "sha256": "c2e292390dd874291214a28c62e294a1d7c5d23338a4fa683352e44be877e59d"
+    }
+  ],
+  "leakage_check": "PASS",
+  "comparison": {
+    "status": "EQUIVALENT",
+    "reasons": []
+  },
+  "metrics": {
+    "roc_auc": 0.5849266019193609,
+    "average_precision": 0.47642628214332844,
+    "brier": 0.23445037011982509,
+    "log_loss": 0.6607698873046539,
+    "lift_top_10pct": 1.2100136833721222,
+    "recall_top_20pct": 0.24460174964539283
+  },
+  "metric_deltas_vs_parent": {
+    "average_precision": 0.009912851625653474,
+    "brier": -0.002747411407711675,
+    "lift_top_10pct": 0.02333900881421469,
+    "log_loss": -0.006136428832916763,
+    "recall_top_20pct": 0.0011441635027771568,
+    "roc_auc": 0.012799642867698191
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.534188172670201,
+      "average_precision": 0.4666234087001812,
+      "brier": 0.2461759462305765,
+      "log_loss": 0.6854526520327926,
+      "lift_top_10pct": 1.0419307771425839,
+      "recall_top_20pct": 0.2099767981438515
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.5824043621256707,
+      "average_precision": 0.509888330364562,
+      "brier": 0.24325721568484548,
+      "log_loss": 0.6796446709951165,
+      "lift_top_10pct": 1.1420599640593965,
+      "recall_top_20pct": 0.2305045871559633
+    },
+    "T2_engaged": {
+      "roc_auc": 0.6381872709622108,
+      "average_precision": 0.452767107365242,
+      "brier": 0.21391794844405332,
+      "log_loss": 0.6172123388860525,
+      "lift_top_10pct": 1.4460503089143866,
+      "recall_top_20pct": 0.29332386363636365
+    }
+  },
+  "conclusion": "SUPPORTED",
+  "caveats": [
+    "trajectory features are evaluated by rolling temporal OOF predictions rather than a single holdout",
+    "scheduled_visit remains a proxy target",
+    "the dataset is synthetic",
+    "the exploratory trajectory hybrid is selected repeatedly on fold validation sets and should not be treated as a production winner without further temporal confirmation"
+  ],
+  "next_experiment": "If trajectory features are supported, ablate the winning trajectory family and audit temporal stability of the strongest individual progression signals.",
+  "spec": {
+    "experiment_id": "E007_trajectory_progression_cv",
+    "parent_experiment": "E006_architecture_rolling_cv",
+    "question": "Do explicit point-in-time trajectory and progression features improve dynamic Lead Quality scoring under the same rolling temporal CV folds?",
+    "hypothesis": "Trajectory features that encode timing, unresolved interactions, revisits and constraint changes will improve T2 Average Precision, especially for pooled CatBoost and stage-specialized tree models.",
+    "primary_change": "add explicit point-in-time trajectory/progression and stalling features",
+    "secondary_changes": [
+      "evaluate trajectory features on Multi-Head, specialist Random Forest, specialist CatBoost and pooled CatBoost",
+      "select an exploratory trajectory hybrid per fold using validation only"
+    ],
+    "scoring_time": {
+      "stage": "T0/T1/T2",
+      "timestamp_definition": "T0=leads.created_at; T1=first inquiries.inquiry_at; T2=second and later inquiries.inquiry_at while no scheduled_visit has already occurred"
+    },
+    "target": {
+      "event": "future scheduled_visit response event",
+      "horizon_days": 30,
+      "anchor": "scoring_time",
+      "censoring": "right"
+    },
+    "population": {
+      "eligibility": "Scoring snapshots with a complete 30-day future observation window; T1/T2 generated only before a known scheduled visit.",
+      "exclusions": [
+        "Right-censored scoring snapshots.",
+        "Dynamic snapshots after an already observed scheduled visit.",
+        "Current/future broker-response information from model inputs.",
+        "Latest 5% of lead cohorts not used as an outer test block in this four-fold CV."
+      ],
+      "period": {
+        "start": null,
+        "end": null
+      }
+    },
+    "data_sources": [
+      "data/candidate/csv/leads.csv",
+      "data/candidate/csv/inquiries.csv",
+      "data/candidate/csv/spots.csv",
+      "data/candidate/csv/spot_attributes.csv",
+      "data/candidate/csv/availability_snapshot.csv"
+    ],
+    "features": {
+      "inherited": [
+        "lead_intake_features",
+        "current_inquiry_features",
+        "current_spot_static_features",
+        "lead_spot_compatibility_features",
+        "availability_asof_features",
+        "historical_interactions_asof_features"
+      ],
+      "added": [
+        "trajectory_progression_features"
+      ],
+      "removed": []
+    },
+    "validation": {
+      "strategy": "four-fold rolling-origin temporal cross-validation by lead cohort",
+      "time_column": "leads.created_at",
+      "split_description": "Each fold trains on an expanding historical lead cohort, uses the immediately following 10% cohort for validation, and the next 10% cohort for test. Test cohorts are disjoint across folds and all snapshots for a lead remain in the same partition within each fold."
+    },
+    "metrics": [
+      "roc_auc",
+      "average_precision",
+      "brier",
+      "log_loss",
+      "lift_top_10pct",
+      "recall_top_20pct"
+    ],
+    "segments": [
+      "T0_cold",
+      "T1_first_inquiry",
+      "T2_engaged"
+    ],
+    "leakage": {
+      "check_status": "PASS",
+      "items": [
+        {
+          "element": "trajectory_progression_features",
+          "source": "current inquiry plus strictly prior inquiries and responses whose response_event_at <= score_time",
+          "scoring_time": "T1/T2 inquiry_at",
+          "information_available_at": "score_time",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Current inquiry timestamp/payload may be used, but current broker response is excluded. Prior response-derived fields include only response events realized on or before score_time. First-inquiry comparisons use inquiry data already observed by the current score_time."
+        }
+      ]
+    }
+  }
+}

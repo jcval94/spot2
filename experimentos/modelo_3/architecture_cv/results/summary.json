@@ -1,0 +1,58 @@
+{
+  "experiment_id": "E006_architecture_rolling_cv",
+  "conclusion": "SUPPORTED",
+  "oof_rows": 7980,
+  "oof_unique_leads": 1936,
+  "folds": [
+    {
+      "fold": 1,
+      "train_end": 0.45,
+      "val_end": 0.55,
+      "test_end": 0.65
+    },
+    {
+      "fold": 2,
+      "train_end": 0.55,
+      "val_end": 0.65,
+      "test_end": 0.75
+    },
+    {
+      "fold": 3,
+      "train_end": 0.65,
+      "val_end": 0.75,
+      "test_end": 0.85
+    },
+    {
+      "fold": 4,
+      "train_end": 0.75,
+      "val_end": 0.85,
+      "test_end": 0.95
+    }
+  ],
+  "t1_random_forest_vs_multihead": {
+    "ap_delta": 0.03369371449284875,
+    "ap_ci95": [
+      0.010580458566330107,
+      0.056058558096586705
+    ],
+    "auc_delta": 0.042665418902544605,
+    "auc_ci95": [
+      0.01809949572518557,
+      0.06910078263617936
+    ]
+  },
+  "pooled_catboost_vs_multihead_macro": {
+    "ap_delta": 0.01668607067436656,
+    "ap_ci95": [
+      0.001586772525248091,
+      0.03140970062343548
+    ],
+    "auc_delta": 0.02233356848678747,
+    "auc_ci95": [
+      0.007698204047957688,
+      0.03709361665637995
+    ]
+  },
+  "best_oof_macro_ap_model": "specialist_catboost_calibrated",
+  "best_oof_macro_ap": 0.47196150032710377
+}

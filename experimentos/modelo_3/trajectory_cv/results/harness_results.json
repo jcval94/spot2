@@ -1,0 +1,45 @@
+{
+  "experiment_id": "E007_trajectory_progression_cv",
+  "metrics": {
+    "roc_auc": 0.5849266019193609,
+    "average_precision": 0.47642628214332844,
+    "brier": 0.23445037011982509,
+    "log_loss": 0.6607698873046539,
+    "lift_top_10pct": 1.2100136833721222,
+    "recall_top_20pct": 0.24460174964539283
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.534188172670201,
+      "average_precision": 0.4666234087001812,
+      "brier": 0.2461759462305765,
+      "log_loss": 0.6854526520327926,
+      "lift_top_10pct": 1.0419307771425839,
+      "recall_top_20pct": 0.2099767981438515
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.5824043621256707,
+      "average_precision": 0.509888330364562,
+      "brier": 0.24325721568484548,
+      "log_loss": 0.6796446709951165,
+      "lift_top_10pct": 1.1420599640593965,
+      "recall_top_20pct": 0.2305045871559633
+    },
+    "T2_engaged": {
+      "roc_auc": 0.6381872709622108,
+      "average_precision": 0.452767107365242,
+      "brier": 0.21391794844405332,
+      "log_loss": 0.6172123388860525,
+      "lift_top_10pct": 1.4460503089143866,
+      "recall_top_20pct": 0.29332386363636365
+    }
+  },
+  "conclusion": "SUPPORTED",
+  "caveats": [
+    "trajectory features are evaluated by rolling temporal OOF predictions rather than a single holdout",
+    "scheduled_visit remains a proxy target",
+    "the dataset is synthetic",
+    "the exploratory trajectory hybrid is selected repeatedly on fold validation sets and should not be treated as a production winner without further temporal confirmation"
+  ],
+  "next_experiment": "If trajectory features are supported, ablate the winning trajectory family and audit temporal stability of the strongest individual progression signals."
+}

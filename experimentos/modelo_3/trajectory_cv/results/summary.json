@@ -1,0 +1,35 @@
+{
+  "experiment_id": "E007_trajectory_progression_cv",
+  "conclusion": "SUPPORTED",
+  "primary_metric": "T2_average_precision",
+  "best_t2_candidate": "pooled_catboost_trajectory",
+  "best_t2_reference": "pooled_catboost_calibrated",
+  "best_t2_delta_ap": 0.016061350807725805,
+  "best_t2_delta_ap_ci95": [
+    0.00031369224336205573,
+    0.032238294059606654
+  ],
+  "best_macro_trajectory_model": "trajectory_validation_hybrid",
+  "best_macro_trajectory_ap": 0.47642628214332844,
+  "features": [
+    "traj_days_since_last_inquiry",
+    "traj_mean_inquiry_gap_days",
+    "traj_std_inquiry_gap_days",
+    "traj_inquiry_velocity_30d",
+    "traj_days_since_last_realized_response",
+    "traj_days_since_last_accept",
+    "traj_response_coverage",
+    "traj_unresolved_prior_inquiries",
+    "traj_inquiries_after_last_accept",
+    "traj_spot_diversity_ratio",
+    "traj_current_spot_prior_count",
+    "traj_current_spot_seen_before",
+    "traj_area_change_vs_first",
+    "traj_rent_budget_change_vs_first",
+    "traj_sale_budget_change_vs_first",
+    "traj_urgency_change_vs_first",
+    "traj_message_length_change_vs_first",
+    "traj_asked_visit_escalated",
+    "traj_channel_changed_from_first"
+  ]
+}

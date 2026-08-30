@@ -1,0 +1,45 @@
+{
+  "experiment_id": "E006_architecture_rolling_cv",
+  "metrics": {
+    "roc_auc": 0.5721269590516627,
+    "average_precision": 0.46651343051767497,
+    "brier": 0.23719778152753676,
+    "log_loss": 0.6669063161375707,
+    "lift_top_10pct": 1.1866746745579075,
+    "recall_top_20pct": 0.24345758614261567
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.534113641568048,
+      "average_precision": 0.4708174542014913,
+      "brier": 0.24695664060953704,
+      "log_loss": 0.6870609894383891,
+      "lift_top_10pct": 1.0187767598727486,
+      "recall_top_20pct": 0.21577726218097448
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.557417344642548,
+      "average_precision": 0.4924762757129356,
+      "brier": 0.24787644971387401,
+      "log_loss": 0.6896878639301615,
+      "lift_top_10pct": 1.1306393644188026,
+      "recall_top_20pct": 0.2305045871559633
+    },
+    "T2_engaged": {
+      "roc_auc": 0.624849890944392,
+      "average_precision": 0.436246561638598,
+      "brier": 0.2167602542591992,
+      "log_loss": 0.6239700950441611,
+      "lift_top_10pct": 1.4106078993821711,
+      "recall_top_20pct": 0.2840909090909091
+    }
+  },
+  "conclusion": "SUPPORTED",
+  "caveats": [
+    "rolling CV changes the validation design relative to E005 and is therefore a robustness study rather than a direct parent delta",
+    "scheduled_visit remains a proxy target",
+    "the dataset is synthetic",
+    "outer test cohorts are disjoint, but expanding training windows reuse older cohorts as later training data by design"
+  ],
+  "next_experiment": "Add explicit point-in-time trajectory/progression features under the identical rolling CV folds and compare paired OOF deltas."
+}

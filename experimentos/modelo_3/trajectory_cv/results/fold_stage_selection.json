@@ -1,0 +1,22 @@
+{
+  "fold_1": {
+    "T0_cold": "specialist_catboost_trajectory",
+    "T1_first_inquiry": "specialist_catboost_trajectory",
+    "T2_engaged": "pooled_catboost_trajectory"
+  },
+  "fold_2": {
+    "T0_cold": "pooled_catboost_trajectory",
+    "T1_first_inquiry": "pooled_catboost_trajectory",
+    "T2_engaged": "specialist_catboost_trajectory"
+  },
+  "fold_3": {
+    "T0_cold": "multihead_trajectory",
+    "T1_first_inquiry": "specialist_catboost_trajectory",
+    "T2_engaged": "pooled_catboost_trajectory"
+  },
+  "fold_4": {
+    "T0_cold": "specialist_catboost_trajectory",
+    "T1_first_inquiry": "specialist_catboost_trajectory",
+    "T2_engaged": "pooled_catboost_trajectory"
+  }
+}
