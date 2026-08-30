@@ -2,7 +2,7 @@
 
 ## Champion
 
-**BASE_RATE + PLATT**
+**BASE_RATE + RAW**
 
 The score estimates the frozen T1 quantity:
 
@@ -25,8 +25,8 @@ The assessment gate explicitly prefers the simple solution when lift is not defe
 - CALIBRATION: 312 leads
 - Model features: **none**
 - Raw probability: DEVELOPMENT prevalence = 0.2037546
-- Calibrator: Platt, fit only on CALIBRATION
-- Final probability: 0.2082788
+- Calibrator: RAW (learned calibration gains were immaterial)
+- Final probability: 0.2037546
 
 ## Intended operational interpretation
 
@@ -43,7 +43,7 @@ Logistic Regression and CatBoost outputs remain diagnostic evidence only. Logist
 - `scheduled_visit` is a proxy outcome.
 - Strong temporal changes exist in Inventory/Availability coverage, intentionally separated from core LeadQuality.
 - The result may reflect a genuinely weak T1 information set, synthetic-data construction, or missing operational signals not present at score time.
-- The June procedural holdout is non-pristine because of the documented execution-export incident.
+- The June procedural holdout is non-pristine because of the documented execution-export incident. A later calibration-rule correction used CALIBRATION only and did not restore holdout status.
 - True confirmation requires new/hidden data.
 
 ## Governance
