@@ -7,6 +7,10 @@ on:
     paths:
       - "experimentos/semantic_rules_lift_ablation/**"
       - ".github/workflows/semantic-rules-lift-ablation.yml"
+  pull_request:
+    paths:
+      - "experimentos/semantic_rules_lift_ablation/**"
+      - ".github/workflows/semantic-rules-lift-ablation.yml"
   workflow_dispatch:
 
 jobs:
