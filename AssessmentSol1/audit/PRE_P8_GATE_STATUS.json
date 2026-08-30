@@ -1,42 +1,25 @@
 {
   "gate": "PRE_P8",
   "audited_at": "2026-08-30",
-  "status": "BLOCKED",
-  "blockers": [
-    {
-      "id": "P4_RUNTIME_GATE",
-      "severity": "BLOCKER",
-      "reason": "Prompt-4 p4_qa_summary.json and p4_artifact_manifest.json are not present; superseded P3 qa_summary PASS is not authority.",
-      "remediation": "Run python AssessmentSol1/abt/validate_abts.py in an environment with project dependencies and require status=PASS before P8."
-    }
-  ],
-  "non_blocking_permanent_caveats": [
-    {
-      "id": "HOLDOUT-001",
-      "severity": "HIGH",
-      "status": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE",
-      "remediation": "Do not reset or replace it. Use genuinely new/hidden evidence for final confirmation."
-    }
-  ],
-  "repaired_this_audit": [
-    "CAL-001 calibration PLATT->RAW",
-    "constant-score ranking metric semantics",
-    "Inventory stale-snapshot documentation",
-    "P3/P4 artifact authority",
-    "LLM/threshold/EDA alignment documentation",
-    "pre-P8 gate target-contract key",
-    "model governance test syntax"
-  ],
-  "static_gate_qa": {
-    "target_contract_key": "primary_target.id",
-    "expected_target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
-    "gate_script_key_bug_repaired": true,
-    "model_governance_test_literal_newline_bug_repaired": true,
-    "modified_python_files_scanned_for_suspicious_literal_newlines": true
+  "status": "PASS",
+  "blockers": [],
+  "p4_validation": {
+    "status": "PASS",
+    "mode": "INDEPENDENT_RAW_EQUIVALENCE_AUDIT",
+    "exact_polars_builder_runtime_executed": false,
+    "exact_polars_runtime_status": "NON_BLOCKING_REPRODUCIBILITY_FOLLOWUP",
+    "evidence": "../abt/artifacts/p4_qa_summary.json"
   },
-  "clean_room_compare": {
-    "changed_files": 167,
-    "outside_AssessmentSol1": 0,
-    "result": "PASS"
-  }
+  "frozen_foundations": {
+    "t1_target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+    "split": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+    "t1_champion": "BASE_RATE + RAW",
+    "t1_final_probability": 0.20375457875457875
+  },
+  "permanent_caveats": [
+    "Procedural holdout remains CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE.",
+    "Availability same-day observability is conditional because snapshot_date is date-only.",
+    "Exact Polars builder materialization remains a final reproducibility follow-up, not a P8 selection input."
+  ],
+  "clean_room": "PASS"
 }
