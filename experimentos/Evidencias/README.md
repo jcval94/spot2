@@ -2,6 +2,10 @@
 
 Registro central que conecta descubrimientos con los archivos que realmente los respaldan.
 
+## Evidencia visual
+
+- [VISUALIZACIONES_FASE_1.md](VISUALIZACIONES_FASE_1.md) — primera ronda transversal con **20 visualizaciones** empíricas/conceptuales claramente etiquetadas. Cubre auditoría de evidencia, lead attention, response time, geografía, LLM triage, clustering/matching, A/B, Modelo 3, interpretabilidad, validación temporal y LLM inventory quality.
+
 ## Índice
 
 | Evidencia | Línea de trabajo | Nivel |
