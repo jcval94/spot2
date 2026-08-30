@@ -44,7 +44,7 @@ erDiagram
         int prior_inquiries "ej: 5"
         boolean has_converted_before "ej: false"
         float lead_score_internal "ej: 0.6562"
-        datetime created_at "ej: 2025-05-09T00:00:00"
+        datetime created_at "ej: 2025-05-09T00:00:00.000000"
     }
 
     SPOTS {
@@ -72,7 +72,7 @@ erDiagram
         int total_inquiries "ej: 4"
         int total_views "ej: 47"
         boolean is_active "ej: false"
-        datetime created_at "ej: 2026-05-30T00:00:00"
+        datetime created_at "ej: 2026-05-30T00:00:00.000000"
     }
 
     SPOT_ATTRIBUTES {
@@ -87,14 +87,14 @@ erDiagram
         int parking_spaces "ej: 35"
         string building_status "ej: new"
         string floor_material "ej: ceramic"
-        array_string amenities "ej: []"
+        string[] amenities "ej: rooftop, cafeteria, gym, meeting_rooms"
     }
 
     INQUIRIES {
         int inquiry_id PK "ej: 1"
         int lead_id FK "ej: 1"
         int spot_id FK "ej: 1483"
-        datetime inquiry_at "ej: 2025-05-16T20:03:15"
+        datetime inquiry_at "ej: 2025-05-16T20:03:15.000000"
         string channel "ej: email"
         int message_length "ej: 136"
         float requested_area_sqm "ej: 796.3"
@@ -139,7 +139,7 @@ Los tipos del diagrama representan el **tipo lógico de negocio/dato**:
 - `string`: texto o categoría.
 - `date`: fecha sin componente horario.
 - `datetime`: timestamp.
-- `array_string`: colección de strings serializada en el CSV; aplica a `spot_attributes.amenities`.
+- `string[]`: colección de strings; en el CSV se encuentra serializada como una lista de texto y aplica a `spot_attributes.amenities`.
 
 Los ejemplos fueron tomados de valores **realmente presentes y no nulos** en los archivos de `data/candidate/csv/`. Un ejemplo de una columna no implica que pertenezca a la misma fila que los ejemplos de las demás columnas.
 
