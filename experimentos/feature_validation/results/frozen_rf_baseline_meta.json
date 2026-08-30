@@ -6,18 +6,18 @@
   },
   "calibration": {
     "T0_cold": {
-      "intercept": -0.0891222273400146,
-      "coefficient": 0.12771924027418,
+      "intercept": -0.08912222734001478,
+      "coefficient": 0.12771924027417933,
       "status": "platt"
     },
     "T1_first_inquiry": {
-      "intercept": 0.06327150617989664,
-      "coefficient": 1.6042505298850553,
+      "intercept": 0.06327150617989659,
+      "coefficient": 1.6042505298850547,
       "status": "platt"
     },
     "T2_engaged": {
-      "intercept": -0.46680114373468706,
-      "coefficient": 1.49150765003556,
+      "intercept": -0.4668011437346871,
+      "coefficient": 1.4915076500355597,
       "status": "platt"
     }
   },
