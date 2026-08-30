@@ -1,0 +1,48 @@
+name: LLM semantic feature pilot
+
+on:
+  push:
+    branches:
+      - experiment/llm-semantic-feature-pilot
+    paths:
+      - "experimentos/llm_semantic_feature_pilot/**"
+      - ".github/workflows/llm-semantic-feature-pilot.yml"
+  workflow_dispatch:
+
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OPENAIKEY: ${{ secrets.OPENAIKEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install -r experimentos/llm_semantic_feature_pilot/requirements.txt
+
+      - name: Validate pilot contract without API
+        run: pytest -q experimentos/llm_semantic_feature_pilot/tests
+
+      - name: Run exactly the 100-record API pilot when key exists
+        shell: bash
+        run: |
+          if [ -z "$OPENAIKEY" ]; then
+            echo "OPENAIKEY repository secret is not configured; API pilot skipped."
+            exit 0
+          fi
+          python experimentos/llm_semantic_feature_pilot/run_pilot.py --limit 100
+
+      - name: Upload pilot CSVs
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-semantic-feature-pilot
+          path: |
+            experimentos/llm_semantic_feature_pilot/results/pilot_llm_results_100.csv
+            experimentos/llm_semantic_feature_pilot/results/pilot_usage_summary.csv
+          if-no-files-found: ignore
