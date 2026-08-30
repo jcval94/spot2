@@ -8,28 +8,28 @@
     "T0_BASE_RATE",
     "T0_INTAKE_LOGISTIC"
   ],
-  "solver": "L2 logistic with fixed FTRL optimizer; no tuning",
+  "solver": "L2 logistic with fixed stable FTRL optimizer; no tuning",
   "macro": {
     "T0_BASE_RATE": {
       "roc_auc": 0.5,
-      "average_precision": 0.4803025053029044,
-      "brier": 0.2631093559749855,
-      "log_loss": 0.7206560212974187,
+      "average_precision": 0.4803025053,
+      "brier": 0.263109356,
+      "log_loss": 0.7206560213,
       "validation_n": 2245
     },
     "T0_INTAKE_LOGISTIC": {
-      "roc_auc": 0.49344739316191644,
-      "average_precision": 0.4831114220003726,
-      "brier": 0.26653348160939977,
-      "log_loss": 0.7294257488174839,
+      "roc_auc": 0.494708003,
+      "average_precision": 0.4855859643,
+      "brier": 0.2641826935,
+      "log_loss": 0.7234330517,
       "validation_n": 2245
     }
   },
   "deltas": {
-    "average_precision": 0.00280891669746817,
-    "roc_auc": -0.00655260683808356,
-    "brier": 0.00342412563441427,
-    "log_loss": 0.00876972752006518
+    "average_precision": 0.005283459,
+    "roc_auc": -0.005291997,
+    "brier": 0.0010733375,
+    "log_loss": 0.0027770304
   },
   "decision": "NEUTRAL_EVIDENCE_BACKED",
   "promotion_gate": {
@@ -37,7 +37,7 @@
     "auc_min": 0.55,
     "max_brier_degradation": 0.002,
     "passed": false,
-    "short_circuit_reason": "Fails delta AP, AUC and Brier criteria; bootstrap is not needed to establish non-promotion."
+    "short_circuit_reason": "Fails delta AP and AUC criteria; paired bootstrap cannot rescue promotion."
   },
   "forbidden_predictors_used": false,
   "future_exposure_used_as_predictor": false
