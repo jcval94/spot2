@@ -110,6 +110,110 @@ def assert_split_integrity(assignments: pl.DataFrame) -> None:
         raise AssertionError("Entity leakage: lead appears in multiple partitions")
 
 
+
+def _read_csv_shards(path: Path) -> pl.DataFrame:
+    files = sorted(path.glob("part-*.csv"))
+    if not files:
+        raise AssertionError(f"No CSV shards found under {path}")
+    return pl.concat(
+        [pl.read_csv(p, infer_schema_length=None) for p in files],
+        how="vertical_relaxed",
+    )
+
+
+def validate_committed_evidence(repo_root: Path) -> dict:
+    """Validate committed CSV evidence when full Parquet materialization is absent."""
+    out = repo_root / "AssessmentSol1" / "abt" / "artifacts"
+    spine = pl.read_csv(out / "score_spine.csv", infer_schema_length=None)
+    audit = _read_csv_shards(out / "lead_quality_audit_all_snapshots")
+    model = _read_csv_shards(out / "lead_quality_model_ready")
+    candidate_summary = _read_csv_shards(out / "candidate_spots_summary")
+    inventory_summary = _read_csv_shards(out / "inventory_state_summary")
+    candidate_sample = pl.read_csv(
+        out / "candidate_spots_sample.csv", infer_schema_length=None
+    )
+    inventory_sample = pl.read_csv(
+        out / "inventory_serviceability_sample.csv", infer_schema_length=None
+    )
+    qa = json.loads((out / "qa_summary.json").read_text())
+
+    for df in (spine, audit, model, candidate_sample, inventory_sample):
+        if "score_time" in df.columns:
+            df.with_columns(
+                pl.col("score_time").str.to_datetime(strict=True).alias("score_time")
+            )
+
+    audit = audit.with_columns(
+        pl.col("score_time").str.to_datetime(strict=True).alias("score_time"),
+        pl.col("hist_max_inquiry_time")
+        .str.to_datetime(strict=False)
+        .alias("hist_max_inquiry_time"),
+    )
+    inventory_sample = inventory_sample.with_columns(
+        pl.col("score_time").str.to_datetime(strict=True).alias("score_time"),
+        pl.col("snapshot_time")
+        .str.to_datetime(strict=False)
+        .alias("snapshot_time"),
+    )
+
+    assert_prediction_key_unique(spine)
+    assert_prediction_key_unique(audit)
+    assert_prediction_key_unique(model)
+    assert set(spine["prediction_key"].to_list()) == set(
+        audit["prediction_key"].to_list()
+    )
+    if not set(model["prediction_key"].to_list()).issubset(
+        set(audit["prediction_key"].to_list())
+    ):
+        raise AssertionError("model_ready contains keys absent from audit")
+
+    assert_no_future_inquiry(audit)
+    assert_no_forbidden_model_feature(model)
+    assert_target_statuses(audit)
+    assert_stage_observability(audit)
+    assert_candidate_grain(candidate_sample)
+    assert_candidate_grain(inventory_sample)
+    assert_no_future_snapshot(inventory_sample)
+
+    if candidate_summary["prediction_key"].n_unique() != spine.height:
+        raise AssertionError("Candidate summary does not cover every prediction_key")
+    if inventory_summary["prediction_key"].n_unique() != spine.height:
+        raise AssertionError("Inventory summary does not cover every prediction_key")
+    if int(candidate_summary["n_candidates"].sum()) != qa["candidate_spots"]["full_logical_rows"]:
+        raise AssertionError("Candidate full row-count reconciliation failed")
+    if int(inventory_summary["n_candidates"].sum()) != qa["inventory_serviceability"]["full_logical_rows"]:
+        raise AssertionError("Inventory full row-count reconciliation failed")
+
+    if any(c in audit.columns for c in ("partition", "fold", "split")):
+        raise AssertionError("Split assignment embedded in ABT audit")
+    if any(c in model.columns for c in ("partition", "fold", "split")):
+        raise AssertionError("Split assignment embedded in model_ready")
+
+    lineage_path = repo_root / "AssessmentSol1" / "abt" / "COLUMN_LINEAGE.csv"
+    artifact_columns = (
+        set(spine.columns)
+        | set(audit.columns)
+        | set(model.columns)
+        | set(candidate_sample.columns)
+        | set(inventory_sample.columns)
+    )
+    assert_lineage_complete(artifact_columns, lineage_path)
+
+    return {
+        "status": "PASS",
+        "mode": "COMMITTED_EVIDENCE",
+        "score_spine_rows": spine.height,
+        "audit_rows": audit.height,
+        "model_ready_rows": model.height,
+        "candidate_full_rows": int(candidate_summary["n_candidates"].sum()),
+        "inventory_full_rows": int(inventory_summary["n_candidates"].sum()),
+        "future_inquiry_count": 0,
+        "future_snapshot_count": 0,
+        "forbidden_model_feature_count": 0,
+        "split_assignment_embedded": False,
+    }
+
+
 def validate_all(repo_root: Path) -> dict:
     out = repo_root / "AssessmentSol1" / "abt" / "artifacts"
     audit = pl.read_parquet(out / "lead_quality_audit_all_snapshots.parquet")
@@ -169,7 +273,15 @@ def validate_all(repo_root: Path) -> dict:
 
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[2]
-    print(json.dumps(validate_all(repo_root), indent=2))
+    out = repo_root / "AssessmentSol1" / "abt" / "artifacts"
+    full = [
+        out / "lead_quality_audit_all_snapshots.parquet",
+        out / "lead_quality_model_ready.parquet",
+        out / "candidate_spots.parquet",
+        out / "inventory_serviceability_state.parquet",
+    ]
+    result = validate_all(repo_root) if all(p.exists() for p in full) else validate_committed_evidence(repo_root)
+    print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":
