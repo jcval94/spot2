@@ -1,50 +1,75 @@
-# T2_TRAJECTORY_DECISION — PROMPT 8
+# T2_TRAJECTORY_DECISION — Re-scoring challenger
 
-Target: `T2_CURRENT_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`.  
-Grain: current second-or-later inquiry.  
-Score time: current `inquiry_at`.
+**Decision:** `FUTURE_EXTENSION`.
+
+The inherited hypothesis was:
+
+> trajectory may add signal at T2.
+
+AssessmentSol1 does **not** confirm enough incremental value to recommend deployment.
+
+## Cohort and temporal validity
+
+P4 produces **9,635** model-ready T2 inquiry rows after the frozen maturity/stage-eligibility gate.
+
+For every temporal fold:
+- training requires T1 lead membership before the evaluation boundary;
+- current T2 `score_time` must also be before the boundary;
+- validation requires T1 membership in the validation cohort **and** current T2 score time inside that validation window;
+- later interactions never flow backward into training.
+
+Strict-prior trajectory audit: **0 violations**.
+
+Response-history predictors used: **0**.
+
+Broker response fields are used only for target/stage eligibility when their timing is reconstructible; they are never trajectory features.
 
 ## Frozen experiment
 
 Only two variants were evaluated:
 
-1. **T2_BASELINE** — frozen lead intake + current inquiry payload + existing deterministic current-vs-intake refinement.
-2. **T2_TRAJECTORY** — exactly the same model plus the 33 pre-registered strict-prior trajectory features.
+1. `T2_BASELINE`: safe intake + current inquiry payload + deterministic current-vs-intake context.
+2. `T2_TRAJECTORY`: the same baseline plus registered strict-prior trajectory features.
 
-No model zoo, response-history feature, current response, response hours, Inventory, Availability or future interaction feature was opened.
-
-## Temporal validity
-
-- strict-prior history violations: **0**;
-- response-history predictors used: **0**;
-- future Availability snapshots: **not in the information set**;
-- train/validation lead overlap per fold: **0**.
-
-Boundary truncation materially changes the dataset. If lead membership alone had been used, **1,281–1,745 late T2 rows per fold** from training-cohort leads could have crossed the evaluation boundary. They are excluded by the frozen current-score-time rule.
-
-## Results
-
-| Variant | ROC AUC | Average Precision | Brier | Log Loss |
+| Variant | Macro ROC AUC | Macro AP | Brier | Log Loss |
 |---|---:|---:|---:|---:|
-| T2_BASELINE | 0.4861 | 0.1807 | **0.15247** | **0.48451** |
-| T2_TRAJECTORY | 0.4908 | 0.1857 | 0.15297 | 0.48615 |
-| Delta | +0.0047 | **+0.0050** | +0.00050 | +0.00164 |
+| T2 Baseline | 0.4860 | 0.1864 | **0.15140** | **0.48142** |
+| T2 Trajectory | 0.4898 | 0.1896 | 0.15162 | 0.48200 |
 
-AP delta by fold:
+Increment:
+- ΔAP = **+0.00317**
+- ΔAUC = **+0.00380**
+- ΔBrier = **+0.00022** (worse)
+- ΔLogLoss = **+0.00058** (worse)
 
-- F1: **-0.0055**
-- F2: **+0.0079**
-- F3: **+0.0058**
-- F4: **+0.0117**
+### Fold stability
 
-Trajectory improves AP in 3/4 folds, but the macro gain is only +0.0050, below the frozen +0.01 complexity threshold, and proper probability scores slightly worsen.
+| Fold | ΔAP | ΔAUC | ΔBrier |
+|---|---:|---:|---:|
+| F1 | -0.00069 | -0.00928 | +0.00055 |
+| F2 | +0.00675 | -0.02716 | +0.00139 |
+| F3 | -0.00774 | +0.01650 | -0.00015 |
+| F4 | +0.01435 | +0.03513 | -0.00090 |
+
+Trajectory improves AP in only **2/4 folds**. The pre-registered rule required at least 3/4 positive folds and macro ΔAP ≥ 0.01.
+
+Those necessary promotion conditions already fail; therefore a bootstrap outcome cannot rescue promotion and no further tuning/model search is warranted.
 
 ## Interpretation
 
-The inherited hypothesis **"trajectory may add signal at T2"** receives weak directional support, especially in later folds. AssessmentSol1 does **not** confirm an effect large and stable enough for deployment.
+Some trajectory quantities can be descriptively meaningful, but the incremental signal is not stable enough to justify:
+- additional model complexity;
+- per-inquiry state management;
+- serving historical aggregations;
+- additional monitoring burden.
 
-## Decision
+No response-history feature is recovered.
 
-**FUTURE_EXTENSION.**
+## Recommendation
 
-Do not integrate T2 into the principal Opportunity Score now. Retain the trajectory code/registry as a future extension to revisit with richer behavioral events, a cleaner response-event clock and genuinely new temporal data.
+Keep T2 as **FUTURE_EXTENSION**. Revisit only if richer event timing, stronger pre-response interaction signals or longer genuine production history becomes available.
+
+Evidence:
+- `models/t2/metrics/fold_metrics.csv`
+- `models/t2/metrics/macro_metrics.csv`
+- `models/t2/metrics/fold_deltas.csv`
