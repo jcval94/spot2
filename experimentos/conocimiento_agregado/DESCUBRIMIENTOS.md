@@ -1225,3 +1225,30 @@ El modelo default es `gpt-5-nano` y el runner impide por defecto enviar más de 
 **Implicación:** no escalar ni agregar estas variables al ABT hasta revisar `pilot_llm_results_100.csv`, costo real y falsos positivos en clean controls.
 
 Evidencia: [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md).
+
+
+## D059 — El piloto no justifica features LLM en el ABT
+
+**Estado:** NOT_SUPPORTED.
+
+E017 ejecutó dos corridas reales de 100 registros con `gpt-5-nano`.
+
+V1 costó aproximadamente USD 0.003335, pero reveló que el schema pedía decisiones redundantes y podía producir contradicciones lógicas. V2 corrigió esto derivando flags redundantes en Python y redujo output tokens de 6,767 a 4,869.
+
+V2:
+
+- costo estimado: **USD 0.002579**;
+- clean controls con issue incremental: **0/25**;
+- new rule candidates: **0/100**;
+- residual actionable: **0/100**;
+- ambiguity challenge marcado residual_ambiguous: **24/25**.
+
+Ese 24/25 no representa cobertura incremental: el estrato se construyó precisamente con patrones determinísticos de ambigüedad. Los casos residuales fuera de ese estrato también corresponden a combinaciones de flags ya derivables sin API.
+
+**Conclusión:** no promover `llm_*` a T0/T1/T2. El LLM fue barato y razonablemente conservador tras corregir el schema, pero no encontró una variable nueva que justifique su uso.
+
+**Sustitución sin costo:** E017 implementa un semantic rule sidecar con seguridad ambigua, adaptive-use Retail, Land building-copy, conteo de señales y tier de revisión.
+
+**Implicación:** si se quiere reabrir el caso LLM, debe existir nueva información lingüística —principalmente raw inquiry text o copy menos templated— o un holdout con humanos que muestre un tipo de issue que las reglas no puedan expresar.
+
+Evidencia: [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md).
