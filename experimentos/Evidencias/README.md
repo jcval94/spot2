@@ -25,3 +25,4 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 | [EV-017](EV-017_llm_semantic_feature_pilot.md) | Low-cost LLM semantic feature pilot | Empírica completa: 100 registros, V1/V2, costo y decisión |
 
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.
+| [EV-018](EV-018_llm_inventory_nano_live.md) | E015 live GPT-5 nano inventory audit | Empírica live completa / gold humano global pendiente |
