@@ -1,0 +1,33 @@
+name: ABT feature engineering validation
+
+on:
+  push:
+    branches:
+      - experiment/abt-feature-engineering-v1
+    paths:
+      - "experimentos/abt_feature_engineering/**"
+      - ".github/workflows/abt-feature-engineering.yml"
+  workflow_dispatch:
+
+jobs:
+  validate-abts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install experiment requirements
+        run: pip install -r experimentos/abt_feature_engineering/requirements.txt
+
+      - name: Run treatment and leakage tests
+        run: pytest -q experimentos/abt_feature_engineering/tests
+
+      - name: Build T0 T1 T2 ABTs on repository data
+        run: python experimentos/abt_feature_engineering/build_abts.py --repo-root .
+
+      - name: Show ABT summary
+        run: cat experimentos/abt_feature_engineering/results/abt_summary.csv
