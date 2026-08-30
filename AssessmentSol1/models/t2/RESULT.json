@@ -1,0 +1,53 @@
+{
+  "phase": "PROMPT_8_T2",
+  "target": "T2_CURRENT_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+  "grain": "second-or-later current inquiry",
+  "score_time": "current inquiry_at",
+  "model_ready_rows": 9635,
+  "models": [
+    "T2_BASELINE",
+    "T2_TRAJECTORY"
+  ],
+  "model_family": "L2 logistic with fixed FTRL optimizer; no tuning",
+  "baseline_information": "intake + current inquiry payload + deterministic current-vs-intake refinement",
+  "trajectory_information": "33 registered strict-prior inquiry-payload trajectory features",
+  "response_history_predictor_used": false,
+  "strict_history_violations": 0,
+  "availability_used": false,
+  "future_snapshot_test": "PASS_NOT_IN_INFORMATION_SET",
+  "macro": {
+    "T2_BASELINE": {
+      "roc_auc": 0.4860690367734116,
+      "average_precision": 0.18071213622982185,
+      "brier": 0.1524690249432543,
+      "log_loss": 0.48450828689454406,
+      "validation_n": 3298
+    },
+    "T2_TRAJECTORY": {
+      "roc_auc": 0.490801564372334,
+      "average_precision": 0.18571287054576952,
+      "brier": 0.15297348859410348,
+      "log_loss": 0.48614558386472084,
+      "validation_n": 3298
+    }
+  },
+  "deltas": {
+    "average_precision": 0.00500073431594767,
+    "roc_auc": 0.004732527598922398,
+    "brier": 0.0005044636508491715,
+    "log_loss": 0.0016372969701767793,
+    "folds_positive_ap": 3,
+    "folds_total": 4
+  },
+  "promotion_rule": {
+    "min_macro_delta_ap": 0.01,
+    "min_positive_ap_folds": 3,
+    "max_brier_degradation": 0.002,
+    "temporal_validity_required": true,
+    "operational_interpretability_required": true
+  },
+  "promotion_passed": false,
+  "bootstrap_status": "NOT_REQUIRED_FOR_NON_PROMOTION_AFTER_HARD_DELTA_AP_GATE_FAILED",
+  "decision": "FUTURE_EXTENSION",
+  "interpretation": "Trajectory may contain weak incremental signal, especially in the latest fold, but the effect is too small and not stable enough to justify a deployed T2 model."
+}
