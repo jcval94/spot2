@@ -1,40 +1,17 @@
 {
   "phase": "PROMPT_2",
-  "decision_rule": "No model performance metric was computed or used. Decision uses business semantics, temporal identifiability, coverage, prevalence stability, censoring, and implementation feasibility.",
+  "decision_rule": "No model performance metric was computed or used. Decision uses business semantics, temporal identifiability, label coverage, prevalence stability, censoring, and implementation feasibility.",
   "activity_horizon": "2026-07-13T17:35:37.000Z",
   "primary_target": {
     "id": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
-    "option": "A",
     "stage": "T1",
     "maturity_buffer_days": 14,
-    "score_time": "earliest inquiries.inquiry_at per lead_id; inquiry_id ascending is deterministic tie-breaker",
-    "estimand": "P(first inquiry eventually has broker_response == scheduled_visit | information known immediately after that inquiry is persisted and before broker response)",
-    "eligible": 4953,
-    "positive": 1008,
-    "negative": 3945,
-    "cohort_coverage": 0.9906,
-    "prevalence": 0.20351302241066022,
-    "monthly_prevalence_sd_pp": 1.6557223316471266,
-    "monthly_prevalence_range_pp": 7.397543551823535,
-    "freeze": true,
-    "immutable_due_to_future_model_performance": true
-  },
-  "target_A_buffers": {
-    "7": {
-      "total": 5000,
-      "labeled": 4994,
-      "positive": 1017,
-      "negative": 3977,
-      "ambiguous": 0,
-      "censored": 6,
-      "cohort_coverage": 0.9988,
-      "prevalence": 0.20364437324789747,
-      "months_total": 19,
-      "months_ge_50": 18,
-      "monthly_prevalence_sd_pp": 1.6587575414670024,
-      "monthly_prevalence_range_pp": 7.397543551823535
-    },
-    "14": {
+    "audit": {
+      "target_option": "A",
+      "stage": "T1",
+      "horizon_days": null,
+      "semantics": "first inquiry eventually recorded scheduled_visit",
+      "maturity_buffer_days": 14,
       "total": 5000,
       "labeled": 4953,
       "positive": 1008,
@@ -43,12 +20,56 @@
       "censored": 47,
       "cohort_coverage": 0.9906,
       "prevalence": 0.20351302241066022,
-      "months_total": 18,
       "months_ge_50": 18,
       "monthly_prevalence_sd_pp": 1.6557223316471266,
       "monthly_prevalence_range_pp": 7.397543551823535
     },
-    "30": {
+    "freeze": true,
+    "immutable_due_to_future_model_performance": true
+  },
+  "cohort_summary": [
+    {
+      "target_option": "A",
+      "stage": "T1",
+      "horizon_days": null,
+      "semantics": "first inquiry eventually recorded scheduled_visit",
+      "maturity_buffer_days": 7,
+      "total": 5000,
+      "labeled": 4994,
+      "positive": 1017,
+      "negative": 3977,
+      "ambiguous": 0,
+      "censored": 6,
+      "cohort_coverage": 0.9988,
+      "prevalence": 0.20364437324789747,
+      "months_ge_50": 18,
+      "monthly_prevalence_sd_pp": 1.6587575414670024,
+      "monthly_prevalence_range_pp": 7.397543551823535
+    },
+    {
+      "target_option": "A",
+      "stage": "T1",
+      "horizon_days": null,
+      "semantics": "first inquiry eventually recorded scheduled_visit",
+      "maturity_buffer_days": 14,
+      "total": 5000,
+      "labeled": 4953,
+      "positive": 1008,
+      "negative": 3945,
+      "ambiguous": 0,
+      "censored": 47,
+      "cohort_coverage": 0.9906,
+      "prevalence": 0.20351302241066022,
+      "months_ge_50": 18,
+      "monthly_prevalence_sd_pp": 1.6557223316471266,
+      "monthly_prevalence_range_pp": 7.397543551823535
+    },
+    {
+      "target_option": "A",
+      "stage": "T1",
+      "horizon_days": null,
+      "semantics": "first inquiry eventually recorded scheduled_visit",
+      "maturity_buffer_days": 30,
       "total": 5000,
       "labeled": 4794,
       "positive": 981,
@@ -57,14 +78,16 @@
       "censored": 206,
       "cohort_coverage": 0.9588,
       "prevalence": 0.204630788485607,
-      "months_total": 18,
       "months_ge_50": 18,
       "monthly_prevalence_sd_pp": 1.7419441970773022,
       "monthly_prevalence_range_pp": 7.397543551823535
-    }
-  },
-  "target_B_30d": {
-    "0": {
+    },
+    {
+      "target_option": "B",
+      "stage": "T1",
+      "horizon_days": 30,
+      "semantics": "timed scheduled_visit event in (score_time, score_time+30d]",
+      "maturity_buffer_days": 0,
       "total": 5000,
       "labeled": 4555,
       "positive": 1895,
@@ -73,12 +96,16 @@
       "censored": 206,
       "cohort_coverage": 0.911,
       "prevalence": 0.41602634467618005,
-      "months_total": 18,
       "months_ge_50": 18,
       "monthly_prevalence_sd_pp": 7.69696608229303,
       "monthly_prevalence_range_pp": 29.088302752293576
     },
-    "7": {
+    {
+      "target_option": "B",
+      "stage": "T1",
+      "horizon_days": 30,
+      "semantics": "timed scheduled_visit event in (score_time, score_time+30d]",
+      "maturity_buffer_days": 7,
       "total": 5000,
       "labeled": 4494,
       "positive": 1861,
@@ -87,12 +114,16 @@
       "censored": 271,
       "cohort_coverage": 0.8988,
       "prevalence": 0.41410769915442813,
-      "months_total": 18,
       "months_ge_50": 17,
       "monthly_prevalence_sd_pp": 7.028144102870961,
       "monthly_prevalence_range_pp": 26.345338983050855
     },
-    "14": {
+    {
+      "target_option": "B",
+      "stage": "T1",
+      "horizon_days": 30,
+      "semantics": "timed scheduled_visit event in (score_time, score_time+30d]",
+      "maturity_buffer_days": 14,
       "total": 5000,
       "labeled": 4436,
       "positive": 1829,
@@ -101,12 +132,16 @@
       "censored": 330,
       "cohort_coverage": 0.8872,
       "prevalence": 0.41230838593327324,
-      "months_total": 17,
       "months_ge_50": 17,
       "monthly_prevalence_sd_pp": 7.040241086514362,
       "monthly_prevalence_range_pp": 26.458333333333332
     },
-    "30": {
+    {
+      "target_option": "B",
+      "stage": "T1",
+      "horizon_days": 30,
+      "semantics": "timed scheduled_visit event in (score_time, score_time+30d]",
+      "maturity_buffer_days": 30,
       "total": 5000,
       "labeled": 4269,
       "positive": 1743,
@@ -115,14 +150,16 @@
       "censored": 505,
       "cohort_coverage": 0.8538,
       "prevalence": 0.40829234012649335,
-      "months_total": 17,
       "months_ge_50": 17,
       "monthly_prevalence_sd_pp": 7.339580289963441,
       "monthly_prevalence_range_pp": 29.057203389830505
-    }
-  },
-  "target_C_30d": {
-    "7": {
+    },
+    {
+      "target_option": "C",
+      "stage": "T1",
+      "horizon_days": 30,
+      "semantics": "an inquiry initiated within 30d eventually recorded scheduled_visit",
+      "maturity_buffer_days": 7,
       "total": 5000,
       "labeled": 4729,
       "positive": 2097,
@@ -131,12 +168,16 @@
       "censored": 271,
       "cohort_coverage": 0.9458,
       "prevalence": 0.4434341298371749,
-      "months_total": 18,
       "months_ge_50": 17,
       "monthly_prevalence_sd_pp": 6.886238980266881,
       "monthly_prevalence_range_pp": 26.251158480074142
     },
-    "14": {
+    {
+      "target_option": "C",
+      "stage": "T1",
+      "horizon_days": 30,
+      "semantics": "an inquiry initiated within 30d eventually recorded scheduled_visit",
+      "maturity_buffer_days": 14,
       "total": 5000,
       "labeled": 4670,
       "positive": 2064,
@@ -145,12 +186,16 @@
       "censored": 330,
       "cohort_coverage": 0.934,
       "prevalence": 0.44197002141327624,
-      "months_total": 17,
       "months_ge_50": 17,
       "monthly_prevalence_sd_pp": 6.906506643646339,
       "monthly_prevalence_range_pp": 26.44219261150562
     },
-    "30": {
+    {
+      "target_option": "C",
+      "stage": "T1",
+      "horizon_days": 30,
+      "semantics": "an inquiry initiated within 30d eventually recorded scheduled_visit",
+      "maturity_buffer_days": 30,
       "total": 5000,
       "labeled": 4495,
       "positive": 1970,
@@ -159,72 +204,46 @@
       "censored": 505,
       "cohort_coverage": 0.899,
       "prevalence": 0.4382647385984427,
-      "months_total": 17,
       "months_ge_50": 17,
       "monthly_prevalence_sd_pp": 7.265785993289025,
       "monthly_prevalence_range_pp": 29.537045821079587
     }
-  },
+  ],
   "response_timing_audit": {
     "scheduled_visit_rows": 4496,
     "scheduled_visit_with_hours": 3823,
     "scheduled_visit_missing_hours": 673,
     "scheduled_visit_timing_coverage": 0.8503113879003559,
     "realized_timed_rows": 15392,
-    "realized_response_hours_p50": 8.4,
-    "realized_response_hours_p95": 36.64499999999989,
-    "realized_response_hours_p99": 56.20900000000002,
     "realized_response_hours_max": 108.9,
     "realized_timed_within_7d_rate": 1
   },
-  "comparison": {
-    "A14": {
-      "coverage": 0.9906,
-      "prevalence": 0.20351302241066022,
-      "monthly_sd_pp": 1.6557223316471266,
-      "monthly_range_pp": 7.397543551823535,
-      "ambiguous": 0,
-      "censored": 47
-    },
-    "B30": {
-      "coverage": 0.911,
-      "prevalence": 0.41602634467618005,
-      "monthly_sd_pp": 7.69696608229303,
-      "monthly_range_pp": 29.088302752293576,
-      "ambiguous": 239,
-      "censored": 206
-    },
-    "C30_maturity14": {
-      "coverage": 0.934,
-      "prevalence": 0.44197002141327624,
-      "monthly_sd_pp": 6.906506643646339,
-      "monthly_range_pp": 26.44219261150562,
-      "ambiguous": 0,
-      "censored": 330
-    }
-  },
   "secondary_targets": {
     "T0": {
-      "status": "FROZEN_SECONDARY",
       "id": "T0_30D_INQUIRY_INITIATION_PROGRESS_V1",
-      "estimand": "P(at least one inquiry initiated within 30d after lead creation eventually has broker_response == scheduled_visit | T0 information)",
-      "horizon_days": 30,
+      "status": "FROZEN_SECONDARY",
+      "score_time": "leads.created_at",
+      "estimand": "P(at least one inquiry initiated in [lead.created_at, lead.created_at + 30d] eventually has broker_response == 'scheduled_visit' | T0 information)",
+      "inquiry_horizon_days": 30,
       "maturity_buffer_days": 14,
-      "audit": {
-        "eligible": 4710,
+      "observed_audit": {
+        "labeled": 4710,
         "positive": 1957,
         "negative": 2753,
-        "cohort_coverage": 0.942,
+        "coverage": 0.942,
         "prevalence": 0.41549893842887475
       },
       "same_estimand_as_primary": false
     },
     "T2": {
-      "status": "DEFERRED_COHORT_GATE",
-      "proposed_estimand": "current second-or-later inquiry eventually has broker_response == scheduled_visit",
+      "id": "T2_CURRENT_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+      "status": "SEMANTICS_FROZEN_COHORT_GATE_DEFERRED",
+      "proposed_score_time": "current second-or-later inquiries.inquiry_at",
+      "estimand": "P(current T2 inquiry eventually has broker_response == 'scheduled_visit' | valid T2 information set and stage membership)",
+      "maturity_buffer_days": 14,
       "same_outcome_definition_as_T1_A": true,
       "same_estimand_as_primary": false,
-      "reason": "T2 population is conditional on reaching a later inquiry and on no prior known scheduled visit; missing/ambiguous prior response timing prevents a fully defensible historical stage-membership gate in P2."
+      "reason": "Population is conditional on reaching T2 and on no prior known scheduled visit. Historical T2 stage membership cannot yet be fully reconstructed when prior scheduled_visit timing is missing; cohort construction is deferred to the point-in-time ABT gate."
     }
   },
   "no_model_metrics": {
