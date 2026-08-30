@@ -27,7 +27,13 @@ The current inquiry's request fields are observed at `inquiry_at` and therefore 
 
 ### spot_attributes
 
-No timestamp exists. Attribute values are therefore blocked for historical predictive use pending an immutability/creation-time contract.
+No attribute-level timestamp exists in raw data. For the definitive assessment, we adopt an **explicit contract assumption that all `spot_attributes` values are immutable over the life of the Spot**.
+
+Therefore the current delivered values are authorized at T1/T2 when the selected Spot itself already exists:
+
+`spots.created_at <= score_time`.
+
+This is an assumption supplied by the assessment owner, not temporal provenance inferred from raw data. We do not invent an attribute event/observation timestamp; the effective-time contract is simply “invariant from Spot creation.”
 
 ### availability_snapshot
 
@@ -42,7 +48,7 @@ No timestamp exists. Attribute values are therefore blocked for historical predi
 ## Stage implications
 
 - **T0:** lead intake only. No selected inquiry/spot context. Inventory-wide state is conditional and must be constructed only from historically existing spots/snapshots.
-- **T1:** current first inquiry is known at `inquiry_at`; current broker response is not. Selected Spot fields are conditional on version semantics; Availability is backward-as-of only.
-- **T2:** same as T1 plus prior events that were actually observable before the current `inquiry_at`. Raw broker response fields do not provide a reliable clock, so no response-history feature is authorized in P1.
+- **T1:** current first inquiry is known at `inquiry_at`; current broker response is not. `spot_attributes` are authorized under the explicit immutability assumption when `spots.created_at <= score_time`; other unversioned Spot fields retain their own temporal policy. Availability is backward-as-of only.
+- **T2:** same as T1, including immutable `spot_attributes` for historically existing Spots, plus prior events that were actually observable before the current `inquiry_at`. Raw broker response fields do not provide a reliable clock, so no response-history feature is authorized in P1.
 
 The authoritative column-by-column ontology is `temporal_column_registry.csv`.
