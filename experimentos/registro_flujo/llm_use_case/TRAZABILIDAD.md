@@ -19,3 +19,10 @@ La línea responde específicamente a:
 - **Product vision:** una futura cola de Catalog QA puede evolucionar a un agente de corrección/revisión asistida.
 
 La propuesta actual evita presentar como “IA de negocio” una tarea que un template resolvería de forma equivalente.
+
+
+## Semantic v2 trace
+
+`manual semantic discovery -> S001 Land×building-copy -> Rules v2 post-discovery -> disjoint holdout/challenge -> future human+LLM evaluation`
+
+Evidence: [EV-015](../../Evidencias/EV-015_llm_inventory_semantic_audit.md). Discovery: D055.

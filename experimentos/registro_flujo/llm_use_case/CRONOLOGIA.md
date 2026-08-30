@@ -75,3 +75,14 @@ Resultados:
 **Decisión:** mantener abierta la hipótesis del LLM, pero elevar el estándar de éxito. Debido a la extrema repetición del lenguaje, el LLM debe superar Rules-only sobre labels humanos; detectar las mismas 12 frases no es valor incremental.
 
 Evidencia: [EV-015](../../Evidencias/EV-015_llm_inventory_semantic_audit.md).
+
+
+## 7. Semantic cross-field revision
+
+A manual simulation of the planned LLM over the discovery sample found a new class: category/type vs copy coherence.
+
+The strongest pattern was Land listings described with building/interior language. Full-catalog projection found 230 cases, 182 beyond Rules v1.
+
+**Correction:** because the 200-row sample was used to discover the pattern, it is no longer a valid clean holdout for S001. Rules v1 is frozen, Rules v2 is marked post-discovery, and final evaluation moves to disjoint holdout/challenge sets.
+
+**Decision:** reposition the LLM as semantic rule discovery, with stable patterns promoted back into deterministic rules.

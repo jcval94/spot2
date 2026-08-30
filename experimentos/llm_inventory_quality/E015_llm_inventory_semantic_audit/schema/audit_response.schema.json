@@ -3,33 +3,106 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "spot_id": {"type": "string"},
-    "quality_status": {"type": "string", "enum": ["good", "review", "critical"]},
+    "spot_id": {
+      "type": "string"
+    },
+    "quality_status": {
+      "type": "string",
+      "enum": [
+        "good",
+        "review",
+        "critical"
+      ]
+    },
     "issues": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "claim_type": {"type": "string"},
-          "evidence_text": {"type": "string"},
-          "structured_field": {"type": ["string", "null"]},
-          "structured_value": {"type": ["string", "number", "boolean", "null"]},
+          "claim_type": {
+            "type": "string"
+          },
+          "evidence_text": {
+            "type": "string"
+          },
+          "structured_field": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "structured_value": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "null"
+            ]
+          },
           "classification": {
             "type": "string",
-            "enum": ["consistent", "contradiction", "unsupported_claim", "ambiguous", "not_verifiable"]
+            "enum": [
+              "consistent",
+              "contradiction",
+              "semantic_cross_field_mismatch",
+              "unsupported_claim",
+              "ambiguous",
+              "not_verifiable"
+            ]
           },
-          "severity": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
-          "reason": {"type": "string"}
+          "actionable": {
+            "type": "boolean"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
         },
-        "required": ["claim_type", "evidence_text", "structured_field", "structured_value", "classification", "severity", "reason"]
+        "required": [
+          "claim_type",
+          "evidence_text",
+          "structured_field",
+          "structured_value",
+          "classification",
+          "actionable",
+          "confidence",
+          "severity",
+          "reason"
+        ]
       }
     },
     "abstentions": {
       "type": "array",
-      "items": {"type": "string"}
+      "items": {
+        "type": "string"
+      }
     },
-    "summary": {"type": "string"}
+    "summary": {
+      "type": "string"
+    }
   },
-  "required": ["spot_id", "quality_status", "issues", "abstentions", "summary"]
+  "required": [
+    "spot_id",
+    "quality_status",
+    "issues",
+    "abstentions",
+    "summary"
+  ]
 }

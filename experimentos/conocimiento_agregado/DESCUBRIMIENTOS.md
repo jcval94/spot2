@@ -60,6 +60,7 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D052 | SUPPORTED | El future test de matching ya fue consumido para discovery iterativo; puede reproducir resultados registrados, pero no confirmar nuevas celdas descubiertas después. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D053 | SUPPORTED | La arquitectura de segmentación decision-ready es Persona actual + Need T0 + Dynamic Need T1 + Physical + Location + Broker legacy, con Broker Service auxiliar y sin Broker Supply/Inquiry Intent. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D054 | SUPPORTED | En esta línea el cuello de botella dejó de ser el algoritmo de clustering: múltiples clusterers/K no producen lift global robusto; la ganancia útil vino de separar conceptos y estados T0→T1. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md), [EV-010](../Evidencias/EV-010_matching_ab_v3.md), [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D055 | SUPPORTED | La revisión semántica cross-field revela un patrón material Land × lenguaje de edificio/interiores: 230 casos, 182 incrementales sobre Rules v1; esto justifica semantic rule discovery, no superioridad del LLM. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -1122,3 +1123,34 @@ Los avances más útiles provinieron de **redefinir el concepto**:
 **Implicación:** cerrar búsqueda general de clusterer/K en esta línea. Nuevas iteraciones deben aportar nueva semántica, nueva fuente o nueva validación, no sólo otro algoritmo.
 
 Evidencia: [EV-006](../Evidencias/EV-006_profile_clustering_v2.md), [EV-010](../Evidencias/EV-010_matching_ab_v3.md), [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+
+## D055 — La semántica cross-field descubre un patrón material Land × building copy
+
+**Estado:** SUPPORTED como hallazgo de data quality; no como benchmark de un modelo LLM.
+
+La revisión semántica posterior a Rules v1 identificó un tipo de inconsistencia no representado por comparaciones uno-a-uno:
+
+```text
+sector_name = Land
++
+lenguaje de edificio/interiores
+```
+
+Ejemplos del lenguaje: “buena iluminación natural”, “recién remodelado”, “acabados modernos”, “listo para ocupar” y “acabados de primera”.
+
+Sobre 3,000 spots:
+
+- S001 aparece en 230 listings Land;
+- 182 de ellos no eran positivos en Rules v1;
+- Rules v1 marca 322 spots únicos;
+- Rules v2 post-discovery marca 504;
+- incremento atribuible a S001: 182 spots, 6.07% del inventario.
+
+**Interpretación:** el valor diferencial de un LLM en este dataset es más defendible como **semantic rule discovery / long-tail anomaly discovery** que como endpoint permanente para repetir verificaciones sobre copy altamente templated.
+
+**No demuestra:** que esos 230 sean errores confirmados, que Rules v2 tenga precision alta ni que un LLM supere Rules-only. La muestra original fue inspeccionada durante discovery y no puede servir como holdout limpio para S001.
+
+**Corrección metodológica:** final evaluation pasa a un holdout disjunto de 240 listings y un challenge set Land de 100 filas para precision del patrón.
+
+Evidencia: [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md).

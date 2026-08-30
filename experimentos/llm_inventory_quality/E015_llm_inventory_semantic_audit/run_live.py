@@ -10,7 +10,7 @@ from src.openai_auditor import PROMPT_PATH, SCHEMA_PATH, audit, build_payload, i
 
 
 HERE = Path(__file__).resolve().parent
-DEFAULT_INPUT = HERE / "labeling" / "labeling_sample.csv"
+DEFAULT_INPUT = HERE / "labeling" / "labeling_holdout_v2.csv"
 DEFAULT_OUTPUT = HERE / "results" / "llm_predictions.jsonl"
 
 

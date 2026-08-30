@@ -224,3 +224,28 @@ fallback ranking
 ```
 
 El audit mejora la confiabilidad del inventario; no reemplaza el scoring.
+
+
+## Revised hybrid architecture
+
+```text
+                    listing
+                       |
+            +----------+----------+
+            |                     |
+       Rules v1/v2          sampled LLM audit
+            |                     |
+       known patterns       semantic long tail
+            |                     |
+            |               new candidate pattern
+            |                     |
+            |                 human review
+            |                     |
+            |              stable + actionable?
+            |                     |
+            +----------< promote to rules
+                       |
+                  catalog QA
+```
+
+The LLM is not intended to repeatedly pay inference cost for already-known templated phrases. Its durable role is semantic anomaly/rule discovery. Deterministic rules own stable recurring patterns once validated.

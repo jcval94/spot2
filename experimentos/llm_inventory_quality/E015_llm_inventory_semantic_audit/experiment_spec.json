@@ -2,19 +2,21 @@
   "experiment_id": "E015_llm_inventory_semantic_audit",
   "experiment_type": "semantic_data_quality",
   "parent_experiment": null,
-  "question": "Does an LLM add useful semantic inconsistency detection beyond a deterministic rules baseline when auditing listing copy against structured inventory attributes?",
-  "hypothesis": "Rules + LLM increases actionable issue recall relative to Rules-only while preserving high precision on a human-labeled holdout.",
-  "primary_change": "introduce semantic claim extraction and contradiction auditing over spots.title/description against spot_attributes",
+  "question": "Does an LLM add actionable semantic inconsistency discovery beyond frozen Rules v1 and a post-discovery Rules v2 challenger when auditing listing copy against structured inventory context?",
+  "hypothesis": "The LLM adds actionable contradiction or semantic_cross_field_mismatch recall beyond deterministic rules while unsupported/not-verifiable findings remain informational.",
+  "primary_change": "expand semantic audit from direct text-vs-attribute contradictions to cross-field semantic coherence while explicitly separating actionable from informational findings",
   "data_sources": [
     "data/candidate/csv/spots.csv",
     "data/candidate/csv/spot_attributes.csv"
   ],
   "arms": [
-    "rules_only",
+    "rules_v1_frozen",
+    "rules_v2_post_discovery",
     "llm_only",
-    "rules_plus_llm"
+    "rules_v1_plus_llm",
+    "rules_v2_plus_llm"
   ],
-  "gold_standard": "human review; another LLM is not the primary judge",
+  "gold_standard": "human review on labeling_holdout_v2.csv; original 200-row sample is discovery-only; another LLM is not the primary judge",
   "metrics": [
     "precision",
     "recall",
@@ -28,14 +30,19 @@
     "input_tokens",
     "output_tokens"
   ],
-  "status": "PARTIAL_OFFLINE_COMPLETE",
+  "status": "SEMANTIC_V2_OFFLINE_PENDING_CI",
   "go_no_go": {
     "validation_targets": {
-      "critical_precision_min": 0.90,
+      "critical_precision_min": 0.9,
       "incremental_recall_pp_min": 10,
       "schema_valid_rate_min": 0.99
     },
     "note": "Thresholds are design targets to freeze before final labeled holdout evaluation; they are not observed results."
   },
-  "governance_note": "The shared Spot2 classification harness is not used because its mandatory AUC/AP/Brier contract is not semantically valid for a data-quality audit. Evidence and reproducibility remain registered through the experiment sandbox."
+  "governance_note": "The shared Spot2 classification harness is not used because its mandatory AUC/AP/Brier contract is not semantically valid for a data-quality audit. Evidence and reproducibility remain registered through the experiment sandbox.",
+  "design_revision": {
+    "reason": "Manual LLM simulation found cross-field semantic patterns not represented in v1, especially Land x building/interior language.",
+    "leakage_control": "The original 200-row sample was inspected during discovery. Rules v2 is marked post-discovery and final evaluation moves to a disjoint 240-row holdout.",
+    "actionability": "unsupported_claim, not_verifiable and ambiguous are informational and do not count as positive QA predictions."
+  }
 }

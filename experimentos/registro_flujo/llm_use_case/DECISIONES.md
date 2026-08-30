@@ -55,3 +55,28 @@
 **Estado:** actual.
 
 **Razón:** el flujo es corto y stateless. No requiere tools, handoffs, sesiones ni loops. Agents SDK/ADK/LangChain sólo se reconsideran si el sistema evoluciona a un workflow autónomo de QA.
+
+
+## D-LLM-08 — Separate actionability from observability
+
+**Decision:** unsupported/not-verifiable/ambiguous claims are informational and do not count as positive QA predictions.
+
+**Status:** current.
+
+**Reason:** absence of a comparable field is not evidence that marketing copy is false.
+
+## D-LLM-09 — Promote stable semantic patterns to rules
+
+**Decision:** use the LLM for sampled semantic discovery; once a recurring pattern is human-validated, promote it to deterministic Rules vN.
+
+**Status:** current.
+
+**Reason:** the current corpus has only 12 description sentences, so permanent LLM inference over known patterns is hard to justify.
+
+## D-LLM-10 — Preserve discovery/test separation
+
+**Decision:** original 200-row sample becomes discovery-only; evaluate the post-discovery S001 rule on disjoint sets.
+
+**Status:** current.
+
+**Reason:** prevents design leakage after manually inspecting the discovery sample.

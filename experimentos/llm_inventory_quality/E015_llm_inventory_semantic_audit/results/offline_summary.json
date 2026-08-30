@@ -1,55 +1,34 @@
 {
   "experiment_id": "E015_llm_inventory_semantic_audit",
-  "phase": "offline_baseline",
-  "copy_profile": {
-    "n_spots": 3000,
-    "unique_exact_descriptions": 856,
-    "exact_description_uniqueness_rate": 0.2853333333333333,
-    "share_rows_with_repeated_exact_description": 0.8436666666666667,
-    "unique_description_sentences": 12
+  "phase": "offline_semantic_discovery_v2",
+  "semantic_discovery": {
+    "n_observations": 3236,
+    "observations_by_pattern": {
+      "NV_all_services": 490,
+      "NV_market_demand": 520,
+      "NV_near_shopping_centers": 531,
+      "NV_road_access": 523,
+      "NV_transit_access": 506,
+      "S001": 230,
+      "S002": 109,
+      "S003": 327
+    },
+    "observations_by_classification": {
+      "ambiguous": 327,
+      "not_verifiable": 2570,
+      "semantic_cross_field_mismatch": 339
+    },
+    "n_actionable_semantic_observations": 230,
+    "n_unique_actionable_semantic_spots": 230,
+    "rules_v1_unique_flagged_spots": 322,
+    "rules_v2_unique_flagged_spots": 504,
+    "rules_v2_incremental_unique_spots": 182,
+    "rules_v2_incremental_share_inventory": 0.06066666666666667,
+    "rules_v2_note": "Rules v2 includes S001 Land x building/interior copy. It is a post-discovery challenger and must not be evaluated as if pre-registered."
   },
-  "rules": {
-    "n_spots": 3000,
-    "n_rule_candidate_issues": 330,
-    "n_unique_flagged_spots": 322,
-    "share_unique_flagged_spots": 0.10733333333333334,
-    "candidate_issues_by_claim_type": {
-      "natural_light": 153,
-      "parking": 21,
-      "readiness": 101,
-      "security": 55
-    },
-    "flagged_spots_by_issue_count": {
-      "1": 314,
-      "2": 8
-    },
-    "rule_phrase_families": {
-      "natural_light": [
-        "iluminacion natural",
-        "luz natural"
-      ],
-      "security": [
-        "seguridad 24/7",
-        "control de acceso",
-        "vigilancia",
-        "circuito cerrado"
-      ],
-      "parking": [
-        "estacionamiento",
-        "cajon de estacionamiento",
-        "cajones de estacionamiento",
-        "parking"
-      ],
-      "readiness": [
-        "listo para ocupar",
-        "recien remodelado",
-        "acabados modernos",
-        "acabados de primera"
-      ]
-    },
-    "interpretation": "Rule flags are candidate semantic conflicts requiring review; they are not gold labels."
-  },
-  "human_labeling_sample_n": 200,
+  "discovery_sample_n": 200,
+  "clean_holdout_v2_n": 240,
+  "semantic_challenge_v2_n": 100,
   "llm_executed": false,
   "conclusion": "INCOMPLETE_LLM_PENDING"
 }
