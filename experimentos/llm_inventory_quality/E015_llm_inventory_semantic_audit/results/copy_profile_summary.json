@@ -1,0 +1,7 @@
+{
+  "n_spots": 3000,
+  "unique_exact_descriptions": 856,
+  "exact_description_uniqueness_rate": 0.2853333333333333,
+  "share_rows_with_repeated_exact_description": 0.8436666666666667,
+  "unique_description_sentences": 12
+}
