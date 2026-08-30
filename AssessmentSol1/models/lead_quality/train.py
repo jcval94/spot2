@@ -120,7 +120,11 @@ def _variant_features(variant_id: str) -> list[str]:
 
 def _load_t1_development(repo_root: Path) -> pd.DataFrame:
     build_feature_artifacts(repo_root, scope="development")
-    feature_path = FEATURE_DIR / "artifacts" / "t1_features_with_selected_spot_challenger.parquet"
+    feature_path = (
+        FEATURE_DIR
+        / "artifacts"
+        / "t1_features_development_with_selected_spot_challenger.parquet"
+    )
     frame = pd.DataFrame(pl.read_parquet(feature_path).to_dicts())
     frame["score_time"] = pd.to_datetime(frame["score_time"], utc=True)
 
