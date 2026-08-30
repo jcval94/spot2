@@ -1,0 +1,64 @@
+{
+  "phase": "PROMPT_7",
+  "status": "CHAMPION_FROZEN_WITH_HOLDOUT_INTEGRITY_INCIDENT",
+  "target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+  "split_version": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "populations": {
+    "development": 4368,
+    "calibration": 312,
+    "procedural_holdout_total": 290,
+    "procedural_holdout_mature_diagnostic": 273
+  },
+  "executed_models": [
+    "BASE_RATE",
+    "BUSINESS_RULE",
+    "LOGISTIC_A",
+    "LOGISTIC_B",
+    "LOGISTIC_C",
+    "LOGISTIC_D_WITH_ASKED_VISIT",
+    "LOGISTIC_D_WITHOUT_ASKED_VISIT",
+    "LOGISTIC_E",
+    "CATBOOST_A"
+  ],
+  "champion": {
+    "model_family": "BASE_RATE",
+    "calibrator": "PLATT",
+    "raw_probability": 0.20375457875457875,
+    "final_probability": 0.2082787838279435,
+    "ranking_capability": false
+  },
+  "bootstrap": {
+    "paired_by": "lead_id",
+    "n_resamples": 2000,
+    "confidence_level": 0.95
+  },
+  "procedural_holdout": {
+    "pristine": false,
+    "status": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE",
+    "used_for_selection": false,
+    "diagnostic_only": true
+  },
+  "temporary_execution_bridge": {
+    "github_temp_files_removed": true,
+    "external_temp_document_deleted": true
+  },
+  "prerequisite_caveat": {
+    "p4_polars_validate_abts_executed_in_this_session": false,
+    "note": "P7 rebuilt T1 inputs directly from raw under frozen contracts, but the repository-wide P4 Polars materialization gate remains pending and must be run before final assessment packaging."
+  },
+  "authoritative_outputs": [
+    "models/lead_quality/FROZEN_MODEL_CONFIG.json",
+    "models/lead_quality/MODEL_SELECTION.md",
+    "models/lead_quality/MODEL_CARD.md",
+    "models/lead_quality/CALIBRATION.md",
+    "models/lead_quality/ERROR_ANALYSIS.md",
+    "models/lead_quality/HOLDOUT_INCIDENT.md",
+    "models/lead_quality/metrics/development_fold_metrics.csv",
+    "models/lead_quality/metrics/development_macro_metrics.csv",
+    "models/lead_quality/metrics/bootstrap_comparisons.csv",
+    "models/lead_quality/metrics/calibration_metrics.csv",
+    "models/lead_quality/predictions/champion_development_oof.csv",
+    "models/lead_quality/predictions/calibration_predictions.csv",
+    "models/lead_quality/predictions/procedural_holdout_predictions.csv"
+  ]
+}
