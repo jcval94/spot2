@@ -30,3 +30,16 @@ The validator rebuilds from `data/candidate/**` and writes:
 under `AssessmentSol1/abt/artifacts/`.
 
 The older P3 files (`build_score_spine.py`, `build_lead_quality_abt.py`, `build_candidate_spots.py`, `build_inventory_state.py`) are superseded and must not be used for downstream P4 modeling. They remain only to preserve prior research chronology.
+
+
+## Current gate status
+
+An independent raw-equivalence execution has now produced:
+
+- `artifacts/p4_qa_summary.json` with `status = PASS`;
+- `artifacts/p4_artifact_manifest.json`;
+- `artifacts/AUTHORITY.json`.
+
+This closes the P4 **temporal-validity gate** for downstream stage analysis without reusing P3 outputs.
+
+The exact Polars builder/materialization command above remains recommended before final packaging to prove code-path reproducibility and regenerate the full Parquet views.
