@@ -1,0 +1,5 @@
+gate,value,reference,status
+clean_control_incremental_issue_rate,0.0,<=0.10 preferred,PASS
+rules_positive_new_rule_rate,0.0,<=0.10 preferred,PASS
+residual_incremental_issue_rate,0.52,descriptive; human precision required,REVIEW
+residual_new_rule_candidate_rate,0.0,descriptive; inspect repeated patterns,REVIEW

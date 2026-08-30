@@ -1,0 +1,102 @@
+{
+  "experiment_id": "E017_llm_semantic_feature_pilot",
+  "parent_experiment": "E016_abt_feature_engineering_v1",
+  "question": "Does a very-low-cost LLM identify actionable semantic information in listing copy that is incremental to deterministic rules?",
+  "hypothesis": "On a controlled 100-record stress test, gpt-5-nano can identify residual cross-field semantic issues or reusable rule candidates beyond literal rule-based checks while maintaining low false-positive behavior on clean controls.",
+  "primary_change": "add an LLM residual semantic audit after deterministic rule extraction",
+  "secondary_changes": [
+    "balanced 100-record challenge sample",
+    "strict structured output",
+    "token-minimized batching",
+    "explicit cost accounting",
+    "hard 100-record API safety gate"
+  ],
+  "scoring_time": {
+    "stage": "inventory QA / optional T1-T2 sidecar",
+    "timestamp_definition": "listing copy and structured attributes available on the spot record; no future inquiry or outcome data is sent"
+  },
+  "target": {
+    "event": "human-actionable incremental semantic issue",
+    "horizon_days": null,
+    "anchor": "listing audit",
+    "censoring": "not applicable"
+  },
+  "population": {
+    "eligibility": "100 deterministic records across rules-positive, Land semantic residual, ambiguity challenge, and clean-control strata",
+    "exclusions": [
+      "raw inquiry outcomes",
+      "market context",
+      "pricing/geography fields irrelevant to semantic QA",
+      "catalog-wide API execution before pilot review"
+    ]
+  },
+  "data_sources": [
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "experimentos/llm_semantic_feature_pilot/data/pilot_input_100.csv"
+  ],
+  "features": {
+    "inherited": [
+      "deterministic claim flags",
+      "deterministic direct contradiction flags",
+      "Land building-copy rule"
+    ],
+    "added": [
+      "llm_incremental_issue",
+      "llm_new_rule_candidate",
+      "llm_semantic_class",
+      "llm_actionability",
+      "llm_use_case_family",
+      "llm_adaptive_reuse_plausible",
+      "llm_requires_human_review",
+      "llm_confidence",
+      "llm_reason_code"
+    ],
+    "removed": [
+      "free-form LLM rationale",
+      "LLM extraction of claims already available through rules"
+    ]
+  },
+  "validation": {
+    "strategy": "100-record balanced stress test before any scale-up",
+    "time_column": null,
+    "split_description": "25 rules-positive, 25 Land semantic residual, 25 ambiguity challenge, 25 clean controls. This sample evaluates incremental semantics and false positives; it is not a prevalence sample."
+  },
+  "metrics": [
+    "incremental_issue_rate",
+    "new_rule_candidate_rate",
+    "clean_control_false_positive_rate",
+    "rules_positive_incremental_rate",
+    "human_review_rate",
+    "input_tokens",
+    "output_tokens",
+    "estimated_cost_usd"
+  ],
+  "segments": [
+    "rules_positive",
+    "land_semantic_residual",
+    "ambiguity_challenge",
+    "clean_control"
+  ],
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN_PENDING_API_RUN",
+    "items": [
+      {
+        "element": "listing semantic input",
+        "source": "spots + spot_attributes",
+        "scoring_time": "listing audit",
+        "information_available_at": "listing data",
+        "status": "ALLOW",
+        "evidence": "Only current listing text and structured listing attributes are sent."
+      },
+      {
+        "element": "inquiry/outcome information",
+        "source": "inquiries",
+        "scoring_time": "listing audit",
+        "information_available_at": "not used",
+        "status": "BLOCK",
+        "evidence": "No inquiry, response, conversion, or future outcome information is part of the LLM payload."
+      }
+    ]
+  }
+}
