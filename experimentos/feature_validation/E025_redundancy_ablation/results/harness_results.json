@@ -1,0 +1,43 @@
+{
+  "experiment_id": "E025_redundancy_ablation",
+  "metrics": {
+    "roc_auc": 0.5532891596348805,
+    "average_precision": 0.5197944085840179,
+    "brier": 0.24505867383165944,
+    "log_loss": 0.6834328428220378,
+    "lift_top_10pct": 1.0728926736191016,
+    "recall_top_20pct": 0.22315045098819472
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.4650372411287392,
+      "average_precision": 0.47258459416671617,
+      "brier": 0.2506236366410492,
+      "log_loss": 0.6943973937775123,
+      "lift_top_10pct": 0.8044797191590033,
+      "recall_top_20pct": 0.181058495821727
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.584629617500655,
+      "average_precision": 0.5613705877211884,
+      "brier": 0.24407956883848922,
+      "log_loss": 0.6811129596730472,
+      "lift_top_10pct": 1.0780032467532468,
+      "recall_top_20pct": 0.21875
+    },
+    "T2_engaged": {
+      "roc_auc": 0.6102006202752471,
+      "average_precision": 0.5254280438641492,
+      "brier": 0.24047281601543993,
+      "log_loss": 0.6747881750155538,
+      "lift_top_10pct": 1.3361950549450547,
+      "recall_top_20pct": 0.26964285714285713
+    }
+  },
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "Non-inferiority margin is -0.01 for macro AP and macro ROC-AUC.",
+    "Lead-Spot budget ratios are retained; the experiment tests direct redundancy of raw Spot total-price columns, not the value of economic fit."
+  ],
+  "next_experiment": "Ablate prior_searches and prior_inquiries separately to test whether their near-zero correlation corresponds to distinct predictive signal."
+}

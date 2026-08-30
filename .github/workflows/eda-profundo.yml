@@ -1,0 +1,84 @@
+name: EDA profundo
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - experimentos/drift-feature-validation
+    paths:
+      - "experimentos/eda_profundo/**"
+      - "data/candidate/csv/**"
+      - ".github/workflows/eda-profundo.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experimentos/eda_profundo/**"
+      - "data/candidate/csv/**"
+      - ".github/workflows/eda-profundo.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deep-eda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/eda_profundo/requirements.txt
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/eda_profundo/requirements.txt
+
+      - name: Compile
+        run: python -m py_compile experimentos/eda_profundo/run_deep_eda.py
+
+      - name: Run deep EDA
+        run: python experimentos/eda_profundo/run_deep_eda.py
+
+      - name: Validate outputs
+        run: |
+          test -s experimentos/eda_profundo/results/summary.json
+          test -s experimentos/eda_profundo/results/numeric_summary.csv
+          test -s experimentos/eda_profundo/results/stratified_outliers.csv
+          test -s experimentos/eda_profundo/results/iforest_summary.csv
+          test -s experimentos/eda_profundo/results/deterministic_relationships.csv
+          test -s experimentos/eda_profundo/results/cohort_dynamics.csv
+          test -s experimentos/eda_profundo/results/selected_correlations.csv
+          test -s experimentos/eda_profundo/results/iforest_univariate_overlap.csv
+          test -s experimentos/eda_profundo/results/current_state_temporal_consistency.csv
+          test -s experimentos/eda_profundo/results/availability_snapshot_gap_summary.csv
+          test -s experimentos/eda_profundo/results/missingness_semantics.csv
+          test -s experimentos/eda_profundo/results/iforest_proxy_tail_diagnostic.csv
+          test -s experimentos/eda_profundo/figures/08_area_ratio_clipping_hist.svg
+          test -s experimentos/eda_profundo/figures/14_iforest_score_ranges.svg
+          test -s experimentos/eda_profundo/figures/19_days_on_market_temporal_consistency.svg
+          test -s experimentos/eda_profundo/figures/20_iforest_tail_proxy_diagnostic.svg
+
+      - name: Publish summary
+        if: always()
+        run: |
+          cat experimentos/eda_profundo/FINDINGS.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit reproducible EDA outputs
+        if: github.event_name == 'push' && github.ref == 'refs/heads/experimentos/drift-feature-validation'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/eda_profundo/results/ experimentos/eda_profundo/figures/
+          if git diff --cached --quiet; then
+            echo "No EDA output changes."
+          else
+            git commit -m "Add E020 deep EDA results [skip ci]"
+            git push
+          fi

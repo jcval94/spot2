@@ -1,0 +1,33 @@
+{
+  "experiment_id": "E035_outcome_free_advanced_fe",
+  "parent_experiments": [
+    "E030_definitive_abt",
+    "E031_semantic_feature_engineering_ladder",
+    "E032_t0_semantic_recovery",
+    "E033_t1_semantic_recovery"
+  ],
+  "status": "PRE_REGISTERED_DEVELOPMENT",
+  "question": "Can outcome-free robust encodings recover development signal for T0/T1 after semantic clusters failed?",
+  "primary_change": "Add train-only missingness patterns, categorical frequency encodings, quantile bins, inventory-relative ratios and preferred-geo centroid distances.",
+  "target": {
+    "name": "target_scheduled_visit_30d",
+    "source": "E028"
+  },
+  "population": "E030 train split only; E030 validation/test are not used.",
+  "validation": {
+    "strategy": "3 expanding rolling lead-cohort folds inside E030 train",
+    "selection": "Compare atomic, missingness_frequency, robust_bins, geo_inventory_relative and combined_v2.",
+    "promotion": "Development challenger only; no production/recovery claim without new independent cohort."
+  },
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN",
+    "items": [
+      "All encoders fit on each fold training slice only.",
+      "Frequency encoding is outcome-free.",
+      "Quantile edges are fit on past fold only.",
+      "Inventory reference statistics use fold-train rows only and no outcome.",
+      "Geo centroids use fold-train Spot coordinates only.",
+      "No E030 val/test, raw clocks, Availability LeadQuality, broker outcomes or current-state Spot aggregates."
+    ]
+  }
+}

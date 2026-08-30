@@ -1,0 +1,7 @@
+entity,isolation_forest_flag,n,share_with_any_univariate_extreme
+inquiry,False,21891,0.0372755927093326
+inquiry,True,685,0.41897810218978104
+lead,False,4845,0.03673890608875129
+lead,True,155,0.25806451612903225
+spot,False,2906,0.05196145905024088
+spot,True,94,0.46808510638297873

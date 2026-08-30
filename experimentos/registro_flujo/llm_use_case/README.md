@@ -38,3 +38,17 @@ La nueva propuesta sí explota un tipo de información que requiere interpretaci
 - [EV-008 — propuesta histórica de triage](../../Evidencias/EV-008_llm_triage.md)
 - [EV-014 — propuesta actual de Inventory Semantic Quality](../../Evidencias/EV-014_llm_inventory_quality.md)
 - [Plan actual](../../llm_inventory_quality/PLAN.md)
+
+
+## Extensión futura — E039 Semantic Inquiry Features
+
+La recuperación T0/T1 identificó una oportunidad de mayor impacto potencial: usar un LLM para extraer intención, restricciones, flexibilidad, readiness, compatibilidad Lead×Spot y trayectoria desde el texto real de las inquiries.
+
+Esta línea está diseñada en [E039](../../feature_validation/E039_llm_semantic_inquiry_features/) pero permanece **BLOCKED_BY_DATA_GAP** porque el paquete actual sólo contiene `message_length` y no el mensaje bruto.
+
+Por tanto:
+
+- **uso LLM ejecutable actual del assessment:** Inventory Semantic Quality;
+- **uso LLM futuro para Lead Opportunity:** Semantic Inquiry Feature Extractor, sólo cuando exista texto real.
+
+E039 no debe simularse generando mensajes desde columnas estructuradas.

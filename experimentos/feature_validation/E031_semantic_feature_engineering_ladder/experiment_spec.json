@@ -1,0 +1,43 @@
+{
+  "experiment_id": "E031_semantic_feature_engineering_ladder",
+  "parent_experiments": [
+    "E030_definitive_abt"
+  ],
+  "status": "PRE_REGISTERED",
+  "question": "Which point-in-time feature-engineering families add stable signal for T0 and T1 without temporal clocks or outcome-derived features?",
+  "primary_change": "Compare a pre-registered ladder on train/validation only: atomic sanitized baseline; continuous/specificity transforms; semantic Need features; train-only soft clusters; and Lead×Spot semantic interactions.",
+  "target": {
+    "name": "target_scheduled_visit_30d",
+    "source": "E028 target_contract.json"
+  },
+  "abt": {
+    "source": "E030_definitive_abt/results/abt_model_ready.csv.gz",
+    "split_unit": "lead_id"
+  },
+  "validation": "Development only. Train fits transformations/models; validation chooses one winner per stage. E030 test is not inspected by E031.",
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN",
+    "items": [
+      {
+        "element": "guardrail_1",
+        "status": "ALLOW",
+        "evidence": "All derived features use fields observable at score_time."
+      },
+      {
+        "element": "guardrail_2",
+        "status": "ALLOW",
+        "evidence": "All clusterers fit on train only and never see target."
+      },
+      {
+        "element": "guardrail_3",
+        "status": "ALLOW",
+        "evidence": "No calendar/progress clocks, Availability LeadQuality fields, broker outcomes/prior, Market Context, or current-state Spot aggregates."
+      },
+      {
+        "element": "guardrail_4",
+        "status": "ALLOW",
+        "evidence": "Validation may select a candidate; test remains sealed for E032/E033."
+      }
+    ]
+  }
+}

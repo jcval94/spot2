@@ -1,0 +1,70 @@
+{
+  "experiment_id": "E028_definitive_opportunity_score_abt",
+  "status": "TEMPLATE_NOT_FROZEN",
+  "release_manifest_version": "v1",
+  "git_sha": null,
+  "model_artifact_version": null,
+  "calibrator_version": null,
+  "feature_schema_hash": null,
+  "treatment_policy_hash": null,
+  "ab_test_protocol_hash": null,
+  "target_version": "target_scheduled_visit_30d / lead_scheduled_visit_30d_from_assignment v1",
+  "stage_policy": {
+    "T0": "neutral unless future-cohort validated",
+    "T1": "neutral unless future-cohort validated",
+    "T2": "rank only if drift-sanitized future-cohort gate passes"
+  },
+  "explicitly_blocked_predictive_inputs": [
+    "score_weekday",
+    "score_hour",
+    "score_month",
+    "days_from_lead_creation",
+    "inquiry_number",
+    "days_since_first_inquiry",
+    "prior_searches",
+    "broker historical prior",
+    "availability_snapshot_age_days raw",
+    "lead_score_internal",
+    "current/future broker response fields",
+    "spot current-state aggregates not reconstructed point-in-time",
+    "Market Context without publication/effective-time semantics"
+  ],
+  "inventory_policy": {
+    "historical_snapshot_age_gt_90_days": "unknown",
+    "production_source": "live/current inventory preferred",
+    "serviceability_type": "auditable binary business rule"
+  },
+  "assignment": {
+    "unit": "lead_id",
+    "allocation": "50/50 sticky",
+    "strata": [
+      "search_sector",
+      "search_modality",
+      "user_type"
+    ],
+    "assignment_before_scoring": true
+  },
+  "primary_outcome": "lead_scheduled_visit_30d_from_assignment",
+  "horizon_days": 30,
+  "minimum_practical_absolute_lift_pp": 2,
+  "required_matured_per_arm": 9806,
+  "required_checks_before_freeze": [
+    "E029 prospective post-freeze validation passed",
+    "A/A protocol dry run passed",
+    "production instrumentation A/A passed",
+    "all hashes/versions above populated"
+  ],
+  "frozen_at": null,
+  "frozen_by": null,
+  "candidate_source": "E029_drift_sanitized_release_candidate",
+  "candidate_artifact_status": "FROZEN_AWAITING_PROSPECTIVE_GATE",
+  "candidate_manifest": "../E029_drift_sanitized_release_candidate/artifacts/release_manifest_candidate.json",
+  "pending_before_final_freeze": [
+    "E029 prospective gate PASS",
+    "production A/A instrumentation PASS",
+    "scheduled_visit backend timestamp completeness >=99.5%",
+    "copy approved E029 artifact hashes into this final manifest",
+    "populate treatment policy and AB protocol hashes",
+    "set final git SHA and frozen_at"
+  ]
+}

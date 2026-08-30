@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-30T00:48:05.314912+00:00",
+  "git_sha": "cd6d3c9f8c883dc03d8c3da3874bd6dcd1457fb9",
+  "experiment_id": "E026_prior_history_ablation",
+  "parent_experiment": "E005_multihead_vs_specialists",
+  "primary_change": "ablate prior_searches and prior_inquiries separately and jointly under the frozen RF benchmark",
+  "spec_sha256": "2fd96fe5c2d6996ae1edb52ed2d056f776d5efaae581f0c7979a8299b526649f",
+  "data_fingerprints": [
+    {
+      "path": "data/candidate/csv/leads.csv",
+      "sha256": "0df1e893137d5a56afb73df9870a794597aa35eb9f9ca14f89ae69615f3b65a4"
+    },
+    {
+      "path": "data/candidate/csv/inquiries.csv",
+      "sha256": "e0a59bc558e0aa4df4141751c63c4e0193e3681b771aac2f5439ebd90b752eb6"
+    },
+    {
+      "path": "data/candidate/csv/spots.csv",
+      "sha256": "e5e3640430567b2430ab5e37dba28f30c6186693f184c4c3e744018d689f7b0c"
+    },
+    {
+      "path": "data/candidate/csv/spot_attributes.csv",
+      "sha256": "a22c42f5bcf9c3b7b07c5c65d0926d43474cc82702389c8322bd1f37f3953fe9"
+    },
+    {
+      "path": "data/candidate/csv/availability_snapshot.csv",
+      "sha256": "c2e292390dd874291214a28c62e294a1d7c5d23338a4fa683352e44be877e59d"
+    }
+  ],
+  "leakage_check": "PASS",
+  "comparison": {
+    "status": "EQUIVALENT",
+    "reasons": []
+  },
+  "metrics": {
+    "roc_auc": 0.5626545885449855,
+    "average_precision": 0.5238706150089498,
+    "brier": 0.24472366886992317,
+    "log_loss": 0.6826531718781585,
+    "lift_top_10pct": 1.1195456912524393,
+    "recall_top_20pct": 0.23050719591457755
+  },
+  "metric_deltas_vs_parent": {
+    "average_precision": 0.006394696655069643,
+    "brier": -0.0004753326024365956,
+    "lift_top_10pct": 0.003098973127519722,
+    "log_loss": -0.001098006503672977,
+    "recall_top_20pct": 0.010475527258257067,
+    "roc_auc": 0.006595163765112266
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.48198498243914256,
+      "average_precision": 0.48213797106169337,
+      "brier": 0.2504530808216692,
+      "log_loss": 0.6940548218763855,
+      "lift_top_10pct": 0.8877017590720035,
+      "recall_top_20pct": 0.1977715877437326
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.593880992926382,
+      "average_precision": 0.5599476952724981,
+      "brier": 0.2436147104411934,
+      "log_loss": 0.6802350052118855,
+      "lift_top_10pct": 1.1347402597402596,
+      "recall_top_20pct": 0.21875
+    },
+    "T2_engaged": {
+      "roc_auc": 0.612097790269432,
+      "average_precision": 0.529526178692658,
+      "brier": 0.24010321534690687,
+      "log_loss": 0.6736696885462047,
+      "lift_top_10pct": 1.3361950549450547,
+      "recall_top_20pct": 0.275
+    }
+  },
+  "conclusion": "NOT_SUPPORTED",
+  "caveats": [
+    "Near-zero raw correlation does not imply redundancy; this experiment uses predictive ablation to test incremental contribution.",
+    "Both fields are fixed lead-intake information and point-in-time safe at T0/T1/T2."
+  ],
+  "next_experiment": "Add a strictly point-in-time smoothed broker history prior without using broker identity itself.",
+  "spec": {
+    "experiment_id": "E026_prior_history_ablation",
+    "parent_experiment": "E005_multihead_vs_specialists",
+    "scoring_time": {
+      "stage": "T0/T1/T2",
+      "timestamp_definition": "T0=leads.created_at; T1=first inquiries.inquiry_at; T2=second and later inquiries.inquiry_at while no scheduled_visit has already occurred"
+    },
+    "target": {
+      "event": "future scheduled_visit response event",
+      "horizon_days": 30,
+      "anchor": "scoring_time",
+      "censoring": "right"
+    },
+    "population": {
+      "eligibility": "Scoring snapshots with a complete 30-day future observation window; T1/T2 are generated only before a known scheduled visit has occurred.",
+      "exclusions": [
+        "Right-censored scoring snapshots.",
+        "Dynamic snapshots after an already observed scheduled visit.",
+        "Current/future broker-response information from model inputs."
+      ],
+      "period": {
+        "start": null,
+        "end": null
+      }
+    },
+    "data_sources": [
+      "data/candidate/csv/leads.csv",
+      "data/candidate/csv/inquiries.csv",
+      "data/candidate/csv/spots.csv",
+      "data/candidate/csv/spot_attributes.csv",
+      "data/candidate/csv/availability_snapshot.csv"
+    ],
+    "metrics": [
+      "roc_auc",
+      "average_precision",
+      "brier",
+      "log_loss",
+      "lift_top_10pct",
+      "recall_top_20pct"
+    ],
+    "segments": [
+      "T0_cold",
+      "T1_first_inquiry",
+      "T2_engaged"
+    ],
+    "question": "Do prior_searches and prior_inquiries provide distinct incremental predictive information despite near-zero raw correlation?",
+    "hypothesis": "Each field will show positive incremental AP when ablated separately if they encode distinct useful aspects of lead history.",
+    "primary_change": "ablate prior_searches and prior_inquiries separately and jointly under the frozen RF benchmark",
+    "secondary_changes": [],
+    "features": {
+      "inherited": [
+        "lead_intake_features",
+        "current_inquiry_features",
+        "current_spot_static_features",
+        "lead_spot_compatibility_features",
+        "availability_asof_features",
+        "historical_interactions_asof_features"
+      ],
+      "added": [],
+      "removed": [
+        "prior_searches",
+        "prior_inquiries"
+      ]
+    },
+    "validation": {
+      "strategy": "temporal lead-cohort train/validation/test",
+      "time_column": "leads.created_at",
+      "split_description": "Chronological 70/15/15 split by lead creation; every T0/T1/T2 snapshot for a lead is assigned to the same partition. Validation controls early stopping and calibration; test is untouched until final evaluation."
+    },
+    "leakage": {
+      "check_status": "PASS",
+      "items": [
+        {
+          "element": "inherited_point_in_time_feature_set",
+          "source": "leads + inquiries + spots + spot_attributes + availability_snapshot",
+          "scoring_time": "T0/T1/T2",
+          "information_available_at": "same point-in-time rules as E005",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Inherited unchanged from E005; lead_score_internal, current broker outcome/timing and mutable current-state Spot aggregates remain blocked."
+        }
+      ]
+    }
+  }
+}

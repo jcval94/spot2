@@ -1,0 +1,37 @@
+{
+  "label_audit": {
+    "all_snapshots_before_canonical_filter": 19715,
+    "eligible_t2_snapshots": 9067,
+    "eligible_t2_unique_leads": 3328,
+    "first_t2_unique_leads": 3328,
+    "positive_rate_t2_all": 0.3324142494761222,
+    "positive_rate_first_t2": 0.38912259615384615,
+    "target_observation_end": "2026-07-14 13:01:24",
+    "ambiguous_rows_all_stages": 1478,
+    "ambiguous_share_all_stages": 0.0749682982500634
+  },
+  "historical_sanity_pass": true,
+  "historical_calibration_partition_metrics": {
+    "n": 666.0,
+    "positive_rate": 0.5075075075075075,
+    "roc_auc": 0.5428452879203347,
+    "average_precision": 0.5423915544020586,
+    "brier": 0.24927016665528012,
+    "log_loss": 0.6917298924972363,
+    "lift_top_10pct": 1.1469575200918485,
+    "recall_top_20pct": 0.22189349112426035,
+    "ap_over_prevalence": 1.0687360213957722
+  },
+  "rolling_post_selection_summary": {
+    "n_folds": 5,
+    "auc_min": 0.5020992772108843,
+    "auc_mean": 0.5343559651515516,
+    "auc_max": 0.5869145029315121,
+    "ap_over_prevalence_min": 0.984714903006182,
+    "lift_top10_min": 0.8023892483822797
+  },
+  "max_numeric_psi_train_vs_calibration": 0.0741411951395578,
+  "artifact_status": "FROZEN_AWAITING_PROSPECTIVE_GATE",
+  "launch_eligible": false,
+  "reason_launch_not_eligible": "No genuinely post-freeze matured cohort exists in the candidate package; prospective gate is mandatory."
+}

@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "checks": {
+    "non_empty": true,
+    "prediction_key_unique": true,
+    "model_ready_target_binary_observed_only": true,
+    "audit_preserves_ambiguous_and_censoring": true,
+    "forbidden_columns_absent": true,
+    "model_features_match_e029": true,
+    "blocked_features_not_model_features": true,
+    "availability_separated_as_policy_guardrail": true,
+    "lead_split_isolation": true,
+    "chronological_split_order": true,
+    "stage_semantics": true,
+    "release_stage_policy": true,
+    "sample_weights_present": true,
+    "summary_reconciles": true
+  },
+  "audit_rows": 20738,
+  "model_ready_rows": 18237,
+  "model_ready_unique_leads": 4648,
+  "model_feature_count": 68,
+  "policy_guardrail_count": 10,
+  "split_created_at_ranges": {
+    "test": {
+      "min": "2026-03-23 00:00:00",
+      "max": "2026-06-14 00:00:00"
+    },
+    "train": {
+      "min": "2025-01-01 00:00:00",
+      "max": "2026-01-02 00:00:00"
+    },
+    "val": {
+      "min": "2026-01-02 00:00:00",
+      "max": "2026-03-23 00:00:00"
+    }
+  },
+  "target_status_counts": {
+    "NEGATIVE": 11530,
+    "POSITIVE": 6707,
+    "AMBIGUOUS_UNKNOWN_EVENT_TIME": 1478,
+    "RIGHT_CENSORED": 1023
+  }
+}

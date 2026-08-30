@@ -1,0 +1,136 @@
+# E029 is a post-selection build-and-freeze workflow; launch requires a post-freeze cohort.
+name: E029 drift-sanitized release candidate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - experimentos/drift-feature-validation
+    paths:
+      - "experimentos/feature_validation/E029_drift_sanitized_release_candidate/**"
+      - "experimentos/feature_validation/common.py"
+      - "experimentos/feature_validation/E028_definitive_opportunity_score_abt/target_contract.py"
+      - "experimentos/modelo_3/*.py"
+      - "data/candidate/**"
+      - ".github/workflows/e029-drift-sanitized-release-candidate.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experimentos/feature_validation/E029_drift_sanitized_release_candidate/**"
+      - "experimentos/Evidencias/EV-029_drift_sanitized_release_candidate.md"
+      - ".github/workflows/e029-drift-sanitized-release-candidate.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: e029-release-candidate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/feature_validation/E029_drift_sanitized_release_candidate/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/feature_validation/E029_drift_sanitized_release_candidate/requirements.txt
+
+      - name: Validate contract
+        run: |
+          python -m py_compile experimentos/feature_validation/E029_drift_sanitized_release_candidate/run_experiment.py
+          python experimentos/_sistema/harness/experiment_harness.py validate             --spec experimentos/feature_validation/E029_drift_sanitized_release_candidate/experiment_spec.json             --parent-spec experimentos/modelo_3/benchmark_specialists/experiment_spec.json             --repo-root .
+
+      - name: Build frozen candidate
+        run: python experimentos/feature_validation/E029_drift_sanitized_release_candidate/run_experiment.py
+
+      - name: Validate outputs
+        run: |
+          set -euo pipefail
+          base="experimentos/feature_validation/E029_drift_sanitized_release_candidate"
+          test -s "$base/results/summary.json"
+          test -s "$base/results/REPORT.md"
+          test -s "$base/results/harness_results.json"
+          test -s "$base/results/target_status_audit.csv"
+          test -s "$base/results/rolling_post_selection_diagnostic.csv"
+          test -s "$base/results/historical_calibration_partition_bootstrap.csv"
+          test -s "$base/results/feature_psi_train_vs_calibration.csv"
+          test -s "$base/artifacts/preprocessor.joblib"
+          test -s "$base/artifacts/rf_t2.joblib"
+          test -s "$base/artifacts/feature_schema.json"
+          test -s "$base/artifacts/release_manifest_candidate.json"
+          test -s "$base/prospective_gate.json"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base = Path("experimentos/feature_validation/E029_drift_sanitized_release_candidate")
+          summary = json.loads((base / "results/summary.json").read_text())
+          manifest = json.loads((base / "artifacts/release_manifest_candidate.json").read_text())
+          gate = json.loads((base / "prospective_gate.json").read_text())
+          if manifest.get("launch_eligible") is not False:
+              raise SystemExit("Historical E029 execution must never set launch_eligible=true.")
+          if gate.get("status") != "AWAITING_POST_FREEZE_COHORT":
+              raise SystemExit("Prospective gate status is not frozen/pending.")
+          if summary.get("reason_launch_not_eligible") is None:
+              raise SystemExit("Missing explicit launch blocker.")
+          print("E029 historical execution correctly remains non-launching.")
+          PY
+
+      - name: Finalize harness record
+        run: |
+          dest="experimentos/Evidencias/harness_records/E029_drift_sanitized_release_candidate/record.json"
+          if [ ! -s "$dest" ]; then
+            python experimentos/_sistema/harness/experiment_harness.py finalize               --spec experimentos/feature_validation/E029_drift_sanitized_release_candidate/experiment_spec.json               --results experimentos/feature_validation/E029_drift_sanitized_release_candidate/results/harness_results.json               --parent-spec experimentos/modelo_3/benchmark_specialists/experiment_spec.json               --parent-results experimentos/modelo_3/benchmark_specialists/results/harness_results.json               --repo-root .               --output-dir experimentos/Evidencias/harness_records
+          fi
+
+      - name: Publish report
+        if: always()
+        run: |
+          f="experimentos/feature_validation/E029_drift_sanitized_release_candidate/results/REPORT.md"
+          if [ -f "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - name: Commit frozen artifacts and evidence
+        if: github.event_name == 'push' && github.ref == 'refs/heads/experimentos/drift-feature-validation'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/feature_validation/E029_drift_sanitized_release_candidate/results/
+          git add experimentos/feature_validation/E029_drift_sanitized_release_candidate/artifacts/
+          git add experimentos/feature_validation/E029_drift_sanitized_release_candidate/prospective_gate.json
+          git add experimentos/Evidencias/harness_records/E029_drift_sanitized_release_candidate/
+          if git diff --cached --quiet; then
+            echo "No E029 output changes."
+          else
+            git commit -m "Add E029 frozen release candidate [skip ci]"
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}"
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e029-drift-sanitized-release-candidate
+          path: |
+            experimentos/feature_validation/E029_drift_sanitized_release_candidate/results/
+            experimentos/feature_validation/E029_drift_sanitized_release_candidate/artifacts/
+            experimentos/feature_validation/E029_drift_sanitized_release_candidate/prospective_gate.json
+            experimentos/Evidencias/harness_records/E029_drift_sanitized_release_candidate/
+          if-no-files-found: warn
+          retention-days: 30

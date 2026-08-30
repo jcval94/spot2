@@ -1,0 +1,109 @@
+{
+  "experiment_id": "E022_temporal_feature_ablation",
+  "parent_experiment": "E005_multihead_vs_specialists",
+  "scoring_time": {
+    "stage": "T0/T1/T2",
+    "timestamp_definition": "T0=leads.created_at; T1=first inquiries.inquiry_at; T2=second and later inquiries.inquiry_at while no scheduled_visit has already occurred"
+  },
+  "target": {
+    "event": "future scheduled_visit response event",
+    "horizon_days": 30,
+    "anchor": "scoring_time",
+    "censoring": "right"
+  },
+  "population": {
+    "eligibility": "Scoring snapshots with a complete 30-day future observation window; T1/T2 are generated only before a known scheduled visit has occurred.",
+    "exclusions": [
+      "Right-censored scoring snapshots.",
+      "Dynamic snapshots after an already observed scheduled visit.",
+      "Current/future broker-response information from model inputs."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "T0_cold",
+    "T1_first_inquiry",
+    "T2_engaged"
+  ],
+  "question": "How much of the frozen RF specialist's held-out performance depends on calendar and funnel-progress clocks that may capture temporal drift?",
+  "hypothesis": "If drift-sensitive timing/progress variables materially drive the model, removing them will reduce held-out AP/AUC and a time-proxy-only diagnostic will retain non-trivial discrimination.",
+  "primary_change": "remove calendar and funnel-progress timing features while holding model, target, population and frozen temporal split fixed",
+  "secondary_changes": [
+    "fit a diagnostic time-proxy-only model using safe cohort/time indices; it is not a production candidate"
+  ],
+  "features": {
+    "inherited": [
+      "lead_intake_features",
+      "current_inquiry_features",
+      "current_spot_static_features",
+      "lead_spot_compatibility_features",
+      "availability_asof_features",
+      "historical_interactions_asof_features"
+    ],
+    "added": [
+      "lead_cohort_index",
+      "score_time_index"
+    ],
+    "removed": [
+      "score_weekday",
+      "score_hour",
+      "score_month",
+      "days_from_lead_creation",
+      "inquiry_number",
+      "days_since_first_inquiry"
+    ]
+  },
+  "validation": {
+    "strategy": "temporal lead-cohort train/validation/test",
+    "time_column": "leads.created_at",
+    "split_description": "Chronological 70/15/15 split by lead creation; every T0/T1/T2 snapshot for a lead is assigned to the same partition. Validation controls early stopping and calibration; test is untouched until final evaluation."
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "inherited_point_in_time_feature_set",
+        "source": "leads + inquiries + spots + spot_attributes + availability_snapshot",
+        "scoring_time": "T0/T1/T2",
+        "information_available_at": "same point-in-time rules as E005",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Inherited unchanged from E005; lead_score_internal, current broker outcome/timing and mutable current-state Spot aggregates remain blocked."
+      },
+      {
+        "element": "lead_cohort_index",
+        "source": "leads.created_at",
+        "scoring_time": "T0/T1/T2",
+        "information_available_at": "leads.created_at",
+        "status": "ALLOW",
+        "evidence": "Derived only from the lead creation timestamp and used solely in the diagnostic time-proxy-only model."
+      },
+      {
+        "element": "score_time_index",
+        "source": "declared scoring timestamp",
+        "scoring_time": "T0/T1/T2",
+        "information_available_at": "score_time",
+        "status": "ALLOW",
+        "evidence": "Derived from the scoring timestamp itself and used only to diagnose temporal regime dependence."
+      }
+    ]
+  }
+}

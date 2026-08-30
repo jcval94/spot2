@@ -1,0 +1,372 @@
+name: Drift and feature validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - experimentos/drift-feature-validation
+    paths:
+      - "experimentos/feature_validation/common.py"
+      - "experimentos/feature_validation/run_all.py"
+      - "experimentos/feature_validation/requirements.txt"
+      - "experimentos/feature_validation/E021_temporal_drift_stress/**"
+      - "experimentos/feature_validation/E022_temporal_feature_ablation/**"
+      - "experimentos/feature_validation/E023_availability_staleness/**"
+      - "experimentos/feature_validation/E024_outlier_handling/**"
+      - "experimentos/feature_validation/E025_redundancy_ablation/**"
+      - "experimentos/feature_validation/E026_prior_history_ablation/**"
+      - "experimentos/feature_validation/E027_broker_prior_point_in_time/**"
+      - "experimentos/feature_validation/E029_drift_sanitized_release_candidate/**"
+      - "experimentos/feature_validation/E030_definitive_abt/**"
+      - "experimentos/eda_profundo/**"
+      - "experimentos/modelo_3/*.py"
+      - "experimentos/modelo_3/benchmark_specialists/results/**"
+      - "data/candidate/**"
+      - "experimentos/_sistema/harness/**"
+      - ".github/workflows/feature-validation.yml"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experimentos/feature_validation/**"
+      - "experimentos/eda_profundo/**"
+      - "experimentos/Evidencias/**"
+      - "experimentos/conocimiento_agregado/**"
+      - ".github/workflows/feature-validation.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: feature-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-features:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/feature_validation/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/feature_validation/requirements.txt
+
+      - name: Compile experiment suite
+        run: |
+          python -m py_compile experimentos/feature_validation/common.py
+          python -m py_compile experimentos/feature_validation/run_all.py
+
+      - name: Validate experiment contracts
+        run: |
+          set -euo pipefail
+          for exp in             E021_temporal_drift_stress             E022_temporal_feature_ablation             E023_availability_staleness             E024_outlier_handling             E025_redundancy_ablation             E026_prior_history_ablation             E027_broker_prior_point_in_time
+          do
+            python experimentos/_sistema/harness/experiment_harness.py validate               --spec "experimentos/feature_validation/$exp/experiment_spec.json"               --parent-spec experimentos/modelo_3/benchmark_specialists/experiment_spec.json               --repo-root .
+          done
+
+      - name: Run full validation suite
+        run: python experimentos/feature_validation/run_all.py
+
+      - name: Finalize traceable records
+        run: |
+          set -euo pipefail
+          for exp in             E021_temporal_drift_stress             E022_temporal_feature_ablation             E023_availability_staleness             E024_outlier_handling             E025_redundancy_ablation             E026_prior_history_ablation             E027_broker_prior_point_in_time
+          do
+            dest="experimentos/Evidencias/harness_records/$exp/record.json"
+            if [ -s "$dest" ]; then
+              echo "$exp already finalized; preserving immutable record."
+            else
+              python experimentos/_sistema/harness/experiment_harness.py finalize                 --spec "experimentos/feature_validation/$exp/experiment_spec.json"                 --results "experimentos/feature_validation/$exp/results/harness_results.json"                 --parent-spec experimentos/modelo_3/benchmark_specialists/experiment_spec.json                 --parent-results experimentos/modelo_3/benchmark_specialists/results/harness_results.json                 --repo-root .                 --output-dir experimentos/Evidencias/harness_records
+            fi
+          done
+
+      - name: Validate required outputs
+        run: |
+          set -euo pipefail
+          test -s experimentos/feature_validation/results/baseline_reconciliation.json
+          test -s experimentos/feature_validation/E021_temporal_drift_stress/results/drift_summary.json
+          test -s experimentos/feature_validation/E021_temporal_drift_stress/results/fold_metrics.csv
+          test -s experimentos/feature_validation/E021_temporal_drift_stress/results/feature_psi_early_vs_late.csv
+          test -s experimentos/feature_validation/E022_temporal_feature_ablation/results/summary.json
+          test -s experimentos/feature_validation/E022_temporal_feature_ablation/results/bootstrap_full_minus_no_temporal.csv
+          test -s experimentos/feature_validation/E023_availability_staleness/results/bootstrap_delta_vs_raw_age.csv
+          test -s experimentos/feature_validation/E024_outlier_handling/results/summary.json
+          test -s experimentos/feature_validation/E025_redundancy_ablation/results/bootstrap_no_totals_minus_full.csv
+          test -s experimentos/feature_validation/E026_prior_history_ablation/results/bootstrap_full_minus_ablation.csv
+          test -s experimentos/feature_validation/E027_broker_prior_point_in_time/results/bootstrap_broker_prior_minus_baseline.csv
+          for exp in             E021_temporal_drift_stress             E022_temporal_feature_ablation             E023_availability_staleness             E024_outlier_handling             E025_redundancy_ablation             E026_prior_history_ablation             E027_broker_prior_point_in_time
+          do
+            test -s "experimentos/feature_validation/$exp/results/REPORT.md"
+            test -s "experimentos/feature_validation/$exp/results/harness_results.json"
+            test -s "experimentos/Evidencias/harness_records/$exp/record.json"
+          done
+
+      - name: Publish reports
+        if: always()
+        run: |
+          for report in experimentos/feature_validation/E*/results/REPORT.md; do
+            if [ -f "$report" ]; then
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              cat "$report" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
+
+      - name: Commit reproducible results
+        if: github.event_name == 'push' && github.ref == 'refs/heads/experimentos/drift-feature-validation'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/feature_validation/results/
+          git add experimentos/feature_validation/E*/results/
+          git add experimentos/Evidencias/harness_records/E021_temporal_drift_stress/
+          git add experimentos/Evidencias/harness_records/E022_temporal_feature_ablation/
+          git add experimentos/Evidencias/harness_records/E023_availability_staleness/
+          git add experimentos/Evidencias/harness_records/E024_outlier_handling/
+          git add experimentos/Evidencias/harness_records/E025_redundancy_ablation/
+          git add experimentos/Evidencias/harness_records/E026_prior_history_ablation/
+          git add experimentos/Evidencias/harness_records/E027_broker_prior_point_in_time/
+          if git diff --cached --quiet; then
+            echo "No result changes to commit."
+          else
+            git commit -m "Add drift and feature validation results [skip ci]"
+            # The branch can advance while this long-running suite is executing
+            # (for example when governance/docs are added). Rebase the generated
+            # result-only commit onto the current remote tip instead of losing it
+            # to a non-fast-forward push.
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}"
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
+
+      - name: Upload validation artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-feature-validation
+          path: |
+            experimentos/feature_validation/results/
+            experimentos/feature_validation/E*/results/
+            experimentos/Evidencias/harness_records/E021_temporal_drift_stress/
+            experimentos/Evidencias/harness_records/E022_temporal_feature_ablation/
+            experimentos/Evidencias/harness_records/E023_availability_staleness/
+            experimentos/Evidencias/harness_records/E024_outlier_handling/
+            experimentos/Evidencias/harness_records/E025_redundancy_ablation/
+            experimentos/Evidencias/harness_records/E026_prior_history_ablation/
+            experimentos/Evidencias/harness_records/E027_broker_prior_point_in_time/
+          if-no-files-found: warn
+          retention-days: 30
+
+
+  build-e029-release-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/feature_validation/E029_drift_sanitized_release_candidate/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/feature_validation/E029_drift_sanitized_release_candidate/requirements.txt
+
+      - name: Validate E029 contract
+        run: |
+          python -m py_compile experimentos/feature_validation/E029_drift_sanitized_release_candidate/run_experiment.py
+          python experimentos/_sistema/harness/experiment_harness.py validate             --spec experimentos/feature_validation/E029_drift_sanitized_release_candidate/experiment_spec.json             --parent-spec experimentos/modelo_3/benchmark_specialists/experiment_spec.json             --repo-root .
+
+      - name: Build and freeze E029
+        run: python experimentos/feature_validation/E029_drift_sanitized_release_candidate/run_experiment.py
+
+      - name: Validate E029 non-launching outputs
+        run: |
+          set -euo pipefail
+          base="experimentos/feature_validation/E029_drift_sanitized_release_candidate"
+          test -s "$base/results/summary.json"
+          test -s "$base/results/REPORT.md"
+          test -s "$base/results/harness_results.json"
+          test -s "$base/results/target_status_audit.csv"
+          test -s "$base/results/rolling_post_selection_diagnostic.csv"
+          test -s "$base/artifacts/rf_t2.joblib"
+          test -s "$base/artifacts/preprocessor.joblib"
+          test -s "$base/artifacts/feature_schema.json"
+          test -s "$base/artifacts/release_manifest_candidate.json"
+          test -s "$base/prospective_gate.json"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base = Path("experimentos/feature_validation/E029_drift_sanitized_release_candidate")
+          manifest = json.loads((base / "artifacts/release_manifest_candidate.json").read_text())
+          gate = json.loads((base / "prospective_gate.json").read_text())
+          if manifest.get("launch_eligible") is not False:
+              raise SystemExit("E029 historical build may not set launch_eligible=true")
+          if gate.get("status") != "AWAITING_POST_FREEZE_COHORT":
+              raise SystemExit("E029 prospective gate must remain pending")
+          print("E029 historical build is correctly non-launching.")
+          PY
+
+      - name: Finalize E029 harness record
+        run: |
+          dest="experimentos/Evidencias/harness_records/E029_drift_sanitized_release_candidate/record.json"
+          if [ ! -s "$dest" ]; then
+            python experimentos/_sistema/harness/experiment_harness.py finalize               --spec experimentos/feature_validation/E029_drift_sanitized_release_candidate/experiment_spec.json               --results experimentos/feature_validation/E029_drift_sanitized_release_candidate/results/harness_results.json               --parent-spec experimentos/modelo_3/benchmark_specialists/experiment_spec.json               --parent-results experimentos/modelo_3/benchmark_specialists/results/harness_results.json               --repo-root .               --output-dir experimentos/Evidencias/harness_records
+          fi
+
+      - name: Publish E029 report
+        if: always()
+        run: |
+          f="experimentos/feature_validation/E029_drift_sanitized_release_candidate/results/REPORT.md"
+          if [ -f "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - name: Commit E029 frozen artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/experimentos/drift-feature-validation'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/feature_validation/E029_drift_sanitized_release_candidate/results/
+          git add experimentos/feature_validation/E029_drift_sanitized_release_candidate/artifacts/
+          git add experimentos/feature_validation/E029_drift_sanitized_release_candidate/prospective_gate.json
+          git add experimentos/Evidencias/harness_records/E029_drift_sanitized_release_candidate/
+          if git diff --cached --quiet; then
+            echo "No E029 output changes."
+          else
+            git commit -m "Add E029 frozen release candidate [skip ci]"
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}"
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
+
+      - name: Upload E029 artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e029-drift-sanitized-release-candidate
+          path: |
+            experimentos/feature_validation/E029_drift_sanitized_release_candidate/results/
+            experimentos/feature_validation/E029_drift_sanitized_release_candidate/artifacts/
+            experimentos/feature_validation/E029_drift_sanitized_release_candidate/prospective_gate.json
+            experimentos/Evidencias/harness_records/E029_drift_sanitized_release_candidate/
+          if-no-files-found: warn
+          retention-days: 30
+
+
+  build-e030-definitive-abt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/feature_validation/E030_definitive_abt/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/feature_validation/E030_definitive_abt/requirements.txt
+
+      - name: Compile E030
+        run: |
+          python -m py_compile experimentos/feature_validation/E030_definitive_abt/build_abt.py
+          python -m py_compile experimentos/feature_validation/E030_definitive_abt/validate_abt.py
+
+      - name: Build E030 definitive ABT
+        run: python experimentos/feature_validation/E030_definitive_abt/build_abt.py
+
+      - name: Validate E030 definitive ABT
+        run: python experimentos/feature_validation/E030_definitive_abt/validate_abt.py
+
+      - name: Validate E030 outputs
+        run: |
+          set -euo pipefail
+          base="experimentos/feature_validation/E030_definitive_abt/results"
+          test -s "$base/abt_all_snapshots.csv.gz"
+          test -s "$base/abt_model_ready.csv.gz"
+          test -s "$base/abt_schema.json"
+          test -s "$base/abt_summary.json"
+          test -s "$base/column_roles.csv"
+          test -s "$base/stage_target_summary.csv"
+          test -s "$base/split_summary.csv"
+          test -s "$base/status_summary.csv"
+          test -s "$base/validation.json"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("experimentos/feature_validation/E030_definitive_abt/results/validation.json")
+          x = json.loads(p.read_text())
+          if x.get("status") != "PASS":
+              raise SystemExit(f"E030 validation failed: {x}")
+          print("E030 ABT validation PASS")
+          PY
+
+      - name: Publish E030 summary
+        if: always()
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          b=Path("experimentos/feature_validation/E030_definitive_abt/results")
+          if (b/"abt_summary.json").exists():
+              s=json.loads((b/"abt_summary.json").read_text())
+              print("# E030 definitive ABT")
+              print(f"- Audit rows: {s['audit_rows']:,}")
+              print(f"- Model-ready rows: {s['model_ready_rows']:,}")
+              print(f"- Model-ready leads: {s['model_ready_unique_leads']:,}")
+              print(f"- Model features: {s['model_feature_count']}")
+              print(f"- Ambiguous preserved: {s['ambiguous_rows']:,}")
+              print(f"- Right-censored preserved: {s['right_censored_rows']:,}")
+          PY
+
+      - name: Commit E030 reproducible ABT
+        if: github.event_name == 'push' && github.ref == 'refs/heads/experimentos/drift-feature-validation'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/feature_validation/E030_definitive_abt/results/
+          if git diff --cached --quiet; then
+            echo "No E030 output changes."
+          else
+            git commit -m "Add E030 definitive ABT results [skip ci]"
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}"
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
+
+      - name: Upload E030 artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e030-definitive-abt
+          path: experimentos/feature_validation/E030_definitive_abt/results/
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,361 @@
+{
+  "schema_version": "v1",
+  "message_semantics": {
+    "transaction_intent": {
+      "type": "enum",
+      "values": [
+        "rent",
+        "sale",
+        "both",
+        "unclear"
+      ]
+    },
+    "search_maturity": {
+      "type": "enum",
+      "values": [
+        "exploratory",
+        "comparing",
+        "active",
+        "ready_to_visit",
+        "negotiating",
+        "unclear"
+      ]
+    },
+    "move_reason": {
+      "type": "enum",
+      "values": [
+        "expansion",
+        "relocation",
+        "new_location",
+        "investment",
+        "replacement",
+        "other",
+        "unknown"
+      ]
+    },
+    "visit_intent": {
+      "type": "enum",
+      "values": [
+        "yes",
+        "no",
+        "unknown"
+      ]
+    },
+    "timeline_days": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "timeline_explicit": {
+      "type": "boolean"
+    },
+    "semantic_urgency": {
+      "type": "enum",
+      "values": [
+        "low",
+        "medium",
+        "high",
+        "unknown"
+      ]
+    },
+    "requested_area_sqm": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "area_flexibility": {
+      "type": "enum",
+      "values": [
+        "none",
+        "low",
+        "medium",
+        "high",
+        "unknown"
+      ]
+    },
+    "budget_amount_mxn": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "budget_flexibility": {
+      "type": "enum",
+      "values": [
+        "none",
+        "low",
+        "medium",
+        "high",
+        "unknown"
+      ]
+    },
+    "location_flexibility": {
+      "type": "enum",
+      "values": [
+        "none",
+        "low",
+        "medium",
+        "high",
+        "unknown"
+      ]
+    },
+    "alternative_spots_open": {
+      "type": "enum",
+      "values": [
+        "yes",
+        "no",
+        "unknown"
+      ]
+    },
+    "actions": {
+      "asks_visit": {
+        "type": "boolean"
+      },
+      "asks_availability": {
+        "type": "boolean"
+      },
+      "asks_price": {
+        "type": "boolean"
+      },
+      "asks_contract_terms": {
+        "type": "boolean"
+      },
+      "asks_amenities": {
+        "type": "boolean"
+      },
+      "asks_location": {
+        "type": "boolean"
+      },
+      "asks_alternatives": {
+        "type": "boolean"
+      },
+      "asks_negotiation": {
+        "type": "boolean"
+      },
+      "requests_callback": {
+        "type": "boolean"
+      }
+    },
+    "constraints": {
+      "parking": {
+        "type": "enum",
+        "values": [
+          "must_have",
+          "preference",
+          "not_needed",
+          "unknown"
+        ]
+      },
+      "loading_dock": {
+        "type": "enum",
+        "values": [
+          "must_have",
+          "preference",
+          "not_needed",
+          "unknown"
+        ]
+      },
+      "security": {
+        "type": "enum",
+        "values": [
+          "must_have",
+          "preference",
+          "not_needed",
+          "unknown"
+        ]
+      },
+      "natural_light": {
+        "type": "enum",
+        "values": [
+          "must_have",
+          "preference",
+          "not_needed",
+          "unknown"
+        ]
+      },
+      "high_clearance": {
+        "type": "enum",
+        "values": [
+          "must_have",
+          "preference",
+          "not_needed",
+          "unknown"
+        ]
+      },
+      "elevators": {
+        "type": "enum",
+        "values": [
+          "must_have",
+          "preference",
+          "not_needed",
+          "unknown"
+        ]
+      },
+      "charging_ports": {
+        "type": "enum",
+        "values": [
+          "must_have",
+          "preference",
+          "not_needed",
+          "unknown"
+        ]
+      },
+      "ground_floor": {
+        "type": "enum",
+        "values": [
+          "must_have",
+          "preference",
+          "not_needed",
+          "unknown"
+        ]
+      }
+    },
+    "specificity_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "requirement_completeness_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "ambiguity_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "explicit_constraint_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "soft_preference_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "extraction_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "lead_spot_semantic_compatibility": {
+    "hard_constraint_conflict_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "soft_preference_match_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unknown_requirement_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "area_fit": {
+      "type": "enum",
+      "values": [
+        "good",
+        "partial",
+        "bad",
+        "unknown"
+      ]
+    },
+    "budget_fit": {
+      "type": "enum",
+      "values": [
+        "good",
+        "partial",
+        "bad",
+        "unknown"
+      ]
+    },
+    "location_fit": {
+      "type": "enum",
+      "values": [
+        "good",
+        "partial",
+        "bad",
+        "unknown"
+      ]
+    },
+    "physical_fit": {
+      "type": "enum",
+      "values": [
+        "good",
+        "partial",
+        "bad",
+        "unknown"
+      ]
+    }
+  },
+  "intent_trajectory": {
+    "intent_evolution": {
+      "type": "enum",
+      "values": [
+        "converging",
+        "stable",
+        "diverging",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "area_preference_change": {
+      "type": "enum",
+      "values": [
+        "increased",
+        "decreased",
+        "stable",
+        "unknown"
+      ]
+    },
+    "budget_preference_change": {
+      "type": "enum",
+      "values": [
+        "increased",
+        "decreased",
+        "stable",
+        "unknown"
+      ]
+    },
+    "location_flexibility_change": {
+      "type": "enum",
+      "values": [
+        "increased",
+        "decreased",
+        "stable",
+        "unknown"
+      ]
+    },
+    "decision_readiness_change": {
+      "type": "enum",
+      "values": [
+        "increased",
+        "decreased",
+        "stable",
+        "unknown"
+      ]
+    },
+    "search_focus": {
+      "type": "enum",
+      "values": [
+        "narrowing",
+        "stable",
+        "broadening",
+        "unknown"
+      ]
+    },
+    "requirement_stability_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "preference_convergence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  }
+}

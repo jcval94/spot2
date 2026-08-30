@@ -1,0 +1,7 @@
+table,rows,columns,primary_key,pk_duplicates
+leads,5000,20,lead_id,0
+inquiries,22576,13,inquiry_id,0
+spots,3000,25,spot_id,0
+spot_attributes,3000,12,spot_id,0
+market_context,500,10,state+municipality+corridor+sector+month,
+availability_snapshot,30000,6,snapshot_id,0

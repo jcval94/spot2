@@ -169,3 +169,28 @@ y cada descubrimiento consolidado debe poder recorrerse desde:
 `conocimiento_agregado/DESCUBRIMIENTOS.md → EV-... → experimento/resultados`
 
 Esto permite conservar resultados positivos, negativos e inconclusos sin contaminar las entradas canónicas del reto.
+
+
+## Estado de investigación
+
+### Feature Engineering / recuperación T0-T1
+
+**CLOSED / DECISION-READY.**
+
+Punto de entrada oficial:
+
+- [Resumen del flujo](experimentos/registro_flujo/feature_engineering_t0_t1/README.md)
+- [Arquitectura final](experimentos/registro_flujo/feature_engineering_t0_t1/ARQUITECTURA_FINAL.md)
+- [Cierre](experimentos/registro_flujo/feature_engineering_t0_t1/CIERRE.md)
+- [Checklist de cierre](experimentos/registro_flujo/feature_engineering_t0_t1/CHECKLIST_CIERRE.md)
+- [Estado final machine-readable](experimentos/registro_flujo/feature_engineering_t0_t1/FINAL_STATE.json)
+
+Decisión resumida:
+
+- T0 LeadQuality: `NEUTRAL_EVIDENCE_BACKED`;
+- T1 LeadQuality: `NEUTRAL_EVIDENCE_BACKED`;
+- T0/T1 mantienen capas semánticas para explicación, matching y routing;
+- T2 conserva el candidato E029 pendiente de validación prospectiva;
+- E039 documenta el extractor semántico LLM futuro y queda bloqueado únicamente porque no existe raw inquiry text.
+
+Los pendientes de prospective gate y A/A productivo pertenecen a la fase de lanzamiento y no reabren la investigación offline T0/T1.

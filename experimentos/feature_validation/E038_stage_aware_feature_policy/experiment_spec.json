@@ -1,0 +1,15 @@
+{
+  "experiment_id": "E038_stage_aware_feature_policy",
+  "status": "DECISION_FREEZE",
+  "parent_experiments": [
+    "E031_semantic_feature_engineering_ladder",
+    "E032_t0_semantic_recovery",
+    "E033_t1_semantic_recovery",
+    "E035_outcome_free_advanced_fe",
+    "E036_t1_geo_inventory_decomposition",
+    "E037_temporal_smoothed_categorical_priors"
+  ],
+  "question": "What feature/head policy should remain after the T0/T1 recovery program?",
+  "primary_change": "Freeze stage-aware separation between LeadQuality propensity and semantic/routing representations.",
+  "validation": "Decision artifact based on reproducible E031-E037 evidence; no new metric claim."
+}

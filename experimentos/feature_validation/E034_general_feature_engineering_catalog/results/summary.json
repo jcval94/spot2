@@ -1,0 +1,28 @@
+{
+  "t0_status": "NOT_RECOVERED",
+  "t0_selected_variant": "soft_profiles",
+  "t1_status": "NOT_RECOVERED",
+  "t1_selected_variant": "semantic_interactions",
+  "tested_families": [
+    "atomic",
+    "scale_specificity",
+    "semantic_need",
+    "soft_profiles",
+    "semantic_interactions"
+  ],
+  "next_challengers": [
+    "missingness_as_signal",
+    "rolling_behavior_velocity",
+    "lead_preference_entropy",
+    "price_relative_to_local_inventory",
+    "geo_distance_to_preference_centroid",
+    "target_encoded_high_cardinality"
+  ],
+  "blocked_or_rejected": [
+    "behavioral_persona_BP",
+    "broker_supply_cluster",
+    "market_context",
+    "raw_calendar_progress_clocks",
+    "prior_searches"
+  ]
+}

@@ -19,6 +19,8 @@ El registro de flujo responde otra pregunta:
 | [Modelo 3 — dynamic Lead Quality](modelo_3/) | **CLOSED / DECISION-READY** | pooled CatBoost + stage + trajectory como baseline operativo; especialistas tabulares como challengers |
 | [FL-003 — Segmentación, perfiles y Matching](segmentation_matching/) | **CLOSED / DECISION-READY** | Persona + Need T0/T1 + Physical/Location; E007 global, BSV auxiliar; pockets requieren nueva evidencia |
 | [Selección del caso de uso LLM](llm_use_case/) | **ACTIVE** | probar Semantic Inventory Quality contra Rules-only; Copilot/fallback quedan como opciones futuras, no como justificación principal |
+| [Feature Engineering y recuperación T0/T1](feature_engineering_t0_t1/) | **CLOSED / DECISION-READY** | LeadQuality T0/T1 neutral con evidencia; capas semánticas activas; reabrir sólo con información/target/cohorte nueva |
+| [Opportunity Score — drift, target y A/B](opportunity_score_drift_abt/) | **ACTIVE / PRE-REGISTERED** | target y protocolo causal congelados; E029 artifact T2 congelado, pendiente prospective gate + A/A productivo antes de tráfico real |
 
 ## Regla
 

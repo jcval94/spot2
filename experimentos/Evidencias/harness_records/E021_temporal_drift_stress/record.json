@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-30T00:48:05.003609+00:00",
+  "git_sha": "cd6d3c9f8c883dc03d8c3da3874bd6dcd1457fb9",
+  "experiment_id": "E021_temporal_drift_stress",
+  "parent_experiment": "E005_multihead_vs_specialists",
+  "primary_change": "replace the single 70/15/15 evaluation with expanding rolling temporal folds while holding target, point-in-time features and model family fixed",
+  "spec_sha256": "d787b57759302fdafe5535d4761f78033ff7281dd2c6b8a320ace20c208e52e9",
+  "data_fingerprints": [
+    {
+      "path": "data/candidate/csv/leads.csv",
+      "sha256": "0df1e893137d5a56afb73df9870a794597aa35eb9f9ca14f89ae69615f3b65a4"
+    },
+    {
+      "path": "data/candidate/csv/inquiries.csv",
+      "sha256": "e0a59bc558e0aa4df4141751c63c4e0193e3681b771aac2f5439ebd90b752eb6"
+    },
+    {
+      "path": "data/candidate/csv/spots.csv",
+      "sha256": "e5e3640430567b2430ab5e37dba28f30c6186693f184c4c3e744018d689f7b0c"
+    },
+    {
+      "path": "data/candidate/csv/spot_attributes.csv",
+      "sha256": "a22c42f5bcf9c3b7b07c5c65d0926d43474cc82702389c8322bd1f37f3953fe9"
+    },
+    {
+      "path": "data/candidate/csv/availability_snapshot.csv",
+      "sha256": "c2e292390dd874291214a28c62e294a1d7c5d23338a4fa683352e44be877e59d"
+    }
+  ],
+  "leakage_check": "PASS",
+  "comparison": {
+    "status": "NON_EQUIVALENT",
+    "reasons": [
+      "validation differs from parent"
+    ]
+  },
+  "metrics": {
+    "roc_auc": 0.576762007345282,
+    "average_precision": 0.47471057870793626,
+    "brier": 0.23685320017365716,
+    "log_loss": 0.6662692028168493,
+    "lift_top_10pct": 1.2263222054463354,
+    "recall_top_20pct": 0.24427705956097837
+  },
+  "metric_deltas_vs_parent": {
+    "average_precision": -0.04276533964594392,
+    "brier": -0.008345801298702604,
+    "lift_top_10pct": 0.10987548732141583,
+    "log_loss": -0.01748197556498221,
+    "recall_top_20pct": 0.024245390904657882,
+    "roc_auc": 0.0207025825654088
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.5431883263946181,
+      "average_precision": 0.46716963466456163,
+      "brier": 0.24591750833690795,
+      "log_loss": 0.684951486674037,
+      "lift_top_10pct": 1.0146992650367481,
+      "recall_top_20pct": 0.22233300099700898
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.5708092301012655,
+      "average_precision": 0.5094988461391847,
+      "brier": 0.2443178050671138,
+      "log_loss": 0.6816375011125462,
+      "lift_top_10pct": 1.1499311701081614,
+      "recall_top_20pct": 0.232055063913471
+    },
+    "T2_engaged": {
+      "roc_auc": 0.6162884655399625,
+      "average_precision": 0.4474632553200625,
+      "brier": 0.2203242871169497,
+      "log_loss": 0.6322186206639646,
+      "lift_top_10pct": 1.5143361811940972,
+      "recall_top_20pct": 0.27844311377245506
+    }
+  },
+  "conclusion": "SUPPORTED",
+  "caveats": [
+    "Rolling folds deliberately change the validation design relative to E005, so comparison is NON_EQUIVALENT.",
+    "Average Precision is prevalence-sensitive; AP/prevalence and ROC-AUC are reported alongside AP.",
+    "The dataset is synthetic and the target is scheduled_visit within 30 days."
+  ],
+  "next_experiment": "Remove drift-sensitive timing/progress variables under the original frozen E005 split and quantify the performance delta.",
+  "spec": {
+    "experiment_id": "E021_temporal_drift_stress",
+    "parent_experiment": "E005_multihead_vs_specialists",
+    "scoring_time": {
+      "stage": "T0/T1/T2",
+      "timestamp_definition": "T0=leads.created_at; T1=first inquiries.inquiry_at; T2=second and later inquiries.inquiry_at while no scheduled_visit has already occurred"
+    },
+    "target": {
+      "event": "future scheduled_visit response event",
+      "horizon_days": 30,
+      "anchor": "scoring_time",
+      "censoring": "right"
+    },
+    "population": {
+      "eligibility": "Scoring snapshots with a complete 30-day future observation window; T1/T2 are generated only before a known scheduled visit has occurred.",
+      "exclusions": [
+        "Right-censored scoring snapshots.",
+        "Dynamic snapshots after an already observed scheduled visit.",
+        "Current/future broker-response information from model inputs."
+      ],
+      "period": {
+        "start": null,
+        "end": null
+      }
+    },
+    "data_sources": [
+      "data/candidate/csv/leads.csv",
+      "data/candidate/csv/inquiries.csv",
+      "data/candidate/csv/spots.csv",
+      "data/candidate/csv/spot_attributes.csv",
+      "data/candidate/csv/availability_snapshot.csv"
+    ],
+    "metrics": [
+      "roc_auc",
+      "average_precision",
+      "brier",
+      "log_loss",
+      "lift_top_10pct",
+      "recall_top_20pct"
+    ],
+    "segments": [
+      "T0_cold",
+      "T1_first_inquiry",
+      "T2_engaged"
+    ],
+    "question": "How stable are target prevalence, feature distributions and a frozen specialist Random Forest across future lead cohorts?",
+    "hypothesis": "The Spot2 synthetic process is temporally non-stationary: target prevalence and/or important feature distributions will shift materially across rolling future cohorts.",
+    "primary_change": "replace the single 70/15/15 evaluation with expanding rolling temporal folds while holding target, point-in-time features and model family fixed",
+    "secondary_changes": [
+      "report feature PSI early vs late",
+      "report AP normalized by prevalence to separate discrimination from prevalence drift"
+    ],
+    "features": {
+      "inherited": [
+        "lead_intake_features",
+        "current_inquiry_features",
+        "current_spot_static_features",
+        "lead_spot_compatibility_features",
+        "availability_asof_features",
+        "historical_interactions_asof_features"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "validation": {
+      "strategy": "expanding rolling temporal lead-cohort folds",
+      "time_column": "leads.created_at",
+      "split_description": "For each fold, train on all earlier lead cohorts, calibrate on the next month, and test on the following two months; test windows are disjoint and all snapshots for a lead remain together."
+    },
+    "leakage": {
+      "check_status": "PASS",
+      "items": [
+        {
+          "element": "inherited_point_in_time_feature_set",
+          "source": "leads + inquiries + spots + spot_attributes + availability_snapshot",
+          "scoring_time": "T0/T1/T2",
+          "information_available_at": "same point-in-time rules as E005",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Inherited unchanged from E005; lead_score_internal, current broker outcome/timing and mutable current-state Spot aggregates remain blocked."
+        }
+      ]
+    }
+  }
+}

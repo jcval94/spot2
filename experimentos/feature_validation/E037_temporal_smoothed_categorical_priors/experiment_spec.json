@@ -1,0 +1,51 @@
+{
+  "experiment_id": "E037_temporal_smoothed_categorical_priors",
+  "parent_experiments": [
+    "E035_outcome_free_advanced_fe",
+    "E030_definitive_abt"
+  ],
+  "status": "PRE_REGISTERED_DEVELOPMENT",
+  "question": "Do historical category-level propensities add stable T0/T1 signal when encoded strictly from prior training data?",
+  "primary_change": "Add centered smoothed target encodings and support counts for pre-registered categorical fields, fit only on each rolling fold training slice.",
+  "target": {
+    "name": "target_scheduled_visit_30d",
+    "source": "E028"
+  },
+  "population": "E030 train only",
+  "validation": "3 expanding rolling lead-cohort folds; development evidence only",
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN",
+    "items": [
+      {
+        "element": "guardrail_1",
+        "status": "ALLOW",
+        "evidence": "E030 train only."
+      },
+      {
+        "element": "guardrail_2",
+        "status": "ALLOW",
+        "evidence": "Target encoding fit on training slice only and applied to later fold."
+      },
+      {
+        "element": "guardrail_3",
+        "status": "ALLOW",
+        "evidence": "Unseen categories receive centered prior 0."
+      },
+      {
+        "element": "guardrail_4",
+        "status": "ALLOW",
+        "evidence": "Smoothing alpha fixed at 50 before results."
+      },
+      {
+        "element": "guardrail_5",
+        "status": "ALLOW",
+        "evidence": "No global/full-data target encoding."
+      },
+      {
+        "element": "guardrail_6",
+        "status": "ALLOW",
+        "evidence": "No E030 validation/test."
+      }
+    ]
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-30T03:17:54.679141+00:00",
+  "git_sha": "bc1bd24f27285886d27028a8984b86558c79d49b",
+  "experiment_id": "E029_drift_sanitized_release_candidate",
+  "parent_experiment": "E005_multihead_vs_specialists",
+  "primary_change": "Build and freeze a T2-only LeadQuality candidate with corrected ambiguous-event target semantics and a sanitized feature policy; T0/T1 remain neutral.",
+  "spec_sha256": "d21dbd03b6330e035b7752291fc357b6645f4a87bfe8b2e78672cb9110e6ead2",
+  "data_fingerprints": [
+    {
+      "path": "data/candidate/csv/leads.csv",
+      "sha256": "0df1e893137d5a56afb73df9870a794597aa35eb9f9ca14f89ae69615f3b65a4"
+    },
+    {
+      "path": "data/candidate/csv/inquiries.csv",
+      "sha256": "e0a59bc558e0aa4df4141751c63c4e0193e3681b771aac2f5439ebd90b752eb6"
+    },
+    {
+      "path": "data/candidate/csv/spots.csv",
+      "sha256": "e5e3640430567b2430ab5e37dba28f30c6186693f184c4c3e744018d689f7b0c"
+    },
+    {
+      "path": "data/candidate/csv/spot_attributes.csv",
+      "sha256": "a22c42f5bcf9c3b7b07c5c65d0926d43474cc82702389c8322bd1f37f3953fe9"
+    },
+    {
+      "path": "data/candidate/csv/availability_snapshot.csv",
+      "sha256": "c2e292390dd874291214a28c62e294a1d7c5d23338a4fa683352e44be877e59d"
+    }
+  ],
+  "leakage_check": "PASS",
+  "comparison": {
+    "status": "NON_EQUIVALENT",
+    "reasons": [
+      "scoring_time differs from parent",
+      "target differs from parent",
+      "population differs from parent",
+      "validation differs from parent"
+    ]
+  },
+  "metrics": {
+    "roc_auc": 0.5428452879203347,
+    "average_precision": 0.5423915544020586,
+    "brier": 0.24927016665528012,
+    "log_loss": 0.6917298924972363,
+    "lift_top_10pct": 1.1469575200918485,
+    "recall_top_20pct": 0.22189349112426035
+  },
+  "metric_deltas_vs_parent": {
+    "average_precision": 0.02491563604817837,
+    "brier": 0.004071165182920361,
+    "lift_top_10pct": 0.030510801966928902,
+    "log_loss": 0.00797871411540474,
+    "recall_top_20pct": 0.0018618224679398665,
+    "roc_auc": -0.013214136859538539
+  },
+  "segment_metrics": {
+    "T2_engaged_historical_post_selection": {
+      "roc_auc": 0.5428452879203347,
+      "average_precision": 0.5423915544020586,
+      "brier": 0.24927016665528012,
+      "log_loss": 0.6917298924972363,
+      "lift_top_10pct": 1.1469575200918485,
+      "recall_top_20pct": 0.22189349112426035
+    }
+  },
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "Historical diagnostics are post-selection because E021-E027 already used this dataset to choose the feature policy.",
+    "Canonical ambiguous event-time labels are excluded rather than coerced to zero.",
+    "T0/T1 are deliberately neutral; this artifact is T2-only.",
+    "No Availability fields or drift-sensitive clocks enter LeadQuality.",
+    "Launch requires a genuinely post-freeze cohort and production A/A instrumentation."
+  ],
+  "next_experiment": "Apply prospective_gate.json to the first post-freeze matured cohort; if PASS, complete E028 release manifest and productive A/A.",
+  "spec": {
+    "experiment_id": "E029_drift_sanitized_release_candidate",
+    "parent_experiment": "E005_multihead_vs_specialists",
+    "question": "Can a T2-only LeadQuality release candidate, stripped of drift-sensitive clocks and non-robust feature families, retain useful signal and be frozen for genuinely prospective validation?",
+    "hypothesis": "A T2 Random Forest using the canonical corrected 30-day target and a drift-sanitized feature policy will retain directional historical discrimination without relying on calendar/progress clocks; production eligibility still requires a post-freeze cohort.",
+    "primary_change": "Build and freeze a T2-only LeadQuality candidate with corrected ambiguous-event target semantics and a sanitized feature policy; T0/T1 remain neutral.",
+    "secondary_changes": [
+      "Remove all Availability fields from LeadQuality; InventoryServiceable remains a separate deterministic policy component.",
+      "Remove score_weekday, score_hour, score_month, days_from_lead_creation, inquiry_number, days_since_first_inquiry and prior_searches.",
+      "Keep outliers and price totals because their removal was not robustly established.",
+      "Do not include broker prior.",
+      "Run rolling historical diagnostics only as post-selection evidence, never as the prospective launch gate.",
+      "Freeze preprocessor, T2 RF, Platt calibrator, feature schema and manifest before future validation."
+    ],
+    "scoring_time": {
+      "stage": "T2_engaged",
+      "timestamp_definition": "Second-and-later inquiry_at while no scheduled_visit with known event time has already occurred; T0/T1 remain LeadQuality-neutral."
+    },
+    "target": {
+      "event": "future scheduled_visit with known response_event_at",
+      "horizon_days": 30,
+      "anchor": "T2 score_time",
+      "censoring": "right-censor immature rows; exclude AMBIGUOUS_UNKNOWN_EVENT_TIME instead of coercing it to 0"
+    },
+    "population": {
+      "eligibility": "T2 snapshots labeled POSITIVE or NEGATIVE by the E028 canonical target contract with a complete 30-day observation window.",
+      "exclusions": [
+        "RIGHT_CENSORED snapshots.",
+        "AMBIGUOUS_UNKNOWN_EVENT_TIME snapshots.",
+        "INELIGIBLE_PRIOR_SCHEDULED_VISIT snapshots.",
+        "T0/T1 snapshots from LeadQuality training.",
+        "Current/future broker-response information from model inputs."
+      ],
+      "period": {
+        "start": null,
+        "end": null
+      }
+    },
+    "data_sources": [
+      "data/candidate/csv/leads.csv",
+      "data/candidate/csv/inquiries.csv",
+      "data/candidate/csv/spots.csv",
+      "data/candidate/csv/spot_attributes.csv",
+      "data/candidate/csv/availability_snapshot.csv"
+    ],
+    "features": {
+      "inherited": [
+        "lead_intake_features_except_prior_searches",
+        "current_inquiry_nonclock_features",
+        "current_spot_static_features",
+        "lead_spot_compatibility_features",
+        "historical_interaction_aggregates_except_days_since_first_inquiry"
+      ],
+      "added": [],
+      "removed": [
+        "score_weekday",
+        "score_hour",
+        "score_month",
+        "days_from_lead_creation",
+        "inquiry_number",
+        "days_since_first_inquiry",
+        "prior_searches",
+        "availability_is_available",
+        "availability_days_until_available",
+        "availability_competing_inquiries_30d",
+        "availability_snapshot_age_days",
+        "has_availability_context",
+        "broker_historical_prior"
+      ]
+    },
+    "validation": {
+      "strategy": "post-selection historical rolling diagnostics plus frozen prospective post-freeze gate",
+      "time_column": "leads.created_at",
+      "split_description": "Historical data are used only for sanity diagnostics and artifact fitting because E021-E027 already informed feature selection. The confirmatory gate is the first post-freeze cohort: first eligible T2 per lead, 8 complete weeks extended by whole weeks until >=500 matured leads or 16 weeks, with no outcome peeking."
+    },
+    "metrics": [
+      "roc_auc",
+      "average_precision",
+      "brier",
+      "log_loss",
+      "lift_top_10pct",
+      "recall_top_20pct"
+    ],
+    "segments": [
+      "T2_engaged"
+    ],
+    "leakage": {
+      "check_status": "PASS",
+      "items": [
+        {
+          "element": "canonical_target_contract",
+          "source": "inquiries.csv via E028 target_contract.py",
+          "scoring_time": "T2 inquiry_at",
+          "information_available_at": "future event is label-only; model features remain as-of score_time",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Known scheduled_visit event time is used only for y. Unknown-time scheduled_visit that could touch the window is excluded as AMBIGUOUS, never used as feature or negative."
+        },
+        {
+          "element": "drift_sanitized_feature_policy",
+          "source": "leads + current inquiry + static spot attributes + strictly prior interaction aggregates",
+          "scoring_time": "T2 inquiry_at",
+          "information_available_at": "all retained features are observable at or before score_time",
+          "status": "ALLOW",
+          "evidence": "Calendar/progress clocks, prior_searches, Availability, broker prior, lead_score_internal and current-state Spot aggregates are excluded."
+        },
+        {
+          "element": "availability_separation",
+          "source": "availability_snapshot.csv",
+          "scoring_time": "T2 inquiry_at",
+          "information_available_at": "not included in LeadQuality",
+          "status": "ALLOW",
+          "evidence": "Availability is handled separately by E028 InventoryServiceable and cannot create predictive lift inside E029 LeadQuality."
+        },
+        {
+          "element": "prospective_gate",
+          "source": "future production cohort after artifact freeze",
+          "scoring_time": "first eligible T2 per lead",
+          "information_available_at": "outcomes are inspected only after the fixed gate cohort matures",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Gate window extends only by sample size, never outcomes; historical diagnostics cannot produce launch_eligible=true."
+        }
+      ]
+    }
+  }
+}

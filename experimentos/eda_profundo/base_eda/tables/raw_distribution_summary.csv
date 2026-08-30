@@ -1,0 +1,5 @@
+sector,leads,spots,lead_target_area_median,spot_area_median,lead_max_rent_budget_median,spot_total_rent_median,lead_max_sale_budget_median,spot_total_sale_median
+Industrial,1249,882,403.8,2714.6,62764.3,425215.265,11302348.67,70272123.945
+Office,1450,878,375.25,196.05,139707.185,68782.28,24219107.415,11865624.22
+Retail,1528,743,400,96.5,121551.71,27155.81,22841249.665,5141736.8
+Land,773,497,388.1,4579,20811.76,212860.06,3751577.33,34137127.71

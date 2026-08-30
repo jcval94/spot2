@@ -1,0 +1,30 @@
+{
+  "experiment_id": "E034_general_feature_engineering_catalog",
+  "parent_experiments": [
+    "E031_semantic_feature_engineering_ladder",
+    "E032_t0_semantic_recovery",
+    "E033_t1_semantic_recovery"
+  ],
+  "status": "PRE_REGISTERED",
+  "question": "Which feature-engineering families should become governed ABT-v2 candidates across T0/T1/T2 and which should remain audit-only or rejected?",
+  "primary_change": "Convert empirical E031-E033 evidence into a governed feature catalog with role, stage availability, formula/source, PIT rule, drift risk and promotion status.",
+  "target": {
+    "name": "target_scheduled_visit_30d",
+    "source": "E028 target_contract.json"
+  },
+  "abt": {
+    "source": "E030_definitive_abt/results/abt_model_ready.csv.gz",
+    "split_unit": "lead_id"
+  },
+  "validation": "Documentation artifact; promotion depends on empirical E031-E033 results.",
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN",
+    "items": [
+      {
+        "element": "guardrail_1",
+        "status": "ALLOW",
+        "evidence": "No new predictive result is claimed from the catalog itself."
+      }
+    ]
+  }
+}

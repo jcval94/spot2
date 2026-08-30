@@ -1,0 +1,13 @@
+information_family,examples,T0_lead_creation,T1_first_inquiry,T2_second_inquiry,eda_interpretation
+Lead profile,"user_type, company_size, industry, search_sector, search_modality, budgets, preferred geography, source",ALLOW,ALLOW,ALLOW,"Observed at lead creation; descriptive distributions are valid from T0 onward."
+First-inquiry content,"channel, message_length, requested_area, requested_budget, urgency_days, asked_visit",BLOCK,ALLOW,ALLOW,"Becomes observable only when the first inquiry arrives."
+Current inquiry content,"channel, requested_area, requested_budget, urgency_days, asked_visit",BLOCK,ALLOW,ALLOW,"At each inquiry head, only the current and prior inquiry information can be observed."
+Broker response to current inquiry,"broker_response, broker_response_hours",BLOCK,BLOCK,BLOCK,"Post-inquiry information; cannot be used by a head scored at the inquiry timestamp."
+Prior broker responses,"responses to inquiries before current scoring time",BLOCK,BLOCK,CONDITIONAL,"Eligible at later heads only when the response timestamp is proven to precede the scoring time."
+Inquiry spot static identity,"spot_id, sector_name, modality, geography, base listing attributes",NOT_APPLICABLE,ALLOW,ALLOW,"The contacted spot becomes known at inquiry time; historical validity of mutable listing fields must still be checked."
+Spot current-state aggregates,"days_on_market, total_inquiries, total_views, is_active",BLOCK,BLOCK,BLOCK,"Repository leakage rules flag these as unsafe for historical scoring unless reconstructed point in time."
+Availability snapshot,"latest snapshot with snapshot_date <= scoring time",CONDITIONAL,CONDITIONAL,CONDITIONAL,"Valid only with a non-future snapshot-selection rule; T1 as-of coverage is about 85%."
+Market context,"state x municipality x corridor x sector x month",CONDITIONAL,CONDITIONAL,CONDITIONAL,"Monthly row is not automatically published before every scoring date; exact T0 join coverage is only about 23%."
+Broker identity,"spots.broker_id for the contacted spot",NOT_APPLICABLE,ALLOW,ALLOW,"Broker identity is observable through the contacted spot; there is no broker master table."
+Broker historical profile,"prior inquiry/response history for broker",NOT_APPLICABLE,CONDITIONAL,CONDITIONAL,"Must be built strictly from events available before each scoring timestamp."
+Outcome proxy,"scheduled_visit in the next 30 days",LABEL_ONLY,LABEL_ONLY,LABEL_ONLY,"Future event may define y but must never appear in X."

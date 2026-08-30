@@ -1,0 +1,244 @@
+{
+  "analysis_scope": "EDA only; no feature engineering and no model fitting",
+  "generated_from": "data/candidate/csv/*",
+  "target_proxy": {
+    "event": "broker_response == scheduled_visit",
+    "horizon_days": 30,
+    "timestamp_caveat": "scheduled_visit is attached to inquiry_at; exact scheduling timestamp is unavailable",
+    "max_observed_inquiry": "2026-07-13T17:35:37.000Z",
+    "censor_cutoff": "2026-06-13T17:35:37.000Z"
+  },
+  "datasets": {
+    "leads": {
+      "rows": 5000,
+      "columns": 20
+    },
+    "inquiries": {
+      "rows": 22576,
+      "columns": 13
+    },
+    "spots": {
+      "rows": 3000,
+      "columns": 25
+    },
+    "spot_attributes": {
+      "rows": 3000,
+      "columns": 12
+    },
+    "market_context": {
+      "rows": 500,
+      "columns": 10
+    },
+    "availability_snapshot": {
+      "rows": 30000,
+      "columns": 6
+    }
+  },
+  "stage_summary": [
+    {
+      "stage": "T0",
+      "scoring_definition": "lead creation",
+      "eligible_rows": 4836,
+      "share_of_all_leads": 0.9672,
+      "proxy_positive_rate": 0.41873449131513646
+    },
+    {
+      "stage": "T1",
+      "scoring_definition": "first inquiry",
+      "eligible_rows": 4794,
+      "share_of_all_leads": 0.9588,
+      "proxy_positive_rate": 0.4453483521068002
+    },
+    {
+      "stage": "T2",
+      "scoring_definition": "second inquiry, excluding prior scheduled visit",
+      "eligible_rows": 3314,
+      "share_of_all_leads": 0.6628,
+      "proxy_positive_rate": 0.38805069402534703
+    },
+    {
+      "stage": "T3",
+      "scoring_definition": "third inquiry, excluding prior scheduled visit",
+      "eligible_rows": 2251,
+      "share_of_all_leads": 0.4502,
+      "proxy_positive_rate": 0.33140826299422477
+    }
+  ],
+  "t1_asof_availability_coverage": 0.8496036712557363,
+  "latest_availability_rate": 0.6023333333333334,
+  "market_context_exact_t0_coverage": 0.23014888337468983,
+  "current_state_total_inquiries_diagnostic": {
+    "exact_match_rate": 0.07066666666666667,
+    "difference_median": -2,
+    "difference_p05": -10,
+    "difference_p95": 8,
+    "difference_min": -21,
+    "difference_max": 35
+  },
+  "first_inquiry_lag": [
+    {
+      "dimension": "first_inquiry_lag_bucket",
+      "segment": "<1d",
+      "n": 840,
+      "proxy_positive_rate": 0.5678571428571428
+    },
+    {
+      "dimension": "first_inquiry_lag_bucket",
+      "segment": ">=30d",
+      "n": 413,
+      "proxy_positive_rate": 0.2542372881355932
+    },
+    {
+      "dimension": "first_inquiry_lag_bucket",
+      "segment": "1-3d",
+      "n": 1240,
+      "proxy_positive_rate": 0.5112903225806451
+    },
+    {
+      "dimension": "first_inquiry_lag_bucket",
+      "segment": "3-7d",
+      "n": 1370,
+      "proxy_positive_rate": 0.4591240875912409
+    },
+    {
+      "dimension": "first_inquiry_lag_bucket",
+      "segment": "7-30d",
+      "n": 931,
+      "proxy_positive_rate": 0.31149301825993553
+    }
+  ],
+  "response_time": [
+    {
+      "response_bucket": "<=2h",
+      "n": 2977,
+      "scheduled_visit_rate": 0.19146792072556265
+    },
+    {
+      "response_bucket": "2-6h",
+      "n": 4609,
+      "scheduled_visit_rate": 0.19960945975265784
+    },
+    {
+      "response_bucket": "6-12h",
+      "n": 4575,
+      "scheduled_visit_rate": 0.1969398907103825
+    },
+    {
+      "response_bucket": "12-24h",
+      "n": 4372,
+      "scheduled_visit_rate": 0.19922232387923147
+    },
+    {
+      "response_bucket": "24-48h",
+      "n": 2265,
+      "scheduled_visit_rate": 0.21545253863134659
+    },
+    {
+      "response_bucket": ">48h",
+      "n": 380,
+      "scheduled_visit_rate": 0.19210526315789472
+    }
+  ],
+  "availability_at_t1": [
+    {
+      "dimension": "is_available",
+      "segment": "false",
+      "n": 1671,
+      "proxy_positive_rate": 0.4614003590664273
+    },
+    {
+      "dimension": "is_available",
+      "segment": "true",
+      "n": 2402,
+      "proxy_positive_rate": 0.4604496253122398
+    }
+  ],
+  "sector_balance": [
+    {
+      "sector": "Industrial",
+      "leads": 1249,
+      "spots": 882,
+      "latest_available_spots": 530,
+      "lead_share": 0.2498,
+      "spot_share": 0.294,
+      "latest_available_share": 0.2933038184836746,
+      "leads_per_latest_available_spot": 2.3566037735849057
+    },
+    {
+      "sector": "Office",
+      "leads": 1450,
+      "spots": 878,
+      "latest_available_spots": 540,
+      "lead_share": 0.29,
+      "spot_share": 0.2926666666666667,
+      "latest_available_share": 0.29883785279468733,
+      "leads_per_latest_available_spot": 2.685185185185185
+    },
+    {
+      "sector": "Retail",
+      "leads": 1528,
+      "spots": 743,
+      "latest_available_spots": 432,
+      "lead_share": 0.3056,
+      "spot_share": 0.24766666666666667,
+      "latest_available_share": 0.23907028223574986,
+      "leads_per_latest_available_spot": 3.537037037037037
+    },
+    {
+      "sector": "Land",
+      "leads": 773,
+      "spots": 497,
+      "latest_available_spots": 305,
+      "lead_share": 0.1546,
+      "spot_share": 0.16566666666666666,
+      "latest_available_share": 0.16878804648588822,
+      "leads_per_latest_available_spot": 2.5344262295081967
+    }
+  ],
+  "raw_distribution_summary": [
+    {
+      "sector": "Industrial",
+      "leads": 1249,
+      "spots": 882,
+      "lead_target_area_median": 403.8,
+      "spot_area_median": 2714.6000000000004,
+      "lead_max_rent_budget_median": 62764.3,
+      "spot_total_rent_median": 425215.265,
+      "lead_max_sale_budget_median": 11302348.67,
+      "spot_total_sale_median": 70272123.945
+    },
+    {
+      "sector": "Office",
+      "leads": 1450,
+      "spots": 878,
+      "lead_target_area_median": 375.25,
+      "spot_area_median": 196.05,
+      "lead_max_rent_budget_median": 139707.185,
+      "spot_total_rent_median": 68782.28,
+      "lead_max_sale_budget_median": 24219107.415,
+      "spot_total_sale_median": 11865624.22
+    },
+    {
+      "sector": "Retail",
+      "leads": 1528,
+      "spots": 743,
+      "lead_target_area_median": 400,
+      "spot_area_median": 96.5,
+      "lead_max_rent_budget_median": 121551.71,
+      "spot_total_rent_median": 27155.81,
+      "lead_max_sale_budget_median": 22841249.665,
+      "spot_total_sale_median": 5141736.8
+    },
+    {
+      "sector": "Land",
+      "leads": 773,
+      "spots": 497,
+      "lead_target_area_median": 388.1,
+      "spot_area_median": 4579,
+      "lead_max_rent_budget_median": 20811.76,
+      "spot_total_rent_median": 212860.06,
+      "lead_max_sale_budget_median": 3751577.33,
+      "spot_total_sale_median": 34137127.71
+    }
+  ]
+}

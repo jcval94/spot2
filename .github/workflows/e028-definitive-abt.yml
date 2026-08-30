@@ -1,0 +1,128 @@
+name: E028 definitive A-B protocol
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - experimentos/drift-feature-validation
+    paths:
+      - "experimentos/feature_validation/E028_definitive_opportunity_score_abt/**"
+      - "data/candidate/csv/leads.csv"
+      - "data/candidate/csv/inquiries.csv"
+      - "experimentos/modelo_3/data_pipeline.py"
+      - ".github/workflows/e028-definitive-abt.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experimentos/feature_validation/E028_definitive_opportunity_score_abt/**"
+      - "experimentos/Evidencias/EV-028_definitive_abt_target.md"
+      - ".github/workflows/e028-definitive-abt.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: e028-protocol-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-protocol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/feature_validation/E028_definitive_opportunity_score_abt/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/feature_validation/E028_definitive_opportunity_score_abt/requirements.txt
+
+      - name: Validate protocol files
+        run: |
+          python -m py_compile experimentos/feature_validation/E028_definitive_opportunity_score_abt/target_contract.py
+          python -m py_compile experimentos/feature_validation/E028_definitive_opportunity_score_abt/validate_protocol.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base = Path("experimentos/feature_validation/E028_definitive_opportunity_score_abt")
+          for name in ["experiment_spec.json", "ab_test_protocol.json", "target_contract.json", "RELEASE_MANIFEST_TEMPLATE.json"]:
+              with (base / name).open(encoding="utf-8") as f:
+                  json.load(f)
+          contract = json.loads((base / "target_contract.json").read_text(encoding="utf-8"))
+          assert contract["offline_target"]["horizon_days"] == 30
+          assert contract["online_primary_outcome"]["horizon_days"] == 30
+          assert contract["offline_target"]["ambiguous_policy"].startswith("exclude")
+          assert contract["online_primary_outcome"]["grain"] == "one row per randomized lead_id"
+          print("E028 JSON protocol files and target contract parse successfully.")
+          PY
+
+      - name: Run target contract boundary tests
+        run: |
+          cd experimentos/feature_validation/E028_definitive_opportunity_score_abt
+          python -m unittest -v test_target_contract.py
+
+      - name: Run A-A target and assignment dry run
+        run: python experimentos/feature_validation/E028_definitive_opportunity_score_abt/validate_protocol.py
+
+      - name: Validate dry-run outputs
+        run: |
+          set -euo pipefail
+          base="experimentos/feature_validation/E028_definitive_opportunity_score_abt/dry_run_results"
+          test -s "$base/summary.json"
+          test -s "$base/aa_arm_summary.csv"
+          test -s "$base/strata_balance.csv"
+          test -s "$base/REPORT.md"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("experimentos/feature_validation/E028_definitive_opportunity_score_abt/dry_run_results/summary.json")
+          x = json.loads(p.read_text(encoding="utf-8"))
+          checks = x["checks"]
+          required = ["unique_lead_assignment", "full_30d_maturation", "srm_threshold_pass", "outcome_one_row_per_lead", "ambiguous_labels_not_coerced_to_zero"]
+          failed = [k for k in required if not checks.get(k)]
+          if failed:
+              raise SystemExit(f"E028 dry-run failed checks: {failed}")
+          print("E028 A/A dry-run checks passed.")
+          PY
+
+      - name: Publish dry-run report
+        if: always()
+        run: |
+          f="experimentos/feature_validation/E028_definitive_opportunity_score_abt/dry_run_results/REPORT.md"
+          if [ -f "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - name: Commit dry-run evidence
+        if: github.event_name == 'push' && github.ref == 'refs/heads/experimentos/drift-feature-validation'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/feature_validation/E028_definitive_opportunity_score_abt/dry_run_results/
+          if git diff --cached --quiet; then
+            echo "No dry-run changes."
+          else
+            git commit -m "Add E028 protocol dry-run evidence [skip ci]"
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}"
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
+
+      - name: Upload protocol artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e028-definitive-abt-protocol
+          path: experimentos/feature_validation/E028_definitive_opportunity_score_abt/dry_run_results/
+          if-no-files-found: warn
+          retention-days: 30

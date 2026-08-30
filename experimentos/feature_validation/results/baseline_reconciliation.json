@@ -1,0 +1,13 @@
+{
+  "parent_model": "specialist_random_forest_calibrated",
+  "max_abs_metric_difference": 8.326672684688674e-17,
+  "metric_differences": {
+    "roc_auc": 0.0,
+    "average_precision": 0.0,
+    "brier": 5.551115123125783e-17,
+    "log_loss": 0.0,
+    "lift_top_10pct": 0.0,
+    "recall_top_20pct": 8.326672684688674e-17
+  },
+  "status": "MATCH"
+}

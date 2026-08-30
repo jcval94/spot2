@@ -1,0 +1,44 @@
+{
+  "experiment_id": "E024_outlier_handling",
+  "metrics": {
+    "roc_auc": 0.5593898177964499,
+    "average_precision": 0.5237390831066944,
+    "brier": 0.24504524084146287,
+    "log_loss": 0.6833549557216378,
+    "lift_top_10pct": 1.097743655970084,
+    "recall_top_20pct": 0.22465572960001925
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.4713652052803682,
+      "average_precision": 0.4767312144639491,
+      "brier": 0.2510149912294351,
+      "log_loss": 0.6951794813085534,
+      "lift_top_10pct": 0.8044797191590033,
+      "recall_top_20pct": 0.18662952646239556
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.594781569295258,
+      "average_precision": 0.5643987680071556,
+      "brier": 0.24413923366517354,
+      "log_loss": 0.6813522501858442,
+      "lift_top_10pct": 1.1347402597402596,
+      "recall_top_20pct": 0.2159090909090909
+    },
+    "T2_engaged": {
+      "roc_auc": 0.6120226788137236,
+      "average_precision": 0.5300872668489783,
+      "brier": 0.23998149762977994,
+      "log_loss": 0.673533135670516,
+      "lift_top_10pct": 1.354010989010989,
+      "recall_top_20pct": 0.2714285714285714
+    }
+  },
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "Isolation Forest is fit only on training data, outcome-free, with stage/sector/modality regimes and stage fallback.",
+    "Temporal clocks and availability snapshot age are intentionally excluded from anomaly detection so anomaly does not simply mean late cohort.",
+    "Held-out validation and test rows are never deleted."
+  ],
+  "next_experiment": "Remove deterministic Spot price-total redundancy while keeping the held-out population fixed."
+}

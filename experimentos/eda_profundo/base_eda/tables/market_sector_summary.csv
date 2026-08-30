@@ -1,0 +1,5 @@
+sector,rows,median_avg_price_sqm_mxn,mean_recent_occupancy_rate,median_absorption_velocity_days,median_recent_inquiry_volume,median_similar_available_spots
+Industrial,126,140.56,0.8757063492063492,169.8,238,15
+Office,128,357.96000000000004,0.8271875000000002,118.85,264,17
+Retail,125,288.49,0.7732559999999999,92.3,278,15
+Land,121,45,0.5955950413223137,236.9,256,16

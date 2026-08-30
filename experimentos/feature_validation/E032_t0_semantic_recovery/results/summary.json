@@ -1,0 +1,71 @@
+{
+  "stage": "T0_cold",
+  "selected_variant": "soft_profiles",
+  "status": "NOT_RECOVERED",
+  "candidate_metrics": {
+    "n": 698,
+    "positive_rate": 0.5200573065902578,
+    "roc_auc": 0.48973315241971954,
+    "average_precision": 0.501558497282502,
+    "ap_over_prevalence": 0.9644292867856376,
+    "brier": 0.25699507758047413,
+    "log_loss": 0.707376458878789,
+    "lift_top_10pct": 0.8240850059031878,
+    "recall_top_20pct": 0.18181818181818182
+  },
+  "atomic_baseline_metrics": {
+    "n": 698,
+    "positive_rate": 0.5200573065902578,
+    "roc_auc": 0.48919863492455085,
+    "average_precision": 0.5002278389079237,
+    "ap_over_prevalence": 0.9618706103518754,
+    "brier": 0.25489837055697256,
+    "log_loss": 0.7030585970766472,
+    "lift_top_10pct": 0.7966155057064149,
+    "recall_top_20pct": 0.1928374655647383
+  },
+  "candidate_bootstrap": {
+    "roc_auc": {
+      "point": 0.48973315241971954,
+      "ci95_low": 0.45013310660064215,
+      "ci95_high": 0.530027075076739
+    },
+    "average_precision": {
+      "point": 0.501558497282502,
+      "ci95_low": 0.4545807000563707,
+      "ci95_high": 0.5561480976236068
+    },
+    "ap_over_prevalence": {
+      "point": 0.9644292867856376,
+      "ci95_low": 0.9114599027044958,
+      "ci95_high": 1.0325657199211153
+    },
+    "lift_top_10pct": {
+      "point": 0.8240850059031878,
+      "ci95_low": 0.6212559334206876,
+      "ci95_high": 1.008185829996214
+    }
+  },
+  "delta_vs_atomic": {
+    "roc_auc": {
+      "point_delta": 0.000534517495168696,
+      "ci95_low": -0.03616624175018263,
+      "ci95_high": 0.0352698754764939,
+      "probability_gt_0": 0.538
+    },
+    "average_precision": {
+      "point_delta": 0.001330658374578353,
+      "ci95_low": -0.02447718758527104,
+      "ci95_high": 0.02562507968869909,
+      "probability_gt_0": 0.586
+    },
+    "lift_top_10pct": {
+      "point_delta": 0.027469500196772856,
+      "ci95_low": -0.16174727008615505,
+      "ci95_high": 0.31945106683359514,
+      "probability_gt_0": 0.642
+    }
+  },
+  "n_cat": 16,
+  "n_num": 51
+}

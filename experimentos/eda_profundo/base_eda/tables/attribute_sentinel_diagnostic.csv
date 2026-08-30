@@ -1,0 +1,13 @@
+column,sector,n,zero_rate,missing_rate
+vertical_height_m,Industrial,882,0,0.14965986394557823
+vertical_height_m,Office,878,0,0.15148063781321183
+vertical_height_m,Retail,743,0,0.14939434724091522
+vertical_height_m,Land,497,0.8370221327967807,0.16297786720321933
+elevators,Industrial,882,0.01927437641723356,0
+elevators,Office,878,0.17425968109339407,0
+elevators,Retail,743,0.19246298788694483,0
+elevators,Land,497,0.008048289738430584,0
+parking_spaces,Industrial,882,0,0
+parking_spaces,Office,878,0,0
+parking_spaces,Retail,743,0.033647375504710635,0
+parking_spaces,Land,497,0.1488933601609658,0

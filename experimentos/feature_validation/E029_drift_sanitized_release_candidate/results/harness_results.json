@@ -1,0 +1,30 @@
+{
+  "experiment_id": "E029_drift_sanitized_release_candidate",
+  "metrics": {
+    "roc_auc": 0.5428452879203347,
+    "average_precision": 0.5423915544020586,
+    "brier": 0.24927016665528012,
+    "log_loss": 0.6917298924972363,
+    "lift_top_10pct": 1.1469575200918485,
+    "recall_top_20pct": 0.22189349112426035
+  },
+  "segment_metrics": {
+    "T2_engaged_historical_post_selection": {
+      "roc_auc": 0.5428452879203347,
+      "average_precision": 0.5423915544020586,
+      "brier": 0.24927016665528012,
+      "log_loss": 0.6917298924972363,
+      "lift_top_10pct": 1.1469575200918485,
+      "recall_top_20pct": 0.22189349112426035
+    }
+  },
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "Historical diagnostics are post-selection because E021-E027 already used this dataset to choose the feature policy.",
+    "Canonical ambiguous event-time labels are excluded rather than coerced to zero.",
+    "T0/T1 are deliberately neutral; this artifact is T2-only.",
+    "No Availability fields or drift-sensitive clocks enter LeadQuality.",
+    "Launch requires a genuinely post-freeze cohort and production A/A instrumentation."
+  ],
+  "next_experiment": "Apply prospective_gate.json to the first post-freeze matured cohort; if PASS, complete E028 release manifest and productive A/A."
+}

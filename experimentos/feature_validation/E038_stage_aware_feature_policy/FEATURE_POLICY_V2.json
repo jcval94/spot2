@@ -1,0 +1,81 @@
+{
+  "policy_version": "v2",
+  "evidence_basis": [
+    "E031",
+    "E032",
+    "E033",
+    "E035",
+    "E036",
+    "E037"
+  ],
+  "stage_policy": {
+    "T0": {
+      "lead_quality": "NEUTRAL_EVIDENCE_BACKED",
+      "active_semantic_layers": [
+        "Search Need",
+        "search specificity/completeness for explanation/ops"
+      ],
+      "routing_status": "REPRESENTATION_ONLY_NOT_PROPENSITY",
+      "rationale": "Two FE waves and temporal target encoding failed to recover stable predictive signal."
+    },
+    "T1": {
+      "lead_quality": "NEUTRAL_EVIDENCE_BACKED",
+      "active_semantic_layers": [
+        "Dynamic Need",
+        "Need transition",
+        "Physical",
+        "Location",
+        "Lead-Spot fit"
+      ],
+      "routing_status": "EXPERIMENTAL_ROUTING_REPRESENTATION",
+      "rationale": "Semantic layers remain interpretable and useful for routing hypotheses, but canonical-target recovery failed and geo/inventory signals were unstable."
+    },
+    "T2": {
+      "lead_quality": "FROZEN_E029_CANDIDATE_PENDING_PROSPECTIVE_GATE",
+      "active_semantic_layers": [
+        "historical behavior",
+        "Lead-Spot context"
+      ],
+      "routing_status": "PREDICTIVE_CANDIDATE_AFTER_GATE",
+      "rationale": "Residual T2 signal exists after drift sanitization; prospective confirmation required."
+    }
+  },
+  "feature_family_decisions": {
+    "scale_log_transforms": "KEEP_AS_OPTIONAL_ENGINEERING_NOT_PROMOTED_BY_RECOVERY",
+    "specificity_completeness": "KEEP_FOR_EXPLANATION_AND_FUTURE_DATA",
+    "search_need": "KEEP_SEMANTIC",
+    "dynamic_need": "KEEP_SEMANTIC_ROUTING_ONLY",
+    "soft_cluster_distances": "DO_NOT_PROMOTE_TO_LEADQUALITY",
+    "physical_location_profiles": "KEEP_MATCHING_REPRESENTATION",
+    "semantic_interactions": "DO_NOT_PROMOTE_TO_T1_LEADQUALITY",
+    "missingness_frequency": "DO_NOT_PROMOTE",
+    "robust_bins": "DO_NOT_PROMOTE",
+    "geo_inventory_relative": "DO_NOT_PROMOTE_T1_LEADQUALITY",
+    "temporal_target_encoding": "RESEARCH_ONLY_HIGH_RISK",
+    "availability": "POLICY_GUARDRAIL_ONLY",
+    "broker_service": "SEPARATE_ROUTING_PROBLEM",
+    "prior_searches": "BLOCKED",
+    "raw_calendar_progress_clocks": "BLOCKED_AUDIT_ONLY",
+    "market_context": "BLOCKED_UNTIL_EFFECTIVE_TIME",
+    "behavioral_persona": "INTERPRETABILITY_ONLY",
+    "broker_supply_cluster": "REJECTED"
+  },
+  "next_data_features": [
+    {
+      "feature_source": "raw inquiry text",
+      "experiment": "E039_llm_semantic_inquiry_features",
+      "status": "BLOCKED_BY_DATA_GAP",
+      "outputs": [
+        "message_semantics",
+        "lead_spot_semantic_compatibility",
+        "intent_trajectory"
+      ]
+    },
+    "canonical preferred-geo coordinates for distance features",
+    "true commercial close/lease target",
+    "effective-dated market context",
+    "strict point-in-time supply/demand inventory statistics",
+    "new independent temporal cohort for T0/T1 challenger confirmation"
+  ],
+  "research_status": "CLOSED_CURRENT_DATA_REOPEN_ON_NEW_INFORMATION"
+}

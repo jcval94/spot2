@@ -1,0 +1,74 @@
+{
+  "experiment_id": "E030_definitive_abt",
+  "parent_experiments": [
+    "E028_definitive_opportunity_score_abt",
+    "E029_drift_sanitized_release_candidate"
+  ],
+  "status": "IMPLEMENTATION_ARTIFACT",
+  "question": "Can Spot2 be represented as one canonical point-in-time Analytical Base Table for dynamic T0/T1/T2 scoring with the corrected target and governed feature roles?",
+  "primary_change": "Materialize a canonical scoring-snapshot ABT using the E028 target contract and E029 feature policy, preserving ambiguous/censored rows in audit output while exposing only mature observable labels to model-ready output.",
+  "grain": "lead_id × stage × score_time",
+  "target": {
+    "name": "target_scheduled_visit_30d",
+    "contract": "../E028_definitive_opportunity_score_abt/target_contract.json",
+    "binary_training_statuses": [
+      "POSITIVE",
+      "NEGATIVE"
+    ],
+    "excluded_statuses": [
+      "AMBIGUOUS_UNKNOWN_EVENT_TIME",
+      "RIGHT_CENSORED",
+      "INELIGIBLE_PRIOR_SCHEDULED_VISIT"
+    ]
+  },
+  "split": {
+    "unit": "lead_id",
+    "order": "lead.created_at then lead_id",
+    "fractions": {
+      "train": 0.7,
+      "val": 0.15,
+      "test": 0.15
+    },
+    "rule": "Assign after canonical target observability is known; leads with no model-ready row remain unlabeled_future in audit."
+  },
+  "feature_policy": {
+    "source": "../E029_drift_sanitized_release_candidate/results/feature_policy.json",
+    "roles": [
+      "model_feature",
+      "policy_guardrail",
+      "audit_only",
+      "identifier",
+      "target"
+    ],
+    "release_stage_policy": {
+      "T0": "neutral",
+      "T1": "neutral",
+      "T2": "candidate_pending_prospective_gate"
+    }
+  },
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN",
+    "forbidden": [
+      "lead_score_internal",
+      "broker_response",
+      "broker_response_hours",
+      "response_event_at",
+      "first_conversion_at",
+      "spot_days_on_market",
+      "spot_total_views",
+      "spot_total_inquiries",
+      "spot_is_active",
+      "Market Context without publication/effective-time semantics"
+    ]
+  },
+  "outputs": [
+    "results/abt_all_snapshots.csv.gz",
+    "results/abt_model_ready.csv.gz",
+    "results/abt_schema.json",
+    "results/abt_summary.json",
+    "results/column_roles.csv",
+    "results/stage_target_summary.csv",
+    "results/split_summary.csv",
+    "results/status_summary.csv"
+  ]
+}

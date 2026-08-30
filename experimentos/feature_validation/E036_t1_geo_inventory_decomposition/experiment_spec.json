@@ -1,0 +1,41 @@
+{
+  "experiment_id": "E036_t1_geo_inventory_decomposition",
+  "parent_experiments": [
+    "E035_outcome_free_advanced_fe",
+    "E030_definitive_abt"
+  ],
+  "status": "PRE_REGISTERED_DEVELOPMENT",
+  "question": "Which component creates E035's weak T1 signal: inventory-relative position, preferred-geo distance, or their combination?",
+  "primary_change": "Ablate train-only inventory relative features and geo-centroid distances separately under rolling E030-train folds.",
+  "target": {
+    "name": "target_scheduled_visit_30d",
+    "source": "E028"
+  },
+  "population": "E030 train only",
+  "validation": "3 expanding rolling lead-cohort folds; development evidence only",
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN",
+    "items": [
+      {
+        "element": "guardrail_1",
+        "status": "ALLOW",
+        "evidence": "E030 train only."
+      },
+      {
+        "element": "guardrail_2",
+        "status": "ALLOW",
+        "evidence": "Inventory medians and geo centroids fit on prior fold rows only."
+      },
+      {
+        "element": "guardrail_3",
+        "status": "ALLOW",
+        "evidence": "No target used to construct features."
+      },
+      {
+        "element": "guardrail_4",
+        "status": "ALLOW",
+        "evidence": "No E030 validation/test."
+      }
+    ]
+  }
+}

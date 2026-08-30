@@ -1,0 +1,44 @@
+{
+  "experiment_id": "E023_availability_staleness",
+  "metrics": {
+    "roc_auc": 0.5517873296377038,
+    "average_precision": 0.517258524168147,
+    "brier": 0.24527848603155503,
+    "log_loss": 0.6838684574754933,
+    "lift_top_10pct": 1.0513499399031412,
+    "recall_top_20pct": 0.22003166865632048
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.4618732590529248,
+      "average_precision": 0.46713831131406364,
+      "brier": 0.2508378870349162,
+      "log_loss": 0.694825866597651,
+      "lift_top_10pct": 0.8322203991300033,
+      "recall_top_20pct": 0.16991643454038996
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.5824764212732513,
+      "average_precision": 0.5601162899705455,
+      "brier": 0.24457823474624407,
+      "log_loss": 0.6821436698484555,
+      "lift_top_10pct": 1.0212662337662337,
+      "recall_top_20pct": 0.21875
+    },
+    "T2_engaged": {
+      "roc_auc": 0.6110123085869354,
+      "average_precision": 0.524520971219832,
+      "brier": 0.24041933631350487,
+      "log_loss": 0.6746358359803734,
+      "lift_top_10pct": 1.3005631868131868,
+      "recall_top_20pct": 0.2714285714285714
+    }
+  },
+  "conclusion": "SUPPORTED",
+  "caveats": [
+    "Non-inferiority margin for macro AP was declared as -0.01 before reading the result.",
+    "A stale snapshot is not equivalent to an unavailable spot; >90d is treated as unknown context, not false availability.",
+    "Snapshot age is point-in-time safe but can still proxy temporal regime."
+  ],
+  "next_experiment": "Test training-row anomaly handling without contaminating the held-out test population."
+}

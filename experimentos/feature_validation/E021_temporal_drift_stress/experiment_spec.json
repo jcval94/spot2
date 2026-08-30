@@ -1,0 +1,84 @@
+{
+  "experiment_id": "E021_temporal_drift_stress",
+  "parent_experiment": "E005_multihead_vs_specialists",
+  "scoring_time": {
+    "stage": "T0/T1/T2",
+    "timestamp_definition": "T0=leads.created_at; T1=first inquiries.inquiry_at; T2=second and later inquiries.inquiry_at while no scheduled_visit has already occurred"
+  },
+  "target": {
+    "event": "future scheduled_visit response event",
+    "horizon_days": 30,
+    "anchor": "scoring_time",
+    "censoring": "right"
+  },
+  "population": {
+    "eligibility": "Scoring snapshots with a complete 30-day future observation window; T1/T2 are generated only before a known scheduled visit has occurred.",
+    "exclusions": [
+      "Right-censored scoring snapshots.",
+      "Dynamic snapshots after an already observed scheduled visit.",
+      "Current/future broker-response information from model inputs."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "T0_cold",
+    "T1_first_inquiry",
+    "T2_engaged"
+  ],
+  "question": "How stable are target prevalence, feature distributions and a frozen specialist Random Forest across future lead cohorts?",
+  "hypothesis": "The Spot2 synthetic process is temporally non-stationary: target prevalence and/or important feature distributions will shift materially across rolling future cohorts.",
+  "primary_change": "replace the single 70/15/15 evaluation with expanding rolling temporal folds while holding target, point-in-time features and model family fixed",
+  "secondary_changes": [
+    "report feature PSI early vs late",
+    "report AP normalized by prevalence to separate discrimination from prevalence drift"
+  ],
+  "features": {
+    "inherited": [
+      "lead_intake_features",
+      "current_inquiry_features",
+      "current_spot_static_features",
+      "lead_spot_compatibility_features",
+      "availability_asof_features",
+      "historical_interactions_asof_features"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "validation": {
+    "strategy": "expanding rolling temporal lead-cohort folds",
+    "time_column": "leads.created_at",
+    "split_description": "For each fold, train on all earlier lead cohorts, calibrate on the next month, and test on the following two months; test windows are disjoint and all snapshots for a lead remain together."
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "inherited_point_in_time_feature_set",
+        "source": "leads + inquiries + spots + spot_attributes + availability_snapshot",
+        "scoring_time": "T0/T1/T2",
+        "information_available_at": "same point-in-time rules as E005",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Inherited unchanged from E005; lead_score_internal, current broker outcome/timing and mutable current-state Spot aggregates remain blocked."
+      }
+    ]
+  }
+}

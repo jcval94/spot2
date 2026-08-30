@@ -1,0 +1,11 @@
+{
+  "conclusion": "INCONCLUSIVE",
+  "train_rows_removed": 436,
+  "train_removed_rate": 0.031109525508383876,
+  "drop_minus_keep_ap": 0.006263164752814188,
+  "drop_minus_keep_ap_ci95": [
+    -0.00286252700334042,
+    0.014333797509506365
+  ],
+  "drop_train_fit_rows": 13579
+}

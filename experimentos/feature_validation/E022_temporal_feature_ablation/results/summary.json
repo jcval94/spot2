@@ -1,0 +1,11 @@
+{
+  "conclusion": "SUPPORTED",
+  "full_minus_no_temporal_ap": 0.03249025428510999,
+  "full_minus_no_temporal_ap_ci95": [
+    0.016089487618161275,
+    0.04963489887577105
+  ],
+  "time_proxy_only_macro_auc": 0.5960461715151711,
+  "time_proxy_only_macro_ap": 0.5492478684824553,
+  "n_encoded_features_no_temporal": 271
+}
