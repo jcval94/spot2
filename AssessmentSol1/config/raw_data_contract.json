@@ -1,5 +1,5 @@
 {
-  "contract_version": "P1-raw-v1",
+  "contract_version": "P1-raw-v1.1",
   "canonical_execution": {
     "format": "parquet",
     "path": "data/candidate/parquet",
@@ -49,8 +49,16 @@
       "fk": {
         "spot_id": "spots.spot_id"
       },
-      "event_anchor": null,
-      "policy": "BLOCKED_PENDING_TEMPORAL_PROVENANCE"
+      "event_anchor": "ASSUMED_FROM spots.created_at; no raw attribute timestamp",
+      "policy": "AUTHORIZED_IMMUTABLE_ASSUMPTION",
+      "historical_use": {
+        "allowed_at_T0": false,
+        "allowed_at_T1": true,
+        "allowed_at_T2": true,
+        "condition": "spots.created_at <= score_time",
+        "assumption": "all spot_attributes values are immutable for the lifetime of the spot",
+        "provenance_note": "assumption supplied by assessment owner; not inferred from raw timestamps"
+      }
     },
     "availability_snapshot": {
       "grain": [
