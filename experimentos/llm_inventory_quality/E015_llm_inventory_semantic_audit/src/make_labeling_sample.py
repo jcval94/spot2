@@ -57,6 +57,7 @@ def run(output_path: Path) -> int:
             "spot_id": row["spot_id"],
             "sector_name": row["sector_name"],
             "type_name": row["type_name"],
+            "modality": row["modality"],
             "title": row["title"],
             "description": row["description"],
             "natural_light": row["natural_light"],
