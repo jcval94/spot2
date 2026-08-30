@@ -11,6 +11,7 @@ from assessment_sol1.raw_audit import (
     TABLES,
     assert_csv_parquet_parity,
     exact_duplicate_rows,
+    date_validity_audit,
     fk_orphan_count,
     pk_duplicate_rows,
     read_parquet_table,
@@ -200,3 +201,50 @@ def test_market_context_is_eda_only() -> None:
 
 def frames_width(table: str) -> int:
     return read_parquet_table(REPO_ROOT, table).width
+
+
+def test_all_declared_dates_parse_and_are_plausible(
+    frames: dict[str, pl.DataFrame]
+) -> None:
+    audit = date_validity_audit(frames)
+    assert audit
+    for result in audit.values():
+        assert result["invalid_parse"] == 0
+        assert result["before_2000"] == 0
+        assert result["after_audit_date"] == 0
+
+
+def test_response_timing_inconsistencies_are_explicit(
+    frames: dict[str, pl.DataFrame]
+) -> None:
+    iq = frames["inquiries"]
+    no_response_with_hours = iq.filter(
+        (pl.col("broker_response") == "no_response")
+        & pl.col("broker_response_hours").is_not_null()
+    ).height
+    realized_missing_hours = iq.filter(
+        pl.col("broker_response").is_in(["accepted", "rejected", "scheduled_visit"])
+        & pl.col("broker_response_hours").is_null()
+    ).height
+    scheduled_missing_hours = iq.filter(
+        (pl.col("broker_response") == "scheduled_visit")
+        & pl.col("broker_response_hours").is_null()
+    ).height
+    assert no_response_with_hours == 3786
+    assert realized_missing_hours == 2701
+    assert scheduled_missing_hours == 673
+
+
+def test_spot_current_state_columns_are_forbidden() -> None:
+    registry = pl.read_csv(
+        REPO_ROOT / "AssessmentSol1" / "evidence" / "temporal_column_registry.csv"
+    )
+    blocked = registry.filter(
+        (pl.col("source") == "spots")
+        & pl.col("column").is_in(
+            ["days_on_market", "total_inquiries", "total_views", "is_active"]
+        )
+    )
+    assert blocked.height == 4
+    assert set(blocked["known_at_T1"].to_list()) == {"BLOCKED"}
+    assert set(blocked["point_in_time_reconstructable"].to_list()) == {"NO"}
