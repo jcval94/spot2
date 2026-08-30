@@ -44,3 +44,28 @@ The manifest was constructed from the current source schemas. The GitHub workflo
 A CI workflow is included to run the builder against the real repository CSVs. In this tool session GitHub did not expose a completed workflow run for the new branch workflow, and the local execution environment cannot resolve github.com to clone the repository.
 
 Therefore no full-data runtime result is fabricated here. The implementation remains **validated at unit/invariant level, with full repository execution automated but not observed in this session**.
+
+
+## Source-schema verification on merged main
+
+After merge, the manifest was compared directly against the six current source headers on `main`:
+
+| Table | Source columns |
+|---|---:|
+| leads | 20 |
+| spots | 25 |
+| spot_attributes | 12 |
+| inquiries | 13 |
+| availability_snapshot | 6 |
+| market_context | 10 |
+| **Total** | **86** |
+
+Result:
+
+- manifest rows: **86**;
+- source columns: **86**;
+- missing manifest entries: **0**;
+- extra manifest entries: **0**;
+- exact `table,column` set match: **PASS**.
+
+This verifies source-variable coverage. It is distinct from a full runtime build of all Parquet ABTs.
