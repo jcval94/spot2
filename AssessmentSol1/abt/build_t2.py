@@ -132,7 +132,11 @@ def _stage_eligibility(iq: pl.DataFrame, current: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def build_t2(repo_root: Path) -> tuple[pl.DataFrame, pl.DataFrame]:
+def build_t2(
+    repo_root: Path,
+    *,
+    max_score_time_exclusive=None,
+) -> tuple[pl.DataFrame, pl.DataFrame]:
     """Build second-and-later inquiry challenger ABT.
 
     Current inquiry request fields are allowed. Historical features use only
@@ -166,6 +170,11 @@ def build_t2(repo_root: Path) -> tuple[pl.DataFrame, pl.DataFrame]:
             ).alias("score_id")
         )
     )
+    if max_score_time_exclusive is not None:
+        current = current.filter(
+            pl.col("score_time") < pl.lit(max_score_time_exclusive)
+        )
+
     history = _strict_history(iq, current)
     stage_gate = _stage_eligibility(iq, current)
 
