@@ -84,6 +84,17 @@ def calibration_intercept_slope(
         return float("nan"), float("nan")
     eps = 1e-6
     p = np.clip(p.astype(float), eps, 1 - eps)
+
+    if len(np.unique(p)) < 2:
+        # A constant predictor has no identifiable calibration slope.
+        # Report calibration-in-the-large as the intercept correction only.
+        observed = float(np.clip(np.mean(y), eps, 1 - eps))
+        predicted = float(p[0])
+        intercept = math.log(observed / (1 - observed)) - math.log(
+            predicted / (1 - predicted)
+        )
+        return float(intercept), float("nan")
+
     logit = np.log(p / (1 - p)).reshape(-1, 1)
     try:
         model = LogisticRegression(
@@ -112,10 +123,16 @@ def metric_bundle(
 
     roc = _safe_binary_metric(roc_auc_score, y, p)
     ap = _safe_binary_metric(average_precision_score, y, p)
-    try:
-        precision, recall, _ = precision_recall_curve(y, p)
-        pr = float(auc(recall, precision))
-    except Exception:
+    ranking_defined = len(np.unique(p)) >= 2
+    if ranking_defined:
+        try:
+            precision, recall, _ = precision_recall_curve(y, p)
+            pr = float(auc(recall, precision))
+        except Exception:
+            pr = float("nan")
+    else:
+        # Trapezoidal PR area on a constant score is interpolation-driven and
+        # can look artificially high; AP remains the valid summary.
         pr = float("nan")
     ll = _safe_binary_metric(
         lambda yt, prb: log_loss(yt, np.clip(prb, 1e-6, 1 - 1e-6)),
@@ -134,12 +151,12 @@ def metric_bundle(
         "brier": brier,
         "calibration_intercept": intercept,
         "calibration_slope": slope,
-        "lift_at_5pct": _lift(y, p, 0.05),
-        "lift_at_10pct": _lift(y, p, 0.10),
-        "lift_at_20pct": _lift(y, p, 0.20),
-        "precision_at_10pct": _precision_at(y, p, 0.10),
-        "recall_at_10pct": _recall_at(y, p, 0.10),
-        "recall_at_20pct": _recall_at(y, p, 0.20),
+        "lift_at_5pct": _lift(y, p, 0.05) if ranking_defined else float("nan"),
+        "lift_at_10pct": _lift(y, p, 0.10) if ranking_defined else float("nan"),
+        "lift_at_20pct": _lift(y, p, 0.20) if ranking_defined else float("nan"),
+        "precision_at_10pct": _precision_at(y, p, 0.10) if ranking_defined else float("nan"),
+        "recall_at_10pct": _recall_at(y, p, 0.10) if ranking_defined else float("nan"),
+        "recall_at_20pct": _recall_at(y, p, 0.20) if ranking_defined else float("nan"),
         "positive_rate": float(np.mean(y)),
         "n": int(len(y)),
         "n_leads": int(pd.Series(leads).nunique()),
