@@ -188,7 +188,8 @@ def test_broker_response_hours_is_not_authorized_by_registry() -> None:
     )
     assert row.height == 1
     assert row["leakage_risk"].item() == "CRITICAL"
-    assert "AUDIT_ONLY" in row["notes"].item()
+    assert "OUTCOME_ONLY" in row["notes"].item()
+    assert "prohibited as a feature" in row["notes"].item()
 
 
 def test_market_context_is_eda_only() -> None:
