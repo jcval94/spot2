@@ -144,10 +144,7 @@ COLUMN_TEMPORAL_CLASSIFICATION = {
     },
     "spot_attributes": {
         "static_columns": [
-            "spot_id"
-        ],
-        "mutable_columns": [],
-        "temporal_unknown_columns": [
+            "spot_id",
             "natural_light",
             "luminaires",
             "charging_ports",
@@ -160,7 +157,9 @@ COLUMN_TEMPORAL_CLASSIFICATION = {
             "floor_material",
             "amenities"
         ],
-        "note": "No timestamp exists for attribute values; all non-key attributes remain temporally unknown pending provenance."
+        "mutable_columns": [],
+        "temporal_unknown_columns": [],
+        "note": "All spot attribute values are treated as immutable over the lifetime of the spot by explicit assessment assumption. Raw has no attribute timestamp; T1/T2 use requires spots.created_at <= score_time."
     },
     "availability_snapshot": {
         "static_columns": [
@@ -776,7 +775,7 @@ def build_audit(repo_root: Path) -> dict:
             "leads": "T0_INTAKE_SNAPSHOT_WITH_CONDITIONAL_HISTORY",
             "inquiries": "EVENT_TABLE_WITH_POST_EVENT_RESPONSE_FIELDS",
             "spots": "MIXED_ENTITY_AND_UNVERSIONED_EXTRACT_STATE",
-            "spot_attributes": "UNVERSIONED_NO_TIMESTAMP",
+            "spot_attributes": "IMMUTABLE_BY_EXPLICIT_ASSESSMENT_ASSUMPTION",
             "availability_snapshot": "DATED_MUTABLE_STATE_BACKWARD_ASOF_ONLY",
             "market_context": "MONTHLY_AGGREGATE_WITHOUT_PUBLICATION_TIME_EDA_ONLY",
         },
@@ -788,14 +787,14 @@ def build_audit(repo_root: Path) -> dict:
             "availability_join_safety": "PASS_WITH_BACKWARD_ASOF_ONLY",
             "spots_current_state": "FORBIDDEN_BACKTEST",
             "market_context": "EDA_ONLY",
-            "spot_attributes": "BLOCKED_PENDING_TEMPORAL_PROVENANCE",
+            "spot_attributes": "AUTHORIZED_IMMUTABLE_ASSUMPTION",
             "broker_response_fields": "AUDIT_ONLY_P1",
             "target_built": False,
             "every_source_has_explicit_temporal_semantics": "PASS",
         },
         "source_policy": {
             "spots_current_state": "FORBIDDEN_BACKTEST",
-            "spot_attributes": "BLOCKED_PENDING_TEMPORAL_PROVENANCE",
+            "spot_attributes": "AUTHORIZED_IMMUTABLE_ASSUMPTION",
             "market_context": "EDA_ONLY",
             "broker_response_fields": "AUDIT_ONLY_P1",
             "availability_competing_inquiries_30d": (
