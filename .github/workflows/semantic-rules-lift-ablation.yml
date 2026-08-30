@@ -1,0 +1,31 @@
+name: Semantic rules lift ablation
+
+on:
+  push:
+    branches:
+      - experiment/semantic-rules-lift-ablation
+    paths:
+      - "experimentos/semantic_rules_lift_ablation/**"
+      - ".github/workflows/semantic-rules-lift-ablation.yml"
+  workflow_dispatch:
+
+jobs:
+  ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -r experimentos/semantic_rules_lift_ablation/requirements.txt
+      - name: Run ablation
+        run: python experimentos/semantic_rules_lift_ablation/run_experiment.py
+      - name: Show report
+        run: cat experimentos/semantic_rules_lift_ablation/results/REPORT.md
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-rules-lift-ablation
+          path: experimentos/semantic_rules_lift_ablation/results/
