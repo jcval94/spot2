@@ -1,19 +1,21 @@
-# T0 Cold Start — PROMPT 8
+# T0 Cold Start
 
-Decision: **NEUTRAL_EVIDENCE_BACKED**.
+Status: **NEUTRAL_EVIDENCE_BACKED**.
 
-T0 scores at `leads.created_at` and predicts `T0_30D_INQUIRY_INITIATION_PROGRESS_V1`.
+The only allowed predictor information is intake state at `lead.created_at`.
 
-**T0 and T1 probabilities estimate different quantities.**
+Macro temporal CV:
+- Base Rate AP: **0.4803**
+- Intake Logistic AP: **0.4856**
+- Intake Logistic AUC: **0.4947**
+- Brier worsens slightly: 0.2631 → 0.2642
 
-Only intake-time lead information was allowed. Inquiry payload, requested Spot, Availability, outcomes, current-state Spot fields, `lead_score_internal`, and unproven historical counters were not predictors.
+No discriminative T0 model is promoted.
 
-The fixed L2 Logistic does not beat the fold-specific Base Rate defensibly:
-- macro AP: 0.4803 → 0.4831 (+0.0028);
-- macro AUC: 0.5000 → 0.4934;
-- Brier: 0.2631 → 0.2665;
-- Log Loss: 0.7207 → 0.7294.
+The strong temporal target drift is explained primarily by future inquiry exposure. That exposure is audit-only and cannot be used as a T0 predictor.
 
-No T0 discriminative model is recommended. T0 can provide only a cold-start prior / uncertainty state until better intake information exists.
-
-See `../../evidence/T0_EXPOSURE_DRIFT.md`.
+See:
+- `../../evidence/T0_EXPOSURE_DRIFT.md`
+- `metrics/fold_metrics.csv`
+- `metrics/exposure_drift.csv`
+- `train.py`
