@@ -60,8 +60,41 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D052 | SUPPORTED | El future test de matching ya fue consumido para discovery iterativo; puede reproducir resultados registrados, pero no confirmar nuevas celdas descubiertas después. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D053 | SUPPORTED | La arquitectura de segmentación decision-ready es Persona actual + Need T0 + Dynamic Need T1 + Physical + Location + Broker legacy, con Broker Service auxiliar y sin Broker Supply/Inquiry Intent. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D054 | SUPPORTED | En esta línea el cuello de botella dejó de ser el algoritmo de clustering: múltiples clusterers/K no producen lift global robusto; la ganancia útil vino de separar conceptos y estados T0→T1. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md), [EV-010](../Evidencias/EV-010_matching_ab_v3.md), [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D055 | SUPPORTED | La revisión semántica cross-field revela un patrón material Land × lenguaje de edificio/interiores: 230 casos, 182 incrementales sobre Rules v1; esto justifica semantic rule discovery, no superioridad del LLM. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |\n| D056 | SUPPORTED | El ABT canónico debe distinguir missing estructural, estado mutable y eventos point-in-time: rent/sale N/A no debe median-imputarse; current Spot state se reconstruye o bloquea; 673 scheduled_visit sin response time requieren label ambiguity en vez de falso negativo. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md) |
+| D055 | SUPPORTED | La revisión semántica cross-field revela un patrón material Land × lenguaje de edificio/interiores: 230 casos, 182 incrementales sobre Rules v1; esto justifica semantic rule discovery, no superioridad del LLM. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |
+| D056 | SUPPORTED | El ABT canónico debe distinguir missing estructural, estado mutable y eventos point-in-time: rent/sale N/A no debe median-imputarse; current Spot state se reconstruye o bloquea; 673 scheduled_visit sin response time requieren label ambiguity en vez de falso negativo. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md) |
 | D057 | PROPOSAL | El LLM no se justifica como tratamiento general de las 86 variables. Sus candidatos defendibles son semantic QA sobre title/description y, si existiera raw inquiry text, extracción estructurada de intención/flexibilidad/restricciones. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md), [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |
+| D060 | SUPPORTED | El proceso presenta drift temporal fuerte: las interacciones se comprimen hacia el alta del lead y rolling CV confirma non-stationarity. | [EV-020](../Evidencias/EV-020_eda_profundo.md), [EV-021](../Evidencias/EV-021_temporal_drift_stress.md) |
+| D061 | SUPPORTED | El dataset contiene clipping y redundancias sintéticas fuertes en área, presupuesto y precios de Spot. | [EV-020](../Evidencias/EV-020_eda_profundo.md) |
+| D062 | SUPPORTED | Rareza multivariable no equivale a error ni oportunidad; no hay base para borrar outliers automáticamente. | [EV-020](../Evidencias/EV-020_eda_profundo.md), [EV-024](../Evidencias/EV-024_outlier_handling.md) |
+| D063 | SUPPORTED | Market Context sigue bloqueado para histórico hasta disponer de semántica de publicación/effective time. | [EV-020](../Evidencias/EV-020_eda_profundo.md) |
+| D064 | SUPPORTED | Availability tiene estado y frescura; snapshot age es guardrail/staleness, no señal comercial demostrada. | [EV-020](../Evidencias/EV-020_eda_profundo.md), [EV-023](../Evidencias/EV-023_availability_staleness.md) |
+| D065 | INCONCLUSIVE | scheduled_visit está débilmente acoplado a compatibilidad intuitiva; limita lo que el proxy demuestra sobre matching real. | [EV-020](../Evidencias/EV-020_eda_profundo.md) |
+| D066 | SUPPORTED | Current-state aggregates de Spot no son snapshots históricos coherentes y deben seguir bloqueados en scoring retrospectivo. | [EV-020](../Evidencias/EV-020_eda_profundo.md) |
+| D067 | SUPPORTED | prior_searches y prior_inquiries no son equivalentes; deben evaluarse por ablación separada. | [EV-020](../Evidencias/EV-020_eda_profundo.md) |
+| D068 | INCONCLUSIVE | La dispersión bruta de broker justifica prueba histórica, no interpretación causal. | [EV-020](../Evidencias/EV-020_eda_profundo.md) |
+| D069 | SUPPORTED | La aparente fortaleza T1 del RF depende materialmente de clocks/progreso inestables; E005/T1 raw queda bloqueado para producción. | [EV-022](../Evidencias/EV-022_temporal_feature_ablation.md) |
+| D070 | SUPPORTED | Availability freshness debe tratarse como guardrail; raw snapshot age no justifica ventaja predictiva robusta. | [EV-023](../Evidencias/EV-023_availability_staleness.md) |
+| D071 | NOT_SUPPORTED | Eliminar anomalies de entrenamiento no mejora de forma robusta; no se adopta limpieza automática por Isolation Forest. | [EV-024](../Evidencias/EV-024_outlier_handling.md) |
+| D072 | INCONCLUSIVE | Price totals son redundantes por construcción, pero la no-inferioridad predictiva de retirarlos no quedó demostrada bajo el margen pre-registrado. | [EV-025](../Evidencias/EV-025_redundancy_ablation.md) |
+| D073 | SUPPORTED | prior_searches deteriora el RF en este split y debe retirarse del release candidate; prior_inquiries no demuestra el mismo patrón. | [EV-026](../Evidencias/EV-026_prior_history_ablation.md) |
+| D074 | INCONCLUSIVE | El prior histórico de broker no entrega lift robusto y queda fuera del release/routing. | [EV-027](../Evidencias/EV-027_broker_prior_point_in_time.md) |
+| D075 | SUPPORTED | E028 tiene protocolo definitivo y E029 artifact congelado, pero launch sigue bloqueado hasta prospective gate + A/A productivo. | [EV-028](../Evidencias/EV-028_definitive_abt_target.md), [EV-029](../Evidencias/EV-029_drift_sanitized_release_candidate.md) |
+| D076 | SUPPORTED | Un scheduled_visit con event time desconocido no puede imputarse a negativo; debe ser AMBIGUOUS y producción exige timestamp real. | [EV-028](../Evidencias/EV-028_definitive_abt_target.md) |
+| D077 | PROPOSAL | La evaluación causal definitiva debe ser lead-level, ITT y medir el sistema completo durante 30 días, no snapshots/inquiries aisladas. | [EV-028](../Evidencias/EV-028_definitive_abt_target.md) |
+| D078 | SUPPORTED | El release candidate debe validarse en cohorte genuinamente post-freeze; el histórico post-selección no puede servir como confirmación. | [EV-029](../Evidencias/EV-029_drift_sanitized_release_candidate.md) |
+| D079 | SUPPORTED | E030 materializa una ABT canónica y validada a nivel lead×stage×score_time, preservando ambiguous/censoring y separando model features de guardrails/audit-only. | [EV-030](../Evidencias/EV-030_definitive_abt.md) |
+| D080 | NOT_SUPPORTED | T0 no recupera señal útil con scale/specificity, semantic Need ni soft clusters bajo la target E028; el mejor challenger permanece cerca/debajo de azar. | [EV-031](../Evidencias/EV-031_semantic_feature_engineering_ladder.md), [EV-032](../Evidencias/EV-032_t0_semantic_recovery.md) |
+| D081 | NOT_SUPPORTED | T1 tampoco se recupera con Dynamic Need + PH/LOC + semantic interactions; el challenger reduce AUC de forma robusta vs atomic baseline. | [EV-031](../Evidencias/EV-031_semantic_feature_engineering_ladder.md), [EV-033](../Evidencias/EV-033_t1_semantic_recovery.md) |
+| D082 | SUPPORTED | Los clusters semánticos pueden seguir siendo útiles para interpretación/routing, pero no deben promoverse automáticamente a LeadQuality bajo la target canónica. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md), [EV-033](../Evidencias/EV-033_t1_semantic_recovery.md) |
+| D083 | SUPPORTED | El test E030 quedó consumido por E032/E033; nuevas familias de FE son desarrollo y requieren nueva cohorte para confirmación independiente. | [EV-032](../Evidencias/EV-032_t0_semantic_recovery.md), [EV-033](../Evidencias/EV-033_t1_semantic_recovery.md), [EV-034](../Evidencias/EV-034_general_feature_engineering_catalog.md) |
+| D084 | NOT_SUPPORTED | Una segunda ola outcome-free (missingness, frequency, bins, geo/inventory relative) tampoco recupera T0; no existe señal dev estable con los campos actuales. | [EV-035](../Evidencias/EV-035_advanced_feature_engineering.md) |
+| D085 | NOT_SUPPORTED | La pista T1 geo/inventory de E035 no se sostiene al aislarla: E036 no obtiene AUC >0.50 en ningún fold para ninguna variante. | [EV-035](../Evidencias/EV-035_advanced_feature_engineering.md), [EV-036](../Evidencias/EV-036_t1_geo_inventory_decomposition.md) |
+| D086 | INCONCLUSIVE | Priors categóricos target-encoded estrictamente temporales mejoran levemente T1 en AUC/AP, pero no Lift@10 ni estabilidad suficiente; no activan LeadQuality. | [EV-037](../Evidencias/EV-037_temporal_smoothed_categorical_priors.md) |
+| D087 | SUPPORTED | Neutralidad debe aplicarse al head LeadQuality, no a toda la etapa: T0/T1 mantienen capas semánticas/routing aunque su propensity head quede neutral. | [EV-038](../Evidencias/EV-038_stage_aware_feature_policy.md) |
+| D088 | SUPPORTED | Con E031–E037, seguir recombinando los mismos campos aumenta research-overfitting; reabrir T0/T1 requiere nueva fuente, target o cohorte independiente. | [EV-038](../Evidencias/EV-038_stage_aware_feature_policy.md) |
+| D089 | SUPPORTED | El paquete actual no contiene raw inquiry text; sólo message_length y campos estructurados, por lo que un LLM semántico de inquiry no puede evaluarse honestamente hoy. | [EV-039](../Evidencias/EV-039_llm_semantic_inquiry_features.md) |
+| D090 | PROPOSAL | Si se incorpora texto real, el LLM debe extraer semántica estructurada (intent, constraints, readiness, compatibility, trajectory), no una probabilidad directa de conversión. | [EV-039](../Evidencias/EV-039_llm_semantic_inquiry_features.md) |
+| D091 | SUPPORTED | La línea T0/T1 queda CLOSED/DECISION-READY con los datos actuales; reabrir requiere nueva información, target, temporalidad o cohorte, no más combinaciones del mismo histórico. | [EV-040](../Evidencias/EV-040_feature_engineering_closure.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -1198,3 +1231,523 @@ Para inventario, el LLM debe continuar como challenger incremental sobre Rules, 
 **Implicación:** el primer benchmark posterior a E016 debe mantener ABT base sin LLM y probar por ablación `Rules semantic flags` y luego `LLM incremental flags`, sólo si existe un output versionado y reproducible.
 
 Evidencia: [EV-016](../Evidencias/EV-016_abt_feature_engineering.md), [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md).
+
+
+## D060 — El drift temporal no es un detalle; cambia la pregunta predictiva
+
+**Estado:** SUPPORTED descriptivamente; su impacto predictivo se somete a stress test en E021/E022.
+
+**Qué se observó.** El número total de inquiries por lead permanece relativamente estable, aproximadamente 4.2–4.8, pero la distribución temporal cambia de forma radical. Las inquiries dentro de 30 días pasan de 1.37 por lead en 2025-01 a 4.42 en 2026-06 y la mediana de tiempo a primera inquiry cae de 7.82 a 2.31 días. En paralelo, el proxy lead-level a 30 días sube aproximadamente de 20.1% a 56.5%.
+
+**Por qué esto importa.** El target usa un horizonte fijo de 30 días. Si el proceso sintético mueve las interacciones cada vez más cerca de la creación del lead, una proporción mayor de eventos cabe mecánicamente dentro de esa ventana. Un modelo puede entonces encontrar señal en `days_from_lead_creation`, `inquiry_number`, `days_since_first_inquiry`, mes o weekday aunque parte de esa señal represente **régimen/cohorte** y no una relación comercial estable.
+
+Esto no es leakage clásico: las variables pueden conocerse correctamente al momento del score. El riesgo es diferente: **generalización bajo non-stationarity**. Un feature legal puede ser inestable.
+
+**Qué no demuestra.** No demuestra que interactuar antes cause una visita ni que las variables temporales deban eliminarse. Tampoco permite cuantificar todavía cuánto desempeño depende de ellas.
+
+**Qué lo resuelve.** E021 evalúa rolling future cohorts y PSI; E022 remueve clocks de calendario/progreso bajo el split congelado de E005 y compara con bootstrap por lead.
+
+Evidencia: [EV-020](../Evidencias/EV-020_eda_profundo.md).
+
+## D061 — Hay reglas del generador dentro de features aparentemente continuas
+
+**Estado:** SUPPORTED.
+
+**Qué se observó.** Aproximadamente 35.53% de `requested_area/spot_area` se concentra en 0.30 y 21.37% en 5.00. Cerca de una cuarta parte de los presupuestos solicitados queda exactamente en el máximo declarado del lead. Además, `spot_price_total` es prácticamente `area × price_sqm`, con error relativo p99 casi nulo.
+
+**Por qué importa.** Un modelo puede repartir importancia entre variables que son copias algebraicas o productos de clipping, inflando la sensación de evidencia independiente. En modelos de árboles esto puede no destruir desempeño, pero sí vuelve más frágil la interpretación y puede crear splits artificiales en los límites del generador.
+
+**Qué no demuestra.** No implica que todas esas variables deban eliminarse; algunas transformaciones derivadas pueden ser útiles para matching.
+
+**Qué lo resuelve.** E025 retira únicamente los price totals redundantes, manteniendo ratios de compatibilidad, y exige no-inferioridad fuera de tiempo.
+
+Evidencia: [EV-020](../Evidencias/EV-020_eda_profundo.md).
+
+## D062 — Outlier no significa registro malo
+
+**Estado:** SUPPORTED.
+
+**Qué se observó.** El Isolation Forest outcome-free encuentra rareza multivariable dentro de sector × modalidad, pero los casos más anómalos no muestran mayor scheduled_visit. El top 1% tiene ~17.95% frente a ~19.94% en el resto; top 3% ~19.12% frente a ~19.94%.
+
+**Por qué importa.** Las áreas, precios y capacidades de inmuebles viven en regímenes de escala muy distintos. Borrar una nave industrial enorme porque es extrema respecto a la nube general puede eliminar precisamente un submercado válido. Un detector de anomalías sirve como **lupa de QA**, no como regla automática de limpieza.
+
+**Qué no demuestra.** El EDA no prueba que conservar todos los outliers sea óptimo para modelado.
+
+**Qué lo resuelve.** E024 ajusta Isolation Forest sólo sobre train, excluye clocks temporales, elimina únicamente train flags y conserva validation/test intactos. Así se prueba directamente si la supuesta limpieza mejora generalización.
+
+Evidencia: [EV-020](../Evidencias/EV-020_eda_profundo.md).
+
+## D063 — Market Context necesita semántica temporal antes de ser feature
+
+**Estado:** SUPPORTED como restricción de datos.
+
+Hay 72 claves geo-sector y 30 meses globales, pero cada clave sólo tiene 3–12 meses, mediana 7, y ninguna cubre los 30 meses.
+
+**Por qué importa.** Un `month` en una tabla no dice cuándo esa información estuvo realmente publicada o disponible. Forward-fill o nearest-month pueden introducir conocimiento que un scoring histórico no tenía.
+
+**Decisión.** Esta batería no experimenta con Market Context. Preferimos perder una feature potencialmente útil a producir un lift no defendible.
+
+**Qué permitiría retomarla.** Fecha efectiva/publicación, regla de cierre mensual y join as-of reproducible.
+
+Evidencia: [EV-020](../Evidencias/EV-020_eda_profundo.md).
+
+## D064 — Availability tiene dos dimensiones: estado y frescura
+
+**Estado:** SUPPORTED.
+
+~90.27% de los spots cambia de availability al menos una vez. La separación entre snapshots tiene mediana de 21 días, p95 97, p99 155 y máximo 319.
+
+**Por qué importa.** Elegir el último snapshot con `snapshot_date <= score_time` resuelve el leakage hacia el futuro, pero no resuelve **staleness**. Un snapshot de hace 150 días es legal pero puede ser poco representativo. Además, la edad del snapshot puede correlacionarse con periodo/cobertura y convertirse en proxy de drift.
+
+**Qué no demuestra.** No demuestra que un snapshot viejo sea incorrecto ni que deba imputarse como unavailable.
+
+**Qué lo resuelve.** E023 compara edad cruda, eliminación de edad y una representación protegida con log-age/buckets que trata >90d como contexto de disponibilidad desconocido.
+
+Evidencia: [EV-020](../Evidencias/EV-020_eda_profundo.md).
+
+## D065 — El proxy actual limita la evidencia sobre matching
+
+**Estado:** INCONCLUSIVE respecto al matching real.
+
+Mismo estado/municipio/corredor y ratios simples de área/presupuesto apenas mueven scheduled_visit en crudo; un fit económico cercano a 1 no aparece consistentemente mejor.
+
+**Por qué importa.** Si el generador de `scheduled_visit` no responde fuertemente a compatibilidad intuitiva, un experimento offline puede subestimar el valor real de matching. Esto es una limitación del **label/proxy**, no evidencia de que matching sea inútil.
+
+**Qué no demuestra.** No invalida D023/D024 ni la suite de Matching A/B; precisamente refuerza la necesidad de una evaluación online/lead-level bien definida.
+
+Evidencia: [EV-020](../Evidencias/EV-020_eda_profundo.md).
+
+## D066 — Los current-state aggregates de Spot no son snapshots históricos
+
+**Estado:** SUPPORTED.
+
+Con fin observable 2026-07-13, 373 spots (12.43%) tienen `days_on_market` mayor al tiempo transcurrido desde `created_at`; 17 implican más de un año hacia el futuro y el máximo es +694 días. `spots.total_inquiries` coincide exactamente con el conteo observable de inquiries sólo en 7.07% de spots.
+
+**Por qué importa.** Utilizarlos retrospectivamente equivale a describir una fila histórica con un estado acumulado en otro momento. Eso sí puede convertirse en leakage/current-state contamination.
+
+**Decisión.** `days_on_market`, `total_inquiries`, `total_views` e `is_active` permanecen BLOCK en el pipeline histórico.
+
+Evidencia: [EV-020](../Evidencias/EV-020_eda_profundo.md).
+
+## D067 — prior_searches y prior_inquiries deben probarse por separado
+
+**Estado:** SUPPORTED descriptivamente; valor incremental pendiente de E026.
+
+Su correlación Pearson es -0.00495, prácticamente cero.
+
+**Por qué importa.** Correlación cero no significa “una sobra”. Puede significar que capturan comportamientos distintos: exploración/búsqueda frente a contacto efectivo. Tampoco hay base para sumarlas en un único engagement score.
+
+**Qué lo resuelve.** E026 realiza ablación de cada campo y de ambos conjuntamente bajo la misma baseline.
+
+Evidencia: [EV-020](../Evidencias/EV-020_eda_profundo.md).
+
+## D068 — La dispersión de broker justifica una prueba, no una conclusión causal
+
+**Estado:** INCONCLUSIVE.
+
+Entre brokers con >=50 inquiries, scheduled_visit descriptivo va aproximadamente de 9.86% a 32.79%.
+
+**Por qué importa.** La magnitud es suficiente para preguntar si existe señal histórica reutilizable. Pero la tasa full-dataset mezcla cartera, geografía, inventario, lead mix y periodo.
+
+**Qué no demuestra.** No demuestra que reasignar un lead a un broker de tasa alta mejore conversión.
+
+**Qué lo resuelve.** E027 construye un prior suavizado usando sólo respuestas realizadas estrictamente antes del score, sin usar `broker_id` como identidad de modelo. Aun si mejora predicción, routing causal seguirá requiriendo experimento online.
+
+Evidencia: [EV-020](../Evidencias/EV-020_eda_profundo.md).
+
+## D069 — T1 parecía fuerte, pero su señal está dominada por tiempo/progreso
+
+**Estado:** SUPPORTED.
+
+E022 responde una pregunta distinta a E005: no quién gana con el feature set disponible, sino cuánto del rendimiento depende de clocks sujetos a drift.
+
+En el Random Forest especialista:
+
+- macro AP: 0.5175 → **0.4850** al retirar temporal/progreso;
+- macro AUC: 0.5561 → **0.5122**;
+- ΔAP full−no-temporal: **+0.0325**, IC95% **[+0.0161, +0.0496]**;
+- ΔAUC: **+0.0439**, IC95% **[+0.0257, +0.0625]**.
+
+T1 concentra el problema:
+
+- AUC 0.5877 → **0.5038**;
+- AP 0.5628 → **0.5097**;
+- ΔAUC **+0.0839**, IC95% **[+0.0494, +0.1208]**;
+- ΔAP **+0.0531**, IC95% **[+0.0200, +0.0815]**.
+
+Además, un diagnóstico `time_proxy_only` obtiene macro AUC **0.5960** y AP **0.5492**, por encima del RF completo.
+
+**Interpretación:** D019 sigue siendo correcto como benchmark relativo dentro de E005, pero ya no puede sostener “T1 tiene una señal estable lista para producción”. El dataset sintético codifica fuertemente la cohorte/progreso del funnel.
+
+**Decisión:** la versión T1 de E005 queda **BLOCK para producción**. Un release candidate debe retirar/reformular clocks, validarse en otra cohorte y demostrar que la señal restante no es sólo calendario.
+
+Evidencia: [EV-022](../Evidencias/EV-022_temporal_feature_ablation.md).
+
+## D070 — Freshness de Availability es guardrail, no ventaja predictiva demostrada
+
+**Estado:** SUPPORTED.
+
+Macro AP:
+
+- raw snapshot age: 0.5175;
+- sin raw age: **0.5236**;
+- representación guarded: 0.5173.
+
+La versión guarded vs raw tiene ΔAP -0.0002, IC95% [-0.0089, +0.0089], dentro del margen de no-inferioridad -0.01.
+
+**Interpretación:** no hay argumento para premiar/castigar comercialmente a un lead por la edad cruda del snapshot. La edad sirve para saber **cuánto confiar en el estado de inventario**.
+
+**Decisión:** eliminar raw age como predictor de negocio; conservar freshness explícita y tratar >90d como unknown histórico. En producción se prefiere inventory live.
+
+Evidencia: [EV-023](../Evidencias/EV-023_availability_staleness.md).
+
+## D071 — Eliminar outliers no está respaldado
+
+**Estado:** NOT_SUPPORTED para una política automática de borrado.
+
+Eliminar sólo anomalies de train:
+
+- AP 0.5175 → 0.5237;
+- ΔAP +0.0063, IC95% **[-0.0029, +0.0143]**;
+- ΔAUC +0.0033, IC95% **[-0.0049, +0.0130]**.
+
+**Interpretación:** el punto mejora, pero la incertidumbre permite tanto ausencia de beneficio como una mejora modesta. No hay base para declarar “los outliers son ruido”.
+
+**Decisión:** conservar observaciones; usar anomaly detection como QA/diagnóstico, no como filtro automático del release candidate.
+
+Evidencia: [EV-024](../Evidencias/EV-024_outlier_handling.md).
+
+## D072 — Price totals: redundancia clara, decisión predictiva todavía estrictamente inconclusa
+
+**Estado:** INCONCLUSIVE.
+
+Al retirar los Spot totals casi deterministas:
+
+- macro AP: 0.5175 → **0.5198**;
+- macro AUC: 0.5561 → **0.5533**;
+- ΔAP +0.0023, IC95% [-0.0078, +0.0104];
+- ΔAUC -0.0028, IC95% **[-0.01017, +0.00468]**.
+
+El margen pre-registrado era -0.01. El límite AUC queda apenas 0.00017 por debajo.
+
+**Interpretación:** sería fácil cambiar el umbral después de ver el dato y declarar no-inferioridad; no se hace. Predictivamente no parecen esenciales, pero el contrato formal no pasó.
+
+**Decisión:** mantener el resultado como inconcluso; por parsimonia son candidatos a retirar después de una confirmación temporal adicional.
+
+Evidencia: [EV-025](../Evidencias/EV-025_redundancy_ablation.md).
+
+## D073 — prior_searches no sólo es redundante: está deteriorando el modelo
+
+**Estado:** SUPPORTED para este RF/split.
+
+Macro AP:
+
+- full: 0.5175;
+- sin `prior_searches`: **0.5276**;
+- sin `prior_inquiries`: 0.5236;
+- sin ambas: 0.5239.
+
+Para `prior_searches`, full−drop = **-0.0101 AP**, IC95% **[-0.0183, -0.0010]**. El signo negativo significa que quitarla mejora.
+
+En T0, AP sube de 0.4683 a **0.4864** al retirarla.
+
+Para `prior_inquiries`, el punto también favorece quitarla, pero su IC cruza cero.
+
+**Decisión:** retirar `prior_searches` del release candidate. La utilidad de `prior_inquiries` queda no demostrada; por parsimonia no debe considerarse una feature “obligatoria”.
+
+Evidencia: [EV-026](../Evidencias/EV-026_prior_history_ablation.md).
+
+## D074 — La heterogeneidad bruta de broker no se convierte en un prior robusto
+
+**Estado:** INCONCLUSIVE predictivamente; **NO-INCLUDE** operacionalmente.
+
+Broker prior vs baseline:
+
+- macro ΔAP **+0.0015**, IC95% **[-0.0086, +0.0120]**;
+- macro ΔAUC **+0.0018**, IC95% **[-0.0080, +0.0116]**;
+- T1 ΔAP +0.0101, IC95% [-0.0148, +0.0371];
+- T2 ΔAP -0.0075, IC95% [-0.0227, +0.0091].
+
+**Interpretación:** construir correctamente el historial point-in-time reduce mucho la aparente “calidad de broker” observada en tasas brutas. La composición de cartera/tiempo probablemente explica parte de la dispersión.
+
+**Decisión:** no incorporar el prior en E028 ni cambiar routing de brokers por esta señal. Un efecto causal de broker requiere otro RCT.
+
+Evidencia: [EV-027](../Evidencias/EV-027_broker_prior_point_in_time.md).
+
+## D075 — E028 ya tiene protocolo definitivo; el release candidate existe, pero el launch gate sigue cerrado
+
+**Estado:** SUPPORTED como decisión de lanzamiento.
+
+El A/B definitivo está pre-registrado y el release candidate drift-sanitized ya fue construido y congelado en E029. Eso resuelve el blocker de **artifact inexistente**, pero no el blocker de **evidencia prospectiva**.
+
+E029 retiró de LeadQuality:
+
+- `score_weekday`, `score_hour`, `score_month`;
+- `days_from_lead_creation`, `inquiry_number`, `days_since_first_inquiry`;
+- `prior_searches`;
+- Availability completa como señal predictiva;
+- broker prior.
+
+T0/T1 quedan neutrales y sólo T2 tiene artifact predictivo congelado.
+
+El diagnóstico histórico del candidato es modesto pero no nulo:
+
+- calibration partition AUC 0.543;
+- AP/prevalencia 1.069;
+- Lift@10 1.147x;
+- PSI numérico máximo train→calibration 0.074.
+
+Sin embargo, esos datos históricos ya participaron en la selección de política E021–E027. Por eso **no son confirmatorios** y no pueden abrir E028.
+
+El gate válido requiere la primera cohorte genuinamente posterior al freeze:
+
+1. mínimo 500 leads maduros first-T2;
+2. AUC >=0.55;
+3. lower IC95% AUC >0.50;
+4. AP/prevalencia >=1.05;
+5. Lift@10 >=1.10;
+6. timestamp real de scheduled_visit >=99.5%;
+7. ningún fallo de leakage/instrumentación.
+
+**Decisión:** E028 está listo a nivel causal/estadístico y E029 está listo a nivel de artifact congelado, pero el lanzamiento permanece **BLOCKED_PENDING_PROSPECTIVE_GATE + production A/A**.
+
+Evidencia: [EV-028](../Evidencias/EV-028_definitive_abt_target.md), [EV-029](../Evidencias/EV-029_drift_sanitized_release_candidate.md).
+
+## D076 — Un scheduled_visit sin timestamp no es un negativo
+
+**Estado:** SUPPORTED como restricción de target/datos.
+
+En el paquete candidato `response_event_at` no viene como timestamp independiente; se reconstruye como `inquiry_at + broker_response_hours`. El EDA muestra que `broker_response_hours` falta en **14.97% de las filas scheduled_visit**.
+
+**Problema.** Si existe un scheduled_visit pero no conocemos cuándo ocurrió, y su inquiry puede corresponder a la ventana `(score_time, score_time+30d]`, no podemos afirmar ni 1 ni 0. El pipeline histórico anterior descartaba esos eventos al exigir `response_event_at.notna()`; por tanto sus labels contienen cierta misclasificación hacia negativo.
+
+**Nueva regla canónica.**
+
+- evento conocido dentro de ventana → 1;
+- observación completa sin evento → 0;
+- scheduled_visit con timestamp desconocido que puede tocar la ventana → `AMBIGUOUS_UNKNOWN_EVENT_TIME`;
+- right-censored → fuera de la evaluación binaria;
+- visita ya observada antes del scoring → snapshot ineligible.
+
+**Impacto sobre evidencia previa.** E021–E027 siguen siendo válidos para detectar drift, comparar feature policies y descubrir señales claramente inestables, especialmente porque el missingness de response hours es parecido entre categorías. Pero sus métricas absolutas no deben tratarse como calibración definitiva del target productivo.
+
+**Producción.** E028 exige timestamp backend real de scheduled_visit con completitud >=99.5%. La falta de timestamp productivo es un blocker de instrumentación, nunca una razón para imputar outcome=0.
+
+Implementación: [target_contract.py](../feature_validation/E028_definitive_opportunity_score_abt/target_contract.py). Evidencia: [EV-028](../Evidencias/EV-028_definitive_abt_target.md).
+
+## D077 — La evaluación causal definitiva debe ser lead-level y sistémica
+
+**Estado:** PROPOSAL pre-registrada.
+
+La evaluación offline ha producido muchas preguntas útiles sobre arquitectura, perfiles, disponibilidad, drift y matching. Ninguna de ellas sustituye la pregunta final de producto: **¿usar el sistema cambia el resultado comercial de un lead?**
+
+La propuesta E028 randomiza por `lead_id` antes de cualquier exposición experimental. El control conserva la priorización actual de Growth; el tratamiento activa el sistema dinámico completo T0/T1/T2, Inventory Serviceability y fallback.
+
+La target primaria se fija como:
+
+`lead_scheduled_visit_30d_from_assignment = 1`
+
+si el lead tiene al menos un `scheduled_visit` durante los 30 días posteriores a `assignment_at`.
+
+**Por qué no randomizar inquiries.** El tratamiento modifica la trayectoria del lead, puede cambiar cuántas inquiries ocurren y produce múltiples T2. Randomizar o analizar a nivel inquiry rompería independencia y permitiría que el propio tratamiento altere el denominador.
+
+**Por qué scheduled_visit.** Es el evento observable más cercano a avance comercial real dentro de los datos disponibles. `accepted` es demasiado débil y cierre/venta no está disponible con maduración confiable en el paquete candidato. En producción, cierre/revenue a 90 días debe conservarse como north-star secundaria cuando exista ground truth.
+
+**Por qué 30 días.** Fija una ventana operativa comparable entre cohortes y evita etiquetar como negativos a leads sólo porque fueron observados menos tiempo.
+
+**Drift.** El power no se calcula suponiendo estable la tasa histórica de 34.3%. Se usa una planificación conservadora alrededor de p=0.50, MDE +2 pp, alpha 0.05 y power 80%: 9,806 leads maduros por brazo, 19,612 en total. El análisis reportará heterogeneidad por semana de asignación y no habrá optional stopping.
+
+**Regla SHIP.** Delta ITT >= +2 pp, límite inferior del IC95% >0 y guardrails duros aprobados.
+
+**Regla NO-SHIP.** Límite superior IC95% < +2 pp: el test descarta el mínimo efecto práctico pre-registrado.
+
+El resto se considera INCONCLUSIVE; secondary metrics no pueden rescatar un primary fallido.
+
+Evidencia: [EV-028](../Evidencias/EV-028_definitive_abt_target.md).
+
+## D078 — El release candidate debe validarse después del freeze, no “confirmarse” con el histórico usado para elegirlo
+
+**Estado:** SUPPORTED como regla de validación.
+
+E029 ya congeló preprocessor, RF T2, calibrador, feature schema y hashes. Su historical calibration partition alcanza AUC 0.543, AP/prevalencia 1.069 y Lift@10 1.147x, mientras el rolling post-selection tiene AUC medio 0.534 y mínimos de AP/prevalencia/Lift inferiores a 1.
+
+**Por qué importa.** E021–E027 usaron el histórico para decidir qué clocks, history fields y fuentes retirar. Volver a usar ese mismo periodo como “confirmación” produciría selection bias: estaríamos evaluando una política parcialmente diseñada con el conjunto que pretende validarla.
+
+**Regla congelada.** El primer test confirmatorio debe comenzar con leads creados estrictamente después del freeze/data cutoff y cerrarse por semanas completas, extendiéndose sólo por N y nunca por outcomes. Si después de 16 semanas hay menos de 500 leads maduros, el resultado es `INCONCLUSIVE_INSUFFICIENT_SAMPLE`; los umbrales no se relajan post hoc.
+
+**Implicación:** el repo ya contiene el evaluator `evaluate_prospective_gate.py`, por lo que este pendiente es de **datos futuros**, no de implementación.
+
+Evidencia: [EV-029](../Evidencias/EV-029_drift_sanitized_release_candidate.md).
+
+
+
+## D079 — La ABT definitiva separa modelado, política y auditoría
+
+**Estado:** SUPPORTED.
+
+E030 pasó todos los gates con 20,738 snapshots de auditoría, 18,237 model-ready y 4,648 leads. La separación de roles evita dos errores previos: convertir variables legales pero inestables en predictors y perder rows ambiguas/censuradas al forzar un label binario.
+
+**Implicación:** E030 es la base contractual para toda nueva recuperación T0/T1/T2; no deben construirse datasets paralelos con targets o splits alternativos salvo experimento registrado.
+
+Evidencia: [EV-030](../Evidencias/EV-030_definitive_abt.md).
+
+## D080 — T0 no se recupera con la primera ola semántica
+
+**Estado:** NOT_SUPPORTED como recovery.
+
+La mejor representación elegida en validation fue soft_profiles, pero no calificó el gate de desarrollo. En test AUC=0.4897, AP/prevalence=0.964x y Lift@10=0.824x. Los deltas frente al atomic baseline cruzan ampliamente cero.
+
+**Lectura:** no hay evidencia de que Need, specificity o un cluster outcome-free K=3 conviertan la información de alta disponible en un ranking útil. T0 neutral sigue siendo la política correcta hoy.
+
+**Qué no implica:** que T0 sea imposible con nuevas fuentes o representaciones; sí implica que no debe forzarse un score usando estos campos actuales.
+
+Evidencia: [EV-031](../Evidencias/EV-031_semantic_feature_engineering_ladder.md), [EV-032](../Evidencias/EV-032_t0_semantic_recovery.md).
+
+## D081 — T1 semántico no rescata la señal perdida al retirar clocks
+
+**Estado:** NOT_SUPPORTED.
+
+Semantic interactions (Dynamic Need + PH/LOC + transitions) fue la mejor variante de validation, pero tampoco calificó. En test AUC cae de 0.4975 atomic a 0.4637 y el delta AUC tiene IC95% [-0.0664,-0.0022].
+
+**Por qué importa:** el resultado anterior de Dynamic Need (EV-013) usaba otra formulación/proxy y un holdout ya consumido. Bajo la target E028 y el split E030, esa señal no se replica como LeadQuality T1.
+
+**Decisión:** mantener Dynamic Need como representación de negocio/routing hypothesis, no como feature promovida de LeadQuality T1.
+
+Evidencia: [EV-033](../Evidencias/EV-033_t1_semantic_recovery.md).
+
+## D082 — Un cluster interpretable no es automáticamente una buena feature
+
+**Estado:** SUPPORTED.
+
+Dynamic Need tiene excelente separación geométrica (silhouette 0.620, ARI 1.000) y PH/LOC tienen semántica útil. Sin embargo, E031-E033 muestran que una segmentación estable puede no aportar generalización a la target canónica.
+
+**Regla:** separar tres gates: calidad geométrica, interpretabilidad comercial y valor predictivo out-of-time. Pasar los dos primeros no autoriza el tercero.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md), [EV-033](../Evidencias/EV-033_t1_semantic_recovery.md).
+
+## D083 — El test E030 ya fue consumido para recuperación T0/T1
+
+**Estado:** SUPPORTED como gobernanza.
+
+E032 y E033 reservaron el test para una evaluación one-shot después de seleccionar exclusivamente con validation. Desde este punto no debe utilizarse para declarar confirmación independiente de nuevas familias de FE.
+
+**Implicación:** la segunda ola de FE puede desarrollarse con rolling CV/train-validation, pero cualquier promoción fuerte necesita nueva cohorte temporal o el gate prospectivo.
+
+Evidencia: [EV-032](../Evidencias/EV-032_t0_semantic_recovery.md), [EV-033](../Evidencias/EV-033_t1_semantic_recovery.md), [EV-034](../Evidencias/EV-034_general_feature_engineering_catalog.md).
+
+
+## D084 — La segunda ola de FE refuerza el no-signal de T0
+
+**Estado:** NOT_SUPPORTED como recuperación.
+
+E035 probó missingness, frequency encoding, quantile bins y transforms combinados en tres rolling folds dentro de E030 train. La mejor variante T0, missingness_frequency, obtiene mean AUC 0.4979, AP/prevalence 0.987x y min Lift@10 0.708x.
+
+**Lectura:** la falta de señal T0 ya no puede atribuirse sólo a que faltaron clusters o transforms básicos. Con la información actual de intake no aparece una relación temporalmente estable con scheduled_visit_30d.
+
+**Decisión:** no activar LeadQuality T0 con estos campos.
+
+Evidencia: [EV-035](../Evidencias/EV-035_advanced_feature_engineering.md).
+
+## D085 — La pista geo/inventory de T1 no es robusta
+
+**Estado:** NOT_SUPPORTED.
+
+E035 mostró una señal débil al combinar geo/inventory-relative. E036 separó los componentes en los mismos rolling folds:
+
+- geo_distance mean AUC 0.4842;
+- inventory_relative 0.4818;
+- inventory_plus_geo 0.4887;
+- inventory_geo_frequency 0.4820.
+
+Ninguna variante consigue AUC >0.50 en un fold.
+
+**Decisión:** no promover estos features a T1 LeadQuality. Pueden conservarse como ideas de matching si aparece una fuente de inventario temporalmente más rica.
+
+Evidencia: [EV-036](../Evidencias/EV-036_t1_geo_inventory_decomposition.md).
+
+## D086 — Target encoding temporal tampoco convierte T0/T1 en un buen propensity model
+
+**Estado:** INCONCLUSIVE para valor futuro; no soportado para activación actual.
+
+E037 usa encoding centrado, suavizado alpha=50 y fit sólo sobre el pasado de cada fold. En T0 permanece cerca de azar. En T1, te_interactions alcanza mean AUC 0.5052 y AP/prevalence 1.020x, con 2/3 folds por encima de 0.50, pero mean Lift@10=0.958x y el peor AUC=0.4966.
+
+**Lectura:** puede existir heterogeneidad categórica histórica débil, pero no se traduce en concentración operacional útil.
+
+**Decisión:** mantener target encoding como research-only/high-risk; no incorporarlo a ABT release.
+
+Evidencia: [EV-037](../Evidencias/EV-037_temporal_smoothed_categorical_priors.md).
+
+## D087 — T0/T1 no deben confundirse con “etapas apagadas”
+
+**Estado:** SUPPORTED.
+
+Los experimentos justifican que el **head de LeadQuality** sea neutral en T0/T1, pero no que el sistema ignore esas etapas.
+
+- T0 conserva Search Need/specificity como representación explicativa y operativa.
+- T1 conserva Dynamic Need, Need transition, PH/LOC y Lead×Spot fit para matching/routing experimental.
+- T2 conserva el candidate predictivo E029.
+
+Esta separación evita inventar propensión donde no existe sin desperdiciar semántica útil para decisiones distintas.
+
+Evidencia: [EV-038](../Evidencias/EV-038_stage_aware_feature_policy.md).
+
+## D088 — La siguiente mejora de T0/T1 debe venir de información nueva
+
+**Estado:** SUPPORTED como decisión de investigación.
+
+E031–E037 cubren clusters, transforms, interactions, missingness, frequency, bins, inventario relativo, geo-distance y target encoding temporal. Continuar buscando combinaciones sobre los mismos periodos aumenta la probabilidad de research overfitting.
+
+**Regla de reapertura:** nueva fuente, target comercial mejor o nueva cohorte independiente.
+
+Fuentes prioritarias:
+- raw inquiry text;
+- coordenadas canónicas de preferencia;
+- market/inventory effective-dated;
+- true close/lease outcome.
+
+Evidencia: [EV-038](../Evidencias/EV-038_stage_aware_feature_policy.md).
+
+
+## D089 — El texto bruto de inquiry no está disponible
+
+**Estado:** SUPPORTED.
+
+La inspección del esquema y búsquedas del repositorio confirman que `inquiries` contiene `message_length`, requested area/budget, urgency, channel y asked_visit, pero no `message_text`, `inquiry_text`, `message_body` ni equivalente.
+
+**Por qué importa:** sin texto real, un experimento LLM de intención semántica no puede demostrar valor incremental. Generar texto sintético desde las columnas estructuradas sería circular.
+
+**Decisión:** E039 queda `BLOCKED_BY_DATA_GAP`, no `FAILED`.
+
+Evidencia: [EV-039](../Evidencias/EV-039_llm_semantic_inquiry_features.md).
+
+## D090 — El LLM futuro debe ser extractor, no predictor libre
+
+**Estado:** PROPOSAL.
+
+Si Spot2 incorpora texto real de inquiries, el uso recomendado es convertir lenguaje no estructurado en variables auditables:
+
+- intent/search maturity;
+- urgency/timeline;
+- constraints/flexibility;
+- requested actions;
+- specificity/ambiguity;
+- Lead×Spot semantic compatibility;
+- T2 intent trajectory.
+
+El LLM no debe producir `conversion_probability`. La calibración de `target_scheduled_visit_30d` permanece en el modelo supervisado.
+
+**Razón:** separa comprensión lingüística de estimación estadística y permite ablations por familia de features.
+
+Evidencia: [EV-039](../Evidencias/EV-039_llm_semantic_inquiry_features.md).
+
+## D091 — Feature Engineering T0/T1 está listo para cerrar con el dataset actual
+
+**Estado:** SUPPORTED.
+
+E031–E037 probaron familias semánticas, clusters, transforms, missingness, frequency, bins, geo/inventory y priors categóricos temporales. T0 no recuperó señal; T1 sólo mostró señales débiles/inestables. E030 test quedó consumido y E035–E037 evitaron reutilizarlo.
+
+**Conclusión:** seguir iterando sobre las mismas columnas/periodos tendría una relación riesgo/valor desfavorable por research-overfitting.
+
+**Criterio de reapertura:** nueva fuente, target comercial mejor, nueva temporalidad point-in-time o nueva cohorte independiente.
+
+Evidencia: [EV-040](../Evidencias/EV-040_feature_engineering_closure.md).
