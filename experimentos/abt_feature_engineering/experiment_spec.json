@@ -30,7 +30,8 @@
       "dynamic rows after a realized scheduled visit",
       "raw current/future broker response",
       "raw mutable spot current-state fields",
-      "market_context from default feature sets"
+      "market_context from default feature sets",
+      "rows whose 30-day label can be affected by scheduled_visit with unknown response timestamp"
     ]
   },
   "data_sources": [
@@ -42,7 +43,9 @@
     "data/candidate/csv/market_context.csv"
   ],
   "features": {
-    "inherited": ["E007 leakage-safe dynamic feature families"],
+    "inherited": [
+      "E007 leakage-safe dynamic feature families"
+    ],
     "added": [
       "budget applicability/open-bound features",
       "log and density transforms",
@@ -72,7 +75,11 @@
     "null/applicability checks",
     "leakage invariants"
   ],
-  "segments": ["T0_cold", "T1_first_inquiry", "T2_engaged"],
+  "segments": [
+    "T0_cold",
+    "T1_first_inquiry",
+    "T2_engaged"
+  ],
   "leakage": {
     "check_status": "PASS_BY_DESIGN_PENDING_RUNTIME_ASSERTIONS",
     "items": [
