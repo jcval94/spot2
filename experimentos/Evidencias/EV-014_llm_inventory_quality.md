@@ -1,6 +1,6 @@
 # EV-014 — LLM Inventory Semantic Quality
 
-**Estado de evidencia:** conceptual / propuesta de experimento; no existe todavía evaluación Rules-vs-LLM.
+**Estado de evidencia:** diseño conceptual. La ejecución offline ya comenzó en [EV-015](EV-015_llm_inventory_semantic_audit.md); la comparación Rules-vs-LLM sigue pendiente.
 
 **Línea de trabajo:** [llm_inventory_quality](../llm_inventory_quality/)
 
@@ -60,4 +60,8 @@ La primera integración es una **catalog QA queue**, no el Lead Opportunity Scor
 
 El LLM debe demostrar cobertura incremental material frente a Rules-only con precisión alta sobre un holdout humano y con costo/latencia razonables.
 
-**Descubrimiento relacionado:** [D050](../conocimiento_agregado/DESCUBRIMIENTOS.md#d050--el-mejor-uso-llm-actual-es-auditar-la-calidad-semántica-del-inventario).
+## Continuación empírica
+
+[E015 / EV-015](EV-015_llm_inventory_semantic_audit.md) ya ejecutó el perfilado del copy, el baseline Rules-only y preparó el gold set humano. La conclusión sobre el valor incremental del LLM permanece abierta.
+
+**Descubrimientos relacionados:** [D050](../conocimiento_agregado/DESCUBRIMIENTOS.md#d050--el-mejor-uso-llm-actual-es-auditar-la-calidad-semántica-del-inventario), [D051](../conocimiento_agregado/DESCUBRIMIENTOS.md#d051--el-copy-sintético-hace-de-rules-only-un-baseline-fuerte).
