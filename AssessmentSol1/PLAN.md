@@ -9,9 +9,11 @@
 
 Gate: answer “What information is known at the exact scoring instant?” for T0, T1, T2, inventory, broker response and market context.
 
-## P1 — Raw-data integrity and source semantics
+## P1 — Raw-data integrity and source semantics — COMPLETE
 
-Re-profile all six raw tables from scratch. Validate keys, cardinalities, timestamp ordering, missingness semantics, duplicated events, modality constraints and temporal coverage. Do not create a supervised target yet.
+Re-profiled all six raw tables from scratch; validated CSV↔Parquet parity, physical fingerprints, keys, cardinalities, timestamp ordering, missingness, duplicates, outliers, modality structure, response inconsistencies, Availability as-of coverage and source temporal provenance. Parquet is canonical. No target was constructed.
+
+Gate: every raw column has explicit event/observation/effective-time semantics or is blocked/EDA-only.
 
 ## P2 — Target contract
 
