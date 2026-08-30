@@ -5,6 +5,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from feature_engineering import (
     AMENITY_VOCAB,
@@ -224,3 +225,32 @@ def test_scheduled_visit_without_response_time_is_label_ambiguous():
     x = add_target(rows, q, horizon_days=30)
     assert x.loc[0, "target_scheduled_visit_30d"] == 0
     assert x.loc[0, "label_time_ambiguous"] == 1
+
+
+def test_manifest_covers_repository_source_columns():
+    repo_root = Path(__file__).resolve().parents[3]
+    data = repo_root / "data" / "candidate" / "csv"
+    if not data.exists():
+        pytest.skip("Repository source data is not present in this local test sandbox")
+
+    table_files = {
+        "leads": "leads.csv",
+        "spots": "spots.csv",
+        "spot_attributes": "spot_attributes.csv",
+        "inquiries": "inquiries.csv",
+        "availability_snapshot": "availability_snapshot.csv",
+        "market_context": "market_context.csv",
+    }
+    expected = set()
+    for table, filename in table_files.items():
+        cols = pd.read_csv(data / filename, nrows=0).columns
+        expected.update((table, col) for col in cols)
+
+    manifest = pd.read_csv(
+        Path(__file__).resolve().parents[1] / "variable_treatment_manifest.csv"
+    )
+    actual = set(zip(manifest["table"], manifest["column"]))
+
+    assert len(manifest) == 86
+    assert not manifest.duplicated(["table", "column"]).any()
+    assert actual == expected
