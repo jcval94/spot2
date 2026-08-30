@@ -70,3 +70,45 @@ Ejecutar LLM-only con `OPENAIAPI`, congelar labels humanos sin ver output del mo
 Rules-only vs LLM-only vs Rules+LLM.
 
 **Descubrimiento relacionado:** [D051](../conocimiento_agregado/DESCUBRIMIENTOS.md#d051--el-copy-sintético-hace-de-rules-only-un-baseline-fuerte).
+
+
+## Revisión semántica v2
+
+La simulación manual del comportamiento esperado del LLM sobre la muestra de descubrimiento reveló una categoría que el baseline original no contemplaba: `semantic_cross_field_mismatch`.
+
+Patrón principal:
+
+- `sector_name=Land`;
+- copy de edificio/interiores como “buena iluminación natural”, “recién remodelado”, “acabados modernos” o “listo para ocupar”.
+
+Proyección sobre el catálogo completo:
+
+- S001 aparece en 230 listings Land;
+- 182 no estaban marcados por Rules v1;
+- Rules v1: 322 spots únicos;
+- Rules v2 post-discovery: 504 spots únicos;
+- incremento: 182 spots, equivalente a 6.07% del inventario total.
+
+Esta revisión también mostró que `unsupported_claim`, `not_verifiable` y `ambiguous` no deben contar como QA positives por defecto.
+
+### Control de leakage de diseño
+
+La muestra original de 200 listings fue utilizada para descubrir S001. Por lo tanto:
+
+- se conserva `Rules v1` como baseline congelado;
+- `Rules v2` se etiqueta explícitamente como post-discovery;
+- la evaluación final se traslada a `labeling_holdout_v2.csv`, 240 filas sin solapamiento;
+- se añade `semantic_challenge_v2.csv`, 100 filas Land (50 patrón / 50 control), también disjunto, exclusivamente para validar precision del patrón.
+
+El challenge set no estima prevalencia.
+
+### Evidencia v2
+
+- [Semantic v2 report](../llm_inventory_quality/E015_llm_inventory_semantic_audit/results/SEMANTIC_V2_REPORT.md)
+- [Semantic discovery summary](../llm_inventory_quality/E015_llm_inventory_semantic_audit/results/semantic_discovery_summary.json)
+- [Semantic observations](../llm_inventory_quality/E015_llm_inventory_semantic_audit/results/semantic_discovery_observations.csv)
+- [Clean holdout v2](../llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/labeling_holdout_v2.csv)
+- [Semantic challenge v2](../llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/semantic_challenge_v2.csv)
+- [Rules v2](../llm_inventory_quality/E015_llm_inventory_semantic_audit/src/rules_v2.py)
+
+**Nuevo descubrimiento:** [D055](../conocimiento_agregado/DESCUBRIMIENTOS.md#d055--la-semantica-cross-field-descubre-un-patron-material-land--building-copy).
