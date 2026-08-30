@@ -1,6 +1,8 @@
 # Modelo 3 — scoring dinámico por etapa
 
 > **Estado actual:** este directorio nació como experimento Multi-Head, pero E005–E007 muestran que el Multi-Head ya no es la arquitectura líder. La decisión actual está en [DECISION_ARQUITECTURA.md](DECISION_ARQUITECTURA.md). El código original se conserva como baseline y evidencia histórica.
+>
+> El proceso completo, incluyendo cambios de criterio, incidencias y cierre formal, está en [registro_flujo/modelo_3](../registro_flujo/modelo_3/).
 
 
 Este experimento prueba una arquitectura supervisada dinámica para \`Lead Quality\` en Spot2. En vez de entrenar un único clasificador con \`stage\` como una columna, el modelo aprende una **representación compartida** y usa una salida distinta para cada momento del funnel.
