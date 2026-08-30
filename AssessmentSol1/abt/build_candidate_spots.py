@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 import polars as pl
@@ -12,6 +13,11 @@ STRUCTURAL_SPOT_COLUMNS = [
     "settlement", "corridor", "region", "lat", "lon", "area_sqm", "modality",
     "created_at",
 ]
+
+
+def _parse_created_at(value: str) -> datetime:
+    dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
 
 
 def _compatible_search_modes(spot_modality: str) -> tuple[str, ...]:
@@ -74,7 +80,7 @@ def build_candidate_spots(repo_root: Path) -> pl.DataFrame:
                 sid = int(spot["spot_id"])
                 if sid in seen:
                     continue
-                created = pl.Series([spot["created_at"]]).str.to_datetime(strict=True)[0]
+                created = _parse_created_at(spot["created_at"])
                 if created > snap["score_time"]:
                     continue
                 seen.add(sid)
@@ -99,7 +105,7 @@ def build_candidate_spots(repo_root: Path) -> pl.DataFrame:
             sid = int(snap["current_spot_id"])
             if sid not in seen:
                 spot = spot_lookup[sid]
-                created = pl.Series([spot["created_at"]]).str.to_datetime(strict=True)[0]
+                created = _parse_created_at(spot["created_at"])
                 if created > snap["score_time"]:
                     raise AssertionError("Observed current Spot did not exist at score_time")
                 rows.append(
