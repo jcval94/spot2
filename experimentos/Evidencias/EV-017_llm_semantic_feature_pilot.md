@@ -146,3 +146,39 @@ Review-tier distribution:
 - cross_field: 182.
 
 This sidecar is generated without OpenAI API calls.
+
+
+## Cierre gobernado
+
+### Hallazgos
+
+- **D058 — SUPPORTED:** Rules-first + LLM residual permitió probar la hipótesis sin pagar por señales determinísticas.
+- **D059 — NOT_SUPPORTED:** el LLM no produjo una familia de features accionables nueva para el ABT actual.
+- **D060 — SUPPORTED:** el semantic rule sidecar gratuito es el output reutilizable del experimento.
+
+### Corrida autoritativa
+
+- workflow: `33296462871`;
+- status: **SUCCESS**;
+- artifact: `9727563377`;
+- modelo: `gpt-5-nano`;
+- 100 registros;
+- costo V2: **USD 0.002579**.
+
+Una reejecución posterior `33296587433` falló por `Batch 2 ID mismatch`. No se utiliza para las métricas ni cambia la conclusión del run exitoso.
+
+### Decisión
+
+No promover ningún `llm_*` al ABT actual.
+
+Conservar y evaluar únicamente las variables Rules-only como challenger:
+
+- `rule_security_ambiguity_flag`;
+- `rule_retail_adaptive_use_flag`;
+- `rule_semantic_ambiguity_flag`;
+- `rule_semantic_signal_count`;
+- `rule_semantic_review_tier`.
+
+Registro de decisión: [DECISION_LLM_FEATURES.md](../llm_semantic_feature_pilot/DECISION_LLM_FEATURES.md)
+
+Historial de ejecución: [RUN_HISTORY.md](../llm_semantic_feature_pilot/results/RUN_HISTORY.md)

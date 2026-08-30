@@ -99,3 +99,16 @@ Review-tier distribution:
 - cross_field: 182.
 
 This sidecar is generated without OpenAI API calls.
+
+
+## Governance conclusion
+
+E017 is closed as:
+
+- **D058 SUPPORTED**: Rules-first / residual-only is the correct LLM evaluation pattern for the current data;
+- **D059 NOT_SUPPORTED**: LLM-derived variables are not justified for the current ABT;
+- **D060 SUPPORTED**: the deterministic semantic sidecar is the reusable output.
+
+Decision record: [DECISION_LLM_FEATURES.md](../DECISION_LLM_FEATURES.md)
+
+Run trace: [RUN_HISTORY.md](RUN_HISTORY.md)

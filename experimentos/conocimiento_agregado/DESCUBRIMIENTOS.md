@@ -60,8 +60,12 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D052 | SUPPORTED | El future test de matching ya fue consumido para discovery iterativo; puede reproducir resultados registrados, pero no confirmar nuevas celdas descubiertas después. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D053 | SUPPORTED | La arquitectura de segmentación decision-ready es Persona actual + Need T0 + Dynamic Need T1 + Physical + Location + Broker legacy, con Broker Service auxiliar y sin Broker Supply/Inquiry Intent. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D054 | SUPPORTED | En esta línea el cuello de botella dejó de ser el algoritmo de clustering: múltiples clusterers/K no producen lift global robusto; la ganancia útil vino de separar conceptos y estados T0→T1. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md), [EV-010](../Evidencias/EV-010_matching_ab_v3.md), [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D055 | SUPPORTED | La revisión semántica cross-field revela un patrón material Land × lenguaje de edificio/interiores: 230 casos, 182 incrementales sobre Rules v1; esto justifica semantic rule discovery, no superioridad del LLM. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |\n| D056 | SUPPORTED | El ABT canónico debe distinguir missing estructural, estado mutable y eventos point-in-time: rent/sale N/A no debe median-imputarse; current Spot state se reconstruye o bloquea; 673 scheduled_visit sin response time requieren label ambiguity en vez de falso negativo. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md) |
-| D057 | PROPOSAL | El LLM no se justifica como tratamiento general de las 86 variables. Sus candidatos defendibles son semantic QA sobre title/description y, si existiera raw inquiry text, extracción estructurada de intención/flexibilidad/restricciones. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md), [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |\n| D058 | PROPOSAL | El piloto LLM debe medir sólo semántica residual incremental: claims y contradicciones literales quedan en Rules; gpt-5-nano se limita a 100 registros balanceados antes de cualquier escala. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
+| D055 | SUPPORTED | La revisión semántica cross-field revela un patrón material Land × lenguaje de edificio/interiores: 230 casos, 182 incrementales sobre Rules v1; esto justifica semantic rule discovery, no superioridad del LLM. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |
+| D056 | SUPPORTED | El ABT canónico debe distinguir missing estructural, estado mutable y eventos point-in-time: rent/sale N/A no debe median-imputarse; current Spot state se reconstruye o bloquea; 673 scheduled_visit sin response time requieren label ambiguity en vez de falso negativo. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md) |
+| D057 | SUPPORTED | El LLM no se justifica como tratamiento general de las 86 variables actuales: los campos estructurados se resuelven determinísticamente y el piloto sobre listing copy no encontró señal accionable nueva. Raw inquiry text sigue siendo una fuente futura no probada. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md), [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
+| D058 | SUPPORTED | El diseño Rules-first + LLM residual fue el correcto: permitió probar 100 registros a costo mínimo sin pagar por claims/contradicciones que ya podían resolverse gratis. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
+| D059 | NOT_SUPPORTED | El piloto real no justifica features LLM en el ABT: V2 costó USD 0.002579, tuvo 0/25 issues en clean controls, pero 0/100 new-rule candidates y 0/100 residual actionable. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
+| D060 | SUPPORTED | El valor reutilizable del piloto es un semantic rule sidecar gratuito: 890/3,000 spots tienen ≥1 señal; 429 presentan ambigüedad semántica y las reglas reemplazan la dependencia LLM para este dataset. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -1202,27 +1206,20 @@ Evidencia: [EV-016](../Evidencias/EV-016_abt_feature_engineering.md), [EV-015](.
 
 ## D058 — El LLM sólo debe pagar por semántica residual
 
-**Estado:** PROPOSAL / diseño pre-ejecución.
+**Estado:** SUPPORTED como principio de diseño.
 
-E017 convierte la frontera conceptual de D057 en un piloto con costo controlado. Antes de cualquier corrida de catálogo:
+E017 aplicó una política Rules-first antes de llamar a la API:
 
-- claims literales de iluminación, seguridad, estacionamiento y readiness permanecen en Rules;
-- contradicciones directas contra atributos estructurados permanecen en Rules;
-- el patrón Land × building/interior copy ya conocido permanece como regla;
-- el LLM recibe únicamente el residual semántico: coherencia cross-field, use-case mismatch, adaptive reuse plausibility y candidatos a nuevas reglas.
+- claims literales de iluminación, seguridad, estacionamiento y readiness permanecieron en Rules;
+- contradicciones directas contra atributos estructurados permanecieron en Rules;
+- el patrón Land × building/interior copy ya conocido permaneció como regla;
+- el LLM recibió únicamente semántica residual: coherencia cross-field, use-case mismatch, adaptive reuse plausibility y candidatos a nuevas reglas.
 
-La muestra inicial queda congelada en **100 registros**, 25 por estrato:
+La muestra se congeló en **100 registros**, 25 por estrato, y se ejecutó con `gpt-5-nano` en cinco batches.
 
-- Rules-positive;
-- Land semantic residual;
-- ambiguity challenge;
-- clean control.
+El costo V2 fue sólo **USD 0.002579**, por lo que el rechazo posterior del LLM no se debe al costo sino a falta de información incremental.
 
-El modelo default es `gpt-5-nano` y el runner impide por defecto enviar más de 100 registros. La salida se fuerza a enums/booleanos mediante Structured Outputs y elimina rationale libre para reducir tokens.
-
-**No demuestra todavía:** precisión, cobertura incremental ni valor predictivo. La API no se ejecutó durante la preparación porque `OPENAIKEY` no estaba disponible en el runtime.
-
-**Implicación:** no escalar ni agregar estas variables al ABT hasta revisar `pilot_llm_results_100.csv`, costo real y falsos positivos en clean controls.
+**Interpretación:** la estrategia correcta para este dataset es agotar primero extracción y validaciones determinísticas, y usar un LLM únicamente como discovery/challenger sobre el residuo semántico.
 
 Evidencia: [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md).
 
@@ -1250,5 +1247,35 @@ Ese 24/25 no representa cobertura incremental: el estrato se construyó precisam
 **Sustitución sin costo:** E017 implementa un semantic rule sidecar con seguridad ambigua, adaptive-use Retail, Land building-copy, conteo de señales y tier de revisión.
 
 **Implicación:** si se quiere reabrir el caso LLM, debe existir nueva información lingüística —principalmente raw inquiry text o copy menos templated— o un holdout con humanos que muestre un tipo de issue que las reglas no puedan expresar.
+
+Evidencia: [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md).
+
+
+## D060 — El sidecar semántico gratuito es el resultado reutilizable
+
+**Estado:** SUPPORTED.
+
+Tras demostrar que el LLM no descubría una familia accionable nueva, E017 convirtió las señales reproducibles en reglas determinísticas y las ejecutó sobre los **3,000 spots**.
+
+Cobertura observada:
+
+- direct conflict: **322** spots (10.73%);
+- Land × building-copy: **230** (7.67%);
+- security ambiguity: **327** (10.90%);
+- Retail adaptive-use language: **109** (3.63%);
+- any semantic ambiguity: **429** (14.30%);
+- al menos una señal semántica: **890**;
+- dos señales simultáneas: **91**.
+
+Review tiers:
+
+- none: 2,110;
+- ambiguity: 386;
+- direct_conflict: 322;
+- cross_field: 182.
+
+**Interpretación:** el experimento LLM produjo valor, pero no en forma de una dependencia LLM de producción. Su valor fue ayudar a formalizar una capa semántica barata, auditable y reproducible.
+
+**Implicación:** evaluar estas variables Rules-only como challenger predictivo por ablación antes de incorporarlas al ABT canónico. No asumir que una inconsistencia semántica aumenta o reduce `scheduled_visit` sin evidencia predictiva.
 
 Evidencia: [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md).

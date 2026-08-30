@@ -160,3 +160,16 @@ Estas variables deben evaluarse predictivamente como challenger antes de entrar 
 ## Estado actual
 
 **PILOT EXECUTED / LLM FEATURES NOT PROMOTED.**
+
+
+## Documentación final
+
+- [Decisión sobre features LLM](DECISION_LLM_FEATURES.md)
+- [Reporte del piloto](results/PILOT_REPORT.md)
+- [Historial de runs](results/RUN_HISTORY.md)
+- [Estado](results/STATUS.md)
+- [Evidencia canónica](../Evidencias/EV-017_llm_semantic_feature_pilot.md)
+
+La corrida autoritativa es el workflow `33296462871` (SUCCESS), artifact `9727563377`.
+
+Una reejecución posterior (`33296587433`) falló por `Batch 2 ID mismatch`; se documenta como un issue de robustez del runner y **no sustituye ni invalida** el resultado V2 exitoso.
