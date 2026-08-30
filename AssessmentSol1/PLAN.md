@@ -1,60 +1,52 @@
 # Incremental plan
 
 ## P0 — Clean-room + temporal information contract — COMPLETE
-Frozen scoring instants and source observability policy.
+Scoring instants and source observability frozen.
 
 ## P1 — Raw-data integrity and source semantics — COMPLETE
-CSV↔Parquet parity, PK/FK, missingness, temporal ontology and source-specific blocks.
+CSV/Parquet parity, PK/FK, missingness, temporal ontology and source-specific blocks.
 
 ## P2 — Target contract — COMPLETE
-Frozen primary target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`, 14-day maturity.
+Primary target frozen as `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`, 14-day maturity.
 
-## P3 / Prompt 4 — Point-in-time ABTs — IMPLEMENTED; POLARS RUNTIME MANIFEST PENDING
-T0, T1, T2 and separate Inventory/Matching builders are implemented with lineage/leakage gates. The full `validate_abts.py` materialization still needs an environment with Polars before final packaging.
+## P3 / Prompt 4 — Point-in-time ABTs — COMPLETE FOR TEMPORAL VALIDITY
+Builders and leakage gates are implemented. An independent raw-equivalence runtime audit now passes and reproduces the frozen T0/T1/T2 and candidate grains.
+
+Exact Polars builder materialization remains a final reproducibility follow-up, not a downstream selection dependency.
 
 ## P4 — Split contract — COMPLETE
-Frozen timestamp-only split:
-- DEVELOPMENT 4,368;
-- CALIBRATION 312;
-- PROCEDURAL_HOLDOUT 290;
-- POST_HOLDOUT_AUDIT 30;
-plus 4 expanding temporal folds.
+Frozen timestamp-only T1 split plus four expanding folds; T2 boundary-crossing rule is active.
 
-## P5–6 — EDA, drift and stage-aware Feature Engineering — COMPLETE
-Development-only EDA, drift classification, 129-row FEATURE_REGISTRY, frozen feature groups/ablations, fold-aware transforms, T2 strict-prior trajectory implementation.
+## P5–6 — EDA, drift and Feature Engineering — COMPLETE
+Development-only FE design, drift classification, 129-row feature registry, stage-aware trajectory implementation and Inventory separation.
 
-## P7 — Lead Quality T1 — COMPLETE WITH HOLDOUT-INTEGRITY INCIDENT
+## P7 — T1 Lead Quality — COMPLETE
+Champion: **BASE_RATE + RAW**, p≈0.2038. No ranking model is supported.
 
-Frozen champion: **BASE_RATE + RAW**.
+Permanent caveat: procedural holdout consumed by the documented execution-export incident; June is diagnostic-only.
 
-Why:
-- learned T1 ranking is not stable;
-- Logistic A AP advantage over Base Rate is not statistically decisive;
-- Logistic A worsens Brier;
-- CatBoost fails frozen promotion;
-- selected-Spot context remains challenger-only;
-- no post-result feature/model search was opened.
+## P8 — T0 sensitivity + T2 challenger — COMPLETE
 
-The champion outputs the DEVELOPMENT base rate ~0.2038 and must not be presented as an individual ranking model. Learned calibration was rejected after a methodological audit because its gain was immaterial.
+### T0
+**NEUTRAL_EVIDENCE_BACKED.**
+Strong exposure drift is reproduced. Intake Logistic fails the frozen promotion rule.
 
-The June procedural holdout is considered consumed because of the documented pre-freeze execution-export incident. Its stored results are diagnostic-only.
+### T2
+**FUTURE_EXTENSION.**
+Trajectory adds only +0.005 AP macro and does not justify operational complexity.
 
-## PRE-P8 AUDIT — COMPLETE; ONE BLOCKER OPEN
+Boundary crossing audit confirms that 1,281–1,745 late T2 rows per fold would leak if lead membership alone were used; current-score-time truncation excludes them.
 
-Assessment alignment, drift, feature registry, metric semantics, Inventory timing assumptions and P7 calibration were audited. See `evidence/PRE_P8_AUDIT.md`.
+## P9 — Inventory / Fallback / Opportunity Score — NEXT
+This is now the highest-value remaining assessment work.
 
-**Blocker:** authoritative Prompt-4 runtime artifacts are still absent. Run `python AssessmentSol1/abt/validate_abts.py` and require `p4_qa_summary.json = PASS` before continuing.
-
-## P8 — T0 sensitivity + T2 trajectory challenger — BLOCKED ON P4 RUNTIME PASS
-T1 must remain frozen. Evaluate T0 as a potentially neutral cold-start product and T2 only as BASELINE vs TRAJECTORY under strict boundary crossing rules.
-
-## P9 — Inventory / opportunity integration
-Keep Lead Quality and Inventory independent; use explicit ablations/integration contracts.
+Required focus:
+1. define Inventory Serviceability under current temporal limits;
+2. distinguish UNKNOWN, stale, unavailable and available;
+3. implement fallback by sector/modality/geography/area;
+4. treat historical price compatibility conservatively because prices are unversioned;
+5. combine the frozen T1 prior with Inventory through a clearly justified Lead Opportunity Score;
+6. evaluate end-to-end prioritization without pretending T1 has individual ranking signal.
 
 ## P10 — Final reporting
-Before final packaging:
-1. execute the pending P4 Polars runtime gate;
-2. carry the P7 holdout caveat visibly;
-3. produce HTML presentation / final evidence index;
-4. do not relabel June as unseen;
-5. reserve new/hidden data for true confirmation.
+Produce the final HTML/notebook narrative, executive one-pager, presentation, AI-use disclosure, scalability/product vision and reproducibility index.
