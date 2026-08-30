@@ -111,5 +111,9 @@
     "candidate_grain": "PASS",
     "inventory_grain": "PASS"
   },
-  "execution_note": "QA metrics were recomputed directly from raw repository blobs in this phase. Python/Polars builders and pytest guards are committed for reproducible rerun; this runtime itself does not have Polars installed."
+  "execution_note": "QA metrics were recomputed directly from raw repository blobs in this phase. Python/Polars builders and pytest guards are committed for reproducible rerun; this runtime itself does not have Polars installed.",
+  "authority_status": "SUPERSEDED_P3_EVIDENCE_ONLY",
+  "downstream_use": "FORBIDDEN",
+  "current_p4_runtime_gate_satisfied": false,
+  "note_for_readers": "status=PASS applies only to superseded P3 architecture; it is not the Prompt-4 runtime PASS."
 }
