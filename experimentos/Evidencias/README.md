@@ -23,5 +23,6 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 | [EV-015](EV-015_llm_inventory_semantic_audit.md) | E015 semantic inventory audit | Empírica parcial: offline baseline completo, LLM pendiente |
 | [EV-016](EV-016_abt_feature_engineering.md) | ABT + Feature Engineering point-in-time | Implementación validada / benchmark predictivo pendiente |
 | [EV-017](EV-017_llm_semantic_feature_pilot.md) | Low-cost LLM semantic feature pilot | Empírica completa: 100 registros, V1/V2, costo y decisión |
+| [EV-018](EV-018_semantic_rules_lift_ablation.md) | Semantic Rules Lift Ablation | Empírica completa: rolling CV + paired bootstrap |
 
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.

@@ -1,0 +1,21 @@
+{
+  "experiment_id": "E018_semantic_rules_lift_ablation",
+  "conclusion": "NOT_SUPPORTED",
+  "oof_rows": 5499,
+  "oof_unique_leads": 1858,
+  "semantic_signal_coverage": 0.29805419167121294,
+  "macro_delta_lift_top_10pct": -0.07156541405728604,
+  "macro_delta_lift_ci95": [-0.14378320140631923, 0.12510695204798955],
+  "macro_probability_lift_delta_gt_0": 0.45,
+  "macro_delta_average_precision": 0.0019115390879246297,
+  "rule_features": [
+    "rule_direct_conflict_flag",
+    "rule_land_building_copy_flag",
+    "rule_security_ambiguity_flag",
+    "rule_retail_adaptive_use_flag",
+    "rule_semantic_signal_count",
+    "rule_semantic_review_tier"
+  ],
+  "authoritative_workflow_run": 33297920881,
+  "artifact_id": 9728035555
+}

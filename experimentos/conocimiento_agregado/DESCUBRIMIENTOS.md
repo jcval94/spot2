@@ -66,6 +66,7 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D058 | SUPPORTED | El diseño Rules-first + LLM residual fue el correcto: permitió probar 100 registros a costo mínimo sin pagar por claims/contradicciones que ya podían resolverse gratis. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
 | D059 | NOT_SUPPORTED | El piloto real no justifica features LLM en el ABT: V2 costó USD 0.002579, tuvo 0/25 issues en clean controls, pero 0/100 new-rule candidates y 0/100 residual actionable. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
 | D060 | SUPPORTED | El valor reutilizable del piloto es un semantic rule sidecar gratuito: 890/3,000 spots tienen ≥1 señal; 429 presentan ambigüedad semántica y las reglas reemplazan la dependencia LLM para este dataset. | [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md) |
+| D061 | NOT_SUPPORTED | Las variables semánticas Rules-only no incrementan Lift@10% del ABT E016: macro 1.267x→1.196x (Δ -0.0716x; IC95% [-0.1438,+0.1251]); se conservan para Inventory QA, no scoring. | [EV-018](../Evidencias/EV-018_semantic_rules_lift_ablation.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -1279,3 +1280,37 @@ Review tiers:
 **Implicación:** evaluar estas variables Rules-only como challenger predictivo por ablación antes de incorporarlas al ABT canónico. No asumir que una inconsistencia semántica aumenta o reduce `scheduled_visit` sin evidencia predictiva.
 
 Evidencia: [EV-017](../Evidencias/EV-017_llm_semantic_feature_pilot.md).
+
+
+## D061 — Semantic Rules no mejora el Lift@10%
+
+**Estado:** NOT_SUPPORTED.
+
+E018 probó el semantic rule sidecar de E017 como features adicionales del ABT canónico E016, manteniendo target, población, CatBoost, folds temporales e hiperparámetros.
+
+Resultados cross-validated:
+
+- T1 Lift@10%: **1.199x → 1.136x**, Δ **-0.0627x**;
+- T2 Lift@10%: **1.336x → 1.256x**, Δ **-0.0804x**;
+- Macro Lift@10%: **1.267x → 1.196x**, Δ **-0.0716x**.
+
+Bootstrap pareado por lead, estratificado dentro de fold:
+
+- macro ΔLift@10%: **-0.0716x**;
+- IC95%: **[-0.1438, +0.1251]**;
+- P(Δ > 0): **45.0%**.
+
+El intervalo cruza cero, por lo que no se demuestra daño estadísticamente concluyente. Sin embargo, el gate pre-registrado de promoción no se cumple y no existe evidencia de mejora.
+
+Guardrails:
+
+- macro ΔAP: **+0.0019**, IC95% [-0.0153,+0.0167];
+- macro ΔAUC: **+0.0051**, IC95% [-0.0087,+0.0188].
+
+**Interpretación:** la calidad semántica del listing y la calidad de ranking del lead son problemas relacionados pero distintos. Las Rules detectan inconsistencias operacionales reales del inventario, pero no concentran mejor los scheduled visits en el top decile.
+
+**Decisión:** no incorporar estas variables al ABT de scoring. Mantenerlas como sidecar de Inventory QA / Catalog Quality.
+
+**Corrección metodológica:** un primer run mezcló raw probabilities entre folds y fue descartado. La corrida autoritativa calcula métricas dentro de cada fold y usa bootstrap fold-stratified. Ver [RUN_HISTORY](../semantic_rules_lift_ablation/results/RUN_HISTORY.md).
+
+Evidencia: [EV-018](../Evidencias/EV-018_semantic_rules_lift_ablation.md).

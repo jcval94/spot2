@@ -1,0 +1,71 @@
+{
+  "experiment_id": "E018_semantic_rules_lift_ablation",
+  "parent_experiment": "E016_abt_feature_engineering_v1",
+  "question": "Do the deterministic semantic-rule variables discovered through E017 improve Lift@10% over the canonical E016 ABT at T1/T2?",
+  "hypothesis": "Adding the compact Rules-only semantic sidecar increases macro Lift@10% across T1/T2 without material degradation in average precision.",
+  "primary_change": "add deterministic E017 semantic rule sidecar features to the E016 T1/T2 feature sets",
+  "secondary_changes": [],
+  "scoring_time": {
+    "stage": "T1/T2",
+    "timestamp_definition": "same E016 score_time; T1=first inquiry_at, T2=second+ inquiry_at before conversion"
+  },
+  "target": {
+    "event": "scheduled_visit within 30 days",
+    "horizon_days": 30,
+    "anchor": "score_time",
+    "censoring": "same E016 right-censoring and ambiguous-label exclusion"
+  },
+  "population": {
+    "eligibility": "same E016 training-ready T1/T2 populations",
+    "exclusions": ["T0 because no Spot exists at scoring time"]
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "features": {
+    "inherited": ["all E016 T1/T2 features"],
+    "added": [
+      "rule_direct_conflict_flag",
+      "rule_land_building_copy_flag",
+      "rule_security_ambiguity_flag",
+      "rule_retail_adaptive_use_flag",
+      "rule_semantic_signal_count",
+      "rule_semantic_review_tier"
+    ],
+    "removed": []
+  },
+  "validation": {
+    "strategy": "4-fold expanding-window chronological lead-cohort CV with paired OOF comparison",
+    "time_column": "leads.created_at",
+    "split_description": "same fold boundaries for baseline and semantic_rules; test cohorts are disjoint and grouped by lead"
+  },
+  "metrics": [
+    "lift_top_10pct",
+    "average_precision",
+    "roc_auc",
+    "recall_top_20pct"
+  ],
+  "segments": ["T1_first_inquiry", "T2_engaged"],
+  "decision_rule": {
+    "supported": "macro delta Lift@10% 95% paired-bootstrap CI > 0 and macro AP delta >= -0.001",
+    "inconclusive": "positive point lift but interval crosses zero",
+    "not_supported": "non-positive macro lift with bootstrap P(delta>0) < 0.50"
+  },
+  "leakage": {
+    "check_status": "CONDITIONAL",
+    "items": [
+      {
+        "element": "semantic rule sidecar",
+        "source": "spots.title, spots.description, spot_attributes",
+        "scoring_time": "T1/T2",
+        "information_available_at": "assumed listing-static metadata",
+        "status": "CONDITIONAL",
+        "evidence": "No inquiry outcome or future event is used. Candidate data does not provide historical versions of listing copy/attributes, so production point-in-time semantics require confirmation."
+      }
+    ]
+  }
+}
