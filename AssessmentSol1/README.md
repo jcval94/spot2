@@ -1,6 +1,6 @@
 # AssessmentSol1 — clean-room definitive assessment
 
-Status: **PROMPT 2 / target contract frozen before feature engineering**.
+Status: **PROMPT 3 / definitive point-in-time ABTs complete**.
 
 This directory is the only runtime/home for the definitive Spot2 assessment. Historical experiments, pull requests, commits and evidence may be read to avoid repeating mistakes, but they are **not runtime dependencies**.
 
@@ -70,3 +70,15 @@ P2 target evidence:
 - [target/target_summary.json](target/target_summary.json)
 
 Frozen primary target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1` with 14-day historical maturity. No model performance metric was used to select it.
+
+
+P3 ABT evidence:
+
+- [abt/ABT_CONTRACT.md](abt/ABT_CONTRACT.md)
+- [abt/COLUMN_ROLES.csv](abt/COLUMN_ROLES.csv)
+- [abt/COLUMN_LINEAGE.csv](abt/COLUMN_LINEAGE.csv)
+- [abt/FORBIDDEN_FEATURES.md](abt/FORBIDDEN_FEATURES.md)
+- [abt/artifacts/qa_summary.json](abt/artifacts/qa_summary.json)
+- [abt/artifacts/artifact_manifest.json](abt/artifacts/artifact_manifest.json)
+
+The Lead Quality audit ABT contains 27,576 T0/T1/T2 snapshots; 19,298 have valid labels in the model-ready view. Candidate Spot and Inventory Serviceability each have 1,114,990 logical rows and remain separate from the Lead Quality grain.
