@@ -1,0 +1,44 @@
+{
+  "phase": "PROMPT_8_T0",
+  "target": "T0_30D_INQUIRY_INITIATION_PROGRESS_V1",
+  "score_time": "leads.created_at",
+  "model_ready_rows": 4710,
+  "statement": "T0 and T1 probabilities estimate different quantities.",
+  "models": [
+    "T0_BASE_RATE",
+    "T0_INTAKE_LOGISTIC"
+  ],
+  "solver": "L2 logistic with fixed FTRL optimizer; no tuning",
+  "macro": {
+    "T0_BASE_RATE": {
+      "roc_auc": 0.5,
+      "average_precision": 0.4803025053029044,
+      "brier": 0.2631093559749855,
+      "log_loss": 0.7206560212974187,
+      "validation_n": 2245
+    },
+    "T0_INTAKE_LOGISTIC": {
+      "roc_auc": 0.49344739316191644,
+      "average_precision": 0.4831114220003726,
+      "brier": 0.26653348160939977,
+      "log_loss": 0.7294257488174839,
+      "validation_n": 2245
+    }
+  },
+  "deltas": {
+    "average_precision": 0.00280891669746817,
+    "roc_auc": -0.00655260683808356,
+    "brier": 0.00342412563441427,
+    "log_loss": 0.00876972752006518
+  },
+  "decision": "NEUTRAL_EVIDENCE_BACKED",
+  "promotion_gate": {
+    "min_delta_ap": 0.01,
+    "auc_min": 0.55,
+    "max_brier_degradation": 0.002,
+    "passed": false,
+    "short_circuit_reason": "Fails delta AP, AUC and Brier criteria; bootstrap is not needed to establish non-promotion."
+  },
+  "forbidden_predictors_used": false,
+  "future_exposure_used_as_predictor": false
+}
