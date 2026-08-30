@@ -74,7 +74,8 @@ class FittedLogistic:
     model: LogisticRegression
 
     def predict_proba(self, frame: pd.DataFrame) -> np.ndarray:
-        x = self.preprocessor.transform(frame[self.features])
+        x = _semantic_model_frame(frame, self.features)
+        x = self.preprocessor.transform(x)
         return self.model.predict_proba(x)[:, 1]
 
 
@@ -85,7 +86,8 @@ class FittedCatBoost:
     model: CatBoostClassifier
 
     def predict_proba(self, frame: pd.DataFrame) -> np.ndarray:
-        x = _catboost_frame(frame[self.features], self.categorical_features)
+        x = _semantic_model_frame(frame, self.features)
+        x = _catboost_frame(x, self.categorical_features)
         return self.model.predict_proba(x)[:, 1]
 
 
@@ -195,7 +197,39 @@ def _prediction_base(part: pd.DataFrame, fold: str) -> pd.DataFrame:
     return out
 
 
+def _semantic_model_frame(
+    frame: pd.DataFrame,
+    features: list[str],
+) -> pd.DataFrame:
+    """Preserve structural missingness before learned preprocessing.
+
+    For modality-inapplicable budget fields, zero is a deterministic placeholder
+    because the explicit applicability/state features carry the semantics.
+    Applicable but genuinely unknown budgets remain NaN and are imputed from
+    TRAIN only by GuardedPreprocessor.
+    """
+    x = frame[features].copy()
+    modality = frame["search_modality"]
+    for col in features:
+        if "budget_mxn_rent" in col:
+            applicable = modality.isin(["rent", "both"])
+            x.loc[~applicable, col] = 0.0
+        elif "budget_mxn_sale" in col:
+            applicable = modality.isin(["sale", "both"])
+            x.loc[~applicable, col] = 0.0
+
+    for col in x.columns:
+        if str(x[col].dtype) == "boolean":
+            x[col] = x[col].astype(object).where(x[col].notna(), np.nan)
+        elif pd.api.types.is_bool_dtype(x[col]):
+            x[col] = x[col].astype(int)
+        elif not pd.api.types.is_numeric_dtype(x[col]):
+            x[col] = x[col].astype(object).where(x[col].notna(), np.nan)
+    return x
+
+
 def _normalize_bool_columns(frame: pd.DataFrame) -> pd.DataFrame:
+    # Backward-compatible helper for calibration imports.
     x = frame.copy()
     for c in x.columns:
         if pd.api.types.is_bool_dtype(x[c]):
@@ -207,7 +241,7 @@ def fit_logistic(
     train: pd.DataFrame,
     features: list[str],
 ) -> FittedLogistic:
-    x = _normalize_bool_columns(train[features])
+    x = _semantic_model_frame(train, features)
     numeric, categorical = classify_columns(x, features)
     preprocessor = GuardedPreprocessor(
         numeric,
@@ -265,8 +299,9 @@ def fit_catboost(
     train: pd.DataFrame,
     features: list[str],
 ) -> FittedCatBoost:
-    categorical = _catboost_categoricals(train, features)
-    x = _catboost_frame(train[features], categorical)
+    prepared = _semantic_model_frame(train, features)
+    categorical = _catboost_categoricals(prepared, features)
+    x = _catboost_frame(prepared, categorical)
     model = CatBoostClassifier(**CATBOOST_CONFIG)
     model.fit(
         x,
@@ -401,9 +436,7 @@ def run_model_cv(
             raise ValueError(model_family)
 
         pred = _prediction_base(val, fold)
-        pred["probability"] = fitted.predict_proba(
-            _normalize_bool_columns(val) if model_family == "LOGISTIC" else val
-        )
+        pred["probability"] = fitted.predict_proba(val)
         pred["model_family"] = model_family
         pred["variant"] = variant
         rows.append(pred)
@@ -683,17 +716,16 @@ def main() -> None:
     ]
     all_predictions: dict[tuple[str, str], pd.DataFrame] = {}
     for variant in variants:
-        for family in ("LOGISTIC", "CATBOOST"):
-            pred = run_model_cv(
-                frame,
-                variant=variant,
-                model_family=family,
-                registry_gate=registry_gate,
-            )
-            all_predictions[(family, variant)] = pred
-            stem = f"{family.lower()}_{variant.lower()}_development"
-            pred.to_csv(pred_dir / f"{stem}_oof.csv", index=False)
-            save_evaluation(pred, metric_dir, name=stem)
+        pred = run_model_cv(
+            frame,
+            variant=variant,
+            model_family="LOGISTIC",
+            registry_gate=registry_gate,
+        )
+        all_predictions[("LOGISTIC", variant)] = pred
+        stem = f"logistic_{variant.lower()}_development"
+        pred.to_csv(pred_dir / f"{stem}_oof.csv", index=False)
+        save_evaluation(pred, metric_dir, name=stem)
 
     logistic_predictions = {
         v: all_predictions[("LOGISTIC", v)] for v in variants
@@ -701,20 +733,64 @@ def main() -> None:
     core_selection = _select_core_variant(logistic_predictions)
     selected_variant = core_selection["selected_core_variant"]
 
-    architecture = select_architecture(
-        all_predictions[("LOGISTIC", selected_variant)],
-        all_predictions[("CATBOOST", selected_variant)],
-    )
-    selected_family = architecture["champion_family"]
-
-    fitted = fit_full_development_model(
+    # CatBoost is intentionally trained only on the already-selected core.
+    catboost_pred = run_model_cv(
         frame,
         variant=selected_variant,
-        model_family=selected_family,
+        model_family="CATBOOST",
         registry_gate=registry_gate,
     )
+    all_predictions[("CATBOOST", selected_variant)] = catboost_pred
+    cat_stem = f"catboost_{selected_variant.lower()}_development"
+    catboost_pred.to_csv(pred_dir / f"{cat_stem}_oof.csv", index=False)
+    save_evaluation(catboost_pred, metric_dir, name=cat_stem)
+
+    architecture = select_architecture(
+        all_predictions[("LOGISTIC", selected_variant)],
+        catboost_pred,
+    )
+    learned_family = architecture["champion_family"]
+    learned_pred = all_predictions[(learned_family, selected_variant)]
+
+    # Terminal prompt gate: a learned model must demonstrate defensible
+    # superiority to Base Rate; otherwise the simple baseline is the champion.
+    base_pred = baselines["base_rate"]
+    base_ap = paired_bootstrap_delta(
+        base_pred, learned_pred, metric="average_precision",
+        n_resamples=2000, seed=RANDOM_SEED + 10,
+    )
+    base_brier = paired_bootstrap_delta(
+        base_pred, learned_pred, metric="brier",
+        n_resamples=2000, seed=RANDOM_SEED + 11,
+    )
+    base_lift = paired_bootstrap_delta(
+        base_pred, learned_pred, metric="lift_at_10pct",
+        n_resamples=2000, seed=RANDOM_SEED + 12,
+    )
+    learned_defensibly_better = (
+        base_ap["ci95_low"] > 0
+        and base_brier["delta"] <= 0
+        and base_lift["delta"] >= 0
+    )
+    selected_family = learned_family if learned_defensibly_better else "BASE_RATE"
+
+    fitted = None
+    if selected_family != "BASE_RATE":
+        fitted = fit_full_development_model(
+            frame,
+            variant=selected_variant,
+            model_family=selected_family,
+            registry_gate=registry_gate,
+        )
     model_path = artifact_dir / "development_champion_raw.joblib"
-    if isinstance(fitted, FittedLogistic):
+    if selected_family == "BASE_RATE":
+        serialized_model = {
+            "model_family": "BASE_RATE",
+            "features": [],
+            "constant_probability": float(frame["target_value"].mean()),
+            "fit_population": "DEVELOPMENT",
+        }
+    elif isinstance(fitted, FittedLogistic):
         serialized_model = {
             "model_family": "LOGISTIC",
             "features": fitted.features,
@@ -741,8 +817,17 @@ def main() -> None:
         "core_feature_selection": core_selection,
         "architecture_selection": architecture,
         "selected_core_variant": selected_variant,
-        "selected_features": _variant_features(selected_variant),
+        "selected_features": [] if selected_family == "BASE_RATE" else _variant_features(selected_variant),
         "selected_model_family": selected_family,
+        "learned_reference_family": learned_family,
+        "terminal_baseline_gate": {
+            "learned_defensibly_better": learned_defensibly_better,
+            "paired_bootstrap": {
+                "average_precision": base_ap,
+                "brier": base_brier,
+                "lift_at_10pct": base_lift,
+            },
+        },
         "logistic_config": LOGISTIC_CONFIG,
         "catboost_config": CATBOOST_CONFIG,
         "random_seed": RANDOM_SEED,
