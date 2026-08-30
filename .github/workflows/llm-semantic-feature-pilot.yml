@@ -40,16 +40,19 @@ jobs:
             echo "OPENAIKEY repository secret is not configured; API pilot skipped."
             exit 0
           fi
-          python experimentos/llm_semantic_feature_pilot/run_pilot.py --limit 100
-          python experimentos/llm_semantic_feature_pilot/summarize_pilot.py
+          python experimentos/llm_semantic_feature_pilot/run_pilot_v2.py --limit 100
+          python experimentos/llm_semantic_feature_pilot/summarize_pilot.py \
+            --results experimentos/llm_semantic_feature_pilot/results/pilot_llm_results_100_v2.csv \
+            --summary experimentos/llm_semantic_feature_pilot/results/pilot_segment_summary_v2.csv \
+            --gates experimentos/llm_semantic_feature_pilot/results/pilot_diagnostic_gates_v2.csv
 
       - name: Upload pilot CSVs
         uses: actions/upload-artifact@v4
         with:
           name: llm-semantic-feature-pilot
           path: |
-            experimentos/llm_semantic_feature_pilot/results/pilot_llm_results_100.csv
-            experimentos/llm_semantic_feature_pilot/results/pilot_usage_summary.csv
-            experimentos/llm_semantic_feature_pilot/results/pilot_segment_summary.csv
-            experimentos/llm_semantic_feature_pilot/results/pilot_diagnostic_gates.csv
+            experimentos/llm_semantic_feature_pilot/results/pilot_llm_results_100_v2.csv
+            experimentos/llm_semantic_feature_pilot/results/pilot_usage_summary_v2.csv
+            experimentos/llm_semantic_feature_pilot/results/pilot_segment_summary_v2.csv
+            experimentos/llm_semantic_feature_pilot/results/pilot_diagnostic_gates_v2.csv
           if-no-files-found: ignore
