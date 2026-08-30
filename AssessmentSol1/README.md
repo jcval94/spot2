@@ -1,109 +1,69 @@
 # AssessmentSol1 — clean-room definitive assessment
 
-Status: **PROMPT 4 / point-in-time ABT architecture implemented; runtime materialization gate pending**.
+Status: **PROMPT 7 Lead Quality champion frozen; global P4 runtime materialization gate still pending.**
 
-This directory is the only runtime/home for the definitive Spot2 assessment. Historical experiments, pull requests, commits and evidence may be read to avoid repeating mistakes, but they are **not runtime dependencies**.
+This directory is the only writable home for the definitive Spot2 assessment. Historical experiments may be read as prior evidence but are not runtime dependencies.
 
-## Clean-room rule
+## Frozen foundations
 
-The definitive solution must be rebuildable from the read-only raw candidate data under `data/candidate/**` plus code/configuration committed inside `AssessmentSol1/**`.
+- raw/source audit: complete;
+- temporal semantics: frozen;
+- target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`;
+- maturity: 14 days;
+- split contract: `SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30`;
+- point-in-time ABT architecture: implemented;
+- feature registry / ablation plan: frozen;
+- Lead Quality T1 champion: **BASE_RATE + PLATT**.
 
-Never import historical:
+## P7 result
 
-- ABTs;
-- OOF predictions;
-- trained models;
-- scalers/preprocessors;
-- clusterers;
-- target encoders;
-- fitted calibrators;
-- generated feature matrices.
+Development contained 4,368 leads and Calibration 312.
 
-Historical code can be inspected to understand a decision, but any accepted logic must be reimplemented here and rerun from raw data.
+No learned model demonstrated defendible superiority to Base Rate:
+- Logistic A macro AP 0.2172 vs Base Rate 0.2083, but paired ΔAP IC95% crosses zero;
+- Logistic A Brier is reliably worse than Base Rate;
+- Logistic Lift@10% does not improve;
+- CatBoost fails the pre-registered promotion rule and shows repeated segment collapses.
 
-## Completed foundational gates
+The final T1 champion is therefore a calibrated prior:
+- raw DEVELOPMENT prevalence: **0.2037546**;
+- Platt-calibrated probability: **0.2082788**;
+- ranking capability: **none**.
 
-P0/P1/P2 intentionally do **not**:
+See `models/lead_quality/MODEL_SELECTION.md` and `FROZEN_MODEL_CONFIG.json`.
 
-- train a model;
-- optimize feature engineering;
-- choose a target because it scores better;
-- open a final test;
-- claim any historical period is pristine/unseen.
+## Procedural holdout integrity
 
-They establish:
+The June procedural holdout is **not pristine**. A temporary execution export encoded its labels before the frozen config existed. It was never used for feature/model/calibration selection, but the stricter holdout contract was violated.
 
-1. source/evidence provenance and research-contamination policy;
-2. scoring-instant information boundaries for T0/T1/T2;
-3. CSV↔Parquet parity and Parquet as canonical preferred raw source;
-4. raw PK/FK/duplicate/missing/outlier/temporal audits;
-5. a column-level temporal ontology for all raw columns;
-6. explicit blocking of temporally unsafe sources/fields;
-7. a non-model target bake-off and frozen T1 Lead Quality target.
+The incident is recorded in:
+- `models/lead_quality/HOLDOUT_INCIDENT.md`
+- `models/lead_quality/artifacts/PROCEDURAL_HOLDOUT_CONSUMED.json`
 
-P1 evidence:
+Any June metric is diagnostic-only. True confirmation requires new/hidden data.
 
-- [evidence/DATA_AUDIT.md](evidence/DATA_AUDIT.md)
-- [evidence/TEMPORAL_SEMANTICS.md](evidence/TEMPORAL_SEMANTICS.md)
-- [evidence/data_schema.csv](evidence/data_schema.csv)
-- [evidence/temporal_column_registry.csv](evidence/temporal_column_registry.csv)
-- [evidence/data_audit.json](evidence/data_audit.json)
-- [config/raw_data_contract.json](config/raw_data_contract.json)
+## Remaining global reproducibility caveat
 
-P2 target evidence:
-
-- [target/TARGET_OPTIONS.md](target/TARGET_OPTIONS.md)
-- [target/TARGET_DECISION.md](target/TARGET_DECISION.md)
-- [target/TARGET_CONTRACT.md](target/TARGET_CONTRACT.md)
-- [target/target_contract.json](target/target_contract.json)
-- [target/target_audit.csv](target/target_audit.csv)
-- [target/target_cohort_summary.csv](target/target_cohort_summary.csv)
-- [target/target_summary.json](target/target_summary.json)
-
-Frozen primary target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1` with 14-day historical maturity. No model performance metric was used to select it.
-
-## Prompt 4 — authoritative ABT architecture
-
-The old combined `score_spine` / `lead_quality_*` / `candidate_spots` / `inventory_serviceability_state` artifacts are **superseded evidence**, not downstream inputs.
-
-Authoritative builders now are:
-
-- [abt/build_t0.py](abt/build_t0.py) — T0 cold-start/sensitivity, one row per lead;
-- [abt/build_t1.py](abt/build_t1.py) — principal T1, deterministic first inquiry, one row per lead;
-- [abt/build_t2.py](abt/build_t2.py) — T2 challenger, one row per second-or-later inquiry;
-- [abt/build_inventory_candidates.py](abt/build_inventory_candidates.py) — separate Matching/Inventory object at `score_id × candidate_spot_id`;
-- [abt/validate_abts.py](abt/validate_abts.py) — temporal, grain, lineage and split-integrity gate.
-
-Contract and feature authority:
-
-- [abt/ABT_CONTRACT.md](abt/ABT_CONTRACT.md)
-- [abt/COLUMN_ROLES.csv](abt/COLUMN_ROLES.csv)
-- [abt/COLUMN_LINEAGE.csv](abt/COLUMN_LINEAGE.csv)
-- [abt/FORBIDDEN_FEATURES.md](abt/FORBIDDEN_FEATURES.md)
-
-The principal LeadQuality model-ready views contain lead/need/current-inquiry information only. Selected Spot, Spot physical attributes, Matching and Availability are physically separated into the Matching/Inventory object.
-
-Availability is backward-as-of only. Missing snapshot is `UNKNOWN`, never unavailable. `competing_inquiries_30d` and `market_context` remain blocked.
-
-## Runtime gate
-
-From repository root:
+`AssessmentSol1/abt/validate_abts.py` still needs to be executed in an environment with the project dependencies, especially Polars, to produce the authoritative P4 runtime manifest:
 
 ```bash
 python AssessmentSol1/abt/validate_abts.py
 ```
 
-A Prompt-4 ABT materialization is authoritative only when:
+P7 rebuilt its T1 inputs from raw under the same frozen temporal rules, but that does not substitute for the repository-wide P4 materialization gate required before final assessment packaging.
 
-- `AssessmentSol1/abt/artifacts/p4_qa_summary.json` exists and reports `status = PASS`;
-- `p4_artifact_manifest.json` matches the current materialized files.
+## Clean-room rule
 
-Until that runtime gate is produced from the current raw package, the older P3 artifact counts must not be cited as Prompt-4 results and the split/modeling phase must not consume them.
+Never consume historical fitted artifacts from `experimentos/**`: no ABTs, predictions, models, preprocessors, clusterers, target encoders or calibrators.
 
-See also:
+## Key evidence
 
-- [CONSTRAINTS.md](CONSTRAINTS.md)
-- [PLAN.md](PLAN.md)
-- [evidence/SOURCE_EVIDENCE_MAP.md](evidence/SOURCE_EVIDENCE_MAP.md)
-- [audit/SCORING_INSTANT_GATE.md](audit/SCORING_INSTANT_GATE.md)
-- [evidence/RESEARCH_CONTAMINATION.md](evidence/RESEARCH_CONTAMINATION.md)
+- `target/TARGET_CONTRACT.md`
+- `splits/SPLIT_CONTRACT.md`
+- `abt/ABT_CONTRACT.md`
+- `features/FEATURE_REGISTRY.csv`
+- `features/ablation_plan.json`
+- `evidence/EDA_FINDINGS.md`
+- `evidence/DRIFT_FINDINGS.md`
+- `evidence/FEATURE_ENGINEERING_DECISIONS.md`
+- `models/lead_quality/MODEL_CARD.md`
