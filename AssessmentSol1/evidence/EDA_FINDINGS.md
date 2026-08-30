@@ -1,8 +1,9 @@
 # EDA_FINDINGS — development-only, point-in-time aware
 
-**Scope:** T1 DEVELOPMENT only (`score_time < 2026-05-01 UTC`; N=4,368).  
-**Calibration opened:** no.  
-**Procedural holdout opened:** no.
+**Core model-facing scope:** T1 DEVELOPMENT only (`score_time < 2026-05-01 UTC`; N=4,368).  
+**Original EDA selection authority:** DEVELOPMENT only.  
+**Narrative exception:** Market Context may use the delivered extract for EDA-only business narrative because it is explicitly blocked from historical features.  
+**Post-selection drift:** kept in a separate `POST_SELECTION_DRIFT_AUDIT.md`; it has no feature/model-selection authority.
 
 This EDA is intentionally decision-oriented. It does not authorize a feature merely because an association exists.
 
