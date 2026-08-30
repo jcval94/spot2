@@ -1305,5 +1305,11 @@
       "class": "MONTHLY_AGGREGATE_WITHOUT_PUBLICATION_TIME",
       "policy": "EDA_ONLY"
     }
+  },
+  "source_provenance": {
+    "initial_data_commit": "8f850cf152bbbefb2f0b8af897e4c94916c88bb6",
+    "commit_message": "Add files via upload",
+    "committed_at": "2026-08-29T02:27:53Z",
+    "observation": "All six CSV files and all six Parquet files were introduced together in the same commit, alongside assessment.md, README-candidate.md and feature_dictionary.md."
   }
 }
