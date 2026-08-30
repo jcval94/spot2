@@ -7,6 +7,10 @@ on:
     paths:
       - "experimentos/llm_semantic_feature_pilot/**"
       - ".github/workflows/llm-semantic-feature-pilot.yml"
+  pull_request:
+    paths:
+      - "experimentos/llm_semantic_feature_pilot/**"
+      - ".github/workflows/llm-semantic-feature-pilot.yml"
   workflow_dispatch:
 
 jobs:
