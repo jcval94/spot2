@@ -1,42 +1,32 @@
-# Definitive point-in-time ABTs — P3 complete
+# P4 point-in-time ABTs
 
-This directory owns the clean-room analytical tables rebuilt only from raw `data/candidate/**`.
+Authoritative P4 builders:
 
-## Objects
+- `build_t0.py` — cold-start/sensitivity, one row per lead;
+- `build_t1.py` — principal first-inquiry ABT, one row per lead;
+- `build_t2.py` — second+ inquiry challenger, one row per inquiry;
+- `build_inventory_candidates.py` — separate `score_id × candidate_spot_id` Matching/Inventory table;
+- `validate_abts.py` — materializes all P4 views from raw sources and enforces the temporal gate.
 
-1. **Lead Quality Snapshot ABT**
-   - grain: `lead_id × stage × score_time`
-   - unique `prediction_key`
-   - T0/T1/T2
-   - audit and model-ready views
+Run from the repository root:
 
-2. **Inventory Serviceability State**
-   - grain: `prediction_key × candidate_spot_id`
-   - backward-as-of Availability only
-   - explicit missing/stale/known semantics
+```bash
+python AssessmentSol1/abt/validate_abts.py
+```
 
-3. **Lead × Candidate Spot decision table**
-   - grain: `prediction_key × candidate_spot_id`
-   - deterministic corridor → municipality → state fallback ladder
-   - observed current Spot preserved as an audit override
+The validator rebuilds from `data/candidate/**` and writes:
 
-## Authoritative contracts
+- `abt_t0_audit_all_rows.parquet`
+- `abt_t0_model_ready.parquet`
+- `abt_t1_audit_all_rows.parquet`
+- `abt_t1_model_ready.parquet`
+- `abt_t2_audit_all_rows.parquet`
+- `abt_t2_model_ready.parquet`
+- `inventory_candidates_audit_all_rows.parquet`
+- `inventory_candidates_model_ready.parquet`
+- `p4_qa_summary.json`
+- `p4_artifact_manifest.json`
 
-- `ABT_CONTRACT.md`
-- `COLUMN_ROLES.csv`
-- `COLUMN_LINEAGE.csv`
-- `FORBIDDEN_FEATURES.md`
+under `AssessmentSol1/abt/artifacts/`.
 
-## Builders
-
-- `build_score_spine.py`
-- `build_lead_quality_abt.py`
-- `build_candidate_spots.py`
-- `build_inventory_state.py`
-- `validate_abts.py`
-
-## Evidence
-
-See `artifacts/README.md`, `artifacts/qa_summary.json` and `artifacts/artifact_manifest.json`.
-
-P3 gate: **PASS** under the explicit temporal assumptions documented in the contract.
+The older P3 files (`build_score_spine.py`, `build_lead_quality_abt.py`, `build_candidate_spots.py`, `build_inventory_state.py`) are superseded and must not be used for downstream P4 modeling. They remain only to preserve prior research chronology.
