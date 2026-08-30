@@ -98,13 +98,17 @@ def _t2_stage_status(spine: pl.DataFrame, iq: pl.DataFrame) -> pl.DataFrame:
             .otherwise(None)
             .alias("_response_event_time")
         )
+        .with_columns(
+            (
+                pl.col("_response_event_time").is_not_null()
+                & (pl.col("_response_event_time") <= pl.col("score_time"))
+            ).alias("_known_at_score"),
+            pl.col("_response_event_time").is_null().alias("_untimed"),
+        )
         .group_by("prediction_key")
         .agg(
-            (
-                (pl.col("_response_event_time").is_not_null())
-                & (pl.col("_response_event_time") <= pl.col("score_time").first())
-            ).any().alias("_known_prior_visit"),
-            pl.col("_response_event_time").is_null().any().alias("_untimed_prior_visit"),
+            pl.col("_known_at_score").any().alias("_known_prior_visit"),
+            pl.col("_untimed").any().alias("_untimed_prior_visit"),
         )
     )
     return t2.select("prediction_key").join(prior, on="prediction_key", how="left").with_columns(
