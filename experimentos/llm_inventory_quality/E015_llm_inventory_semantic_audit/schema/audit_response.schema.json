@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "spot_id": {"type": "string"},
+    "quality_status": {"type": "string", "enum": ["good", "review", "critical"]},
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "claim_type": {"type": "string"},
+          "evidence_text": {"type": "string"},
+          "structured_field": {"type": ["string", "null"]},
+          "structured_value": {},
+          "classification": {
+            "type": "string",
+            "enum": ["consistent", "contradiction", "unsupported_claim", "ambiguous", "not_verifiable"]
+          },
+          "severity": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+          "reason": {"type": "string"}
+        },
+        "required": ["claim_type", "evidence_text", "structured_field", "structured_value", "classification", "severity", "reason"]
+      }
+    },
+    "abstentions": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "summary": {"type": "string"}
+  },
+  "required": ["spot_id", "quality_status", "issues", "abstentions", "summary"]
+}
