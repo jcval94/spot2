@@ -1,0 +1,12 @@
+metric,value
+fallback_cases,598
+coverage_at_3_any_recommendation,0.7591973244147158
+full_list_at_3,0.6237458193979933
+full_list_at_5,0.5568561872909699
+no_result_rate,0.24080267558528423
+at_least_one_currently_available_fallback_at_3,0.7090301003344481
+median_valid_candidates,6
+all_three_same_corridor_given_full_list_3,0.8257372654155496
+returned_recommendations,1233
+currently_available_recommendation_share,0.8613138686131386
+strict_recommendation_share,0.6342254663422546

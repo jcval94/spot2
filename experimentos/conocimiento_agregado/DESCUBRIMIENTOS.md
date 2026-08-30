@@ -1383,3 +1383,106 @@ Un hallazgo negativo evita falsa precisión: entre spots actualmente no disponib
 
 Experimento: [E019](../E019_operational_threshold_availability/).  
 Evidencia: [EV-019](../Evidencias/EV-019_operational_threshold_availability.md).
+
+
+## D064 — El fallback final debe devolver hasta 3 alternativas, no forzar 5
+
+**Estado:** SUPPORTED / DECISION-READY.
+
+E020 congela una política de fallback point-in-time:
+
+- mismo sector y modalidad compatible;
+- spot existente al score;
+- availability backward-as-of observable;
+- área entre 0.5x y 2.0x;
+- precio total <=1.5x presupuesto;
+- jerarquía corredor -> municipio -> estado;
+- no cruza de estado;
+- ranking por geografía, disponibilidad actual y distancia de área + precio/m²;
+- `NO_RESULT` si no existe alternativa defendible.
+
+Con folds 1–3, una lista completa de 3 existe en **60.8%** de casos, contra **50.3%** para una lista de 5. Por esto se congela **K=3 como máximo**, permitiendo retornar 1–3 candidatos.
+
+En fold 4:
+
+- casos de fallback: 598;
+- >=1 alternativa: **75.9%**;
+- 3 alternativas: **62.4%**;
+- no-result: **24.1%**;
+- >=1 alternativa actualmente disponible: **70.9%**;
+- 86.1% de las recomendaciones retornadas están disponibles as-of.
+
+En el top P85 de Quality, 83 filas tienen el spot solicitado no disponible; el fallback recupera **59** con al menos una alternativa disponible, **71.1%**.
+
+**Interpretación:** devolver menos resultados cuando el inventario no soporta la necesidad es preferible a relajar indefinidamente las restricciones.
+
+Evidencia: [EV-020](../Evidencias/EV-020_lead_opportunity_fallback_e2e.md).
+
+## D065 — El spot histórico de scheduled_visit no es un gold label válido para fallback
+
+**Estado:** SUPPORTED como limitación de evaluación.
+
+Entre 801 spots de futuras visitas alternativas:
+
+- 67.4% coincide con sector;
+- 16.5% coincide con corredor;
+- ~1.0% cumple la política estricta;
+- ~1.75% cumple la política bounded final.
+
+En fold 4, behavioral Hit@3 es 0% y Hit@5 0.52%.
+
+**Interpretación:** el historial fue generado como interacción orgánica, no como exposición a un recomendador. Optimizar Hit@K contra ese spot obligaría a violar precisamente las restricciones que el assessment exige respetar.
+
+**Decisión:** usar como evaluación primaria de fallback Constraint-valid Coverage@K, availability as-of y NO_RESULT. Mantener behavioral Hit@K como diagnóstico negativo, no borrarlo ni maquillarlo.
+
+Evidencia: [EV-020](../Evidencias/EV-020_lead_opportunity_fallback_e2e.md).
+
+## D066 — El Lead Opportunity Score final es Quality × Inventory, pero no se vende como probabilidad conjunta calibrada
+
+**Estado:** SUPPORTED / DECISION-READY.
+
+La fórmula final es:
+
+`Lead Opportunity Score = P_quality × P_inventory_top3`.
+
+`P_quality` proviene de pooled CatBoost + stage + trajectory. `P_inventory_top3` es el máximo de E019 P(availability) entre el spot solicitado y las alternativas finales top-3.
+
+La multiplicación expresa una propiedad de producto: una oportunidad alta requiere simultáneamente buena calidad del lead y capacidad de atenderlo.
+
+No se afirma que el resultado sea una probabilidad conjunta perfectamente calibrada porque los componentes no han demostrado independencia condicional.
+
+Evidencia: [EV-020](../Evidencias/EV-020_lead_opportunity_fallback_e2e.md).
+
+## D067 — La integración gana oportunidades atendibles y sacrifica conversiones no atendibles
+
+**Estado:** SUPPORTED / DECISION-READY.
+
+E020 evalúa:
+
+`joint_success = scheduled_visit_30d AND confirmed_serviceable`.
+
+Macro, Quality-only -> Opportunity Score:
+
+- AUC: **0.592 -> 0.660**;
+- AP: **0.412 -> 0.462**;
+- Brier: **0.221 -> 0.210**;
+- Log-loss: **0.632 -> 0.607**;
+- Lift@10%: **1.312x -> 1.450x**;
+- Recall@20%: **24.7% -> 28.7%**.
+
+En fold 4, P85 por etapa:
+
+- misma capacidad: 219;
+- joint positives: **106 -> 114**;
+- ganancia: **+8 / +7.5%**;
+- confirmed-serviceable selected: **89.0% -> 100%**.
+
+Guardrail:
+
+- conversion positives puros: **124 -> 114**, delta **-10**.
+
+**Interpretación:** si Growth sólo quiere maximizar `scheduled_visit`, debe ordenar por Lead Quality. Si quiere maximizar oportunidades que además pueden atenderse con el inventario actual/fallback, debe usar Lead Opportunity Score.
+
+Este tradeoff no es un error del score combinado; es la diferencia entre los dos objetivos.
+
+Evidencia: [EV-020](../Evidencias/EV-020_lead_opportunity_fallback_e2e.md).

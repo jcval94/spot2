@@ -18,7 +18,7 @@ El registro de flujo responde otra pregunta:
 |---|---|---|
 | [Modelo 3 — dynamic Lead Quality](modelo_3/) | **CLOSED / DECISION-READY** | pooled CatBoost + stage + trajectory como baseline operativo; especialistas tabulares como challengers |
 | [FL-003 — Segmentación, perfiles y Matching](segmentation_matching/) | **CLOSED / DECISION-READY** | Persona + Need T0/T1 + Physical/Location; E007 global, BSV auxiliar; pockets requieren nueva evidencia |
-| [FL-004 — Operational threshold + P(availability)](operational_policy/) | **CLOSED / DECISION-READY** | P85/top15 en T1/T2; T0 sin gate; Availability probabilística a 30d |\n| [Selección del caso de uso LLM](llm_use_case/) | **ACTIVE** | probar Semantic Inventory Quality contra Rules-only; Copilot/fallback quedan como opciones futuras, no como justificación principal |
+| [FL-004 — Operational threshold + P(availability)](operational_policy/) | **CLOSED / DECISION-READY** | P85/top15 en T1/T2; T0 sin gate; Availability probabilística a 30d |\n| [FL-005 — Lead Opportunity Score + Fallback](lead_opportunity_e2e/) | **CLOSED / DECISION-READY** | top-3 bounded fallback; Quality × Inventory; joint_success end-to-end |\n| [Selección del caso de uso LLM](llm_use_case/) | **ACTIVE** | probar Semantic Inventory Quality contra Rules-only; Copilot/fallback quedan como opciones futuras, no como justificación principal |
 
 ## Regla
 
