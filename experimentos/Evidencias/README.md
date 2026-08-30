@@ -7,6 +7,9 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 - [VISUALIZACIONES_FASE_1.md](VISUALIZACIONES_FASE_1.md) — primera ronda transversal con **20 visualizaciones** empíricas/conceptuales claramente etiquetadas. Cubre auditoría de evidencia, lead attention, response time, geografía, LLM triage, clustering/matching, A/B, Modelo 3, interpretabilidad, validación temporal y LLM inventory quality.
 - [VISUALIZACIONES_FASE_2.md](VISUALIZACIONES_FASE_2.md) — segunda ronda con **20 visualizaciones adicionales** centradas en incertidumbre, soporte muestral, cobertura/frescura temporal, transición T0→T1, estabilidad de perfiles, rolling/trajectory CV y anomalías semánticas.
 - [VISUALIZACIONES_FASE_3.md](VISUALIZACIONES_FASE_3.md) — **19 imágenes SVG reales**: PR, ROC, calibration, lift/gains por stage; AP y Lift@10 por fold temporal; y tres heatmaps de transición/compatibilidad.
+- [VISUALIZACIONES_FASE_4.md](VISUALIZACIONES_FASE_4.md) — **12 imágenes SVG reales** de robustez: sensibilidad de clustering, tamaños de cluster, drift por stage/fold, auditabilidad semántica, ejemplos concretos y executive visual summary.
+
+**Acumulado:** 40 visualizaciones Markdown/Mermaid + **31 imágenes SVG reales**.
 
 ## Índice
 
