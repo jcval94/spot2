@@ -9,16 +9,19 @@
     "pr_auc": null,
     "log_loss": 0.49245784194628645,
     "brier": 0.15654162305948022,
-    "lift_at_5pct": 1.471698113207547,
-    "lift_at_10pct": 0.9198113207547169,
-    "lift_at_20pct": 0.9365351629502573,
-    "precision_at_10pct": 0.17857142857142858,
-    "recall_at_10pct": 0.09433962264150944,
-    "recall_at_20pct": 0.18867924528301888,
+    "lift_at_5pct": null,
+    "lift_at_10pct": null,
+    "lift_at_20pct": null,
+    "precision_at_10pct": null,
+    "recall_at_10pct": null,
+    "recall_at_20pct": null,
     "probability": 0.20375457875457875,
     "ranking_metrics_tie_caveat": true,
     "window_start": "2026-06-01 08:06:36+00:00",
     "window_end": "2026-06-29 17:21:00+00:00",
-    "pr_auc_status": "UNDEFINED_FOR_CONSTANT_SCORE_TRAPEZOIDAL_PR"
+    "pr_auc_status": "UNDEFINED_FOR_CONSTANT_SCORE_TRAPEZOIDAL_PR",
+    "calibration_intercept": -0.060344400612196925,
+    "calibration_slope": null,
+    "ranking_metrics_status": "UNDEFINED_CONSTANT_SCORE"
   }
 }
