@@ -1,0 +1,23 @@
+{
+  "status": "DIAGNOSTIC_ONLY_NON_PRISTINE",
+  "metrics": {
+    "n": 273,
+    "n_leads": 273,
+    "positive_rate": 0.19413919413919414,
+    "roc_auc": 0.5,
+    "average_precision": 0.19413919413919414,
+    "pr_auc": 0.5970695970695971,
+    "log_loss": 0.4927861964192656,
+    "brier": 0.1566490954347446,
+    "lift_at_5pct": 1.471698113207547,
+    "lift_at_10pct": 0.9198113207547169,
+    "lift_at_20pct": 0.9365351629502573,
+    "precision_at_10pct": 0.17857142857142858,
+    "recall_at_10pct": 0.09433962264150944,
+    "recall_at_20pct": 0.18867924528301888,
+    "probability": 0.2082787838279435,
+    "ranking_metrics_tie_caveat": true,
+    "window_start": "2026-06-01 08:06:36+00:00",
+    "window_end": "2026-06-29 17:21:00+00:00"
+  }
+}
