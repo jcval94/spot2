@@ -81,5 +81,9 @@
     "status": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE",
     "incident_document": "HOLDOUT_INCIDENT.md",
     "note": "A temporary execution export encoded procedural-holdout labels before this config existed. No holdout metric or individual label was inspected and no selection/calibration decision used holdout rows, but the procedural-final claim is invalidated."
-  }
+  },
+  "development_model_artifact": "models/lead_quality/artifacts/base_rate_champion.json",
+  "calibrator_artifact": "models/lead_quality/artifacts/platt_calibrator.json",
+  "procedural_holdout_consumed": true,
+  "procedural_holdout_evaluation_status": "DIAGNOSTIC_ONLY_NON_PRISTINE"
 }
