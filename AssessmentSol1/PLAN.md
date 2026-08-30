@@ -33,9 +33,9 @@ Strong exposure drift is reproduced. Intake Logistic fails the frozen promotion 
 
 ### T2
 **FUTURE_EXTENSION.**
-Trajectory adds only +0.005 AP macro and does not justify operational complexity.
+Trajectory adds only +0.0032 AP macro, improves AP in 2/4 folds, and does not justify operational complexity.
 
-Boundary crossing audit confirms that 1,281–1,745 late T2 rows per fold would leak if lead membership alone were used; current-score-time truncation excludes them.
+Boundary crossing is enforced by requiring both frozen T1 lead membership and current T2 score_time to satisfy each fold boundary; strict-history violations in the final P8 execution are 0.
 
 ## P9 — Inventory / Fallback / Opportunity Score — NEXT
 This is now the highest-value remaining assessment work.
