@@ -1,0 +1,11 @@
+encoded_feature,mean_coefficient,std_coefficient,sign_agreement
+cat__preferred_municipality_Monterrey,0.6750163536895484,0.19291949397467467,1.0
+num__max_budget_mxn_sale_total,-0.6716657523937107,0.1391342367162719,1.0
+cat__preferred_corridor_roma-condesa,0.6429218032524775,0.21575932802353906,1.0
+cat__preferred_municipality_San Pedro Garza García,-0.609882983296688,0.09026530787267537,1.0
+cat__preferred_corridor_zona-rio-aguacaliente,-0.5714371532232561,0.010789601034617785,1.0
+cat__preferred_municipality_Toluca,-0.5025519265425361,0.04327832810947721,1.0
+cat__preferred_municipality_Naucalpan de Juárez,0.48188357767261364,0.05156443840295358,1.0
+cat__preferred_corridor_centro-chihuahua,0.45387680128000835,0.10504948124667854,1.0
+cat__preferred_corridor_polanco,0.4224786209306049,0.08355019062480151,1.0
+cat__preferred_state_CDMX,-0.4098320887767397,0.07911298729166144,1.0
