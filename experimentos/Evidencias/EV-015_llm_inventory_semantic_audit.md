@@ -112,3 +112,10 @@ El challenge set no estima prevalencia.
 - [Rules v2](../llm_inventory_quality/E015_llm_inventory_semantic_audit/src/rules_v2.py)
 
 **Nuevo descubrimiento:** [D055](../conocimiento_agregado/DESCUBRIMIENTOS.md#d055--la-semantica-cross-field-descubre-un-patron-material-land--building-copy).
+
+
+## Live continuation
+
+La ejecución live del modelo económico quedó cerrada en [EV-018](EV-018_llm_inventory_nano_live.md).
+
+Resultado: GPT-5 nano fue técnicamente estable y muy barato, pero su specificity de 28% en el challenge S001 impide recomendarlo como gate automático. La evaluación humana global sigue pendiente.
