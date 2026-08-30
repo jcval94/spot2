@@ -380,8 +380,8 @@ def summarize_config(
         "horizon_days": (
             None if target_option == "A" else 30
         ),
-        "semantics": semantics,
         "maturity_buffer_days": maturity_buffer_days,
+        "semantics": semantics,
         "total": total,
         "labeled": len(labeled),
         "positive": positives,
