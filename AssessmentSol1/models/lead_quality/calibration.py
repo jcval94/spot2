@@ -69,6 +69,12 @@ def _load_calibration(repo_root: Path) -> pd.DataFrame:
 
 
 def predict_raw(model_payload: dict, frame: pd.DataFrame) -> np.ndarray:
+    if model_payload["model_family"] == "BASE_RATE":
+        return np.full(
+            len(frame),
+            float(model_payload["constant_probability"]),
+            dtype=float,
+        )
     features = list(model_payload["features"])
     if model_payload["model_family"] == "LOGISTIC":
         x = _normalize_bool_columns(frame[features])
@@ -390,13 +396,21 @@ def run_calibration(repo_root: Path) -> dict:
         ),
         "feature_registry_sha256": feature_registry_sha256(registry_path),
         "ablation_plan_sha256": _sha256(ablation_path),
-        "feature_variant": selection["selected_core_variant"],
+        "feature_variant": (
+            "BASE_RATE_NO_FEATURES"
+            if selection["selected_model_family"] == "BASE_RATE"
+            else selection["selected_core_variant"]
+        ),
         "features": selection["selected_features"],
         "model_family": selection["selected_model_family"],
         "hyperparameters": (
-            selection["logistic_config"]
-            if selection["selected_model_family"] == "LOGISTIC"
-            else selection["catboost_config"]
+            {"constant_source": "DEVELOPMENT prevalence"}
+            if selection["selected_model_family"] == "BASE_RATE"
+            else (
+                selection["logistic_config"]
+                if selection["selected_model_family"] == "LOGISTIC"
+                else selection["catboost_config"]
+            )
         ),
         "calibrator": selected_method,
         "random_seed": selection["random_seed"],
