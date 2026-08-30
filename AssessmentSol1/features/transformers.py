@@ -55,7 +55,11 @@ class FeatureRegistryGate:
             stages = set(str(row["stage"]).split("|"))
             if stage not in stages:
                 errors.append(f"{f}: stage={row['stage']}")
-            if row["model_role"] not in roles:
+            if row["model_role"] == "FORBIDDEN" or row["status"] == "REJECTED":
+                errors.append(
+                    f"{f}: hard-blocked model_role={row['model_role']} status={row['status']}"
+                )
+            elif row["model_role"] not in roles:
                 errors.append(f"{f}: model_role={row['model_role']}")
             if row["status"] not in allowed_statuses:
                 errors.append(f"{f}: status={row['status']}")
