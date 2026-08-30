@@ -78,3 +78,8 @@ En la sesión de implementación no estaba disponible `OPENAIKEY` ni `OPENAI_API
 Por disciplina experimental **no se simula ni fabrica el CSV LLM**.
 
 La evidencia se actualizará sólo después de una corrida real.
+
+
+## Conocimiento acumulado
+
+Relacionado con [DESCUBRIMIENTOS.md](../conocimiento_agregado/DESCUBRIMIENTOS.md).
