@@ -145,9 +145,9 @@ This satisfies the business need to understand where observed proxy rates differ
 ### Finding EDA-13 — Market Context is useful for business narrative, not historical scoring
 
 - **claim:** The supplied market table contains interpretable corridor/sector differences that help explain marketplace conditions.
-- **metric:** among descriptive highlights, Retail in `centro-chihuahua` averages ~**74 days** absorption; Retail in `del-valle-narvarte` ~**81 days**. Several Industrial corridor/sector cells show mean occupancy near **0.88–0.90** but slower mean absorption around **150–185 days**.
-- **population:** delivered `market_context` extract aggregated by state × municipality × corridor × sector.
-- **time_period:** all delivered months; narrative only.
+- **metric:** among DEVELOPMENT-period descriptive highlights, Retail in `centro-chihuahua` averages ~**74 days** absorption; Retail in `del-valle-narvarte` ~**84 days**. Several Industrial corridor/sector cells show mean occupancy near **0.88–0.90** but slower mean absorption around **150–185 days**.
+- **population:** `market_context` rows with `month < 2026-05-01`, aggregated by state × municipality × corridor × sector.
+- **time_period:** DEVELOPMENT-period months only; narrative only.
 - **artifact:** `outputs/eda/market_context_highlights.csv`.
 - **evidence_strength:** MODERATE_DESCRIPTIVE.
 - **limitation:** `month` is not a publication/effective timestamp; these aggregates remain EDA_ONLY and cannot enter historical modeling.
