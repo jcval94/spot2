@@ -1,0 +1,11 @@
+{
+  "artifact_type": "PLATT_CALIBRATOR",
+  "fit_population": "CALIBRATION",
+  "fit_n": 312,
+  "fit_positive_rate": 0.20833333333333334,
+  "input_probability": 0.20375457875457875,
+  "logistic_intercept": -0.4672676514660003,
+  "logistic_coefficient": 0.6368817120332566,
+  "output_probability": 0.2082787838279435,
+  "random_seed": 20260830
+}
