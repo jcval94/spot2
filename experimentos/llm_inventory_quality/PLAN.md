@@ -25,7 +25,7 @@ El acceso se configurará con el secret `OPENAIAPI`, aceptando opcionalmente `OP
 
 **H0 / criterio de descarte:** el lenguaje es tan repetitivo y sintético que reglas de alta precisión capturan prácticamente todos los problemas; el LLM añade falsos positivos, costo o poca cobertura incremental.
 
-## Fase 0 — Taxonomía y auditoría de texto
+## Fase 0 — Taxonomía y auditoría de texto — COMPLETE
 
 Antes de llamar a la API:
 
@@ -44,7 +44,7 @@ Taxonomía inicial:
 - `accessibility/access` cuando exista un campo estructurado comparable;
 - `semantic_implausibility` como categoría separada y no crítica por defecto.
 
-## Fase 1 — Baseline determinístico
+## Fase 1 — Baseline determinístico — COMPLETE
 
 Construir primero reglas explícitas de alta precisión.
 
@@ -65,7 +65,7 @@ El baseline debe registrar:
 
 El LLM sólo se evalúa después de tener este baseline.
 
-## Fase 2 — Gold standard humano
+## Fase 2 — Gold standard humano — SAMPLE READY / LABELING PENDING
 
 No usar otro LLM como juez principal.
 
@@ -87,7 +87,7 @@ Cada listing recibe labels a nivel claim:
 
 La guía de etiquetado debe quedar versionada.
 
-## Fase 3 — Auditor LLM
+## Fase 3 — Auditor LLM — IMPLEMENTED / LIVE RUN PENDING
 
 Para cada listing, enviar únicamente los campos necesarios y pedir Structured Output.
 
@@ -101,7 +101,7 @@ El modelo debe:
 
 No debe usar conocimiento externo para afirmar hechos sobre una ubicación o inmueble.
 
-## Fase 4 — Comparación
+## Fase 4 — Comparación — BLOCKED ON HUMAN LABELS + LIVE OUTPUT
 
 Comparar sobre el mismo holdout humano:
 
