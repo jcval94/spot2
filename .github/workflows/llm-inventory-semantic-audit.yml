@@ -1,5 +1,9 @@
 name: LLM inventory semantic audit
 
+concurrency:
+  group: e015-live-gpt5nano
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -64,7 +68,7 @@ jobs:
       (github.event_name == 'push' && github.ref == 'refs/heads/experiment/e015-live-gpt5nano')
     needs: offline
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       OPENAIKEY: ${{ secrets.OPENAIKEY }}
       OPENAIAPI: ${{ secrets.OPENAIAPI }}
@@ -88,39 +92,67 @@ jobs:
           python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/run_live.py \
             --model "$OPENAI_MODEL" \
             --limit 10 \
+            --budget-usd 1.70 \
+            --budget-state experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/live_budget.json \
+            --max-error-rate 0.20 \
             --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_smoke.jsonl
+
       - name: Run clean holdout
         run: |
           python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/run_live.py \
             --model "$OPENAI_MODEL" \
             --input experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/labeling_holdout_v2.csv \
-            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl
+            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl \
+            --budget-usd 1.70 \
+            --budget-state experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/live_budget.json \
+            --max-error-rate 0.10
+
       - name: Run Land semantic challenge
         run: |
           python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/run_live.py \
             --model "$OPENAI_MODEL" \
             --input experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/semantic_challenge_v2.csv \
-            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2.jsonl
+            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2.jsonl \
+            --budget-usd 1.70 \
+            --budget-state experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/live_budget.json \
+            --max-error-rate 0.10
+
       - name: Summarize holdout cost and overlap
+        if: always()
         run: |
-          python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/summarize_live.py \
-            --labels experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/labeling_holdout_v2.csv \
-            --predictions experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl \
-            --model "$OPENAI_MODEL" \
-            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2_summary.json
+          if [ -f experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl ]; then
+            python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/summarize_live.py \
+              --labels experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/labeling_holdout_v2.csv \
+              --predictions experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl \
+              --model "$OPENAI_MODEL" \
+              --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2_summary.json
+          fi
+
       - name: Summarize semantic challenge
+        if: always()
         run: |
-          python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/summarize_live.py \
-            --labels experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/semantic_challenge_v2.csv \
-            --predictions experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2.jsonl \
-            --model "$OPENAI_MODEL" \
-            --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2_summary.json
+          if [ -f experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2.jsonl ]; then
+            python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/summarize_live.py \
+              --labels experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/semantic_challenge_v2.csv \
+              --predictions experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2.jsonl \
+              --model "$OPENAI_MODEL" \
+              --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_semantic_challenge_v2_summary.json
+          fi
+
       - name: Evaluation readiness
-        run: python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/evaluate.py \
-          --llm experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl
+        if: always()
+        run: |
+          if [ -f experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl ]; then
+            python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/evaluate.py \
+              --labels experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/labeling_holdout_v2.csv \
+              --llm experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/llm_holdout_v2.jsonl \
+              --output experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/evaluation_live.json
+          fi
+
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: e015-live-${{ inputs.model }}
+          name: e015-live-gpt-5-nano
           path: |
             experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/
             experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/
