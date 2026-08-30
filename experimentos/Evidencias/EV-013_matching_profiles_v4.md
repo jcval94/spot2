@@ -11,6 +11,8 @@ Experimentos:
 - [E012 Dynamic Need Strong Baseline](../matching_profiles_v4/specs/E012_dynamic_need_strong_baseline.json)
 - [E013 Balanced Broker Profiles](../matching_profiles_v4/specs/E013_balanced_broker_profiles.json)
 - [E014 Hierarchical Matching v2](../matching_profiles_v4/specs/E014_hierarchical_matching_v2.json)
+- [E015 Broker Service](../matching_profiles_v4/specs/E015_broker_service_profile.json)
+- [E016 Dynamic + Service Hierarchy](../matching_profiles_v4/specs/E016_dynamic_service_hierarchy.json)
 
 ## Objetivo
 
@@ -36,4 +38,4 @@ Resolver los cuatro pendientes de segmentación identificados tras EV-010 sin me
 
 ## Descubrimientos relacionados
 
-- [D038–D044](../conocimiento_agregado/DESCUBRIMIENTOS.md)
+- [D038–D046](../conocimiento_agregado/DESCUBRIMIENTOS.md)

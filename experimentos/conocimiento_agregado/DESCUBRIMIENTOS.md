@@ -50,6 +50,8 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D042 | PROPOSAL | Dynamic Need debe probarse directamente sobre E006 para aislar su efecto del deterioro introducido por E008 Persona. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D043 | PROPOSAL | Broker Supply/Service necesita una versión compacta, winsorizada y con gate duro de balance antes de considerarse una segmentación válida. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D044 | PROPOSAL | La jerarquía v2 sólo debe evaluarse sobre la rama fuerte E012→E013 y compararse contra E007 en el mismo future test. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D045 | PROPOSAL | Si Broker Supply no es clusterizable, Broker Service balanceado debe probarse como perfil adicional sobre E012 sin desechar el Broker legacy. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
+| D046 | PROPOSAL | Dynamic Need × Physical/Location × Broker Service puede capturar la mejor señal local sin depender de un perfil Supply artificial. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -845,5 +847,26 @@ Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
 **Estado:** PROPOSAL.
 
 E014 añade compatibilidades sólo después de E012 Dynamic Need y E013 Broker balanceado. Se compara contra su padre y contra E007 old compatibility sobre el mismo future test.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+
+## D045 — Broker Service es la rama válida si Supply no clusteriza
+
+**Estado:** PROPOSAL.
+
+E015 conserva E012 y el Broker legacy, y añade únicamente un Broker Service balanceado construido con historia pre-cutoff y sin `broker_response_hours`.
+
+**Hipótesis:** la heterogeneidad operacional del broker puede ser útil aunque su mix de Supply no forme clusters naturales.
+
+Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).
+
+## D046 — La compatibilidad de servicio debe probarse sin Supply artificial
+
+**Estado:** PROPOSAL.
+
+E016 prueba Dynamic Need × Physical/Location × Broker Service y compara contra E015, E006 y el E007 flat compatibility anterior.
+
+**Hipótesis:** la combinación que produjo el nuevo pocket DN4×BV1 puede generalizar mejor usando un perfil Service balanceado y sin forzar Supply.
 
 Evidencia: [EV-013](../Evidencias/EV-013_matching_profiles_v4.md).

@@ -331,19 +331,29 @@ def build_compact_broker_views(supply, service):
     v = _winsorize(v, service_num)
     return s[["broker_id"] + supply_cat + supply_num], supply_cat, supply_num, v[["broker_id"] + service_cat + service_num], service_cat, service_num
 
-def cluster_compact_broker(df, cat_cols, num_cols, prefix, family):
+def cluster_compact_broker(df, cat_cols, num_cols, prefix, family, require_balance=True):
     rid, aid, bench = select_clusterer(df, df, cat_cols, num_cols, prefix, family)
     selected = bench[bench.selected].iloc[0]
-    if not bool(selected.balance_ok):
-        raise RuntimeError(
-            f"{family} failed strict balance gate: min={selected.min_cluster_share:.3f}, "
-            f"max={selected.max_cluster_share:.3f}"
-        )
+    passed = bool(selected.balance_ok)
     d = df.copy()
     profile_col = f"{family}_profile"
     d[profile_col] = aid
     interp = describe_profiles(d, profile_col, cat_cols, num_cols, family)
-    return d[["broker_id", profile_col]], bench, interp
+    if require_balance and not passed:
+        return d[["broker_id", profile_col]], bench, interp, {
+            "passed": False,
+            "min_cluster_share": float(selected.min_cluster_share),
+            "max_cluster_share": float(selected.max_cluster_share),
+            "method": str(selected.method),
+            "k": int(selected.k),
+        }
+    return d[["broker_id", profile_col]], bench, interp, {
+        "passed": passed,
+        "min_cluster_share": float(selected.min_cluster_share),
+        "max_cluster_share": float(selected.max_cluster_share),
+        "method": str(selected.method),
+        "k": int(selected.k),
+    }
 
 def add_interactions_v2(df):
     z = df.copy()
@@ -361,6 +371,50 @@ def add_interactions_v2(df):
     for name, cols in pairs.items():
         z[name] = z[cols].astype(str).agg("x".join, axis=1)
     return z, list(pairs)
+
+
+def add_service_interactions(df):
+    z = df.copy()
+    pairs = {
+        "dynamic_need_x_physical_service": ["dynamic_need_profile", "physical_profile"],
+        "dynamic_need_x_location_service": ["dynamic_need_profile", "location_profile"],
+        "dynamic_need_x_broker_service": ["dynamic_need_profile", "broker_service_balanced_profile"],
+        "need_transition_x_broker_service": ["need_transition", "broker_service_balanced_profile"],
+        "physical_x_broker_service": ["physical_profile", "broker_service_balanced_profile"],
+        "dynamic_need_x_physical_x_service": ["dynamic_need_profile", "physical_profile", "broker_service_balanced_profile"],
+    }
+    for name, cols in pairs.items():
+        z[name] = z[cols].astype(str).agg("x".join, axis=1)
+    return z, list(pairs)
+
+def service_compatibility_cells(test, global_rate):
+    specs = [
+        (["dynamic_need_profile", "broker_service_balanced_profile"], "dynamic_need_x_broker_service"),
+        (["dynamic_need_profile", "physical_profile"], "dynamic_need_x_physical"),
+        (["dynamic_need_profile", "location_profile"], "dynamic_need_x_location"),
+        (["need_transition", "broker_service_balanced_profile"], "need_transition_x_broker_service"),
+        (["physical_profile", "broker_service_balanced_profile"], "physical_x_broker_service"),
+        (["dynamic_need_profile", "physical_profile", "broker_service_balanced_profile"], "dynamic_need_x_physical_x_service"),
+        (["dynamic_need_profile", "location_profile", "broker_service_balanced_profile"], "dynamic_need_x_location_x_service"),
+    ]
+    rows = []
+    for cols, label in specs:
+        for keys, g in test.groupby(cols):
+            if len(g) < MIN_CELL:
+                continue
+            if not isinstance(keys, tuple):
+                keys = (keys,)
+            k, n = int(g.visit.sum()), len(g)
+            smooth = (k + 30 * global_rate) / (n + 30)
+            lo, hi = wilson(k, n)
+            row = {
+                "interaction": label, "n": n, "visit_rate": k/n,
+                "smoothed_rate": smooth, "lift_vs_global": smooth/global_rate,
+                "wilson_low": lo, "wilson_high": hi, "wilson_low_lift": lo/global_rate
+            }
+            row.update(dict(zip(cols, keys)))
+            rows.append(row)
+    return pd.DataFrame(rows).sort_values(["lift_vs_global","n"], ascending=[False,False]).reset_index(drop=True)
 
 def compatibility_cells_v2(test, global_rate):
     specs = [
@@ -564,12 +618,14 @@ def main():
 
     # 4) Balanced Broker challenger: compress specialization, winsorize scale and enforce balance.
     supply_c, supply_cat, supply_num, service_c, service_cat, service_num = build_compact_broker_views(supply, service)
-    broker_supply_bal, b5, i5 = cluster_compact_broker(
+    broker_supply_bal, b5, i5, supply_gate = cluster_compact_broker(
         supply_c, supply_cat, supply_num, "BSP", "broker_supply_balanced"
     )
-    broker_service_bal, b6, i6 = cluster_compact_broker(
+    broker_service_bal, b6, i6, service_gate = cluster_compact_broker(
         service_c, service_cat, service_num, "BSV", "broker_service_balanced"
     )
+    (OUT / "broker_supply_balance_gate.json").write_text(jdump(supply_gate), encoding="utf-8")
+    (OUT / "broker_service_balance_gate.json").write_text(jdump(service_gate), encoding="utf-8")
 
     all_bench = pd.concat([b1, b2, b3, b4, b5, b6], ignore_index=True)
     all_bench.to_csv(OUT / "clustering_benchmark.csv", index=False)
@@ -651,21 +707,45 @@ def main():
         train, test, cols["E012_dynamic_need_strong_baseline"]
     )
 
+    # E013/E014 are only scientifically eligible if BOTH Broker families pass the pre-registered balance gate.
+    broker_pair_valid = bool(supply_gate["passed"] and service_gate["passed"])
     cols["E013_balanced_broker_profiles"] = [
         "persona_profile", "need_profile", "dynamic_need_profile", "need_transition",
         "physical_profile", "location_profile",
         "broker_supply_balanced_profile", "broker_service_balanced_profile",
         "availability_state", "availability_lag_bucket"
     ]
-    pred["E013_balanced_broker_profiles"] = fit_score(
-        train, test, cols["E013_balanced_broker_profiles"]
-    )
+    if broker_pair_valid:
+        pred["E013_balanced_broker_profiles"] = fit_score(train, test, cols["E013_balanced_broker_profiles"])
+        train_h2, interaction_cols_v2 = add_interactions_v2(train)
+        test_h2, _ = add_interactions_v2(test)
+        cols["E014_hierarchical_matching_v2"] = cols["E013_balanced_broker_profiles"] + interaction_cols_v2
+        pred["E014_hierarchical_matching_v2"] = fit_score(train_h2, test_h2, cols["E014_hierarchical_matching_v2"])
+    else:
+        # Preserve metrics equal to parent only so harness can record the failed representation gate.
+        pred["E013_balanced_broker_profiles"] = pred["E012_dynamic_need_strong_baseline"].copy()
+        pred["E014_hierarchical_matching_v2"] = pred["E012_dynamic_need_strong_baseline"].copy()
+        train_h2, interaction_cols_v2 = add_interactions_v2(train)
+        test_h2, _ = add_interactions_v2(test)
 
-    train_h2, interaction_cols_v2 = add_interactions_v2(train)
-    test_h2, _ = add_interactions_v2(test)
-    cols["E014_hierarchical_matching_v2"] = cols["E013_balanced_broker_profiles"] + interaction_cols_v2
-    pred["E014_hierarchical_matching_v2"] = fit_score(
-        train_h2, test_h2, cols["E014_hierarchical_matching_v2"]
+    # E015: service-only branch remains eligible even when Supply is not clusterable.
+    if not service_gate["passed"]:
+        raise RuntimeError(
+            f"broker_service_balanced failed balance gate: min={service_gate['min_cluster_share']:.3f}, "
+            f"max={service_gate['max_cluster_share']:.3f}"
+        )
+    cols["E015_broker_service_profile"] = [
+        "persona_profile", "need_profile", "dynamic_need_profile", "need_transition",
+        "physical_profile", "location_profile", "broker_profile",
+        "broker_service_balanced_profile", "availability_state", "availability_lag_bucket"
+    ]
+    pred["E015_broker_service_profile"] = fit_score(train, test, cols["E015_broker_service_profile"])
+
+    train_s, service_interaction_cols = add_service_interactions(train)
+    test_s, _ = add_service_interactions(test)
+    cols["E016_dynamic_service_hierarchy"] = cols["E015_broker_service_profile"] + service_interaction_cols
+    pred["E016_dynamic_service_hierarchy"] = fit_score(
+        train_s, test_s, cols["E016_dynamic_service_hierarchy"]
     )
 
     # Reproduce the old E007 treatment as a same-test external benchmark.
@@ -712,6 +792,10 @@ def main():
         ("E014_vs_E013", "E013_balanced_broker_profiles", "E014_hierarchical_matching_v2"),
         ("E014_vs_E007_old", "E007_old_compatibility", "E014_hierarchical_matching_v2"),
         ("E014_vs_E006_parent", "E006_parent_marginals", "E014_hierarchical_matching_v2"),
+        ("E015_vs_E012", "E012_dynamic_need_strong_baseline", "E015_broker_service_profile"),
+        ("E016_vs_E015", "E015_broker_service_profile", "E016_dynamic_service_hierarchy"),
+        ("E016_vs_E007_old", "E007_old_compatibility", "E016_dynamic_service_hierarchy"),
+        ("E016_vs_E006_parent", "E006_parent_marginals", "E016_dynamic_service_hierarchy"),
     ]
     boot_rows = []
     for label, a, b in comparisons:
@@ -726,10 +810,18 @@ def main():
     cells["beats_prior_best_1_366x"] = cells.lift_vs_global > prior_best
     cells.to_csv(OUT / "top_compatibility_cells.csv", index=False)
 
-    cells_v2 = compatibility_cells_v2(test_h2, global_rate)
-    cells_v2["beats_old_EV010_1_366x"] = cells_v2.lift_vs_global > 1.366344422133438
-    cells_v2["beats_v4_first_pass_1_42685x"] = cells_v2.lift_vs_global > 1.42685
+    if broker_pair_valid:
+        cells_v2 = compatibility_cells_v2(test_h2, global_rate)
+    else:
+        cells_v2 = pd.DataFrame(columns=["interaction","n","visit_rate","smoothed_rate","lift_vs_global"])
+    cells_v2["beats_old_EV010_1_366x"] = cells_v2.get("lift_vs_global", pd.Series(dtype=float)) > 1.366344422133438
+    cells_v2["beats_v4_first_pass_1_42685x"] = cells_v2.get("lift_vs_global", pd.Series(dtype=float)) > 1.42685
     cells_v2.to_csv(OUT / "top_compatibility_cells_v2.csv", index=False)
+
+    service_cells = service_compatibility_cells(test_s, global_rate)
+    service_cells["beats_old_EV010_1_366x"] = service_cells.lift_vs_global > 1.366344422133438
+    service_cells["beats_v4_first_pass_1_42685x"] = service_cells.lift_vs_global > 1.42685
+    service_cells.to_csv(OUT / "top_service_compatibility_cells.csv", index=False)
 
     # Profile transitions are useful product diagnostics independent of the model.
     trans = pd.crosstab(
@@ -748,6 +840,8 @@ def main():
         "E012_dynamic_need_strong_baseline": "E012_vs_E006",
         "E013_balanced_broker_profiles": "E013_vs_E012",
         "E014_hierarchical_matching_v2": "E014_vs_E013",
+        "E015_broker_service_profile": "E015_vs_E012",
+        "E016_dynamic_service_hierarchy": "E016_vs_E015",
     }
     next_map = {
         "E008_behavioral_persona": "E009_dynamic_need_t1",
@@ -756,21 +850,27 @@ def main():
         "E011_hierarchical_matching": "E012_dynamic_need_strong_baseline",
         "E012_dynamic_need_strong_baseline": "E013_balanced_broker_profiles",
         "E013_balanced_broker_profiles": "E014_hierarchical_matching_v2",
-        "E014_hierarchical_matching_v2": "Online randomized routing A/B if operationally available",
+        "E014_hierarchical_matching_v2": "E015_broker_service_profile because Broker Supply failed the balance gate",
+        "E015_broker_service_profile": "E016_dynamic_service_hierarchy",
+        "E016_dynamic_service_hierarchy": "Online randomized routing A/B if operationally available",
     }
     for eid, cmp_name in parent_cmp.items():
         row = boot.set_index("comparison").loc[cmp_name].to_dict()
         m = metric_df.set_index("model").loc[eid].to_dict()
+        failed_broker_gate = eid in {"E013_balanced_broker_profiles","E014_hierarchical_matching_v2"} and not broker_pair_valid
         result = {
             "experiment_id": eid,
             "metrics": {k: float(v) for k, v in m.items() if isinstance(v, (int, float, np.number))},
-            "conclusion": conclusion(row),
+            "conclusion": "NOT_SUPPORTED" if failed_broker_gate else conclusion(row),
             "comparison_to_parent": row,
             "caveats": [
                 "Offline temporal backtest; not causal.",
                 "scheduled_visit is a proxy for commercial progress, not hidden sale/conversion.",
                 "Clusters are selected outcome-free; compatibility cells are exploratory and multiple comparisons are not family-wise adjusted."
-            ],
+            ] + ([
+                f"Representation gate failed before model eligibility: Broker Supply min share={supply_gate['min_cluster_share']:.3f}, max share={supply_gate['max_cluster_share']:.3f}.",
+                "Treatment predictions are intentionally copied from the valid parent only to satisfy the immutable harness record; no performance claim is made."
+            ] if failed_broker_gate else []),
             "next_experiment": next_map[eid]
         }
         (OUT / f"{eid}_results.json").write_text(jdump(result), encoding="utf-8")
@@ -783,6 +883,10 @@ def main():
     e012_vs_parent = boot.set_index("comparison").loc["E012_vs_E006"]
     e014_vs_old = boot.set_index("comparison").loc["E014_vs_E007_old"]
     e014_vs_parent = boot.set_index("comparison").loc["E014_vs_E006_parent"]
+    e015_vs_parent = boot.set_index("comparison").loc["E015_vs_E012"]
+    e016_vs_old = boot.set_index("comparison").loc["E016_vs_E007_old"]
+    e016_vs_parent = boot.set_index("comparison").loc["E016_vs_E006_parent"]
+    best_service_cells = service_cells.head(15)
 
     report = f"""# Matching profiles v4 — semantic profiles + dynamic need + clean broker + hierarchical matching
 
@@ -798,7 +902,9 @@ The ladder is intentionally incremental:
 4. E011: add pre-specified hierarchical compatibility interactions.
 5. E012: branch back to the strong E006 baseline and add Dynamic Need without carrying E008.
 6. E013: replace legacy Broker with strictly balanced compact Supply + Service profiles.
-7. E014: retry hierarchical matching on the stronger branch.
+7. E014: retry hierarchical matching only if both Broker profiles pass the balance gate.
+8. E015: when Supply is not clusterable, add only the valid balanced Broker Service profile to E012.
+9. E016: add Dynamic Need × Physical/Location × Broker Service interactions on that valid branch.
 
 ### Model metrics
 
@@ -816,7 +922,13 @@ The ladder is intentionally incremental:
 
 **E014 v2 vs old E007:** ΔAP {e014_vs_old.delta_ap:+.4f} (95% CI {e014_vs_old.delta_ap_low:+.4f}, {e014_vs_old.delta_ap_high:+.4f}); ΔLift@10 {e014_vs_old.delta_lift10:+.3f}.
 
-**E014 v2 vs E006:** ΔAP {e014_vs_parent.delta_ap:+.4f} (95% CI {e014_vs_parent.delta_ap_low:+.4f}, {e014_vs_parent.delta_ap_high:+.4f}).
+**E014 v2 vs E006:** ΔAP {e014_vs_parent.delta_ap:+.4f} (95% CI {e014_vs_parent.delta_ap_low:+.4f}, {e014_vs_parent.delta_ap_high:+.4f}). If Broker Supply failed the gate, E014 is NOT_SUPPORTED and these copied-parent metrics are not a treatment result.
+
+**E015 Broker Service vs E012:** ΔAP {e015_vs_parent.delta_ap:+.4f} (95% CI {e015_vs_parent.delta_ap_low:+.4f}, {e015_vs_parent.delta_ap_high:+.4f}).
+
+**E016 Service hierarchy vs old E007:** ΔAP {e016_vs_old.delta_ap:+.4f} (95% CI {e016_vs_old.delta_ap_low:+.4f}, {e016_vs_old.delta_ap_high:+.4f}); ΔLift@10 {e016_vs_old.delta_lift10:+.3f}.
+
+**E016 Service hierarchy vs E006:** ΔAP {e016_vs_parent.delta_ap:+.4f} (95% CI {e016_vs_parent.delta_ap_low:+.4f}, {e016_vs_parent.delta_ap_high:+.4f}).
 
 ## Selected outcome-free clusterers
 
@@ -834,7 +946,11 @@ Prior best from Matching A/B v3 was ~1.366x smoothed lift. The table below is ex
 
 ## Top compatibility cells — balanced Broker / strong-baseline branch
 
-{best_cells_v2.to_markdown(index=False)}
+{best_cells_v2.to_markdown(index=False) if len(best_cells_v2) else "_Not eligible: Broker Supply failed the strict balance gate._"}
+
+## Top compatibility cells — Dynamic Need + balanced Broker Service
+
+{best_service_cells.to_markdown(index=False)}
 
 ## Guardrails
 

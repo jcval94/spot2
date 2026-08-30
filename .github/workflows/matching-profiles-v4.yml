@@ -88,6 +88,14 @@ jobs:
             --spec experimentos/matching_profiles_v4/specs/E014_hierarchical_matching_v2.json \
             --parent-spec experimentos/matching_profiles_v4/specs/E013_balanced_broker_profiles.json \
             --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/matching_profiles_v4/specs/E015_broker_service_profile.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E012_dynamic_need_strong_baseline.json \
+            --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py validate \
+            --spec experimentos/matching_profiles_v4/specs/E016_dynamic_service_hierarchy.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E015_broker_service_profile.json \
+            --repo-root .
 
       - name: Run profile ladder and hierarchical matching
         run: python experimentos/matching_profiles_v4/run_profiles.py
@@ -137,6 +145,18 @@ jobs:
             --parent-spec experimentos/matching_profiles_v4/specs/E013_balanced_broker_profiles.json \
             --parent-results experimentos/matching_profiles_v4/results/E013_balanced_broker_profiles_results.json \
             --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
+            --spec experimentos/matching_profiles_v4/specs/E015_broker_service_profile.json \
+            --results experimentos/matching_profiles_v4/results/E015_broker_service_profile_results.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E012_dynamic_need_strong_baseline.json \
+            --parent-results experimentos/matching_profiles_v4/results/E012_dynamic_need_strong_baseline_results.json \
+            --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
+          python experimentos/_sistema/harness/experiment_harness.py finalize \
+            --spec experimentos/matching_profiles_v4/specs/E016_dynamic_service_hierarchy.json \
+            --results experimentos/matching_profiles_v4/results/E016_dynamic_service_hierarchy_results.json \
+            --parent-spec experimentos/matching_profiles_v4/specs/E015_broker_service_profile.json \
+            --parent-results experimentos/matching_profiles_v4/results/E015_broker_service_profile_results.json \
+            --output-dir "$RUNNER_TEMP/spot2_harness" --repo-root .
 
       - name: Validate outputs
         run: |
@@ -148,6 +168,9 @@ jobs:
           test -s experimentos/matching_profiles_v4/results/selected_clusterers.csv
           test -s experimentos/matching_profiles_v4/results/top_compatibility_cells.csv
           test -s experimentos/matching_profiles_v4/results/top_compatibility_cells_v2.csv
+          test -s experimentos/matching_profiles_v4/results/top_service_compatibility_cells.csv
+          test -s experimentos/matching_profiles_v4/results/broker_supply_balance_gate.json
+          test -s experimentos/matching_profiles_v4/results/broker_service_balance_gate.json
           test -s experimentos/matching_profiles_v4/results/broker_supply_balanced_assignments.csv
           test -s experimentos/matching_profiles_v4/results/broker_service_balanced_assignments.csv
           test -s experimentos/matching_profiles_v4/results/need_t0_t1_transition_matrix.csv
