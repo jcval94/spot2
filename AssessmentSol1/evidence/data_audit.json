@@ -1217,7 +1217,7 @@
     "availability_join_safety": "PASS_WITH_BACKWARD_ASOF_ONLY",
     "spots_current_state": "FORBIDDEN_BACKTEST",
     "market_context": "EDA_ONLY",
-    "spot_attributes": "BLOCKED_PENDING_TEMPORAL_PROVENANCE",
+    "spot_attributes": "AUTHORIZED_IMMUTABLE_ASSUMPTION",
     "broker_response_fields": "AUDIT_ONLY_P1",
     "target_built": false,
     "every_source_has_explicit_temporal_semantics": "PASS"
@@ -1290,10 +1290,7 @@
       ],
       "other_fields": "CONDITIONAL_ON_IMMUTABILITY_OR_VERSION_PROOF"
     },
-    "spot_attributes": {
-      "class": "UNVERSIONED_NO_TIMESTAMP",
-      "policy": "BLOCKED_PENDING_TEMPORAL_PROVENANCE"
-    },
+    "spot_attributes": "IMMUTABLE_BY_EXPLICIT_ASSESSMENT_ASSUMPTION",
     "availability_snapshot": {
       "class": "DATED_MUTABLE_STATE",
       "effective_time_candidate": "snapshot_date",
@@ -1402,10 +1399,7 @@
     },
     "spot_attributes": {
       "static_columns": [
-        "spot_id"
-      ],
-      "mutable_columns": [],
-      "temporal_unknown_columns": [
+        "spot_id",
         "natural_light",
         "luminaires",
         "charging_ports",
@@ -1418,7 +1412,9 @@
         "floor_material",
         "amenities"
       ],
-      "note": "No timestamp exists for attribute values; all non-key attributes remain temporally unknown pending provenance."
+      "mutable_columns": [],
+      "temporal_unknown_columns": [],
+      "note": "All non-key values are treated as immutable by explicit assessment assumption. Raw contains no attribute timestamp; historical T1/T2 use is authorized only when spots.created_at <= score_time."
     },
     "availability_snapshot": {
       "static_columns": [
@@ -1530,6 +1526,14 @@
       "invalid_parse": 0,
       "before_2000": 0,
       "after_audit_date": 0
+    }
+  },
+  "assumptions": {
+    "spot_attributes_immutability": {
+      "status": "ACCEPTED_CONTRACT_ASSUMPTION",
+      "statement": "spot_attributes values are immutable over the life of a spot",
+      "historical_use": "T1/T2 allowed when spots.created_at <= score_time",
+      "raw_timestamp_present": false
     }
   }
 }
