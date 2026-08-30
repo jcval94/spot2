@@ -260,6 +260,40 @@ def sha256_file(path: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+def git_blob_sha1_file(path: Path) -> str:
+    """Compute the Git blob SHA-1 for a local file without using Git."""
+    data = path.read_bytes()
+    header = f"blob {len(data)}\\0".encode("ascii")
+    return hashlib.sha1(header + data).hexdigest()
+
+
+def load_source_manifest(repo_root: Path) -> dict:
+    path = repo_root / "AssessmentSol1" / "config" / "raw_source_manifest.json"
+    return json.loads(path.read_text())
+
+
+def validate_source_manifest(repo_root: Path) -> dict[str, dict[str, str]]:
+    """Fail if any raw file differs from the frozen P1 fingerprint manifest."""
+    manifest = load_source_manifest(repo_root)
+    observed: dict[str, dict[str, str]] = {}
+    for table, formats in manifest["tables"].items():
+        observed[table] = {}
+        for fmt, spec in formats.items():
+            path = repo_root / spec["path"]
+            sha256 = sha256_file(path)
+            blob = git_blob_sha1_file(path)
+            if sha256 != spec["sha256"]:
+                raise AssertionError(
+                    f"Raw SHA256 drift for {table}/{fmt}: {sha256} != {spec['sha256']}"
+                )
+            if blob != spec["git_blob_sha1"]:
+                raise AssertionError(
+                    f"Raw Git blob drift for {table}/{fmt}: {blob} != {spec['git_blob_sha1']}"
+                )
+            observed[table][f"{fmt}_sha256"] = sha256
+            observed[table][f"{fmt}_git_blob_sha1"] = blob
+    return observed
+
 
 def pk_duplicate_rows(df: pl.DataFrame, cols: Iterable[str]) -> int:
     cols = list(cols)
@@ -618,6 +652,22 @@ def market_context_audit(
     }
 
 
+def _schema_dtype_names(table: str, column: str, dtype: pl.DataType) -> tuple[str, str]:
+    physical_map = {
+        pl.Boolean: "BOOLEAN",
+        pl.Int64: "INT64",
+        pl.Float64: "FLOAT64",
+        pl.String: "STRING/BYTE_ARRAY",
+    }
+    physical = physical_map.get(dtype, str(dtype).upper())
+    canonical = physical
+    if column in TIME_COLUMNS[table]:
+        canonical = "DATE" if column in {"snapshot_date", "month"} else "DATETIME_UTC"
+    if table == "spot_attributes" and column == "amenities":
+        canonical = "JSON_STRING"
+    return canonical, physical
+
+
 def build_schema_frame(frames: dict[str, pl.DataFrame]) -> pl.DataFrame:
     rows: list[dict] = []
     fk_lookup = {
@@ -627,11 +677,13 @@ def build_schema_frame(frames: dict[str, pl.DataFrame]) -> pl.DataFrame:
     for table, df in frames.items():
         for column, dtype in df.schema.items():
             missing = df[column].null_count()
+            canonical_dtype, physical_dtype = _schema_dtype_names(table, column, dtype)
             rows.append(
                 {
                     "source": table,
                     "column": column,
-                    "canonical_dtype": str(dtype),
+                    "canonical_dtype": canonical_dtype,
+                    "parquet_physical_type": physical_dtype,
                     "row_count": df.height,
                     "non_null_count": df.height - missing,
                     "missing_count": missing,
@@ -667,6 +719,7 @@ def validate_temporal_registry(repo_root: Path, frames: dict[str, pl.DataFrame])
 
 
 def build_audit(repo_root: Path) -> dict:
+    source_manifest_validation = validate_source_manifest(repo_root)
     frames = {t: read_parquet_table(repo_root, t) for t in TABLES}
 
     parity = {}
@@ -692,6 +745,7 @@ def build_audit(repo_root: Path) -> dict:
 
     return {
         "audit_version": "P1-raw-audit-v1",
+        "source_manifest_validation": source_manifest_validation,
         "canonical_format": "parquet",
         "csv_role": "parity/reference only; never concatenated",
         "target_built": False,
@@ -727,6 +781,18 @@ def build_audit(repo_root: Path) -> dict:
             "market_context": "MONTHLY_AGGREGATE_WITHOUT_PUBLICATION_TIME_EDA_ONLY",
         },
         "column_temporality": COLUMN_TEMPORAL_CLASSIFICATION,
+        "gates": {
+            "csv_parquet_parity": "PASS",
+            "pk_fk_duplicates": "PASS",
+            "impossible_dates": "PASS",
+            "availability_join_safety": "PASS_WITH_BACKWARD_ASOF_ONLY",
+            "spots_current_state": "FORBIDDEN_BACKTEST",
+            "market_context": "EDA_ONLY",
+            "spot_attributes": "BLOCKED_PENDING_TEMPORAL_PROVENANCE",
+            "broker_response_fields": "AUDIT_ONLY_P1",
+            "target_built": False,
+            "every_source_has_explicit_temporal_semantics": "PASS",
+        },
         "source_policy": {
             "spots_current_state": "FORBIDDEN_BACKTEST",
             "spot_attributes": "BLOCKED_PENDING_TEMPORAL_PROVENANCE",
