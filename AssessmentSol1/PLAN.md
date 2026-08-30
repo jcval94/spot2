@@ -1,82 +1,54 @@
 # Incremental plan
 
 ## P0 — Clean-room + temporal information contract — COMPLETE
-
-- inventory prior evidence;
-- record conflicts and research contamination;
-- define exact scoring instants;
-- classify sources as observable / conditional / audit-only / blocked.
-
-Gate: answer “What information is known at the exact scoring instant?” for T0, T1, T2, inventory, broker response and market context.
+Frozen scoring instants and source observability policy.
 
 ## P1 — Raw-data integrity and source semantics — COMPLETE
-
-Re-profiled all six raw tables from scratch; validated CSV↔Parquet parity, physical fingerprints, keys, cardinalities, timestamp ordering, missingness, duplicates, outliers, modality structure, response inconsistencies, Availability as-of coverage and source temporal provenance. Parquet is canonical when present. No target was constructed.
-
-Gate: every raw column has explicit event/observation/effective-time semantics or is blocked/EDA-only.
+CSV↔Parquet parity, PK/FK, missingness, temporal ontology and source-specific blocks.
 
 ## P2 — Target contract — COMPLETE
+Frozen primary target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`, 14-day maturity.
 
-Compared Target A (first-inquiry eventual scheduled_visit), Target B (E028-style 30d reconstructed response event), and Target C (30d inquiry-initiation progress) without training a model or using AUC/AP/Lift. Frozen the primary T1 target as `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1` with a 14-day historical maturity buffer. T0 has a separate secondary progress estimand; T2 outcome semantics are frozen.
+## P3 / Prompt 4 — Point-in-time ABTs — IMPLEMENTED; POLARS RUNTIME MANIFEST PENDING
+T0, T1, T2 and separate Inventory/Matching builders are implemented with lineage/leakage gates. The full `validate_abts.py` materialization still needs an environment with Polars before final packaging.
 
-Gate: target estimand and maturity are frozen before FE/modeling and may not be changed because another target later gives better model performance.
+## P4 — Split contract — COMPLETE
+Frozen timestamp-only split:
+- DEVELOPMENT 4,368;
+- CALIBRATION 312;
+- PROCEDURAL_HOLDOUT 290;
+- POST_HOLDOUT_AUDIT 30;
+plus 4 expanding temporal folds.
 
-## P3 — Definitive point-in-time ABTs / Prompt 4 refactor — IMPLEMENTED, RUNTIME GATE PENDING
+## P5–6 — EDA, drift and stage-aware Feature Engineering — COMPLETE
+Development-only EDA, drift classification, 129-row FEATURE_REGISTRY, frozen feature groups/ablations, fold-aware transforms, T2 strict-prior trajectory implementation.
 
-Prompt 4 supersedes the earlier combined score-spine design with four separate analytical objects:
+## P7 — Lead Quality T1 — COMPLETE WITH HOLDOUT-INTEGRITY INCIDENT
 
-1. `abt_t0` — one row per lead at intake;
-2. `abt_t1` — principal, one deterministic first inquiry per lead;
-3. `abt_t2` — challenger, one row per second-or-later inquiry with strict-prior request history only;
-4. `inventory_candidates` — separate `score_id × candidate_spot_id` Matching/Inventory table.
+Frozen champion: **BASE_RATE + PLATT**.
 
-LeadQuality is physically separated from selected Spot, physical attributes, Matching and Availability. Availability uses backward as-of only; missing snapshots remain UNKNOWN. Market Context and `competing_inquiries_30d` are blocked. T2 broker-response history is not a predictive feature; timed prior scheduled visits are used only for cohort eligibility and untimed prior successes make stage membership ambiguous.
+Why:
+- learned T1 ranking is not stable;
+- Logistic A AP advantage over Base Rate is not statistically decisive;
+- Logistic A worsens Brier;
+- CatBoost fails frozen promotion;
+- selected-Spot context remains challenger-only;
+- no post-result feature/model search was opened.
 
-Static gate implemented:
+The champion outputs a calibrated constant probability ~0.2083 and must not be presented as an individual ranking model.
 
-- raw-only builder boundary;
-- unique-grain and row-explosion checks;
-- strict prior-inquiry checks;
-- no future Spot;
-- no future Availability;
-- forbidden feature checks;
-- stage observability;
-- external split-integrity check;
-- 111-row column lineage/role registry;
-- hard rejection of any promoted feature without demonstrated temporal availability.
+The June procedural holdout is considered consumed because of the documented pre-freeze execution-export incident. Its stored results are diagnostic-only.
 
-Runtime gate:
+## P8 — T0 sensitivity + T2 trajectory challenger — NEXT
+T1 must remain frozen. Evaluate T0 as a potentially neutral cold-start product and T2 only as BASELINE vs TRAJECTORY under strict boundary crossing rules.
 
-`python AssessmentSol1/abt/validate_abts.py`
-
-must produce `p4_qa_summary.json` with `status = PASS` and a matching artifact manifest before P4 outputs are treated as authoritative.
-
-## P4 — Splits and research-contamination-aware evaluation — BLOCKED ON ABT RUNTIME PASS
-
-Create development splits before FE/model fitting. Historical candidate periods are development/research-contaminated unless a protocol was frozen before their inspection. Reserve only a procedural final holdout if useful; true confirmation is new data/hidden evaluator.
-
-Gate: no split/model fitting begins until the current Prompt-4 ABT runtime gate passes.
-
-## P5 — Feature engineering
-
-Start with deterministic, explainable features. Fit any learned transform inside training folds only. Every feature gets provenance, availability time, mutation risk and leakage tests.
-
-## P6 — Lead Quality models
-
-Benchmark simple baselines before complex models. Use temporal/lead-grouped validation and calibration. T0/T1 neutrality from prior research is a prior belief, not a forced result.
-
-## P7 — Inventory serviceability + fallback
-
-Build inventory logic independently from Lead Quality, using only point-in-time inventory. Separate catalog-quality QA from propensity modeling.
-
-## P8 — Opportunity Score
-
-Combine validated Lead Quality and Inventory Serviceability only after each component has its own contract and evidence.
-
-## P9 — LLM
-
-Use an LLM only where unstructured information exists and where deterministic extraction is not an equivalent cheaper solution. Historical E017/E018 are negative evidence for current structured/listing-copy LeadQuality features.
+## P9 — Inventory / opportunity integration
+Keep Lead Quality and Inventory independent; use explicit ablations/integration contracts.
 
 ## P10 — Final reporting
-
-Produce notebook, one-pager, HTML presentation, figures, audit and reproducibility manifest. Do not relabel a research-contaminated period as unseen.
+Before final packaging:
+1. execute the pending P4 Polars runtime gate;
+2. carry the P7 holdout caveat visibly;
+3. produce HTML presentation / final evidence index;
+4. do not relabel June as unseen;
+5. reserve new/hidden data for true confirmation.
