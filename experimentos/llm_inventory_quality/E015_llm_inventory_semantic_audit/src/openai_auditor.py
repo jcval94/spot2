@@ -16,14 +16,20 @@ SCHEMA_PATH = HERE / "schema" / "audit_response.schema.json"
 
 
 def api_key() -> str:
-    value = os.getenv("OPENAIAPI") or os.getenv("OPENAI_API_KEY")
+    value = (
+        os.getenv("OPENAIKEY")
+        or os.getenv("OPENAIAPI")
+        or os.getenv("OPENAI_API_KEY")
+    )
     if not value:
-        raise RuntimeError("Missing OPENAIAPI (or OPENAI_API_KEY) environment variable.")
+        raise RuntimeError(
+            "Missing OPENAIKEY, OPENAIAPI, or OPENAI_API_KEY environment variable."
+        )
     return value
 
 
 def model_name() -> str:
-    return os.getenv("OPENAI_MODEL", "gpt-5.6-luna")
+    return os.getenv("OPENAI_MODEL", "gpt-5-nano")
 
 
 def build_payload(row: dict[str, Any]) -> dict[str, Any]:
@@ -106,6 +112,7 @@ def audit(payload: dict[str, Any], *, model: str | None = None) -> dict[str, Any
                 "strict": True,
             }
         },
+        max_output_tokens=700,
         store=False,
     )
     latency_ms = (time.perf_counter() - started) * 1000
