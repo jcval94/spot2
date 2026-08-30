@@ -1,0 +1,6 @@
+{
+  "n_rows": 200,
+  "n_human_labeled": 0,
+  "n_llm_predictions": 0,
+  "ready_for_final_evaluation": false
+}
