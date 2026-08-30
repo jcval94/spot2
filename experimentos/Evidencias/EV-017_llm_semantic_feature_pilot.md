@@ -2,7 +2,7 @@
 
 ## Estado
 
-**READY_FOR_API_PILOT / NOT YET EXECUTED**
+**NOT_SUPPORTED for promoting LLM-derived ABT features**
 
 ## Experimento
 
@@ -71,13 +71,54 @@ Debe contener original text + structured fields + Rules + LLM outputs.
 
 contendrá tokens y costo.
 
-## Estado de ejecución
+## Resultados reales
 
-En la sesión de implementación no estaba disponible `OPENAIKEY` ni `OPENAI_API_KEY`. Se abrió el flujo seguro de configuración de una OpenAI API key.
+### V1
 
-Por disciplina experimental **no se simula ni fabrica el CSV LLM**.
+- 100 registros;
+- input tokens: 12,564;
+- output tokens: 6,767;
+- costo estimado: **USD 0.003335**.
 
-La evidencia se actualizará sólo después de una corrida real.
+V1 reveló una falla de contrato: `incremental_issue=false` para 100/100, pero algunos registros tenían simultáneamente `new_rule_candidate=true` o `requires_human_review=true`. Los outputs redundantes fueron rechazados.
+
+### V2
+
+Se repitieron los mismos 100 registros con un schema reducido y flags derivados en Python:
+
+- input tokens: **12,634**;
+- output tokens: **4,869**;
+- costo estimado: **USD 0.002579**;
+- clean-control incremental issue rate: **0%**;
+- new rule candidates: **0/100**;
+- residual actionable: **0/100**.
+
+Por estrato:
+
+- ambiguity challenge: 96% residual_ambiguous;
+- clean control: 100% no_residual_issue;
+- Land semantic residual: 8% residual_ambiguous;
+- Rules-positive: 8% residual_ambiguous.
+
+La aparente señal del ambiguity challenge ya estaba definida por reglas gratuitas. Los pocos residual ambiguities restantes también corresponden a combinaciones de flags determinísticos ya disponibles.
+
+## Decisión
+
+**NOT_SUPPORTED** para agregar variables LLM al ABT actual.
+
+No se encontró cobertura semántica accionable/nueva que justifique costo o complejidad. En cumplimiento con la regla del usuario, las señales se convierten en variables determinísticas gratuitas mediante `build_rule_sidecar.py`.
+
+Nuevas variables sin API:
+
+- `rule_security_ambiguity_flag`;
+- `rule_retail_adaptive_use_flag`;
+- `rule_semantic_ambiguity_flag`;
+- `rule_semantic_signal_count`;
+- `rule_semantic_review_tier`.
+
+Workflow V2: `33296462871`. Artifact: `9727563377`.
+
+Reporte: [PILOT_REPORT.md](../llm_semantic_feature_pilot/results/PILOT_REPORT.md).
 
 
 ## Conocimiento acumulado
