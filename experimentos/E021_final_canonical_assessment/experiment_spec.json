@@ -1,0 +1,67 @@
+{
+  "experiment_id": "E021_final_canonical_assessment",
+  "parent_experiments": [
+    "E016_abt_feature_engineering_v1",
+    "E019_operational_threshold_availability",
+    "E020_lead_opportunity_fallback_e2e"
+  ],
+  "question": "Does the canonical point-in-time feature contract remain defensible predictively, and does the complete Lead Quality -> Inventory -> LOS -> fallback system remain decision-ready when all final metrics are generated from the same canonical OOF population?",
+  "primary_change": "replace historical Lead Quality OOF input with OOF predictions trained directly on the canonical E016 point-in-time ABTs",
+  "scoring_time": {
+    "T0": "leads.created_at",
+    "T1": "first inquiry by inquiry_at, inquiry_id",
+    "T2": "second and later inquiry_at before conversion is already observable"
+  },
+  "target": {
+    "event": "future scheduled_visit",
+    "horizon_days": 30,
+    "censoring": "right",
+    "ambiguous_event_time": "excluded"
+  },
+  "validation": {
+    "strategy": "four-fold rolling-origin temporal CV by lead cohort",
+    "folds": [
+      {"fold": 1, "train_end": 0.45, "val_end": 0.55, "test_end": 0.65},
+      {"fold": 2, "train_end": 0.55, "val_end": 0.65, "test_end": 0.75},
+      {"fold": 3, "train_end": 0.65, "val_end": 0.75, "test_end": 0.85},
+      {"fold": 4, "train_end": 0.75, "val_end": 0.85, "test_end": 0.95}
+    ],
+    "lead_integrity": "all snapshots for one lead remain in the same partition"
+  },
+  "feature_benchmark": {
+    "reference": "minimal leakage-safe PIT core",
+    "candidate": "complete E016 PIT feature contract",
+    "model": "pooled CatBoost + stage",
+    "calibration": "Platt scaling fit on each fold validation set by stage"
+  },
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct",
+    "paired_bootstrap_delta_ap",
+    "paired_bootstrap_delta_lift10"
+  ],
+  "error_analysis": {
+    "operational_gate": "top 15% within fold and T1/T2 stage",
+    "segments": ["stage", "sector", "modality", "user_type", "availability_state"]
+  },
+  "end_to_end": {
+    "quality_score": "pooled_catboost_pit_full",
+    "formula": "P_quality * P_inventory_top3",
+    "fallback": "frozen E020 bounded K=3 policy"
+  },
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN_PENDING_RUNTIME_ASSERTIONS",
+    "rules": [
+      "ABTs rebuilt from data/candidate through E016",
+      "current broker response blocked",
+      "mutable current-state Spot leakage fields blocked",
+      "availability backward-as-of",
+      "future scheduled_visit target-only",
+      "metrics ranked inside fold/stage before aggregation"
+    ]
+  }
+}
