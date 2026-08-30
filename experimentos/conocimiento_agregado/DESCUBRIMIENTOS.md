@@ -60,7 +60,8 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D052 | SUPPORTED | El future test de matching ya fue consumido para discovery iterativo; puede reproducir resultados registrados, pero no confirmar nuevas celdas descubiertas después. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D053 | SUPPORTED | La arquitectura de segmentación decision-ready es Persona actual + Need T0 + Dynamic Need T1 + Physical + Location + Broker legacy, con Broker Service auxiliar y sin Broker Supply/Inquiry Intent. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D054 | SUPPORTED | En esta línea el cuello de botella dejó de ser el algoritmo de clustering: múltiples clusterers/K no producen lift global robusto; la ganancia útil vino de separar conceptos y estados T0→T1. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md), [EV-010](../Evidencias/EV-010_matching_ab_v3.md), [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
-| D055 | SUPPORTED | La revisión semántica cross-field revela un patrón material Land × lenguaje de edificio/interiores: 230 casos, 182 incrementales sobre Rules v1; esto justifica semantic rule discovery, no superioridad del LLM. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |
+| D055 | SUPPORTED | La revisión semántica cross-field revela un patrón material Land × lenguaje de edificio/interiores: 230 casos, 182 incrementales sobre Rules v1; esto justifica semantic rule discovery, no superioridad del LLM. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |\n| D056 | SUPPORTED | El ABT canónico debe distinguir missing estructural, estado mutable y eventos point-in-time: rent/sale N/A no debe median-imputarse; current Spot state se reconstruye o bloquea; 673 scheduled_visit sin response time requieren label ambiguity en vez de falso negativo. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md) |
+| D057 | PROPOSAL | El LLM no se justifica como tratamiento general de las 86 variables. Sus candidatos defendibles son semantic QA sobre title/description y, si existiera raw inquiry text, extracción estructurada de intención/flexibilidad/restricciones. | [EV-016](../Evidencias/EV-016_abt_feature_engineering.md), [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -1154,3 +1155,46 @@ Sobre 3,000 spots:
 **Corrección metodológica:** final evaluation pasa a un holdout disjunto de 240 listings y un challenge set Land de 100 filas para precision del patrón.
 
 Evidencia: [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md).
+
+
+## D056 — El tratamiento correcto de variables es parte del modelo
+
+**Estado:** SUPPORTED.
+
+La auditoría de las 86 columnas muestra que un preprocesamiento genérico no es suficiente para Spot2. E016 formaliza un contrato por variable y etapa:
+
+- missing de renta/venta es mayormente **estructural por modalidad**, no un NaN intercambiable;
+- `lead_score_internal` permanece bloqueado;
+- `days_on_market`, `total_inquiries`, `total_views` e `is_active` no entran como current-state historical features;
+- `days_on_market` se sustituye por `score_time - spot.created_at`;
+- `total_inquiries` se sustituye por historia de inquiries as-of;
+- `broker_id` se usa como llave para perfil histórico, no como identificador memorizable;
+- Availability se une únicamente backward-as-of;
+- atributos built-environment se gatean para Land en vez de permitir que valores sintéticos físicamente extraños dominen la representación.
+
+Además, `broker_response_hours` no sólo tiene missingness: su semántica es inconsistente. Hay **673 scheduled_visit sin response time**. Para un target de 30 días no se puede demostrar si esos outcomes ocurrieron dentro del horizonte. E016 marca esos labels como temporalmente ambiguos y excluye las filas afectadas del ABT training-ready.
+
+**Interpretación:** data treatment, leakage y target observability forman parte de la especificación estadística del modelo; no son limpieza cosmética.
+
+**No demuestra:** que E016 mejore métricas predictivas. El benchmark temporal sobre estos ABTs es el siguiente experimento.
+
+Evidencia: [EV-016](../Evidencias/EV-016_abt_feature_engineering.md).
+
+## D057 — El LLM tiene una frontera clara dentro del Feature Engineering
+
+**Estado:** PROPOSAL.
+
+La revisión variable-por-variable no justifica aplicar un LLM a precios, presupuestos, áreas, geografía, enums, availability ni response timing. Esos problemas son determinísticos, temporales o de unidades.
+
+Los usos defendibles son:
+
+1. **`spots.title + spots.description`**: semantic/cross-field QA, detección de contradicciones y extracción de claims;
+2. **raw inquiry text futuro**: intent stage, flexibilidad de ubicación/área/presupuesto, must-have constraints, completeness y confidence.
+
+Con los datos actuales, `message_length` no contiene el texto y por tanto no permite extraer semántica honestamente.
+
+Para inventario, el LLM debe continuar como challenger incremental sobre Rules, no como sustituto automático de atributos estructurados. Una contradicción genera una señal de QA; no autoriza al modelo a reescribir el dato.
+
+**Implicación:** el primer benchmark posterior a E016 debe mantener ABT base sin LLM y probar por ablación `Rules semantic flags` y luego `LLM incremental flags`, sólo si existe un output versionado y reproducible.
+
+Evidencia: [EV-016](../Evidencias/EV-016_abt_feature_engineering.md), [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md).
