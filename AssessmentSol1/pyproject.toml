@@ -4,13 +4,18 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "assessment-sol1"
-version = "0.0.1"
+version = "0.1.0"
 description = "Clean-room Spot2 assessment"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+  "polars>=1.0,<2",
+]
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
