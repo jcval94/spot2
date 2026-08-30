@@ -19,7 +19,9 @@
 
 - Matching profiles v4: [run 33287168139](https://github.com/jcval94/spot2/actions/runs/33287168139) — **success**.
 - Governance CI: [run 33287168148](https://github.com/jcval94/spot2/actions/runs/33287168148) — **success**.
-- Commit reproducible de resultados: [969c953](https://github.com/jcval94/spot2/commit/969c953245a501310d676af3060c4c9f6c91d71b).
+- Commit reproducible inicial de resultados: [969c953](https://github.com/jcval94/spot2/commit/969c953245a501310d676af3060c4c9f6c91d71b).
+- Rerun final tras cierre documental: [run 33289633282](https://github.com/jcval94/spot2/actions/runs/33289633282) — **success**.
+- Commit reproducible final: [50d56e1](https://github.com/jcval94/spot2/commit/50d56e156c0ad051aa11253aad686b47a2bbde5e).
 - Future test: 4,516 inquiries / 2,065 Leads, idéntico a EV-010.
 - Baseline scheduled_visit inquiry-level ≈20.77%.
 - Clustering outcome-free; bootstrap por `lead_id`.
@@ -56,8 +58,8 @@ E012, aislado directamente sobre E006:
 - Lift@10 **1.108x vs 1.001x**.
 - Recall@20 **21.96% vs 19.72%**.
 - ΔAP +0.00131, IC95% [-0.00690,+0.00881].
-- ΔLift@10 +0.0995, IC95% [-0.0753,+0.2735].
-- ΔRecall@20 +0.0211, IC95% [-0.00003,+0.04158], P(Δ>0)=97.25%.
+- ΔLift@10 +0.0993, IC95% [-0.0753,+0.2706].
+- ΔRecall@20 +0.0211, IC95% [-0.00104,+0.04158], P(Δ>0)=97.25%.
 
 **Resultado:** señal direccional útil pero todavía INCONCLUSIVE para mejora global.
 

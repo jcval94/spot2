@@ -862,7 +862,7 @@ Resultados:
 - Lift@10 1.001x → **1.108x**.
 - Recall@20 19.72% → **21.96%**.
 - ΔAP +0.00131, IC95% [-0.00690,+0.00881].
-- ΔLift@10 +0.0995, IC95% [-0.0753,+0.2735].
+- ΔLift@10 +0.0993, IC95% [-0.0753,+0.2706].
 - P(ΔRecall@20>0)=97.25%, aunque el IC95% toca prácticamente cero.
 
 **Interpretación:** Dynamic Need merece conservarse como challenger T1 y para routing, pero todavía no hay evidencia para declarar mejora global robusta.
