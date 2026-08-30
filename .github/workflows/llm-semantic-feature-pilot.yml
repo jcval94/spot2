@@ -37,6 +37,7 @@ jobs:
             exit 0
           fi
           python experimentos/llm_semantic_feature_pilot/run_pilot.py --limit 100
+          python experimentos/llm_semantic_feature_pilot/summarize_pilot.py
 
       - name: Upload pilot CSVs
         uses: actions/upload-artifact@v4
@@ -45,4 +46,6 @@ jobs:
           path: |
             experimentos/llm_semantic_feature_pilot/results/pilot_llm_results_100.csv
             experimentos/llm_semantic_feature_pilot/results/pilot_usage_summary.csv
+            experimentos/llm_semantic_feature_pilot/results/pilot_segment_summary.csv
+            experimentos/llm_semantic_feature_pilot/results/pilot_diagnostic_gates.csv
           if-no-files-found: ignore
