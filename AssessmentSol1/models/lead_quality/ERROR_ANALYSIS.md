@@ -1,6 +1,6 @@
 # ERROR_ANALYSIS — T1 frozen champion
 
-Champion: **Base Rate + Platt**, probability = **0.2082788** for every row.
+Champion: **Base Rate + RAW**, probability = **0.2037546** for every row.
 
 Because the champion is constant, conventional per-row ranking error analysis has a special interpretation.
 
@@ -11,19 +11,19 @@ At a 0.5 threshold the champion predicts every row as negative.
 On CALIBRATION:
 - all positives are false negatives at this threshold;
 - there are no false positives;
-- this is not a hidden model defect: a constant ~20.8% probability is not designed to produce binary decisions at threshold 0.5.
+- this is not a hidden model defect: a constant ~20.4% probability is not designed to produce binary decisions at threshold 0.5.
 
 A production decision threshold would have to come from explicit costs/capacity, not from this assessment.
 
 ## High-confidence errors
 
-There are no high-confidence positive predictions. For positive cases the model assigns the same 0.2083 probability as every other case. Therefore row-level “top false positive” narratives would be arbitrary and are intentionally not fabricated.
+There are no high-confidence positive predictions. For positive cases the model assigns the same 0.2038 probability as every other case. Therefore row-level “top false positive” narratives would be arbitrary and are intentionally not fabricated.
 
 ## Calibration by segment — CALIBRATION
 
 Largest absolute prevalence-minus-prediction gaps among segments with N≥30:
 
-| Segment | N | Observed prevalence | Gap vs 0.20828 |
+| Segment | N | Observed prevalence | Gap vs 0.20375 |
 |---|---:|---:|---:|
 | modality=both | ≥30 | 0.2923 | +0.0840 |
 | source=referral | ≥30 | 0.1346 | -0.0737 |
