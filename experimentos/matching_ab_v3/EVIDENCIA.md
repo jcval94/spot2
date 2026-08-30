@@ -11,3 +11,6 @@ Conocimiento acumulado:
 
 - [D023 — Separar Spot físico de localización](../conocimiento_agregado/DESCUBRIMIENTOS.md#d023--separar-spot-físico-de-localización)
 - [D024 — Compatibility Routing](../conocimiento_agregado/DESCUBRIMIENTOS.md#d024--compatibility-routing-como-tratamiento-explícito)
+
+
+Interpretabilidad completa: [INTERPRETABILIDAD.md](INTERPRETABILIDAD.md)

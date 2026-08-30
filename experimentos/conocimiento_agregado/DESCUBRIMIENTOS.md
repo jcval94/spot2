@@ -14,9 +14,18 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D006 | INCONCLUSIVE | Clustering balanceado produce perfiles mucho más interpretables, pero su lift predictivo sigue siendo pequeño e incierto. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D007 | PROPOSAL | Enriquecimiento geográfico externo tiene rutas plausibles, pero requiere joins point-in-time y validación incremental. | [EV-007](../Evidencias/EV-007_geographic_enrichment.md) |
 | D008 | PROPOSAL | El LLM es defendible como capa de triage/extracción operativa; no existe evidencia en estos datos de lift causal del LLM. | [EV-008](../Evidencias/EV-008_llm_triage.md) |
-| D023 | PROPOSAL | Separar Spot en arquetipo físico y localización puede mejorar interpretabilidad y/o ranking frente al Spot unificado; requiere auditoría relacional y A/B controlado. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D024 | PROPOSAL | Interacciones explícitas Need × Physical × Location × Broker pueden capturar compatibilidad útil para routing; requiere comparación A/B con los mismos perfiles marginales. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
-| D009 | SUPPORTED | Separar Lead Persona de Search Need produce perfiles mucho más estables, balanceados y semánticamente claros, sin evidencia de lift incremental robusto. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
+| D023 | INCONCLUSIVE | Separar Spot en Physical Space + Location mejora fuertemente la interpretabilidad, pero no demuestra lift predictivo frente al Spot unificado. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D024 | INCONCLUSIVE | Compatibility Routing mejora puntos lead-level y revela celdas atractivas, pero el delta AP pre-registrado sigue cruzando cero. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D025 | SUPPORTED | La integridad relacional es limpia, pero Availability exige backward as-of: un join directo por spot_id expande las inquiries ~10.02x. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D026 | SUPPORTED | Modalidad funciona como restricción dura; sector, municipio y corredor se comportan como preferencias blandas en el matching observado. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D027 | SUPPORTED | El Need evoluciona entre Lead e Inquiry: presupuesto y área se refinan materialmente en T1. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D028 | SUPPORTED | El missingness de presupuesto/precio es mayormente estructural por modalidad y la aritmética de precios del Spot es internamente consistente. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D029 | NOT_SUPPORTED | broker_response_hours no puede tratarse como un SLA limpio: su presencia no concuerda semánticamente con broker_response. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D030 | SUPPORTED | Availability es consistente pero su cobertura cambia drásticamente en el tiempo; debe tratarse como riesgo de coverage drift/censoring. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D031 | NOT_SUPPORTED | Market Context no está listo para uso histórico point-in-time: la cobertura exacta es ~23.8% y no existe semántica de publicación/effective time. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D032 | INCONCLUSIVE | Existen bolsillos locales de compatibilidad de hasta ~1.37x lift suavizado, pero no hay evidencia suficiente para un Compatibility Score global. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D033 | NOT_SUPPORTED | spots.total_inquiries no equivale al conteo de la tabla inquiries y no debe usarse como historial de eventos sin redefinir su semántica. | [EV-010](../Evidencias/EV-010_matching_ab_v3.md) |
+| D009 | INCONCLUSIVE | Search Need sí queda semánticamente limpio; Lead Persona actual está dominado por canal de adquisición/historial, por lo que la separación de facetas es correcta pero Persona necesita rediseño. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D010 | NOT_SUPPORTED | Inquiry Intent v1 no debe usarse como capa predictiva: aprende principalmente día de la semana y empeora AP/AUC/lift fuera de muestra. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D011 | SUPPORTED | El perfil de Spot actual mezcla arquetipo físico con geografía; varios clusters son esencialmente regiones/estados. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
 | D012 | INCONCLUSIVE | Existen bolsillos locales de compatibilidad Lead/Need × Spot × Broker con lift descriptivo, pero no hay evidencia suficiente de una sinergia global generalizable. | [EV-006](../Evidencias/EV-006_profile_clustering_v2.md) |
@@ -175,24 +184,33 @@ El uso defendible es:
 Evidencia: [EV-008](../Evidencias/EV-008_llm_triage.md).
 
 
-## D009 — Persona y necesidad deben tratarse como facetas distintas
+## D009 — Persona y Search Need sí son facetas distintas, pero Persona aún no es una persona comercial limpia
 
-**Estado:** SUPPORTED para calidad de representación; **no** para lift incremental.
+**Estado:** INCONCLUSIVE.
 
-La descomposición de Lead en dos facetas produjo perfiles equilibrados y extremadamente estables:
+El rerun autoritativo de profile_clustering_v2 confirma que separar “quién / madurez” de “qué necesita” es conceptualmente correcto, pero cambia la interpretación material de Persona.
 
-- Lead Persona: K-Means, K=3, cluster mínimo 11.2%, máximo 51.4%, ARI 0.999.
-- Search Need: K-Means, K=3, cluster mínimo 23.7%, máximo 46.3%, ARI 1.000.
-- Persona separa principalmente quién es el actor (tenant_direct, broker, mayor historial de búsquedas).
-- Search Need separa qué requiere (rent, sale, both, área/presupuesto).
+**Search Need sí es limpio:**
 
-Predictivamente E002 obtuvo AP 0.215 frente a 0.212 de E001, pero el delta bootstrap de AP fue +0.0028 con IC95% [-0.0134, +0.0185]; el delta de AUC también cruza cero.
+- N1: renta (99% rent).
+- N2: venta (100% sale).
+- N3: modalidad both (83%) y mayor área objetivo.
 
-**Interpretación:** para producto y feature engineering es más limpio representar **quién es el lead** y **qué necesita** por separado. Es una mejora semántica/estructural, no una mejora predictiva demostrada.
+**Lead Persona actual está dominado por canal/historial:**
 
-**No demuestra:** que Persona + Need aumenten conversión, ni que sean entidades físicas nuevas; son dos facetas latentes de la misma fila de Lead.
+- P1 organic.
+- P2 paid.
+- P3 referral.
+- P4 prior_searches alta.
+- P5 has_converted_before + prior_inquiries alta.
+- P6 email.
+- P7 social.
 
-**Siguiente implicación:** conservar Persona y Search Need como features interpretables y evaluar sus interacciones con Spot/Broker sin convertirlas todavía en multiplicadores obligatorios del Opportunity Score.
+E002 tampoco mejora robustamente a E001 en la corrida actual: ΔAP -0.0068, IC95% [-0.0224, +0.0072].
+
+**Interpretación:** Search Need puede mantenerse como estado de demanda. Persona debería rediseñarse como dos facetas explícitas —Acquisition Channel y Behavioral Maturity— antes de usar etiquetas de negocio más fuertes.
+
+**Refina:** la versión previa de D009 que describía Persona como semánticamente limpia.
 
 Evidencia: [EV-006](../Evidencias/EV-006_profile_clustering_v2.md).
 
@@ -438,36 +456,230 @@ En test, el híbrido alcanza el mayor macro AP del benchmark: 0.5295 frente a 0.
 Evidencia: [EV-009](../Evidencias/EV-009_modelo_3_benchmark_specialists.md).
 
 
-## D023 — Separar Spot físico de localización
+## D023 — Separar Spot físico de localización mejora la semántica, no el lift demostrado
 
-**Estado:** PROPOSAL.
+**Estado:** INCONCLUSIVE.
 
-E006 compara dos brazos sobre la misma población temporal:
+E006 comparó, sobre exactamente la misma población y split:
 
-- **A / control:** Persona + Search Need + Broker + Spot unificado.
-- **B / tratamiento:** Persona + Search Need + Broker + Physical Space Archetype + Location Profile.
+- **A / control:** Persona + Search Need + Broker + Unified Spot + Availability.
+- **B / tratamiento:** Persona + Search Need + Broker + Physical Space + Location + Availability.
 
-Antes del modelado, una auditoría de PK/FK, cardinalidad, completitud, reglas de negocio y joins point-in-time debe pasar sin fallos críticos.
+La descomposición produjo perfiles mucho más legibles:
 
-**Qué resolverá:** si descomponer el Spot mejora interpretabilidad y/o desempeño futuro sin atribuir al perfil físico una señal que en realidad es geográfica.
+- Physical: 4 clusters; PH2 es 100% Industrial, PH3 100% Land.
+- Location: 7 clusters geográficos, ARI=1.000.
 
-**No prueba todavía:** lift causal. El backtest histórico será evidencia pre-experimento; la causalidad requiere el A/B online pre-registrado.
+Pero el rendimiento no mejora de forma robusta:
+
+- AP A 0.2100 vs B 0.2098.
+- ΔAP B−A -0.00005.
+- IC95% [-0.00572, +0.00550].
+- Lead-level AP 0.3728 vs 0.3752.
+
+**Interpretación:** Physical + Location es una representación mejor para explicar y gobernar el matching, pero no hay evidencia para venderla como mejora predictiva.
+
+**Implicación:** usar la descomposición por claridad semántica y como base para interacciones, no porque E006 pruebe lift.
+
+Interpretabilidad cluster por cluster: [INTERPRETABILIDAD](../matching_ab_v3/INTERPRETABILIDAD.md).
 
 Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
 
-## D024 — Compatibility Routing como tratamiento explícito
+## D024 — Compatibility Routing tiene señal local, pero el A/B offline global sigue inconcluso
 
-**Estado:** PROPOSAL.
+**Estado:** INCONCLUSIVE.
 
-E007 mantiene exactamente los perfiles marginales de E006 y cambia sólo una cosa:
+E007 mantuvo exactamente los mismos perfiles marginales y cambió sólo las interacciones:
 
-- **A / control:** perfiles marginales.
-- **B / tratamiento:** mismos perfiles + interacciones regularizadas Persona×Need, Need×Physical, Need×Location, Need×Broker, Physical×Broker y Need×Physical×Broker.
+- Persona×Need.
+- Need×Physical.
+- Need×Location.
+- Need×Broker.
+- Physical×Broker.
+- Need×Physical×Broker.
 
-El diseño online usa asignación sticky 50/50 por `lead_id`, estratificada por sector, modalidad y tipo de lead, con outcome primario lead-level a 30 días.
+Resultados:
 
-**Qué resolverá:** si la compatibilidad añade valor por encima de saber por separado quién es el lead, qué necesita, qué spot es y qué broker lo atiende.
+- inquiry-level AP: 0.2098 → 0.2117.
+- Lift@10%: 1.001x → 1.033x.
+- Lead-level AP: 0.3752 → 0.4270.
+- Lead-level AUC: 0.5469 → 0.5899.
 
-**No prueba todavía:** que una celda histórica con lift alto sea causal o estable.
+Pero la comparación inferencial pre-registrada no separa los brazos:
+
+- ΔAP +0.00205.
+- IC95% [-0.00960, +0.01294].
+
+**Interpretación:** hay una señal interesante a nivel Lead y en celdas específicas, pero no evidencia suficiente para un multiplicador global de Compatibility.
+
+**Implicación:** convertir las mejores celdas en hipótesis de routing para un A/B online, no en reglas de producción.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D025 — La estructura relacional está limpia; Availability exige un join as-of
+
+**Estado:** SUPPORTED.
+
+La auditoría encontró 0 fallos críticos de PK/FK/cardinalidad y preservación de filas. Sin embargo, un join directo Inquiry×Availability por `spot_id` expande la tabla **10.02x**.
+
+El pipeline correcto usa `latest snapshot_date <= inquiry_at`:
+
+- cobertura global 92.38%;
+- cobertura con lag <=90d 88.51%;
+- snapshots futuros usados: 0.
+
+**Interpretación:** la relación es 1:N temporal; Availability no se puede unir como una dimensión estática.
+
+**Implicación:** cualquier feature de disponibilidad debe construirse con backward as-of y tests de no-futuro.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D026 — Modalidad es dura; sector y geografía son preferencias blandas
+
+**Estado:** SUPPORTED.
+
+En las 22,576 inquiries:
+
+- modalidad Lead↔Spot compatible: **100.0%**;
+- sector exacto: **70.35%**;
+- municipio preferido exacto: **19.80%**;
+- corredor exacto cuando se declara: **18.60%**.
+
+El patrón es estable por search_sector.
+
+**Interpretación:** el mercado observado respeta la modalidad, pero permite desviarse mucho de sector/localización preferida.
+
+**Implicación:** municipio/corredor no deben convertirse en filtros duros. Son features de compatibilidad o penalizaciones suaves.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D027 — El Search Need debe poder actualizarse en T1
+
+**Estado:** SUPPORTED.
+
+Al cruzar Lead→Inquiry:
+
+- 81.53% del requested rent budget cae dentro del rango inicial;
+- 81.04% del requested sale budget cae dentro del rango inicial;
+- mediana requested_area / target_area = **1.053x**;
+- sólo **62.16%** de las inquiries queda entre 0.5x y 2x del target_area inicial.
+
+**Interpretación:** la inquiry no sólo repite la necesidad declarada; la refina materialmente.
+
+**Implicación:** mantener N1/N2/N3 como estado T0, pero recalcular/refinar Need en T1 con requested area/budget/urgency.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D028 — El missingness de presupuesto/precio es mayormente estructural por modalidad
+
+**Estado:** SUPPORTED.
+
+Condicionado a que el campo aplique:
+
+- Lead min rent: 96.64% completo; max rent: 100%.
+- Lead min sale: 96.40%; max sale: 100%.
+- Spot rent/sale prices: 100% completos.
+
+Además:
+
+- 0 casos min_budget > max_budget.
+- price_total ≈ price_sqm × area está dentro de 1% en **100%** de rent y sale listings comparables.
+
+**Interpretación:** los nulls crudos de renta/venta no deben tratarse automáticamente como mala calidad; gran parte es missingness estructural por modalidad.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D029 — broker_response_hours no es un SLA limpio
+
+**Estado:** NOT_SUPPORTED para interpretación directa como tiempo de respuesta.
+
+El non-null rate de response_hours es ~85% en **todos** los outcomes, incluso `no_response`.
+
+- 3,786 `no_response` tienen response_hours.
+- 2,701 outcomes con respuesta no tienen response_hours.
+- medianas por outcome son casi idénticas (~8.1–8.5h).
+
+**Interpretación:** el nombre del campo no coincide con una semántica simple “horas hasta que respondió el broker”.
+
+**Implicación:** no usarlo como driver causal/SLA sin definición de origen; las etiquetas B1/B2 basadas en rapidez se consideran low-trust.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D030 — Availability tiene coverage drift fuerte al inicio de la historia
+
+**Estado:** SUPPORTED.
+
+Cobertura backward-as-of:
+
+- ene-2025 6.5%;
+- jun-2025 84.7%;
+- sep-2025 96.6%;
+- dic-2025 99.9%;
+- desde ene-2026 100%.
+
+La consistencia interna sí es perfecta: available→days_until_available=0 y not_available→days_until_available>0 en 100%.
+
+**Interpretación:** el dato es coherente cuando existe, pero su disponibilidad histórica cambia con el tiempo.
+
+**Implicación:** monitorizar coverage/lag por cohorte y evitar interpretar missing availability temprano como “no disponible”.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D031 — Market Context todavía no es una feature histórica defendible
+
+**Estado:** NOT_SUPPORTED para incorporación point-in-time actual.
+
+Coverage exacta Spot geography × sector × inquiry month:
+
+- global 23.84%;
+- Industrial 26.76%;
+- Land 19.73%;
+- Office 22.34%;
+- Retail 24.95%;
+- julio-2026 0%.
+
+Además no se conoce publication/effective time.
+
+**Interpretación:** el problema no es sólo missingness; falta semántica temporal para saber qué contexto era realmente observable al scoring time.
+
+**Implicación:** mantenerlo fuera del ABT hasta construir una tabla effective-dated o una regla de lag explícita.
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D032 — Existen bolsillos locales de compatibilidad, no una regla global
+
+**Estado:** INCONCLUSIVE.
+
+Top celdas future-test, N>=50 y shrinkage hacia el baseline:
+
+- N2×PH1×B6: N=73, 31.5% raw, 28.38% smooth, **1.37x**.
+- N3×PH1×B5: N=81, **1.31x**.
+- N3×LOC6: N=64, **1.29x**.
+- PH3×B2: N=99, **1.28x**.
+- PH3×B1: N=139, **1.26x**.
+- N2×PH2×B3: N=67, **1.25x**.
+
+**Interpretación:** la compatibilidad parece localizada en ciertos Need×Physical×Broker/Location, no como una mejora uniforme.
+
+**Implicación:** priorizar estas celdas en un routing A/B randomizado; no multiplicar el score offline por el lift observado.
+
+Interpretabilidad detallada: [INTERPRETABILIDAD](../matching_ab_v3/INTERPRETABILIDAD.md).
+
+Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
+
+## D033 — spots.total_inquiries no equivale a la tabla de eventos
+
+**Estado:** NOT_SUPPORTED para usarlo como historial de inquiries.
+
+Al reconciliar `spots.total_inquiries` con el conteo real de `inquiries` por spot:
+
+- exact match: 7.07%;
+- total_inquiries >= event count: 37.43%;
+- correlación: -0.051;
+- diferencia mediana: -2.
+
+**Interpretación:** total_inquiries probablemente representa otra ventana, definición o snapshot agregado.
+
+**Implicación:** no usarlo como conteo de eventos histórico ni como feature point-in-time hasta aclarar su semántica.
 
 Evidencia: [EV-010](../Evidencias/EV-010_matching_ab_v3.md).
