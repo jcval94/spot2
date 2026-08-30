@@ -26,3 +26,17 @@ La propuesta actual evita presentar como “IA de negocio” una tarea que un te
 `manual semantic discovery -> S001 Land×building-copy -> Rules v2 post-discovery -> disjoint holdout/challenge -> future human+LLM evaluation`
 
 Evidence: [EV-015](../../Evidencias/EV-015_llm_inventory_semantic_audit.md). Discovery: D055.
+
+
+## GPT-5 nano live result
+
+Run `33296510774` completed successfully with 0 API/schema errors.
+
+- holdout: 240/240 valid;
+- challenge: 100/100 valid;
+- cumulative observed live cost: USD 0.053522;
+- S001 sensitivity: 76%;
+- S001 specificity: 28%;
+- conclusion: suitable for semantic discovery, not for automatic QA gating.
+
+Evidence: [EV-016](../../Evidencias/EV-016_llm_gpt5nano_live.md).
