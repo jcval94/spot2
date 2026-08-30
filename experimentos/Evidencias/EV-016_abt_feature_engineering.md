@@ -50,7 +50,7 @@ Las filas dinámicas desde la inquiry que contiene ese scheduled_visit ambiguo t
 Antes de registrar la evidencia:
 
 - Python compile: PASS.
-- 8 unit tests de semántica/leakage: PASS.
+- 9 core unit tests de semántica/leakage: PASS.\n- 1 test repository-aware adicional valida que el manifest cubra exactamente las 86 columnas fuente cuando corre dentro del repo completo.
 
 La ejecución completa sobre datos reales queda automatizada mediante el workflow del experimento.
 
