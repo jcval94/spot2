@@ -8,11 +8,11 @@ Mature June rows: **273** (17 additional June rows were censored by the frozen m
 
 Diagnostic metrics:
 - prevalence: 0.19414
-- predicted probability: 0.20828 for every row
+- predicted probability: 0.20375 for every row
 - ROC AUC: 0.5000
 - Average Precision: 0.19414
-- Log Loss: 0.49279
-- Brier: 0.15665
+- Log Loss: 0.49246
+- Brier: 0.15654
 
 Lift@5/10/20 and Precision/Recall@top-k are stored for completeness, but because all probabilities tie, their values depend on deterministic row tie-breaking and **must not be interpreted as ranking performance**.
 
