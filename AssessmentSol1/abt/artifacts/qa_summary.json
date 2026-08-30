@@ -1,0 +1,115 @@
+{
+  "phase": "P3_DEFINITIVE_POINT_IN_TIME_ABTS",
+  "audit_date": "2026-08-30",
+  "status": "PASS",
+  "gate": "No audited ABT object contains a value selected from after score_time under the explicit temporal assumptions.",
+  "raw_source": "data/candidate/parquet/**",
+  "historical_abts_used_as_runtime_inputs": false,
+  "target_contract": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1 / P2-target-v1.1",
+  "lead_quality": {
+    "score_spine_rows": 27576,
+    "unique_prediction_keys": 27576,
+    "stage_rows": {
+      "T0": 5000,
+      "T1": 5000,
+      "T2": 17576
+    },
+    "audit_all_snapshots_rows": 27576,
+    "model_ready_rows": 19298,
+    "target_status_by_stage": {
+      "T0": {
+        "POSITIVE": 1957,
+        "NEGATIVE": 2753,
+        "CENSORED": 290,
+        "AMBIGUOUS": 0,
+        "INELIGIBLE": 0
+      },
+      "T1": {
+        "POSITIVE": 1008,
+        "NEGATIVE": 3945,
+        "CENSORED": 47,
+        "AMBIGUOUS": 0,
+        "INELIGIBLE": 0
+      },
+      "T2": {
+        "POSITIVE": 1887,
+        "NEGATIVE": 7748,
+        "CENSORED": 171,
+        "AMBIGUOUS": 932,
+        "INELIGIBLE": 6838
+      }
+    },
+    "future_historical_inquiry_count": 0,
+    "current_spot_created_after_score_time_count": 0,
+    "forbidden_model_feature_count": 0,
+    "audit_shards": 7,
+    "model_ready_shards": 5
+  },
+  "candidate_spots": {
+    "full_logical_rows": 1114990,
+    "expected_grain": "prediction_key × candidate_spot_id",
+    "duplicate_grain_count": 0,
+    "candidate_rows_by_tier": {
+      "CORRIDOR": 581429,
+      "MUNICIPALITY": 108030,
+      "STATE": 405494,
+      "OBSERVED_OVERRIDE": 20037
+    },
+    "observed_current_override_rows": 20037,
+    "future_spot_creation_count": 0,
+    "logical_fnv1a64": "b6b2f89f2fa28c24",
+    "committed_full_row_table": false,
+    "committed_evidence": "full per-prediction summary + deterministic 5,000-row sample",
+    "reason_full_rows_not_committed": "Avoid adding tens/hundreds of MB of deterministic derived rows to Git; build_candidate_spots.py materializes full Parquet from raw."
+  },
+  "inventory_serviceability": {
+    "full_logical_rows": 1114990,
+    "expected_grain": "prediction_key × candidate_spot_id",
+    "duplicate_grain_count": 0,
+    "future_snapshot_count": 0,
+    "no_backward_snapshot_rows": 53593,
+    "stale_gt_90d_rows": 63512,
+    "availability_known_rows": 997885,
+    "availability_known_rate": 0.8949721522166119,
+    "snapshot_age_days": {
+      "p50": 20.467256944444443,
+      "p90": 72.29303240740741,
+      "p95": 96.42569444444445,
+      "max": 318.8435185185185
+    },
+    "no_snapshot_interpreted_as_unavailable": false,
+    "competing_inquiries_30d_model_allowed": false,
+    "logical_fnv1a64": "ba93d99f37cee16f",
+    "committed_full_row_table": false,
+    "committed_evidence": "full per-prediction coverage summary + deterministic 5,000-row row-level sample",
+    "reason_full_rows_not_committed": "Avoid Git bloat; build_inventory_state.py materializes full Parquet via backward as-of."
+  },
+  "source_policies": {
+    "spot_current_state": [
+      "days_on_market",
+      "total_views",
+      "total_inquiries",
+      "is_active"
+    ],
+    "spot_current_state_role": "FORBIDDEN",
+    "market_context": "BLOCKED_MAIN_MODEL",
+    "spot_attributes": "AUTHORIZED_IMMUTABLE_ASSUMPTION_WHEN_SPOT_CREATED_LE_SCORE_TIME",
+    "structural_spot_candidate_fields": "POLICY_GUARDRAIL_UNDER_STRUCTURAL_INVARIANCE_ASSUMPTION",
+    "availability_join": "BACKWARD_ASOF_ONLY",
+    "competing_inquiries_30d": "AUDIT_ONLY_WINDOW_DIRECTION_UNPROVEN"
+  },
+  "invariants": {
+    "prediction_key_unique": "PASS",
+    "joins_do_not_expand_lead_quality_grain": "PASS",
+    "future_snapshot": "PASS_0",
+    "future_inquiry_history": "PASS_0",
+    "forbidden_feature": "PASS_0",
+    "target_status_contract": "PASS",
+    "split_integrity": "PASS_SPLIT_AGNOSTIC_NO_ASSIGNMENT_EMBEDDED",
+    "lineage_complete": "PASS",
+    "stage_observability": "PASS",
+    "candidate_grain": "PASS",
+    "inventory_grain": "PASS"
+  },
+  "execution_note": "QA metrics were recomputed directly from raw repository blobs in this phase. Python/Polars builders and pytest guards are committed for reproducible rerun; this runtime itself does not have Polars installed."
+}
