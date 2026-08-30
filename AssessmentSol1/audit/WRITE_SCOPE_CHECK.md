@@ -1,38 +1,18 @@
 # Write-scope verification
 
-## PROMPT 0 verification
+## Current branch audit — pre-P8
 
-A temporary workflow under the explicitly allowed `.github/**` execution exception ran on the AssessmentSol1 branch.
+Branch: `assessment/assessment-sol1-clean-room`
 
-Workflow run: `33298494834`.
+Comparison against `main` after the pre-P8 audit:
 
-Result: **SUCCESS**.
+- changed files: **167**
+- commits ahead in the compare view: **308**
+- changed paths outside `AssessmentSol1/**`: **0**
+- result: **PASS**
 
-The workflow executed the requested literal command:
+The original write-scope rule remains satisfied: the definitive assessment has not modified repository paths outside `AssessmentSol1/**`.
 
-```bash
-git diff --name-only
-```
+## Historical Prompt-0 verification
 
-inside a clean checkout. Its output was empty, as expected for a clean working tree after committed changes.
-
-It also executed the committed branch comparison:
-
-```bash
-git diff --name-only origin/main...HEAD
-```
-
-and enforced that every changed path was either:
-
-- `AssessmentSol1/**`; or
-- the temporary verification workflow itself.
-
-No `OUT_OF_SCOPE` path was detected.
-
-Contract tests also passed:
-
-```text
-2 passed
-```
-
-After recording this evidence, the temporary workflow is removed. The final repository comparison must therefore contain only `AssessmentSol1/**`.
+An earlier temporary workflow also verified clean write scope and was removed afterward. That evidence remains historical; the current Git compare above is the relevant final pre-P8 check.
