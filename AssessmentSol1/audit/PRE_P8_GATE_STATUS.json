@@ -23,6 +23,20 @@
     "constant-score ranking metric semantics",
     "Inventory stale-snapshot documentation",
     "P3/P4 artifact authority",
-    "LLM/threshold/EDA alignment documentation"
-  ]
+    "LLM/threshold/EDA alignment documentation",
+    "pre-P8 gate target-contract key",
+    "model governance test syntax"
+  ],
+  "static_gate_qa": {
+    "target_contract_key": "primary_target.id",
+    "expected_target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+    "gate_script_key_bug_repaired": true,
+    "model_governance_test_literal_newline_bug_repaired": true,
+    "modified_python_files_scanned_for_suspicious_literal_newlines": true
+  },
+  "clean_room_compare": {
+    "changed_files": 167,
+    "outside_AssessmentSol1": 0,
+    "result": "PASS"
+  }
 }
