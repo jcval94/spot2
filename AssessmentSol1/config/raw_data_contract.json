@@ -1,0 +1,92 @@
+{
+  "contract_version": "P1-raw-v1",
+  "canonical_execution": {
+    "format": "parquet",
+    "path": "data/candidate/parquet",
+    "csv_use": "independent parity reference only",
+    "concatenate_formats": false
+  },
+  "tables": {
+    "leads": {
+      "grain": "lead_id",
+      "pk": [
+        "lead_id"
+      ],
+      "event_anchor": "created_at",
+      "policy": "T0 intake snapshot; historical counters conditional; lead_score_internal forbidden"
+    },
+    "inquiries": {
+      "grain": "inquiry_id",
+      "pk": [
+        "inquiry_id"
+      ],
+      "fks": {
+        "lead_id": "leads.lead_id",
+        "spot_id": "spots.spot_id"
+      },
+      "event_anchor": "inquiry_at",
+      "policy": "request fields event-time safe; broker response fields audit-only in P1"
+    },
+    "spots": {
+      "grain": "spot_id",
+      "pk": [
+        "spot_id"
+      ],
+      "event_anchor": "created_at only for entity existence",
+      "policy": "unversioned listing state conditional",
+      "forbidden_backtest": [
+        "days_on_market",
+        "total_inquiries",
+        "total_views",
+        "is_active"
+      ]
+    },
+    "spot_attributes": {
+      "grain": "spot_id",
+      "pk": [
+        "spot_id"
+      ],
+      "fk": {
+        "spot_id": "spots.spot_id"
+      },
+      "event_anchor": null,
+      "policy": "BLOCKED_PENDING_TEMPORAL_PROVENANCE"
+    },
+    "availability_snapshot": {
+      "grain": [
+        "spot_id",
+        "snapshot_date"
+      ],
+      "pk": [
+        "snapshot_id"
+      ],
+      "fk": {
+        "spot_id": "spots.spot_id"
+      },
+      "event_anchor": "snapshot_date business-date candidate",
+      "join_policy": "latest snapshot_date <= score_time",
+      "blocked": [
+        "competing_inquiries_30d"
+      ]
+    },
+    "market_context": {
+      "grain": [
+        "state",
+        "municipality",
+        "corridor",
+        "sector",
+        "month"
+      ],
+      "pk": [
+        "state",
+        "municipality",
+        "corridor",
+        "sector",
+        "month"
+      ],
+      "event_anchor": null,
+      "policy": "EDA_ONLY"
+    }
+  },
+  "target_allowed": false
+}
