@@ -1,0 +1,43 @@
+{
+  "experiment_id": "E010_clean_broker_profiles",
+  "metrics": {
+    "roc_auc": 0.5015420879313406,
+    "average_precision": 0.20755827869231536,
+    "brier": 0.16535784570990544,
+    "log_loss": 0.5135579571481228,
+    "lift_top_10pct": 0.9479876219408645,
+    "recall_top_20pct": 0.1908315565031983,
+    "lead_level_ap": 0.3848961243430379,
+    "lead_level_auc": 0.5571913576394523,
+    "lead_level_lift_top_10pct": 1.139694609676826,
+    "lead_level_n": 2065.0,
+    "lead_level_visit_rate": 0.34334140435835353
+  },
+  "conclusion": "INCONCLUSIVE",
+  "comparison_to_parent": {
+    "control": "E009_dynamic_need_t1",
+    "treatment": "E010_clean_broker_profiles",
+    "delta_auc": 0.003608213460980856,
+    "delta_auc_low": -0.009743253512895568,
+    "delta_auc_high": 0.018633218209713514,
+    "delta_auc_p_positive": 0.6725,
+    "delta_ap": 0.0004938130970840415,
+    "delta_ap_low": -0.00686030430322959,
+    "delta_ap_high": 0.008431632608114827,
+    "delta_ap_p_positive": 0.5325,
+    "delta_lift10": -0.10187832783377494,
+    "delta_lift10_low": -0.2641018787476779,
+    "delta_lift10_high": 0.06194546866240371,
+    "delta_lift10_p_positive": 0.09,
+    "delta_recall20": -0.014295264630856388,
+    "delta_recall20_low": -0.0357142857142857,
+    "delta_recall20_high": 0.0075604212249339425,
+    "delta_recall20_p_positive": 0.0775
+  },
+  "caveats": [
+    "Offline temporal backtest; not causal.",
+    "scheduled_visit is a proxy for commercial progress, not hidden sale/conversion.",
+    "Clusters are selected outcome-free; compatibility cells are exploratory and multiple comparisons are not family-wise adjusted."
+  ],
+  "next_experiment": "E011_hierarchical_matching"
+}

@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "min_cluster_share": 0.03666666666666667,
+  "max_cluster_share": 0.7033333333333334,
+  "method": "kmeans",
+  "k": 3
+}

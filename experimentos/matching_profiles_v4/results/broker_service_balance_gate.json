@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "min_cluster_share": 0.18666666666666668,
+  "max_cluster_share": 0.5766666666666667,
+  "method": "bisecting",
+  "k": 3
+}

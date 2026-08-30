@@ -1,0 +1,13 @@
+feature,missing_rate
+persona_profile,0.0
+need_profile,0.0
+behavioral_profile,0.0
+source,0.0
+dynamic_need_profile,0.0
+physical_profile,0.0
+location_profile,0.0
+broker_profile,0.0
+broker_supply_profile,0.0
+broker_service_profile,0.0
+broker_supply_balanced_profile,0.0
+broker_service_balanced_profile,0.0
