@@ -6,7 +6,8 @@
 | ¿El LLM debe ser parte del predictor? | arquitectura de Lead Quality / matching existente | D019–D021, D049 | No forzarlo dentro del score |
 | ¿LLM fallback tiene ventaja diferencial? | revisión del input disponible para matching/fallback | decisión de diseño, sin experimento | No seleccionado como caso principal |
 | ¿Existe texto no estructurado útil en inventario? | `spots.title/description` + `spot_attributes` | [D050](../../conocimiento_agregado/DESCUBRIMIENTOS.md#d050--el-mejor-uso-llm-actual-es-auditar-la-calidad-semántica-del-inventario) | Probar auditoría semántica |
-| ¿El LLM es mejor que reglas? | [EV-014](../../Evidencias/EV-014_llm_inventory_quality.md) | D050 todavía PROPOSAL | Pendiente experimento Rules vs LLM vs Rules+LLM |
+| ¿El LLM es mejor que reglas? | [EV-014](../../Evidencias/EV-014_llm_inventory_quality.md), [EV-015](../../Evidencias/EV-015_llm_inventory_semantic_audit.md) | D050 PROPOSAL, D051 SUPPORTED | Rules baseline ya ejecutado; comparación LLM sigue pendiente |
+| ¿Qué tan difícil es el baseline? | [EV-015](../../Evidencias/EV-015_llm_inventory_semantic_audit.md) | D051 | Muy fuerte por copy templated: 12 oraciones, 322 spots candidatos |
 
 ## Assessment
 
