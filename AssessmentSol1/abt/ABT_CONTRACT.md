@@ -1,208 +1,251 @@
-# ABT_CONTRACT — definitive point-in-time analytical tables
+# ABT_CONTRACT — P4 point-in-time analytical tables
 
-## Scope
+## Authority and clean-room boundary
 
-All ABTs are rebuilt from `data/candidate/parquet/**`. Historical ABTs, fitted objects and generated matrices under `experimentos/**` are evidence only and are never runtime inputs.
+This P4 contract supersedes the P3 combined `score_spine` / `lead_quality_abt` design for downstream modeling.
 
-The frozen P2 target contract remains authoritative.
+All builders reconstruct directly from `data/candidate/{parquet,csv}/**`. No builder reads:
 
-## 1. Score spine
+- `experimentos/**` as runtime input;
+- historical ABTs;
+- prior model matrices;
+- prior fitted preprocessors;
+- previously materialized files under `AssessmentSol1/abt/artifacts/**`.
 
-Canonical grain:
+Prior work is evidence only. `AssessmentSol1/target/TARGET_CONTRACT.md` remains the frozen target authority.
 
-`lead_id × stage × score_time`
+## Four separate analytical objects
 
-with unique `prediction_key`.
+### 1. `abt_t0` — cold-start / sensitivity
 
-Stages:
+**Grain:** exactly one row per `lead_id`.
 
-- **T0** — `leads.created_at`.
-- **T1** — deterministic first inquiry: minimum `inquiry_at`, then minimum `inquiry_id` as tie-break metadata.
-- **T2** — every second-or-later inquiry, at its own `inquiry_at`.
+**Score time:** `leads.created_at`.
 
-Prediction keys are deterministic:
+**Information set:** intake-only LeadQuality fields that are assumed captured with the lead record.
 
-- `L{lead_id}:T0`
-- `L{lead_id}:T1:I{inquiry_id}`
-- `L{lead_id}:T2:I{inquiry_id}`
+No inquiry payload, selected Spot, Spot attributes, Availability, Matching result, response field, or Market Context enters the model-ready view.
 
-The spine is split-agnostic. No train/eval membership is embedded in the ABT.
+The T0 label remains a sensitivity target, not the principal assessment target:
 
-## 2. Lead Quality Snapshot ABT
+`T0_30D_INQUIRY_INITIATION_PROGRESS_V1`.
 
-Two views are produced.
+A positive means that an inquiry initiated in `[lead.created_at, lead.created_at + 30d]` eventually carries recorded `scheduled_visit`. Maturity requires 30 days plus the 14-day finality buffer.
 
-### audit_all_snapshots
+### 2. `abt_t1` — PRINCIPAL
 
-Keeps every score snapshot and one mutually exclusive `target_status`:
+**Grain:** exactly one row per lead with a first inquiry.
 
-- `POSITIVE`
-- `NEGATIVE`
-- `AMBIGUOUS`
-- `CENSORED`
-- `INELIGIBLE`
+**Identifiers:**
 
-### model_ready
+- `lead_id`;
+- `first_inquiry_id`;
+- `score_id`;
+- `score_time`.
 
-Contains only `POSITIVE`/`NEGATIVE` rows with valid stage membership and mature labels.
+**Deterministic first inquiry:** sort by `(lead_id, inquiry_at, inquiry_id)` and select `inquiry_number == 1`.
 
-It does not contain forbidden raw predictors.
+**Score time:** first inquiry `inquiry_at`.
 
-### T0 label
+**Scoring instant:** after the current request payload is persisted and before the current `broker_response` is known.
 
-Uses frozen secondary target `T0_30D_INQUIRY_INITIATION_PROGRESS_V1`:
+**Primary target:** `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`.
 
-there exists an inquiry initiated in `[lead.created_at, lead.created_at + 30d]` that eventually has recorded status `scheduled_visit`.
+Outcome fields are read only inside label construction and are never selected into either ABT view.
 
-Maturity: 30-day initiation window + 14-day label-finality buffer.
+### 3. `abt_t2` — CHALLENGER
 
-### T1 label
+**Grain:** exactly one row per `inquiry_id` from the second interaction onward.
 
-Uses frozen primary target `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`.
+**Stage membership:** deterministic `inquiry_number >= 2` under `(inquiry_at, inquiry_id)` ordering.
 
-Maturity: 14 days. The 14 days are label maturity, not an outcome horizon.
+Current inquiry request fields are allowed.
 
-### T2 label
+Historical inquiry features require:
 
-Current second-or-later inquiry eventually has `broker_response == scheduled_visit`, with 14-day maturity.
+`prior.inquiry_at < current.score_time`.
 
-Historical stage membership is conservative:
+Same-timestamp inquiries are **not** historical, even if their `inquiry_id` sorts earlier.
 
-1. if a prior scheduled_visit has a reconstructable response time `<= score_time`: `INELIGIBLE`;
-2. if a prior scheduled_visit exists but its response time is missing and therefore may already have occurred: `AMBIGUOUS`;
-3. otherwise the current T2 snapshot is eligible.
+Broker-response history is never used as a predictive feature. For the frozen T2 cohort gate only, a prior `scheduled_visit` may affect stage membership when its response time is reconstructible and proves the event occurred on/before the current score time. A prior `scheduled_visit` with missing response timing makes T2 stage membership `AMBIGUOUS`; it is never silently treated as known or absent.
 
-No current-inquiry response field is a feature.
+The current inquiry response may be read only to construct the current T2 challenger label.
 
-## 3. Historical inquiry features
+### 4. `inventory_candidates`
 
-Only inquiry request/event rows with:
+**Grain:** unique `score_id × candidate_spot_id`.
 
-`prior.inquiry_at < current.score_time`
+This object remains physically and semantically separate from LeadQuality.
 
-may enter history.
+It is built from T0/T1/T2 score definitions plus raw lead, Spot, Spot-attribute, and Availability sources. The builder invokes the stage builders directly; it does not read their materialized ABT files.
 
-Same-timestamp inquiries are not considered historical merely because their `inquiry_id` is smaller.
+## Logical blocks
 
-The first safe history features are deterministic event-only summaries:
+The architecture has four explicit blocks.
 
-- prior inquiry count;
-- prior unique Spot count;
-- prior asked-visit count/rate;
-- prior message-length mean;
-- prior known-urgency count/mean.
+### A. LeadQuality
 
-No broker-response history is promoted as a Lead Quality model feature in this ABT.
+Primary model inputs:
 
-## 4. Spot policy
+- lead intake fields;
+- stated need/preferences;
+- current inquiry intent/refinement at T1/T2;
+- strict-prior inquiry request history at T2 only.
 
-### Explicitly forbidden current/extract state
+### B. Matching
 
-Never model from raw:
+Kept outside the primary LeadQuality feature set. Matching includes:
 
-- `days_on_market`
-- `total_views`
-- `total_inquiries`
-- `is_active`
+- candidate-policy tier/rank;
+- sector/modality compatibility;
+- candidate geography;
+- candidate structural area;
+- request/lead area-reference deltas;
+- current observed Spot indicator for audit/comparison.
 
-They have no historical state clock.
+### C. Inventory
 
-### Structural Spot fields used only as candidate-policy guardrails
+Kept outside the primary LeadQuality feature set. Inventory includes:
 
-For candidate generation, the following are treated as structural/invariant-by-business-semantics from Spot creation:
+- Spot physical attributes under the frozen immutability assumption;
+- backward-as-of Availability state;
+- snapshot freshness/coverage semantics.
 
-- `sector_name`
-- `type_name`
-- `state`
-- `municipality`
-- `settlement`
-- `corridor`
-- `region`
-- `lat`
-- `lon`
-- `area_sqm`
-- `modality`
+### D. Audit / policy
 
-They are not promoted as Lead Quality model features in this phase. The candidate table requires `spots.created_at <= score_time`.
+Contains identifiers, temporal anchors, maturity timestamps, source flags, lineage guardrails, and observability checks. Audit/policy fields are not automatically model features.
 
-Potentially mutable unversioned Spot fields remain audit-only:
+## Spot policy
 
-- `broker_id`
-- `title`
-- `description`
+A candidate Spot can exist only if:
+
+`spots.created_at <= score_time`.
+
+Structural fields used for candidate policy/matching remain under the P3 business-semantics assumption that they describe the Spot from creation:
+
+- sector/type;
+- state/municipality/settlement/corridor/region;
+- lat/lon;
+- area;
+- modality.
+
+The following current/extract state fields are forbidden:
+
+- `days_on_market`;
+- `total_views`;
+- `total_inquiries`;
+- `is_active`.
+
+Potentially mutable, unversioned listing fields remain blocked from P4 modeling:
+
+- broker;
+- title/description;
 - prices;
 - maintenance cost.
 
-### Spot attributes
+`spot_attributes` remain authorized only under the frozen immutability assumption from the target contract, and only for Spots that already existed at score time. They belong to Inventory/Matching, not the principal LeadQuality model.
 
-Per the explicit P2 assumption, `spot_attributes` are immutable over the life of a Spot. They are model-eligible at T1/T2 only when `spots.created_at <= score_time`.
+## Candidate policy
 
-## 5. Inventory Serviceability State
+The deterministic policy universe uses:
 
-Grain:
+1. exact requested sector;
+2. compatible modality;
+3. geographic fallback, deduplicated in this order:
+   - preferred corridor;
+   - preferred municipality;
+   - preferred state.
 
-`prediction_key × candidate_spot_id`.
+At T1/T2, the observed current Spot may be retained as `OBSERVED_CURRENT_OVERRIDE` for audit/comparison if and only if it existed at `score_time`. It does not become a LeadQuality feature.
 
-Availability is resolved exclusively by backward as-of:
+## Availability contract
+
+Availability is resolved **only** by backward as-of:
 
 `max(snapshot_date) where snapshot_date <= score_time`.
 
 Never nearest. Never forward.
 
+Required fields:
+
+- `availability_known`;
+- `is_available_asof`;
+- `days_until_available_asof`;
+- `snapshot_age_days`;
+- `freshness_bucket`.
+
+Additional explicit state:
+
+- `availability_state ∈ {AVAILABLE, UNAVAILABLE, UNKNOWN}`.
+
 Definitions:
 
-- `snapshot_found`: a backward snapshot exists;
-- `snapshot_age_days`: score_time minus snapshot_date;
-- `stale_gt_30d`, `stale_gt_60d`, `stale_gt_90d`;
-- `availability_known`: snapshot exists and age <=90d;
-- `is_available_asof`: null when availability is not known;
-- `days_until_available_asof`: null when availability is not known;
-- `competing_inquiries_30d_asof`: retained for audit only because the raw 30-day window direction is still unproven;
-- `coverage_status`: `NO_SNAPSHOT`, `STALE_GT_90D`, or `COVERED`.
+- `availability_known = true` iff a backward snapshot exists;
+- a stale snapshot is still historically known; staleness is represented separately in `snapshot_age_days` / `freshness_bucket`;
+- if no backward snapshot exists, `availability_state = UNKNOWN`, `is_available_asof = null`, and `days_until_available_asof = null`.
 
-Absence of snapshot is never interpreted as unavailable.
+Missing snapshot is never coerced to unavailable.
 
-## 6. Lead × Candidate Spot decision table
+`competing_inquiries_30d` is not selected into any P4 ABT until its 30-day window semantics are proven point-in-time.
 
-Grain:
+## Market Context
 
-`prediction_key × candidate_spot_id`.
+`market_context` remains EDA-only because `month` is not a defensible publication/effective timestamp. No P4 builder reads it.
 
-Candidate policy is deterministic and uses no learned ranking.
+## Views
 
-Eligibility requires:
+Every analytical object has explicit views:
 
-- Spot created on/before score time;
-- exact requested sector;
-- modality compatibility;
-- geographic fallback ladder, deduplicated in order:
-  1. preferred corridor;
-  2. preferred municipality;
-  3. preferred state.
+- `*_audit_all_rows`: preserves censored, ambiguous, policy/audit context and UNKNOWN inventory coverage;
+- `*_model_ready`: contains only temporally authorized columns for the intended modeling block.
 
-The observed current Spot at T1/T2 is always retained as `OBSERVED_CURRENT_OVERRIDE` even if it falls outside the preference policy. This is for audit/comparison, not evidence that it should be recommended.
+For T0/T1/T2, model-ready retains only mature binary labels (`POSITIVE` / `NEGATIVE`). CENSORED and AMBIGUOUS rows remain in audit.
 
-No N-way candidate join is made into the Lead Quality ABT.
+For `inventory_candidates`, model-ready does not drop UNKNOWN Availability rows; unknownness is an explicit state, not an exclusion criterion.
 
-## 7. Market Context
+## Column lineage gate
 
-Blocked from all principal model-ready ABTs. `month` is not a defensible publication/effective timestamp.
+`COLUMN_LINEAGE.csv` is authoritative for every output column and must contain:
 
-## 8. Split integrity
+- `column`;
+- `source`;
+- `meaning`;
+- `available_at`;
+- `transform`;
+- `role`;
+- `stage`;
+- `future_risk`;
+- `justification`;
+- `evidence`.
 
-These ABTs contain no split/fold assignment. Future splits must remain external and keyed by `prediction_key`/`lead_id`.
+Allowed roles:
 
-The validation API includes an entity-leakage check that fails if a provided split assignment places the same lead in train and evaluation.
+- `identifier`;
+- `target`;
+- `model_feature`;
+- `matching_feature`;
+- `inventory_feature`;
+- `policy_guardrail`;
+- `audit_only`;
+- `forbidden`.
 
-## Exit gate
+A column cannot be a model feature if its `available_at` is unknown. T0/T1/T2 LeadQuality model-ready views cannot contain Matching/Inventory roles.
 
-The ABT gate is PASS only if:
+## Tests and exit gate
 
-- prediction keys are unique;
-- every current/request history timestamp is <= the snapshot boundary and all historical inquiries are strictly earlier;
-- every Availability snapshot is <= score time;
-- no forbidden raw predictor is model-eligible;
-- labels have valid mutually exclusive statuses;
-- lineage covers every output column;
-- stage observability rules pass;
-- candidate and inventory joins preserve their intended grain.
+P4 is PASS only if all of the following hold:
+
+1. unique grain for T0, T1, T2, and inventory candidates;
+2. exact row-count reconciliation with raw leads/inquiries; no unintended row explosion;
+3. T2 history is strictly earlier than score time;
+4. every candidate Spot existed by score time;
+5. every selected Availability snapshot is backward-as-of;
+6. missing Availability remains UNKNOWN;
+7. forbidden/current-state/outcome fields are absent from model-ready views;
+8. T0/T1/T2 stage observability rules pass;
+9. Market Context is unused;
+10. `competing_inquiries_30d` is unused;
+11. no split/fold assignment is embedded in ABTs;
+12. if an external split assignment exists, a lead cannot cross partitions/folds;
+13. every emitted column has complete lineage;
+14. every promoted feature has demonstrated temporal availability.
