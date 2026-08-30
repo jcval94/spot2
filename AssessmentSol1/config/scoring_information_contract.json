@@ -1,5 +1,5 @@
 {
-  "contract_version": "0.1.0",
+  "contract_version": "0.1.1",
   "phase": "PROMPT_0",
   "stage_score_times": {
     "T0": "leads.created_at",
@@ -9,8 +9,14 @@
   "source_policy": {
     "leads": {
       "default": "KNOWN_AT_T0_IF_CAPTURED_AT_CREATED_AT",
-      "blocked": ["lead_score_internal"],
-      "audit_or_conditional": ["prior_searches", "prior_inquiries", "has_converted_before"]
+      "blocked": [
+        "lead_score_internal"
+      ],
+      "audit_or_conditional": [
+        "prior_searches",
+        "prior_inquiries",
+        "has_converted_before"
+      ]
     },
     "inquiries": {
       "current_request_fields": "KNOWN_AT_INQUIRY_AT",
@@ -19,10 +25,21 @@
     },
     "spots": {
       "descriptive_fields": "CONDITIONAL_ON_SPOT_CREATED_AND_FIELD_IMMUTABILITY",
-      "blocked_current_state": ["days_on_market", "total_inquiries", "total_views", "is_active"]
+      "blocked_current_state": [
+        "days_on_market",
+        "total_inquiries",
+        "total_views",
+        "is_active"
+      ]
     },
     "spot_attributes": {
-      "policy": "CONDITIONAL_NO_EFFECTIVE_TIMESTAMP"
+      "policy": "KNOWN_AT_T1_T2_UNDER_EXPLICIT_IMMUTABILITY_ASSUMPTION",
+      "condition": "selected spot exists at score_time: spots.created_at <= score_time",
+      "raw_attribute_timestamp": "ABSENT",
+      "effective_time_contract": "assume values are invariant from spot creation",
+      "T0": "NO_SELECTED_SPOT",
+      "T1": "AUTHORIZED",
+      "T2": "AUTHORIZED"
     },
     "availability_snapshot": {
       "policy": "BACKWARD_ASOF_ONLY",
