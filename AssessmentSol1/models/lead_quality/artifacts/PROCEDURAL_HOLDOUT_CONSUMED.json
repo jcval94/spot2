@@ -1,0 +1,10 @@
+{
+  "status": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE",
+  "procedural_holdout_pristine": false,
+  "used_for_feature_selection": false,
+  "used_for_model_selection": false,
+  "used_for_hyperparameter_selection": false,
+  "used_for_calibration_selection": false,
+  "reason": "Temporary T1 execution export encoded procedural-holdout target before FROZEN_MODEL_CONFIG existed.",
+  "remediation": "No replacement holdout is created. June holdout may only be reported as diagnostic-only; true confirmation requires new/hidden data."
+}
