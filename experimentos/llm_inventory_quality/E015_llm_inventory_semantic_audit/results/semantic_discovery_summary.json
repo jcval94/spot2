@@ -1,0 +1,25 @@
+{
+  "n_observations": 3236,
+  "observations_by_pattern": {
+    "NV_all_services": 490,
+    "NV_market_demand": 520,
+    "NV_near_shopping_centers": 531,
+    "NV_road_access": 523,
+    "NV_transit_access": 506,
+    "S001": 230,
+    "S002": 109,
+    "S003": 327
+  },
+  "observations_by_classification": {
+    "ambiguous": 327,
+    "not_verifiable": 2570,
+    "semantic_cross_field_mismatch": 339
+  },
+  "n_actionable_semantic_observations": 230,
+  "n_unique_actionable_semantic_spots": 230,
+  "rules_v1_unique_flagged_spots": 322,
+  "rules_v2_unique_flagged_spots": 504,
+  "rules_v2_incremental_unique_spots": 182,
+  "rules_v2_incremental_share_inventory": 0.06066666666666667,
+  "rules_v2_note": "Rules v2 includes S001 Land x building/interior copy. It is a post-discovery challenger and must not be evaluated as if pre-registered."
+}
