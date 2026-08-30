@@ -97,7 +97,7 @@ def audit(payload: dict[str, Any], *, model: str | None = None) -> dict[str, Any
     model = model or model_name()
     prompt = PROMPT_PATH.read_text(encoding="utf-8")
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
-    client = OpenAI(api_key=api_key())
+    client = OpenAI(api_key=api_key(), max_retries=0, timeout=60.0)
 
     started = time.perf_counter()
     response = client.responses.create(
@@ -112,10 +112,16 @@ def audit(payload: dict[str, Any], *, model: str | None = None) -> dict[str, Any
                 "strict": True,
             }
         },
-        max_output_tokens=700,
+        reasoning={"effort": "minimal"},
+        max_output_tokens=1600,
         store=False,
     )
     latency_ms = (time.perf_counter() - started) * 1000
+    if getattr(response, "status", None) == "incomplete":
+        details = getattr(response, "incomplete_details", None)
+        raise RuntimeError(f"Incomplete response: {details}")
+    if not response.output_text:
+        raise RuntimeError("OpenAI response did not contain output_text.")
     parsed = json.loads(response.output_text)
 
     usage = getattr(response, "usage", None)
