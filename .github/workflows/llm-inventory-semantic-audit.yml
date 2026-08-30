@@ -1,0 +1,90 @@
+name: LLM inventory semantic audit
+
+on:
+  pull_request:
+    paths:
+      - "experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/**"
+      - "data/candidate/csv/spots.csv"
+      - "data/candidate/csv/spot_attributes.csv"
+      - ".github/workflows/llm-inventory-semantic-audit.yml"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "offline or live"
+        required: true
+        default: "offline"
+        type: choice
+        options:
+          - offline
+          - live
+      model:
+        description: "OpenAI model for live mode"
+        required: true
+        default: "gpt-5.6-luna"
+        type: string
+      limit:
+        description: "Maximum listings for live smoke/evaluation"
+        required: true
+        default: "200"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/requirements.txt
+      - name: Unit tests
+        run: python -m unittest discover -s experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/tests
+      - name: Rebuild offline evidence
+        run: python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/run_offline.py
+      - name: Evaluation readiness
+        run: python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/evaluate.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e015-offline-evidence
+          path: |
+            experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/
+            experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/
+
+  live:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live'
+    needs: offline
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OPENAIAPI: ${{ secrets.OPENAIAPI }}
+      OPENAI_MODEL: ${{ inputs.model }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/requirements.txt
+      - name: Require API secret
+        shell: bash
+        run: |
+          if [ -z "$OPENAIAPI" ]; then
+            echo "OPENAIAPI secret is not configured."
+            exit 1
+          fi
+      - name: Run live semantic audit
+        run: |
+          python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/run_live.py             --model "${{ inputs.model }}"             --limit "${{ inputs.limit }}"
+      - name: Evaluate available human labels
+        run: python experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/src/evaluate.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e015-live-${{ inputs.model }}
+          path: |
+            experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/results/
+            experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/labeling/
