@@ -12,5 +12,6 @@ These decisions survive the clean-room review as principles, not copied fitted s
 8. **Availability is primarily serviceability/freshness context**, not automatically a LeadQuality feature.
 9. **Research history is contaminated by iterative inspection.** Historical tests can support engineering decisions but are not pristine unseen confirmation.
 10. **Rules before LLM.** Structured/deterministic signals should not incur LLM cost or nondeterminism.
+11. **Spot Attributes immutability assumption.** For the definitive assessment, `spot_attributes` values are explicitly assumed immutable over the life of a Spot and may be used at T1/T2 when `spots.created_at <= score_time`. This is a declared assessment assumption, not a timestamp inferred from raw data.
 
 All accepted logic must be reimplemented inside AssessmentSol1 and rerun from raw data when its phase arrives.
