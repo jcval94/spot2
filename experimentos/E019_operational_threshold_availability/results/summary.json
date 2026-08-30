@@ -1,0 +1,24 @@
+{
+  "status": "SUPPORTED / DECISION-READY",
+  "threshold_policy": {
+    "T0_cold": "no_priority_gate",
+    "T1_first_inquiry": "top_15pct_within_stage",
+    "T2_engaged": "top_15pct_within_stage",
+    "raw_threshold_policy": "diagnostic_only_not_frozen",
+    "indicative_median_raw_cutoffs": {
+      "T1_first_inquiry": 0.487773336843975,
+      "T2_engaged": 0.45586653954925793
+    }
+  },
+  "availability": {
+    "definition": "P(spot available now or observed available within 30d | point-in-time inventory state and matured historical sector transitions)",
+    "lead_aggregation": "max candidate probability over the compatible fallback pool",
+    "observable_events": 17323,
+    "macro_auc": 0.8827154797604972,
+    "macro_brier": 0.0668726996594318,
+    "macro_log_loss": 0.1919496569996726,
+    "backward_asof_coverage": 0.9238128986534373,
+    "backward_asof_lag_le_90d_coverage": 0.8850549255846917
+  },
+  "leakage_check": "PASS"
+}

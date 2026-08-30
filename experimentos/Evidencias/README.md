@@ -25,4 +25,6 @@ Registro central que conecta descubrimientos con los archivos que realmente los 
 | [EV-017](EV-017_llm_semantic_feature_pilot.md) | Low-cost LLM semantic feature pilot | Empírica completa: 100 registros, V1/V2, costo y decisión |
 | [EV-018](EV-018_semantic_rules_lift_ablation.md) | Semantic Rules Lift Ablation | Empírica completa: rolling CV + paired bootstrap |
 
+| [EV-019](EV-019_operational_threshold_availability.md) | Operational threshold + explicit P(availability) | Empírica completa: temporal capacity frontier + purged availability CV |
+
 Una evidencia no implica causalidad. Su alcance queda declarado en cada entrada.

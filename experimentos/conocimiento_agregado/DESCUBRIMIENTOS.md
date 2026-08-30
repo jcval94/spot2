@@ -1314,3 +1314,72 @@ Guardrails:
 **Corrección metodológica:** un primer run mezcló raw probabilities entre folds y fue descartado. La corrida autoritativa calcula métricas dentro de cada fold y usa bootstrap fold-stratified. Ver [RUN_HISTORY](../semantic_rules_lift_ablation/results/RUN_HISTORY.md).
 
 Evidencia: [EV-018](../Evidencias/EV-018_semantic_rules_lift_ablation.md).
+
+
+## D062 — La política operativa final es top 15% en T1/T2, no un threshold bruto fijo
+
+**Estado:** SUPPORTED / DECISION-READY.
+
+E019 reutiliza las predicciones OOF temporales de `pooled_catboost_trajectory` y calcula la frontera de capacidad **dentro de cada fold y etapa**, evitando mezclar escalas de probabilidad entre folds.
+
+Resultados clave:
+
+- T1 top 10%: Lift **1.126x**, Recall **11.4%**;
+- T1 top 15%: Lift **1.122x**, Recall **17.0%**;
+- T2 top 10%: Lift **1.457x**, Recall **14.6%**;
+- T2 top 15%: Lift **1.457x**, Recall **21.9%**.
+
+En T1, pasar de 10% a 15% aumenta el recall ~48.5% relativo con una pérdida de lift de sólo ~0.004x. En T2, el recall aumenta ~50.3% relativo con lift prácticamente idéntico.
+
+T0 permanece alrededor de lift 1.0 en toda la frontera y por tanto **no justifica una cola high-priority**.
+
+**Decisión:** congelar como default operativo:
+
+- T0: score informativo / cola estándar;
+- T1: top **15%** dentro de etapa;
+- T2: top **15%** dentro de etapa;
+- threshold final: **P85 stage-relative**, no una probabilidad cruda fija.
+
+Los raw cutoffs medianos equivalentes (T1 0.488; T2 0.456) son diagnósticos, no constantes productivas, porque cambian materialmente entre folds.
+
+**No demuestra:** que 15% sea la capacidad óptima si Growth posteriormente entrega un límite real de casos/día. En ese caso, la misma frontera debe traducir la capacidad real a percentile cutoff.
+
+Experimento: [E019](../E019_operational_threshold_availability/).  
+Evidencia: [EV-019](../Evidencias/EV-019_operational_threshold_availability.md).
+
+## D063 — P(availability) queda explícita y temporalmente calibrada
+
+**Estado:** SUPPORTED / DECISION-READY.
+
+E019 formaliza el componente de Inventory Availability como probabilidad a 30 días usando únicamente estado de inventario point-in-time.
+
+Para cada spot:
+
+1. se toma el último snapshot con `snapshot_date <= scoring_time`;
+2. si el spot está disponible, `p_available_30d = 1`;
+3. si está no disponible, se usa la tasa histórica de transición a disponibilidad dentro de 30 días para spots no disponibles del mismo sector, estimada sólo con labels ya maduros y suavizada hacia la tasa global histórica;
+4. sin snapshot as-of, sólo se permite un prior histórico con bandera de baja confianza; nunca se presenta como disponibilidad confirmada.
+
+Para el lead:
+
+`P_availability(lead,t) = max p_spot_available_30d`
+
+sobre el pool compatible/fallback point-in-time. Se usa `max` para evitar asumir independencia entre listings correlacionados.
+
+Validación temporal con purge de maduración de 30 días:
+
+- eventos observables: **17,323**;
+- macro AUC: **0.8827**;
+- macro Brier: **0.06687**;
+- macro log-loss: **0.19195**;
+- coverage backward-as-of: **92.38%**;
+- coverage con lag <=90d: **88.51%**.
+
+Un hallazgo negativo evita falsa precisión: entre spots actualmente no disponibles, la tasa observada de disponibilidad a 30 días fue casi plana por bucket de `days_until_available` (aprox. 64.3%–69.3%). Por ello no se impone una curva artificial con ese campo.
+
+**Interpretación:** Inventory Availability ya no es sólo una categoría available/not_available usada dentro de matching; existe una definición probabilística explícita, calibrable, leakage-safe y coherente con el horizonte de 30 días del Lead Quality target.
+
+**No demuestra:** causalidad, independencia entre spots ni performance end-to-end del Lead Opportunity Score combinado.
+
+Experimento: [E019](../E019_operational_threshold_availability/).  
+Evidencia: [EV-019](../Evidencias/EV-019_operational_threshold_availability.md).

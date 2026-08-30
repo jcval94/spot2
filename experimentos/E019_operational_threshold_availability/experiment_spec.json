@@ -1,0 +1,83 @@
+{
+  "experiment_id": "E019_operational_threshold_availability",
+  "parent_experiment": "E007_trajectory_progression_cv",
+  "question": "What operational Lead Quality threshold should Growth use, and how should Inventory Availability be expressed explicitly as a point-in-time probability component?",
+  "hypothesis": "A stage-relative capacity threshold can preserve ranking lift while materially improving recall, and a temporally calibrated availability probability can be estimated from backward-as-of inventory state without future leakage.",
+  "primary_change": "freeze an operational capacity/threshold policy and formalize P(availability)",
+  "secondary_changes": [
+    "add a 30-day availability target for validation",
+    "use expanding temporal calibration with a 30-day maturation purge"
+  ],
+  "scoring_time": {
+    "stage": "T0/T1/T2 for threshold policy; inquiry time for availability calibration",
+    "timestamp_definition": "same score_time as Modelo 3; availability calibration uses inquiries.inquiry_at"
+  },
+  "target": {
+    "lead_quality": {
+      "event": "scheduled_visit within 30 days",
+      "horizon_days": 30,
+      "anchor": "score_time"
+    },
+    "availability": {
+      "event": "spot is available now or is observed available in a snapshot within 30 days",
+      "horizon_days": 30,
+      "anchor": "inquiry_at",
+      "censoring": "currently-unavailable rows without any future snapshot inside the 30-day window are excluded"
+    }
+  },
+  "population": {
+    "lead_quality": "OOF rows from modelo_3/trajectory_cv",
+    "availability": "inquiry/spot events with a backward-as-of snapshot and an observable 30-day availability label"
+  },
+  "data_sources": [
+    "experimentos/modelo_3/trajectory_cv/results/oof_predictions.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "features": {
+    "lead_quality": ["pooled_catboost_trajectory OOF score", "stage"],
+    "availability": ["latest backward-as-of is_available", "sector historical transition prior"],
+    "explicitly_not_used_for_probability_precision": ["days_until_available"]
+  },
+  "validation": {
+    "lead_quality": "existing 4-fold temporal OOF predictions; capacity metrics computed inside fold and stage",
+    "availability": "4-fold expanding chronological validation with label_mature_at < test_start purge"
+  },
+  "metrics": [
+    "lift_at_capacity",
+    "recall_at_capacity",
+    "roc_auc",
+    "brier",
+    "log_loss"
+  ],
+  "decision_rule": {
+    "threshold": "choose the smallest operational capacity that is close to the lift frontier while materially increasing recall; freeze one stage-relative percentile policy",
+    "availability": "prefer calibrated point-in-time probability over a more complex rule if added variables do not demonstrate useful probability resolution"
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "Lead Quality capacity threshold",
+        "status": "ALLOW",
+        "evidence": "computed from OOF scores inside each temporal fold and stage"
+      },
+      {
+        "element": "current inventory availability",
+        "status": "ALLOW",
+        "evidence": "latest snapshot_date <= scoring time only"
+      },
+      {
+        "element": "future availability snapshots",
+        "status": "ALLOW_FOR_TARGET_ONLY",
+        "evidence": "used exclusively to construct the 30-day availability label"
+      },
+      {
+        "element": "availability transition calibration",
+        "status": "ALLOW",
+        "evidence": "training rows require label_mature_at < test_start"
+      }
+    ]
+  }
+}
