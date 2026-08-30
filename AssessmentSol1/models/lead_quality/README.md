@@ -2,10 +2,10 @@
 
 ## Frozen champion
 
-**BASE_RATE + PLATT**
+**BASE_RATE + RAW**
 
 Raw score = DEVELOPMENT prevalence: **0.2037546**.  
-Calibrated score = **0.2082788**.
+Final score = **0.2037546** (RAW; learned calibration improvement was immaterial).
 
 This is an evidence-backed neutral prior, not a lead-ranking model.
 
