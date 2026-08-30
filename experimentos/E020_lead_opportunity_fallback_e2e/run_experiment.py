@@ -322,15 +322,39 @@ def main():
         ]
     ].copy()
 
-    dyn = dyn.merge(
-        current,
-        left_on=["lead_id", "score_time"],
-        right_on=["lead_id", "inquiry_at"],
-        how="left",
-        validate="many_to_one",
-    )
-    if dyn["inquiry_id"].isna().any():
-        raise RuntimeError("Some OOF T1/T2 rows did not resolve to the current inquiry.")
+    if "inquiry_id" in dyn.columns:
+        current_for_merge = current.rename(columns={"spot_id": "spot_id_current"})
+        dyn = dyn.merge(
+            current_for_merge,
+            on=["lead_id", "inquiry_id"],
+            how="left",
+            validate="many_to_one",
+        )
+        if dyn["inquiry_at"].isna().any():
+            raise RuntimeError("Some OOF T1/T2 rows did not resolve by inquiry_id.")
+        if not (pd.to_datetime(dyn["score_time"]) == pd.to_datetime(dyn["inquiry_at"])).all():
+            raise RuntimeError("Canonical inquiry_id resolves to an inquiry_at different from score_time.")
+        if "spot_id" not in dyn.columns:
+            dyn["spot_id"] = dyn["spot_id_current"]
+        else:
+            mismatch = (
+                dyn["spot_id"].notna()
+                & dyn["spot_id_current"].notna()
+                & (dyn["spot_id"].astype(int) != dyn["spot_id_current"].astype(int))
+            )
+            if mismatch.any():
+                raise RuntimeError("Canonical OOF spot_id disagrees with inquiry spot_id.")
+        dyn = dyn.drop(columns=["spot_id_current"])
+    else:
+        dyn = dyn.merge(
+            current,
+            left_on=["lead_id", "score_time"],
+            right_on=["lead_id", "inquiry_at"],
+            how="left",
+            validate="many_to_one",
+        )
+        if dyn["inquiry_id"].isna().any():
+            raise RuntimeError("Some OOF T1/T2 rows did not resolve to the current inquiry.")
 
     lead_lookup = leads.set_index("lead_id")
     spot_lookup = {
