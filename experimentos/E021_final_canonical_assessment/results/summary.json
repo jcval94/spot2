@@ -1,0 +1,32 @@
+{
+  "status": "COMPLETED",
+  "feature_engineering": {
+    "status": "NOT_SUPPORTED",
+    "core_feature_count": 41,
+    "full_feature_count": 161,
+    "macro_ap_core": 0.5019093510871924,
+    "macro_ap_full": 0.48556740664619286,
+    "macro_lift10_core": 1.2651877135926024,
+    "macro_lift10_full": 1.2092555083013017,
+    "ap_delta_ci95": [
+      -0.029997145952636618,
+      -0.000695948722773019
+    ]
+  },
+  "end_to_end": {
+    "status": "COMPLETED",
+    "macro_auc_quality_only": 0.5697554534399816,
+    "macro_auc_los": 0.6470108501376185,
+    "macro_ap_quality_only": 0.414649761638857,
+    "macro_ap_los": 0.4674114471115616,
+    "macro_lift10_quality_only": 1.2109700429774986,
+    "macro_lift10_los": 1.368751211292795,
+    "final_fold_p85_joint_positives_quality_only": 85,
+    "final_fold_p85_joint_positives_los": 98
+  },
+  "error_analysis": {
+    "status": "COMPLETED",
+    "segment_rows": 16
+  },
+  "leakage_check": "PASS"
+}

@@ -1,0 +1,7 @@
+scope,metric,reference_model,candidate_model,point_delta,ci95_low,ci95_high,probability_delta_gt_0
+T1_first_inquiry,average_precision,pooled_catboost_pit_core,pooled_catboost_pit_full,-0.024957878598856897,-0.04989796211926445,0.005570588309347644,0.05333333333333334
+T1_first_inquiry,lift_top_10pct,pooled_catboost_pit_core,pooled_catboost_pit_full,-0.03781904210496678,-0.2624065605101875,0.15292792174003217,0.2966666666666667
+T2_engaged,average_precision,pooled_catboost_pit_core,pooled_catboost_pit_full,-0.014391124943491942,-0.03137852299215552,0.006307255368869566,0.09333333333333334
+T2_engaged,lift_top_10pct,pooled_catboost_pit_core,pooled_catboost_pit_full,-0.01817195334216609,-0.18158117592159287,0.19951808908733412,0.5233333333333333
+MACRO,average_precision,pooled_catboost_pit_core,pooled_catboost_pit_full,-0.016341944440999442,-0.029997145952636618,-0.000695948722773019,0.023333333333333334
+MACRO,lift_top_10pct,pooled_catboost_pit_core,pooled_catboost_pit_full,-0.055932205291300885,-0.16958590663695738,0.044268300912288824,0.12666666666666668

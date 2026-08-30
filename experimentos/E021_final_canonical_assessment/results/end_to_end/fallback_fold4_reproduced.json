@@ -1,0 +1,13 @@
+{
+  "fallback_cases": 538,
+  "coverage_at_3_any": 0.7509293680297398,
+  "full_list_at_3": 0.6078066914498141,
+  "full_list_at_5": 0.5427509293680297,
+  "no_result_rate": 0.24907063197026022,
+  "available_fallback_at_3": 0.6951672862453532,
+  "median_valid_candidates": 5.0,
+  "all_three_same_corridor_given_full_list_3": 0.8379204892966361,
+  "returned_recommendations": 1090,
+  "currently_available_recommendation_share": 0.8660550458715597,
+  "strict_recommendation_share": 0.6284403669724771
+}
