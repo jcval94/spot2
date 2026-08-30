@@ -57,7 +57,7 @@ For the selected Spot:
 
 - Spot exists only if `spots.created_at <= score_time`;
 - descriptive fields/prices/location may be used only under an explicit immutability/versioning assumption;
-- `spot_attributes` are conditional because they have no effective timestamp;
+- `spot_attributes` are authorized under the explicit immutability assumption, provided `spots.created_at <= score_time`; raw still has no attribute-level timestamp;
 - raw `days_on_market`, `total_inquiries`, `total_views`, `is_active` are blocked as current-state leakage.
 
 Availability:
@@ -107,7 +107,7 @@ Progress clocks (`inquiry_number`, `days_since_first_inquiry`, etc.) are observa
 At any score time `t`, defensibly known inventory is:
 
 - Spots created on/before `t`;
-- immutable/descriptive listing fields only if their historical mutability contract is confirmed;
+- immutable/descriptive listing fields only under their historical contract; specifically, `spot_attributes` are treated as immutable from Spot creation by explicit assessment assumption;
 - latest availability state per Spot from a snapshot dated on/before `t`.
 
 Not defensibly known:
@@ -115,7 +115,7 @@ Not defensibly known:
 - extract-time/current mutable Spot fields as if they were historical;
 - any availability snapshot after `t`;
 - stale state silently carried forward as current truth;
-- unversioned listing/attribute edits if mutability is possible.
+- unversioned listing edits if mutability is possible. `spot_attributes` are the explicit exception because this assessment assumes them immutable.
 
 Catalog semantic Rules/LLM audits describe listing quality; they are not automatically LeadQuality features.
 
