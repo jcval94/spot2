@@ -107,7 +107,7 @@ def load_budget(path: Path, budget: float) -> dict[str, Any]:
         "attempts": 0,
         "successes": 0,
         "failures": 0,
-        "budget_exhausted": false
+        "budget_exhausted": False
     }
 
 
