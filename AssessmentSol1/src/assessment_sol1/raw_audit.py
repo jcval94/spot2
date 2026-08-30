@@ -413,8 +413,9 @@ def inquiry_response_audit(inquiries: pl.DataFrame) -> dict:
             pl.col("broker_response_hours") < 0
         ).height,
         "policy": (
-            "AUDIT_ONLY in P1; broker_response_hours is not used to construct "
-            "features or targets."
+            "OUTCOME_ONLY after P2; broker_response_hours is prohibited as a feature. "
+            "It may be used only to audit the reconstructed-event Target B alternative; "
+            "the frozen primary Target A ignores broker_response_hours."
         ),
     }
 
@@ -788,7 +789,7 @@ def build_audit(repo_root: Path) -> dict:
             "spots_current_state": "FORBIDDEN_BACKTEST",
             "market_context": "EDA_ONLY",
             "spot_attributes": "AUTHORIZED_IMMUTABLE_ASSUMPTION",
-            "broker_response_fields": "AUDIT_ONLY_P1",
+            "broker_response_fields": "OUTCOME_ONLY_PRIMARY_A_IGNORES_HOURS",
             "target_built": False,
             "every_source_has_explicit_temporal_semantics": "PASS",
         },
@@ -796,7 +797,7 @@ def build_audit(repo_root: Path) -> dict:
             "spots_current_state": "FORBIDDEN_BACKTEST",
             "spot_attributes": "AUTHORIZED_IMMUTABLE_ASSUMPTION",
             "market_context": "EDA_ONLY",
-            "broker_response_fields": "AUDIT_ONLY_P1",
+            "broker_response_fields": "OUTCOME_ONLY_PRIMARY_A_IGNORES_HOURS",
             "availability_competing_inquiries_30d": (
                 "BLOCKED_UNTIL_WINDOW_DIRECTION_PROVEN"
             ),
