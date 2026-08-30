@@ -520,6 +520,8 @@ def main():
 
     report=f"""# Matching A/B v3 — relational audit + two governed experiments
 
+**Interpretabilidad cluster por cluster y mejores combinaciones:** [INTERPRETABILIDAD.md](INTERPRETABILIDAD.md)
+
 ## Executive result
 
 Data-quality gate: **PASS** with {quality['critical_failures']} critical failures.
