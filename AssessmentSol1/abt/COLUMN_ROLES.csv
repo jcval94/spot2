@@ -1,123 +1,112 @@
-column,source_table,business_meaning,available_at,transformation,role,future_risk,allowed_stage,justification,evidence
-lead_id,leads,Lead identifier,leads.created_at (intake-snapshot assumption),raw,identifier,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-user_type,leads,Lead/customer type,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-company_size,leads,Company size,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-industry,leads,Lead industry,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-search_sector,leads,Requested real-estate sector,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-search_modality,leads,Rent/sale/both search mode,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-target_area_sqm,leads,Target area,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-min_budget_mxn_rent_monthly,leads,Minimum monthly rent budget,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-max_budget_mxn_rent_monthly,leads,Maximum monthly rent budget,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-min_budget_mxn_sale_total,leads,Minimum purchase budget,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-max_budget_mxn_sale_total,leads,Maximum purchase budget,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-preferred_state,leads,Preferred state,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-preferred_municipality,leads,Preferred municipality,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-preferred_corridor,leads,Preferred commercial corridor,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-source,leads,Acquisition source,leads.created_at (intake-snapshot assumption),raw,model_feature,LOW,T0|T1|T2,Use original intake value; no later version history is assumed.,P1 temporal ontology
-prior_searches,leads,Declared prior searches count,Assumed at leads.created_at; not separately timestamped,raw,audit_only,LOW,T0|T1|T2,Requires proof that aggregate is frozen strictly before created_at; prior_searches remains audit-only from prior evidence.,P1 temporal ontology
-prior_inquiries,leads,Declared prior inquiries count,Assumed at leads.created_at; not separately timestamped,raw,audit_only,LOW,T0|T1|T2,Requires proof that aggregate is frozen strictly before created_at; prior_searches remains audit-only from prior evidence.,P1 temporal ontology
-has_converted_before,leads,Declared prior conversion flag,Assumed at leads.created_at; not separately timestamped,raw,audit_only,LOW,T0|T1|T2,Requires proof that aggregate is frozen strictly before created_at; prior_searches remains audit-only from prior evidence.,P1 temporal ontology
-lead_score_internal,leads,Internal pre-existing score,UNKNOWN,raw,forbidden,CRITICAL,T0|T1|T2,FORBIDDEN. Internal score generation time/inputs are unknown.,P1 temporal ontology
-created_at,leads,Entity creation timestamp,leads.created_at,raw,policy_guardrail,LOW,T0|T1|T2,Canonical T0 score-time anchor.,P1 temporal ontology
-inquiry_id,inquiries,Inquiry identifier,inquiries.inquiry_at,raw,identifier,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-lead_id,inquiries,Lead identifier,inquiries.inquiry_at,raw,identifier,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-spot_id,inquiries,Spot identifier,inquiries.inquiry_at,raw,identifier,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-inquiry_at,inquiries,Inquiry event timestamp,inquiries.inquiry_at,raw,policy_guardrail,LOW,T1|T2,Canonical T1/T2 scoring event time.,P1 temporal ontology
-channel,inquiries,Inquiry channel,inquiries.inquiry_at,raw,model_feature,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-message_length,inquiries,"Length of inquiry message, not raw text",inquiries.inquiry_at,raw,model_feature,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-requested_area_sqm,inquiries,Area requested in inquiry,inquiries.inquiry_at,raw,model_feature,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-requested_budget_mxn_rent_monthly,inquiries,Rent budget stated in inquiry,inquiries.inquiry_at,raw,model_feature,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-requested_budget_mxn_sale_total,inquiries,Purchase budget stated in inquiry,inquiries.inquiry_at,raw,model_feature,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-urgency_days,inquiries,Stated urgency in days,inquiries.inquiry_at,raw,model_feature,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-asked_visit,inquiries,Lead asked for a visit,inquiries.inquiry_at,raw,model_feature,LOW,T1|T2,Captured on current inquiry.,P1 temporal ontology
-broker_response,inquiries,Broker response/status after inquiry,UNKNOWN,raw,target,CRITICAL_OUTCOME,LABEL_ONLY,OUTCOME_ONLY. Current response is unknown at scoring. Permitted for P2 label/audit construction (Target B sensitivity); prohibited as a feature. Primary Target A does not use broker_response_hours.,P1 temporal ontology
-broker_response_hours,inquiries,Hours from inquiry to broker response/status,UNKNOWN,raw,target,CRITICAL_OUTCOME,LABEL_ONLY,OUTCOME_ONLY. Current response is unknown at scoring. Permitted for P2 label/audit construction (Target B sensitivity); prohibited as a feature. Primary Target A does not use broker_response_hours.,P1 temporal ontology
-spot_id,spots,Spot identifier,inquiry references spot_id at inquiry_at,raw,identifier,LOW,T1|T2|CANDIDATE,Key only; do not model raw numeric ID.,P1 temporal ontology
-broker_id,spots,Broker identifier,Extraction/current-state time UNKNOWN,raw,audit_only,HIGH_UNVERSIONED,T1|T2|CANDIDATE,No version history. Backtest use requires immutability/creation-time proof; otherwise block.,P1 temporal ontology
-sector_name,spots,Spot sector,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-type_name,spots,Spot type,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-state,spots,Spot/market state,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-municipality,spots,Spot/market municipality,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-settlement,spots,Spot settlement/neighborhood,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-corridor,spots,Commercial corridor,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-region,spots,Spot region,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-lat,spots,Spot latitude,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-lon,spots,Spot longitude,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-title,spots,Listing title,Extraction/current-state time UNKNOWN,raw,audit_only,HIGH_UNVERSIONED,T1|T2|CANDIDATE,No version history. Backtest use requires immutability/creation-time proof; otherwise block.,P1 temporal ontology
-description,spots,Listing description,Extraction/current-state time UNKNOWN,raw,audit_only,HIGH_UNVERSIONED,T1|T2|CANDIDATE,No version history. Backtest use requires immutability/creation-time proof; otherwise block.,P1 temporal ontology
-area_sqm,spots,Spot area,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-price_sqm_mxn_rent,spots,Monthly rent price per sqm,Extraction/current-state time UNKNOWN,raw,audit_only,HIGH_UNVERSIONED,T1|T2|CANDIDATE,No version history. Backtest use requires immutability/creation-time proof; otherwise block.,P1 temporal ontology
-price_sqm_mxn_sale,spots,Sale price per sqm,Extraction/current-state time UNKNOWN,raw,audit_only,HIGH_UNVERSIONED,T1|T2|CANDIDATE,No version history. Backtest use requires immutability/creation-time proof; otherwise block.,P1 temporal ontology
-price_total_mxn_rent,spots,Monthly total rent,Extraction/current-state time UNKNOWN,raw,audit_only,HIGH_UNVERSIONED,T1|T2|CANDIDATE,No version history. Backtest use requires immutability/creation-time proof; otherwise block.,P1 temporal ontology
-price_total_mxn_sale,spots,Total sale price,Extraction/current-state time UNKNOWN,raw,audit_only,HIGH_UNVERSIONED,T1|T2|CANDIDATE,No version history. Backtest use requires immutability/creation-time proof; otherwise block.,P1 temporal ontology
-maintenance_cost_mxn,spots,Monthly maintenance cost,Extraction/current-state time UNKNOWN,raw,audit_only,HIGH_UNVERSIONED,T1|T2|CANDIDATE,No version history. Backtest use requires immutability/creation-time proof; otherwise block.,P1 temporal ontology
-modality,spots,Spot modality,ASSUMED_FROM spots.created_at,candidate policy structural field,policy_guardrail,MEDIUM_ASSUMPTION,T1|T2|CANDIDATE,Used only as candidate-policy guardrail under explicit structural-invariance assumption; not Lead Quality model feature.,ABT_CONTRACT P3 + spots.created_at gate
-days_on_market,spots,Current/extract days on market,Extraction/current-state time UNKNOWN,raw,forbidden,CRITICAL,T1|T2|CANDIDATE,FORBIDDEN for historical backtest. total_inquiries agrees with reconstructible inquiry count for only 212/3000 spots.,P1 temporal ontology
-total_inquiries,spots,Current/extract inquiry counter,Extraction/current-state time UNKNOWN,raw,forbidden,CRITICAL,T1|T2|CANDIDATE,FORBIDDEN for historical backtest. total_inquiries agrees with reconstructible inquiry count for only 212/3000 spots.,P1 temporal ontology
-total_views,spots,Current/extract view counter,Extraction/current-state time UNKNOWN,raw,forbidden,CRITICAL,T1|T2|CANDIDATE,FORBIDDEN for historical backtest. total_inquiries agrees with reconstructible inquiry count for only 212/3000 spots.,P1 temporal ontology
-is_active,spots,Current/extract active status,Extraction/current-state time UNKNOWN,raw,forbidden,CRITICAL,T1|T2|CANDIDATE,FORBIDDEN for historical backtest. total_inquiries agrees with reconstructible inquiry count for only 212/3000 spots.,P1 temporal ontology
-created_at,spots,Entity creation timestamp,spots.created_at,raw,policy_guardrail,LOW,T1|T2|CANDIDATE,Proves spot existence at score time; require created_at <= score_time.,P1 temporal ontology
-spot_id,spot_attributes,Spot identifier,UNKNOWN in raw; assumed available from spots.created_at by explicit assessment contract,raw,identifier,LOW,T1|T2|CANDIDATE,1:1 key to spots. Spot existence still requires spots.created_at <= score_time.,P1 temporal ontology
-natural_light,spot_attributes,Natural light attribute,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-luminaires,spot_attributes,Luminaire count,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-charging_ports,spot_attributes,Charging port count,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-security_type,spot_attributes,Security attribute,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-floor_level,spot_attributes,Floor level,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-elevators,spot_attributes,Elevator count,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-vertical_height_m,spot_attributes,Vertical clear height,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-parking_spaces,spot_attributes,Parking count,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-building_status,spot_attributes,Building status,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-floor_material,spot_attributes,Floor material,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-amenities,spot_attributes,Amenities JSON/listing attributes,ASSUMED_FROM spots.created_at,current selected spot static join,model_feature,MEDIUM_IMMUTABILITY_ASSUMPTION,T1|T2|CANDIDATE,User-approved immutability assumption; only if spot existed at score_time.,P2 immutable spot_attributes assumption
-snapshot_id,availability_snapshot,Availability snapshot identifier,snapshot_date <= score_time,backward as-of,identifier,MEDIUM_BACKWARD_ASOF_ONLY,T1|T2|CANDIDATE,"Use only backward snapshot, never nearest/forward.",P1 availability audit + ABT_CONTRACT
-spot_id,availability_snapshot,Spot identifier,snapshot_date <= score_time,backward as-of,identifier,MEDIUM_BACKWARD_ASOF_ONLY,T1|T2|CANDIDATE,"Use only backward snapshot, never nearest/forward.",P1 availability audit + ABT_CONTRACT
-snapshot_date,availability_snapshot,Availability snapshot business date,snapshot_date <= score_time,backward as-of,policy_guardrail,MEDIUM_BACKWARD_ASOF_ONLY,T1|T2|CANDIDATE,"Use only backward snapshot, never nearest/forward.",P1 availability audit + ABT_CONTRACT
-is_available,availability_snapshot,Availability state at snapshot,snapshot_date <= score_time,backward as-of,policy_guardrail,MEDIUM_BACKWARD_ASOF_ONLY,T1|T2|CANDIDATE,"Use only backward snapshot, never nearest/forward.",P1 availability audit + ABT_CONTRACT
-days_until_available,availability_snapshot,Days until availability at snapshot,snapshot_date <= score_time,backward as-of,policy_guardrail,MEDIUM_BACKWARD_ASOF_ONLY,T1|T2|CANDIDATE,"Use only backward snapshot, never nearest/forward.",P1 availability audit + ABT_CONTRACT
-competing_inquiries_30d,availability_snapshot,30-day competing inquiries aggregate,snapshot_date <= score_time,backward as-of,audit_only,HIGH_WINDOW_UNKNOWN,T1|T2|CANDIDATE,Carried for audit only; window direction unproven.,P1 availability audit + ABT_CONTRACT
-state,market_context,Spot/market state,UNKNOWN publication/effective time,not joined to main ABTs,audit_only,HIGH_NO_PUBLICATION_TIME,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-municipality,market_context,Spot/market municipality,UNKNOWN publication/effective time,not joined to main ABTs,audit_only,HIGH_NO_PUBLICATION_TIME,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-corridor,market_context,Commercial corridor,UNKNOWN publication/effective time,not joined to main ABTs,audit_only,HIGH_NO_PUBLICATION_TIME,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-sector,market_context,Market-context sector,UNKNOWN publication/effective time,not joined to main ABTs,audit_only,HIGH_NO_PUBLICATION_TIME,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-month,market_context,Market aggregate month,UNKNOWN publication/effective time,not joined to main ABTs,audit_only,HIGH_NO_PUBLICATION_TIME,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-similar_available_spots,market_context,Similar available inventory aggregate,UNKNOWN publication/effective time,not joined to main ABTs,forbidden,CRITICAL,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-avg_price_sqm_mxn,market_context,Average rent price per sqm,UNKNOWN publication/effective time,not joined to main ABTs,forbidden,CRITICAL,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-recent_occupancy_rate,market_context,Recent occupancy aggregate,UNKNOWN publication/effective time,not joined to main ABTs,forbidden,CRITICAL,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-absorption_velocity_days,market_context,Average absorption velocity,UNKNOWN publication/effective time,not joined to main ABTs,forbidden,CRITICAL,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-recent_inquiry_volume,market_context,Recent inquiry volume aggregate,UNKNOWN publication/effective time,not joined to main ABTs,forbidden,CRITICAL,NONE_MAIN_MODEL,Blocked from principal modeling.,P1 market_context EDA_ONLY
-prediction_key,derived_score_spine,Unique scoring decision key,at score snapshot,deterministic from lead/stage/inquiry,identifier,LOW,T0|T1|T2,Prevents accidental grain expansion.,ABT_CONTRACT
-stage,derived_score_spine,Scoring stage,at score snapshot,T0/T1/T2 rule,identifier,LOW,T0|T1|T2,Explicit information set.,ABT_CONTRACT
-score_time,derived_score_spine,Exact prediction timestamp,at score snapshot,lead.created_at or inquiry_at,policy_guardrail,LOW,T0|T1|T2,All feature clocks compare against this value.,ABT_CONTRACT
-current_inquiry_id,derived_score_spine,Current inquiry key,T1/T2 score_time,first/current inquiry,identifier,LOW,T1|T2,Join key only.,ABT_CONTRACT
-current_spot_id,derived_score_spine,Current observed Spot key,T1/T2 score_time,current inquiry spot_id,identifier,LOW,T1|T2,Join key only.,ABT_CONTRACT
-inquiry_number,derived_score_spine,Ordinal inquiry stage,score_time,ordered by inquiry_at then inquiry_id,policy_guardrail,MEDIUM_CLOCK_PROXY,T1|T2,Stage routing; not default propensity feature.,P0 drift prior + ABT_CONTRACT
-stage_eligibility,derived_label,Whether snapshot belongs to stage cohort,score_time under response-time evidence,prior scheduled-visit timing gate,policy_guardrail,MEDIUM_LABEL_TIME,T2,Conservative T2 membership.,P2 T2 contract
-target_status,derived_label,POSITIVE/NEGATIVE/AMBIGUOUS/CENSORED/INELIGIBLE,after maturity,frozen target rules,target,LABEL_ONLY,T0|T1|T2,Audit preserves all statuses.,P2 target_contract
-target_value,derived_label,Binary model label,after maturity,"1 positive, 0 negative, null otherwise",target,LABEL_ONLY,T0|T1|T2,Only valid labels enter model_ready.,P2 target_contract
-current_spot_existed_at_score_time,derived_guardrail,Current Spot existence check,score_time,spots.created_at <= score_time,policy_guardrail,LOW,T1|T2,Blocks impossible join state.,P1 + ABT_CONTRACT
-hist_prior_inquiry_count,derived_inquiry_history,Strictly prior inquiry count,score_time,count inquiry_at < score_time,model_feature,LOW,T2,No same/future inquiry included.,ABT_CONTRACT
-hist_prior_unique_spots,derived_inquiry_history,Strictly prior unique Spot count,score_time,n_unique spot_id where inquiry_at < score_time,model_feature,LOW,T2,Event-only history.,ABT_CONTRACT
-hist_prior_asked_visit_count,derived_inquiry_history,Prior asked_visit count,score_time,sum strictly prior asked_visit,model_feature,LOW,T2,Event-only history.,ABT_CONTRACT
-hist_prior_asked_visit_rate,derived_inquiry_history,Prior asked_visit rate,score_time,mean strictly prior asked_visit,model_feature,LOW,T2,Event-only history.,ABT_CONTRACT
-hist_prior_message_length_mean,derived_inquiry_history,Prior mean message length,score_time,mean strictly prior message_length,model_feature,LOW,T2,Event-only history.,ABT_CONTRACT
-hist_prior_urgency_known_count,derived_inquiry_history,Prior inquiries with stated urgency,score_time,count non-null urgency strictly prior,model_feature,LOW,T2,Missing urgency remains unstated.,ABT_CONTRACT
-hist_prior_urgency_days_mean,derived_inquiry_history,Prior mean stated urgency,score_time,mean non-null urgency strictly prior,model_feature,LOW,T2,No imputation from future.,ABT_CONTRACT
-hist_max_inquiry_time,derived_inquiry_history,Latest timestamp used in history,score_time,max prior inquiry_at,audit_only,LOW,T2,QA witness must be < score_time.,ABT_CONTRACT
-candidate_spot_id,derived_candidate,Candidate Spot key,score_time,policy universe / observed override,identifier,LOW,CANDIDATE,Candidate grain key.,ABT_CONTRACT
-fallback_rank,derived_candidate,Fallback ladder ordinal,score_time,corridor→municipality→state; observed override=99,policy_guardrail,MEDIUM_ASSUMPTION,CANDIDATE,Deterministic fallback.,ABT_CONTRACT
-fallback_tier,derived_candidate,Fallback ladder tier,score_time,structural geo matching,policy_guardrail,MEDIUM_ASSUMPTION,CANDIDATE,No learned ranking.,ABT_CONTRACT
-candidate_source,derived_candidate,Why candidate row exists,score_time,POLICY_UNIVERSE or OBSERVED_CURRENT_OVERRIDE,audit_only,LOW,CANDIDATE,Separates recommended universe from observed override.,ABT_CONTRACT
-is_observed_current_spot,derived_candidate,Candidate equals current inquiry Spot,score_time,candidate_spot_id == current_spot_id,audit_only,LOW,T1|T2|CANDIDATE,Audit only.,ABT_CONTRACT
-inventory_state_key,derived_inventory,Unique inventory decision key,score_time,prediction_key + candidate_spot_id,identifier,LOW,CANDIDATE,Inventory grain key.,ABT_CONTRACT
-snapshot_time,derived_inventory,Selected availability snapshot date,score_time,max snapshot_date <= score_time,policy_guardrail,LOW,CANDIDATE,Never future.,P1 availability audit
-snapshot_found,derived_inventory,Backward snapshot exists,score_time,snapshot_id is not null,policy_guardrail,LOW,CANDIDATE,Absence != unavailable.,ABT_CONTRACT
-snapshot_age_days,derived_inventory,Age of selected snapshot,score_time,score_time - snapshot_time,policy_guardrail,LOW,CANDIDATE,Freshness guardrail.,ABT_CONTRACT
-stale_gt_30d,derived_inventory,Snapshot older than 30d,score_time,age >30,policy_guardrail,LOW,CANDIDATE,Freshness diagnostic.,ABT_CONTRACT
-stale_gt_60d,derived_inventory,Snapshot older than 60d,score_time,age >60,policy_guardrail,LOW,CANDIDATE,Freshness diagnostic.,ABT_CONTRACT
-stale_gt_90d,derived_inventory,Snapshot older than 90d,score_time,age >90,policy_guardrail,LOW,CANDIDATE,>90d treated unknown.,P1 availability policy
-availability_known,derived_inventory,Availability is known enough to act on,score_time,snapshot_found and age<=90,policy_guardrail,LOW,CANDIDATE,Unknown is distinct from unavailable.,ABT_CONTRACT
-is_available_asof,derived_inventory,As-of availability state,score_time,snapshot is_available when availability_known else null,policy_guardrail,LOW,CANDIDATE,No future snapshot.,ABT_CONTRACT
-days_until_available_asof,derived_inventory,As-of days until available,score_time,snapshot value when availability_known else null,policy_guardrail,LOW,CANDIDATE,No future snapshot.,ABT_CONTRACT
-competing_inquiries_30d_asof,derived_inventory,Snapshot 30d competing inquiries value,score_time,backward snapshot raw value,audit_only,HIGH_WINDOW_UNKNOWN,CANDIDATE,Window direction unproven; not model-allowed.,P1 temporal ontology
-coverage_status,derived_inventory,Inventory coverage state,score_time,NO_SNAPSHOT/STALE_GT_90D/COVERED,policy_guardrail,LOW,CANDIDATE,Explicit coverage semantics.,ABT_CONTRACT
-competing_inquiries_30d_model_allowed,derived_inventory,Guardrail flag,score_time,constant false,policy_guardrail,LOW,CANDIDATE,Prevents accidental promotion.,ABT_CONTRACT
+column,role,block,stage,model_allowed,future_risk,gate
+score_id,identifier,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+lead_id,identifier,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+stage,policy_guardrail,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+score_time,policy_guardrail,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+target_contract_id,policy_guardrail,D_AUDIT_POLICY,T0|T1|T2,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+target_mature_at,policy_guardrail,D_AUDIT_POLICY,T0|T1|T2,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+target_status,target,D_AUDIT_POLICY,T0|T1|T2,CONTEXT_ONLY,CRITICAL_OUTCOME,NON_FEATURE_CONTEXT
+target_value,target,D_AUDIT_POLICY,T0|T1|T2,CONTEXT_ONLY,CRITICAL_OUTCOME,NON_FEATURE_CONTEXT
+audit_label_horizon_days,audit_only,D_AUDIT_POLICY,T0,NO,LOW,AUDIT_ONLY
+user_type,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+company_size,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+industry,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+search_sector,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+search_modality,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+target_area_sqm,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+min_budget_mxn_rent_monthly,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+max_budget_mxn_rent_monthly,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+min_budget_mxn_sale_total,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+max_budget_mxn_sale_total,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+preferred_state,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+preferred_municipality,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+preferred_corridor,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+source,model_feature,A_LEADQUALITY,T0|T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+prior_searches,audit_only,D_AUDIT_POLICY,T0|T1|T2,NO,MEDIUM_UNPROVEN_AGGREGATE,AUDIT_ONLY
+prior_inquiries,audit_only,D_AUDIT_POLICY,T0|T1|T2,NO,MEDIUM_UNPROVEN_AGGREGATE,AUDIT_ONLY
+has_converted_before,audit_only,D_AUDIT_POLICY,T0|T1|T2,NO,MEDIUM_UNPROVEN_AGGREGATE,AUDIT_ONLY
+first_inquiry_id,identifier,D_AUDIT_POLICY,T1,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+inquiry_id,identifier,D_AUDIT_POLICY,T2,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+inquiry_number,policy_guardrail,D_AUDIT_POLICY,T2,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+channel,model_feature,A_LEADQUALITY,T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+message_length,model_feature,A_LEADQUALITY,T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+requested_area_sqm,model_feature,A_LEADQUALITY,T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+requested_budget_mxn_rent_monthly,model_feature,A_LEADQUALITY,T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+requested_budget_mxn_sale_total,model_feature,A_LEADQUALITY,T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+urgency_days,model_feature,A_LEADQUALITY,T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+asked_visit,model_feature,A_LEADQUALITY,T1|T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+hist_prior_inquiry_count,model_feature,A_LEADQUALITY,T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+hist_prior_unique_spots,model_feature,A_LEADQUALITY,T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+hist_prior_asked_visit_count,model_feature,A_LEADQUALITY,T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+hist_prior_asked_visit_rate,model_feature,A_LEADQUALITY,T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+hist_prior_message_length_mean,model_feature,A_LEADQUALITY,T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+hist_prior_urgency_known_count,model_feature,A_LEADQUALITY,T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+hist_prior_urgency_days_mean,model_feature,A_LEADQUALITY,T2,YES,LOW,LEADQUALITY_TEMPORAL_GATE
+hist_max_inquiry_time,audit_only,D_AUDIT_POLICY,T2,NO,LOW,AUDIT_ONLY
+stage_eligibility,policy_guardrail,D_AUDIT_POLICY,T2,CONTEXT_ONLY,MEDIUM_OUTCOME_GATE,NON_FEATURE_CONTEXT
+audit_response_history_feature_used,policy_guardrail,D_AUDIT_POLICY,T2,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+matching_current_spot_id,audit_only,D_AUDIT_POLICY,T1|T2,NO,MEDIUM_SPOT_CONTEXT,AUDIT_ONLY
+audit_current_spot_created_at,audit_only,D_AUDIT_POLICY,T1|T2,NO,LOW,AUDIT_ONLY
+audit_current_spot_existed_at_score_time,policy_guardrail,D_AUDIT_POLICY,T1|T2,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+source_inquiry_id,identifier,D_AUDIT_POLICY,CANDIDATE,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+candidate_spot_id,identifier,D_AUDIT_POLICY,CANDIDATE,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+candidate_source,audit_only,D_AUDIT_POLICY,CANDIDATE,NO,LOW,AUDIT_ONLY
+spot_created_at,policy_guardrail,D_AUDIT_POLICY,CANDIDATE,CONTEXT_ONLY,LOW,NON_FEATURE_CONTEXT
+matching_fallback_rank,matching_feature,B_MATCHING,CANDIDATE,YES,LOW,MATCHING_TEMPORAL_GATE
+matching_fallback_tier,matching_feature,B_MATCHING,CANDIDATE,YES,LOW,MATCHING_TEMPORAL_GATE
+matching_is_observed_current_spot,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_SPOT_CONTEXT,MATCHING_TEMPORAL_GATE
+matching_sector_exact,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_modality_compatible,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_type_name,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_state,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_municipality,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_settlement,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_corridor,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_region,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_lat,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_lon,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_area_sqm,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_candidate_modality,matching_feature,B_MATCHING,CANDIDATE,YES,MEDIUM_STRUCTURAL_ASSUMPTION,MATCHING_TEMPORAL_GATE
+matching_area_reference_sqm,matching_feature,B_MATCHING,CANDIDATE,YES,LOW,MATCHING_TEMPORAL_GATE
+matching_area_gap_sqm,matching_feature,B_MATCHING,CANDIDATE,YES,LOW,MATCHING_TEMPORAL_GATE
+matching_area_ratio,matching_feature,B_MATCHING,CANDIDATE,YES,LOW,MATCHING_TEMPORAL_GATE
+inventory_natural_light,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_luminaires,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_charging_ports,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_security_type,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_floor_level,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_elevators,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_vertical_height_m,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_parking_spaces,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_building_status,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_floor_material,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+inventory_amenities,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_IMMUTABILITY_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+snapshot_id,audit_only,D_AUDIT_POLICY,CANDIDATE,NO,LOW,AUDIT_ONLY
+snapshot_date_asof,policy_guardrail,D_AUDIT_POLICY,CANDIDATE,CONTEXT_ONLY,MEDIUM_BUSINESS_DATE_ASSUMPTION,NON_FEATURE_CONTEXT
+availability_known,inventory_feature,C_INVENTORY,CANDIDATE,YES,LOW,INVENTORY_TEMPORAL_GATE
+is_available_asof,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_BUSINESS_DATE_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+days_until_available_asof,inventory_feature,C_INVENTORY,CANDIDATE,YES,MEDIUM_BUSINESS_DATE_ASSUMPTION,INVENTORY_TEMPORAL_GATE
+snapshot_age_days,inventory_feature,C_INVENTORY,CANDIDATE,YES,LOW,INVENTORY_TEMPORAL_GATE
+freshness_bucket,inventory_feature,C_INVENTORY,CANDIDATE,YES,LOW,INVENTORY_TEMPORAL_GATE
+availability_state,inventory_feature,C_INVENTORY,CANDIDATE,YES,LOW,INVENTORY_TEMPORAL_GATE
+lead_score_internal,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+broker_response,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+broker_response_hours,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+days_on_market,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+total_views,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+total_inquiries,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+is_active,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+competing_inquiries_30d,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+broker_id,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+title,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+description,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+price_sqm_mxn_rent,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+price_sqm_mxn_sale,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+price_total_mxn_rent,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+price_total_mxn_sale,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+maintenance_cost_mxn,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+similar_available_spots,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+avg_price_sqm_mxn,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+recent_occupancy_rate,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+absorption_velocity_days,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
+recent_inquiry_volume,forbidden,D_AUDIT_POLICY,T0|T1|T2|CANDIDATE,NO,CRITICAL,BLOCK
