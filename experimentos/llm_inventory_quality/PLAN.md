@@ -211,3 +211,17 @@ Before the live OpenAI run, the plan was tightened:
 8. S001 precision is additionally assessed on a disjoint 100-row Land challenge set.
 
 The intended product pattern is now hybrid: periodic/sampled LLM semantic discovery -> human validation -> promote stable recurring patterns to deterministic rules.
+
+
+## GPT-5 nano live result
+
+Run `33296510774` completed successfully with 0 API/schema errors.
+
+- holdout: 240/240 valid;
+- challenge: 100/100 valid;
+- cumulative observed live cost: USD 0.053522;
+- S001 sensitivity: 76%;
+- S001 specificity: 28%;
+- conclusion: suitable for semantic discovery, not for automatic QA gating.
+
+Evidence: [EV-016](../Evidencias/EV-016_llm_gpt5nano_live.md).
