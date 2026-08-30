@@ -1,0 +1,2 @@
+n_gaps,min_days,p05_days,median_days,p95_days,p99_days,max_days,same_day_gaps
+27000,1.0,2.0,21.0,97.0,155.0,319.0,0

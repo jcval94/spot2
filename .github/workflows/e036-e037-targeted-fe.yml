@@ -1,0 +1,92 @@
+name: E036-E037 targeted FE challengers
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - experimentos/drift-feature-validation
+    paths:
+      - "experimentos/feature_validation/run_e036_e037.py"
+      - "experimentos/feature_validation/E036_t1_geo_inventory_decomposition/**"
+      - "experimentos/feature_validation/E037_temporal_smoothed_categorical_priors/**"
+      - ".github/workflows/e036-e037-targeted-fe.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experimentos/feature_validation/run_e036_e037.py"
+      - "experimentos/feature_validation/E036_t1_geo_inventory_decomposition/**"
+      - "experimentos/feature_validation/E037_temporal_smoothed_categorical_priors/**"
+      - ".github/workflows/e036-e037-targeted-fe.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: e036-e037-targeted-fe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  targeted-dev:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/feature_validation/semantic_recovery_requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/feature_validation/semantic_recovery_requirements.txt
+      - name: Compile
+        run: python -m py_compile experimentos/feature_validation/run_e036_e037.py
+      - name: Verify E030
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("experimentos/feature_validation/E030_definitive_abt/results/validation.json").read_text())
+          assert x["status"]=="PASS", x
+          PY
+      - name: Run E036 E037
+        run: python experimentos/feature_validation/run_e036_e037.py
+      - name: Validate outputs
+        run: |
+          test -s experimentos/feature_validation/E036_t1_geo_inventory_decomposition/results/summary.csv
+          test -s experimentos/feature_validation/E036_t1_geo_inventory_decomposition/results/selected.json
+          test -s experimentos/feature_validation/E037_temporal_smoothed_categorical_priors/results/summary.csv
+          test -s experimentos/feature_validation/E037_temporal_smoothed_categorical_priors/results/selected.json
+      - name: Publish
+        run: |
+          cat experimentos/feature_validation/E036_t1_geo_inventory_decomposition/results/REPORT.md >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          cat experimentos/feature_validation/E037_temporal_smoothed_categorical_priors/results/REPORT.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Commit reproducible results
+        if: github.event_name == 'push' && github.ref == 'refs/heads/experimentos/drift-feature-validation'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/feature_validation/E036_t1_geo_inventory_decomposition/results/
+          git add experimentos/feature_validation/E037_temporal_smoothed_categorical_priors/results/
+          if git diff --cached --quiet; then
+            echo "No E036/E037 changes."
+          else
+            git commit -m "Add E036 E037 targeted FE results [skip ci]"
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}"
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: targeted-feature-challengers
+          path: |
+            experimentos/feature_validation/E036_t1_geo_inventory_decomposition/results/
+            experimentos/feature_validation/E037_temporal_smoothed_categorical_priors/results/
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,27 @@
+{
+  "fit_counts": {
+    "T0_cold": 3388,
+    "T1_first_inquiry": 3379,
+    "T2_engaged": 7248
+  },
+  "calibration": {
+    "T0_cold": {
+      "intercept": -0.0891222273400146,
+      "coefficient": 0.12771924027418,
+      "status": "platt"
+    },
+    "T1_first_inquiry": {
+      "intercept": 0.06327150617989664,
+      "coefficient": 1.6042505298850553,
+      "status": "platt"
+    },
+    "T2_engaged": {
+      "intercept": -0.46680114373468706,
+      "coefficient": 1.49150765003556,
+      "status": "platt"
+    }
+  },
+  "n_train_before_filter": 14015,
+  "n_train_after_filter": 14015,
+  "n_encoded_features": 284
+}

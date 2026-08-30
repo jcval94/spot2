@@ -1,0 +1,138 @@
+{
+  "experiment_id": "E028_definitive_opportunity_score_abt",
+  "parent_experiment": "E005_multihead_vs_specialists",
+  "status": "PRE_REGISTERED_NOT_RUN",
+  "question": "Does deploying the full dynamic Lead Opportunity + inventory/fallback system causally increase lead-level scheduled visits within 30 days versus current Growth prioritization?",
+  "hypothesis": "The full treatment increases lead_scheduled_visit_30d_from_assignment by at least 2 percentage points absolute.",
+  "primary_change": "Replace current Growth prioritization with a frozen, drift-sanitized Lead Opportunity policy plus inventory serviceability and governed fallback. Stages that fail the offline/future-cohort gate remain LeadQuality-neutral.",
+  "secondary_changes": [
+    "Treatment queue ordering changes as the lead progresses.",
+    "Fallback ranking is surfaced when requested inventory cannot be served.",
+    "Availability freshness is explicitly handled rather than assumed."
+  ],
+  "target": {
+    "name": "lead_scheduled_visit_30d_from_assignment",
+    "grain": "lead_id",
+    "event": "any broker_response == scheduled_visit",
+    "anchor": "assignment_at",
+    "horizon_days": 30,
+    "censoring": "wait for full 30-day maturation; do not label immature leads negative",
+    "definition": "One per randomized lead: 1 iff at least one unique backend broker_response == scheduled_visit event has response_event_at in (assignment_at, assignment_at + 30 days]; multiple events count once.",
+    "assignment_semantics": "assignment_at is persisted in UTC by the randomization service before any experimental score, queue ordering or routing. First assignment wins and is immutable."
+  },
+  "population": {
+    "eligibility": "New production leads that would normally enter the Growth prioritization queue.",
+    "exclusions_before_randomization": [
+      "internal/test/duplicate leads under fixed production rules",
+      "leads outside the product's intended Growth queue",
+      "leads with any scheduled_visit already observed before assignment_at"
+    ],
+    "post_randomization_exclusions": "none for ITT except symmetric proven instrumentation corruption"
+  },
+  "randomization": {
+    "unit": "lead_id",
+    "allocation": "50/50 sticky",
+    "stratification": [
+      "search_sector",
+      "search_modality",
+      "user_type"
+    ],
+    "implementation": "Server-side sticky assignment persisted before scoring; prefer permuted blocks within the declared strata. Repeated calls must return the original arm."
+  },
+  "metrics": {
+    "primary": "absolute ITT risk difference in lead_scheduled_visit_30d_from_assignment",
+    "secondary": [
+      "accepted_or_scheduled_30d",
+      "time_to_first_scheduled_visit",
+      "fallback_to_inquiry_rate"
+    ],
+    "guardrails": [
+      "SRM",
+      "unavailable recommendation rate",
+      "no-result rate",
+      "scoring failure rate",
+      "broker workload concentration"
+    ]
+  },
+  "power": {
+    "alpha": 0.05,
+    "power": 0.8,
+    "absolute_mde": 0.02,
+    "conservative_baseline": 0.5,
+    "n_per_arm": 9806,
+    "total_matured_leads": 19612
+  },
+  "decision_rule": "SHIP only when point delta >= +0.02, the two-sided 95% CI lower bound is >0, and hard guardrails pass. NO-SHIP if CI upper bound < +0.02. Otherwise INCONCLUSIVE.",
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN",
+    "items": [
+      "randomization precedes treatment exposure",
+      "outcome is measured after assignment",
+      "all dynamic model inputs obey point-in-time rules",
+      "ITT retains treatment failures",
+      "no post-randomization eligibility filtering"
+    ]
+  },
+  "temporal_drift": {
+    "risk": "HIGH and explicitly pre-registered",
+    "controls": [
+      "fixed 30-day outcome horizon",
+      "weekly blinded covariate monitoring",
+      "assignment-week heterogeneity report",
+      "assignment-week adjusted sensitivity analysis",
+      "no optional stopping"
+    ]
+  },
+  "launch_status": "BLOCKED_PENDING_PROSPECTIVE_GATE_AND_PRODUCTION_AA",
+  "release_candidate_gate": {
+    "evidence": [
+      "E021",
+      "E022",
+      "E023",
+      "E024",
+      "E025",
+      "E026",
+      "E027"
+    ],
+    "launch_blocker": "E022 shows the E005/T1 model is dominated by drift-sensitive calendar/progress clocks.",
+    "blocked_predictive_inputs": [
+      "score_weekday",
+      "score_hour",
+      "score_month",
+      "days_from_lead_creation",
+      "inquiry_number",
+      "days_since_first_inquiry",
+      "prior_searches",
+      "broker historical prior",
+      "availability_snapshot_age_days raw"
+    ],
+    "stage_policy": {
+      "T0": "LeadQuality neutral in v1.",
+      "T1": "LeadQuality neutral in v1; serviceability/fallback may refresh.",
+      "T2": "Frozen E029 candidate may influence ranking only after prospective gate PASS."
+    },
+    "required_before_launch": [
+      "E029 prospective post-freeze gate PASS",
+      "production A/A assignment and outcome instrumentation PASS",
+      "scheduled_visit backend event timestamp completeness >=99.5%",
+      "complete and freeze final E028 manifest with approved artifact/protocol/schema hashes"
+    ],
+    "artifact_source": "E029_drift_sanitized_release_candidate",
+    "artifact_status": "FROZEN_AWAITING_PROSPECTIVE_GATE",
+    "completed": [
+      "drift-sanitized T2 candidate trained and frozen",
+      "model/calibrator/feature schema/treatment policy hashes persisted",
+      "E028 retrospective A/A target/assignment dry run passed"
+    ]
+  },
+  "protocol_validation": {
+    "script": "validate_protocol.py",
+    "role": "A/A plumbing validation only; never interpreted as treatment-effect evidence.",
+    "outputs": [
+      "dry_run_results/summary.json",
+      "dry_run_results/aa_arm_summary.csv",
+      "dry_run_results/strata_balance.csv",
+      "dry_run_results/REPORT.md"
+    ]
+  }
+}

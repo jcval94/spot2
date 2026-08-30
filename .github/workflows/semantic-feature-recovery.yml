@@ -1,0 +1,129 @@
+name: E031-E034 semantic feature recovery
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - experimentos/drift-feature-validation
+    paths:
+      - "experimentos/feature_validation/semantic_recovery_common.py"
+      - "experimentos/feature_validation/run_semantic_recovery.py"
+      - "experimentos/feature_validation/semantic_recovery_requirements.txt"
+      - "experimentos/feature_validation/E03[1-4]_*/**"
+      - "experimentos/feature_validation/E030_definitive_abt/results/**"
+      - ".github/workflows/semantic-feature-recovery.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "experimentos/feature_validation/semantic_recovery_common.py"
+      - "experimentos/feature_validation/run_semantic_recovery.py"
+      - "experimentos/feature_validation/E03[1-4]_*/**"
+      - "experimentos/Evidencias/EV-03[1-4]_*.md"
+      - ".github/workflows/semantic-feature-recovery.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: semantic-feature-recovery-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  recover-t0-t1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: experimentos/feature_validation/semantic_recovery_requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r experimentos/feature_validation/semantic_recovery_requirements.txt
+
+      - name: Compile
+        run: |
+          python -m py_compile experimentos/feature_validation/semantic_recovery_common.py
+          python -m py_compile experimentos/feature_validation/run_semantic_recovery.py
+
+      - name: Verify E030 ABT gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("experimentos/feature_validation/E030_definitive_abt/results/validation.json")
+          x=json.loads(p.read_text())
+          assert x["status"]=="PASS", x
+          print("E030 ABT PASS")
+          PY
+
+      - name: Run semantic feature ladder and one-shot recovery tests
+        run: python experimentos/feature_validation/run_semantic_recovery.py
+
+      - name: Validate outputs
+        run: |
+          set -euo pipefail
+          test -s experimentos/feature_validation/E031_semantic_feature_engineering_ladder/results/validation_ladder.csv
+          test -s experimentos/feature_validation/E031_semantic_feature_engineering_ladder/results/selected_variants.json
+          test -s experimentos/feature_validation/E032_t0_semantic_recovery/results/summary.json
+          test -s experimentos/feature_validation/E033_t1_semantic_recovery/results/summary.json
+          test -s experimentos/feature_validation/E034_general_feature_engineering_catalog/results/feature_engineering_catalog.csv
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("experimentos/feature_validation")
+          choices=json.loads((root/"E031_semantic_feature_engineering_ladder/results/selected_variants.json").read_text())
+          assert set(choices)=={"T0_cold","T1_first_inquiry"}
+          for exp in ["E032_t0_semantic_recovery","E033_t1_semantic_recovery"]:
+              x=json.loads((root/exp/"results/summary.json").read_text())
+              assert x["status"] in {"RECOVERED","PROMISING_NOT_CONFIRMED","NOT_RECOVERED"}
+              assert x["selected_variant"] in {"atomic","scale_specificity","semantic_need","soft_profiles","semantic_interactions"}
+          print("Recovery result schema PASS")
+          PY
+
+      - name: Publish summary
+        run: |
+          cat experimentos/feature_validation/E031_semantic_feature_engineering_ladder/results/REPORT.md >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          cat experimentos/feature_validation/E032_t0_semantic_recovery/results/REPORT.md >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          cat experimentos/feature_validation/E033_t1_semantic_recovery/results/REPORT.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit reproducible results
+        if: github.event_name == 'push' && github.ref == 'refs/heads/experimentos/drift-feature-validation'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add experimentos/feature_validation/E031_semantic_feature_engineering_ladder/results/
+          git add experimentos/feature_validation/E032_t0_semantic_recovery/results/
+          git add experimentos/feature_validation/E033_t1_semantic_recovery/results/
+          git add experimentos/feature_validation/E034_general_feature_engineering_catalog/results/
+          if git diff --cached --quiet; then
+            echo "No semantic recovery changes."
+          else
+            git commit -m "Add E031-E034 semantic feature recovery results [skip ci]"
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}"
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-feature-recovery
+          path: |
+            experimentos/feature_validation/E031_semantic_feature_engineering_ladder/results/
+            experimentos/feature_validation/E032_t0_semantic_recovery/results/
+            experimentos/feature_validation/E033_t1_semantic_recovery/results/
+            experimentos/feature_validation/E034_general_feature_engineering_catalog/results/
+          if-no-files-found: warn
+          retention-days: 30

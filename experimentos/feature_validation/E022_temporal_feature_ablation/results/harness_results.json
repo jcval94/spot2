@@ -1,0 +1,44 @@
+{
+  "experiment_id": "E022_temporal_feature_ablation",
+  "metrics": {
+    "roc_auc": 0.5121683687490411,
+    "average_precision": 0.4849856640687702,
+    "brier": 0.2497599750878079,
+    "log_loss": 0.6929753480375607,
+    "lift_top_10pct": 1.0011603602814683,
+    "recall_top_20pct": 0.20209335696800879
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.4591482984134674,
+      "average_precision": 0.4540032992163424,
+      "brier": 0.2507796103815436,
+      "log_loss": 0.6947107332290359,
+      "lift_top_10pct": 0.7212576792460029,
+      "recall_top_20pct": 0.16991643454038996
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.5037742336913806,
+      "average_precision": 0.5097118244458463,
+      "brier": 0.25059503000233274,
+      "log_loss": 0.6943349732244419,
+      "lift_top_10pct": 1.1063717532467532,
+      "recall_top_20pct": 0.19886363636363635
+    },
+    "T2_engaged": {
+      "roc_auc": 0.5735825741422756,
+      "average_precision": 0.49124186854412183,
+      "brier": 0.24790528487954727,
+      "log_loss": 0.6898803376592042,
+      "lift_top_10pct": 1.1758516483516483,
+      "recall_top_20pct": 0.2375
+    }
+  },
+  "conclusion": "SUPPORTED",
+  "caveats": [
+    "The experiment removes calendar/progress clocks but retains availability snapshot age, which is audited separately in E023.",
+    "The time-proxy-only model is diagnostic and includes lead_cohort_index and score_time_index; it is not proposed for production.",
+    "Bootstrap resamples complete leads to preserve dependence among T2 snapshots."
+  ],
+  "next_experiment": "Audit availability snapshot age separately, because it is point-in-time safe but may behave as a regime/staleness proxy."
+}

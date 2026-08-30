@@ -1,0 +1,27 @@
+family,stages,status,recommended_role,idea,guardrail,t0_recovery_status,t1_recovery_status
+scale_log_transforms,T0/T1/T2,TESTED_E031,model_candidate,"log1p area, budget, urgency, message length; reduces scale/outlier sensitivity",PIT safe,NOT_RECOVERED,NOT_RECOVERED
+budget_mid_width_specificity,T0/T1,TESTED_E031,model_candidate,"midpoint, width, relative width, completeness",PIT safe,NOT_RECOVERED,NOT_RECOVERED
+geo_search_specificity,T0,TESTED_E031,model_candidate,count/quality of preferred geography fields,PIT safe,NOT_RECOVERED,NOT_RECOVERED
+search_need_semantic,T0/T1,TESTED_E031,model_candidate,rent/sale/flexible semantic state,PIT safe,NOT_RECOVERED,NOT_RECOVERED
+t0_to_t1_need_transition,T1/T2,TESTED_E031,model_candidate,requested modality and area/budget shifts vs intake,PIT safe,NOT_RECOVERED,NOT_RECOVERED
+dynamic_need_soft_profile,T1/T2,TESTED_E031,model_candidate,train-only K=5 hard profile + centroid distances + ambiguity margin,Outcome-free; fit train only,NOT_RECOVERED,NOT_RECOVERED
+search_need_soft_profile,T0,TESTED_E031,model_candidate,train-only K=3 need profile + centroid distances,Outcome-free; fit train only,NOT_RECOVERED,NOT_RECOVERED
+spot_physical_soft_profile,T1/T2,TESTED_E031,model_candidate,train-only K=4 physical profile + distances,Fit unique train Spots only,NOT_RECOVERED,NOT_RECOVERED
+spot_location_soft_profile,T1/T2,TESTED_E031,model_candidate,train-only K=7 location profile + distances,Fit unique train Spots only,NOT_RECOVERED,NOT_RECOVERED
+lead_spot_directional_fit,T1/T2,TESTED_E031,model_candidate,"absolute log area/budget mismatch, within-budget, within-20% area",PIT safe,NOT_RECOVERED,NOT_RECOVERED
+semantic_profile_interactions,T0/T1/T2,TESTED_E031,model_candidate,Need x source/sector; DynamicNeed x PH/LOC; transition x PH,No outcome-derived cell multipliers,NOT_RECOVERED,NOT_RECOVERED
+missingness_as_signal,T0/T1/T2,NEXT_CHALLENGER,model_candidate,explicit missingness pattern rather than implicit imputer only,Verify stability by cohort,NOT_RECOVERED,NOT_RECOVERED
+rolling_behavior_velocity,T2,NEXT_CHALLENGER,model_candidate,recent inquiry/unique-spot/asked-visit intensity in trailing windows,Strict as-of windows; avoid raw funnel clocks,NOT_RECOVERED,NOT_RECOVERED
+lead_preference_entropy,T2,NEXT_CHALLENGER,model_candidate,diversity of sectors/locations/spots contacted before score,Strict historical events only,NOT_RECOVERED,NOT_RECOVERED
+price_relative_to_local_inventory,T1/T2,NEXT_CHALLENGER,model_candidate,spot price percentile vs contemporaneous same sector/location inventory,Must be as-of; train-only/reference window,NOT_RECOVERED,NOT_RECOVERED
+geo_distance_to_preference_centroid,T1/T2,NEXT_CHALLENGER,model_candidate,distance between Spot and preferred geo centroid,Needs canonical coordinates for preferred area,NOT_RECOVERED,NOT_RECOVERED
+cluster_uncertainty_margin,T0/T1/T2,TESTED_E031,model_candidate,nearest-centroid distance and first-vs-second margin,Outcome-free,NOT_RECOVERED,NOT_RECOVERED
+behavioral_persona_BP,T0,REJECT_AS_PRIMARY,interpretability_only,stable semantic clusters but worsened AP/Lift in prior evidence,Can remain diagnostic,NOT_RECOVERED,NOT_RECOVERED
+broker_supply_cluster,T1/T2,REJECT,none,failed balance twice,Do not force K,NOT_RECOVERED,NOT_RECOVERED
+broker_service_profile,T1/T2,ROUTING_ONLY,routing_candidate,useful segmentation but no robust marginal lift,Separate Lead x Spot x Broker problem,NOT_RECOVERED,NOT_RECOVERED
+availability_state_freshness,T1/T2,POLICY_GUARDRAIL,policy_guardrail,"serviceability/freshness, not LeadQuality",Backward as-of only,NOT_RECOVERED,NOT_RECOVERED
+market_context,T0/T1/T2,BLOCKED,none,potential macro context,Blocked until effective/publication time exists,NOT_RECOVERED,NOT_RECOVERED
+raw_calendar_progress_clocks,T0/T1/T2,BLOCKED,audit_only,"score month/hour/weekday, days from creation, inquiry number",Strong drift proxy,NOT_RECOVERED,NOT_RECOVERED
+prior_searches,T0/T1/T2,BLOCKED,audit_only,ablation showed deterioration when included,Do not reintroduce,NOT_RECOVERED,NOT_RECOVERED
+target_encoded_high_cardinality,T0/T1/T2,NEXT_CHALLENGER_HIGH_RISK,model_candidate,cross-fitted encoding for source/location categories,Must be fold-safe and temporal,NOT_RECOVERED,NOT_RECOVERED
+text_semantic_embedding,T1/T2,DATA_GAP,future_candidate,message meaning beyond length,Raw inquiry text not in canonical ABT,NOT_RECOVERED,NOT_RECOVERED

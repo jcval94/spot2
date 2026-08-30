@@ -1,0 +1,13 @@
+{
+  "stage": "T1_first_inquiry",
+  "variant": "inventory_plus_geo",
+  "folds": 3,
+  "mean_auc": 0.48869117665513956,
+  "min_auc": 0.4869711751662971,
+  "mean_ap_over_prevalence": 1.0052596612259683,
+  "min_ap_over_prevalence": 0.9577044656726769,
+  "mean_lift10": 0.996180507863003,
+  "min_lift10": 0.8522727272727273,
+  "folds_auc_gt_05": 0,
+  "status": "NO_DEV_SIGNAL"
+}

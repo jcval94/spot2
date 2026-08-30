@@ -1,0 +1,39 @@
+{
+  "experiment_id": "E032_t0_semantic_recovery",
+  "parent_experiments": [
+    "E031_semantic_feature_engineering_ladder",
+    "E030_definitive_abt"
+  ],
+  "status": "PRE_REGISTERED",
+  "question": "Can T0 recover useful, temporally held-out signal using the E031-selected semantic feature representation?",
+  "primary_change": "Freeze the T0 variant selected on validation and evaluate it exactly once on E030 test against neutral and atomic sanitized baselines.",
+  "target": {
+    "name": "target_scheduled_visit_30d",
+    "source": "E028 target_contract.json"
+  },
+  "abt": {
+    "source": "E030_definitive_abt/results/abt_model_ready.csv.gz",
+    "split_unit": "lead_id"
+  },
+  "validation": "One-shot E030 test evaluation at T0; bootstrap over lead_id.",
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN",
+    "items": [
+      {
+        "element": "guardrail_1",
+        "status": "ALLOW",
+        "evidence": "Variant selection uses validation only."
+      },
+      {
+        "element": "guardrail_2",
+        "status": "ALLOW",
+        "evidence": "No post-T0 inquiry/spot information enters T0."
+      },
+      {
+        "element": "guardrail_3",
+        "status": "ALLOW",
+        "evidence": "No clocks/progress or target-derived fields."
+      }
+    ]
+  }
+}

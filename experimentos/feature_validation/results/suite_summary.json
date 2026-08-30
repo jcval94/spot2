@@ -1,0 +1,24 @@
+{
+  "baseline_reconciliation": {
+    "parent_model": "specialist_random_forest_calibrated",
+    "max_abs_metric_difference": 8.326672684688674e-17,
+    "metric_differences": {
+      "roc_auc": 0.0,
+      "average_precision": 0.0,
+      "brier": 5.551115123125783e-17,
+      "log_loss": 0.0,
+      "lift_top_10pct": 0.0,
+      "recall_top_20pct": 8.326672684688674e-17
+    },
+    "status": "MATCH"
+  },
+  "experiments": [
+    "E021_temporal_drift_stress",
+    "E022_temporal_feature_ablation",
+    "E023_availability_staleness",
+    "E024_outlier_handling",
+    "E025_redundancy_ablation",
+    "E026_prior_history_ablation",
+    "E027_broker_prior_point_in_time"
+  ]
+}

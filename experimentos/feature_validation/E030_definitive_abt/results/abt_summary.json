@@ -1,0 +1,28 @@
+{
+  "schema_version": "v1",
+  "audit_rows": 20738,
+  "audit_unique_leads": 5000,
+  "model_ready_rows": 18237,
+  "model_ready_unique_leads": 4648,
+  "target_status_counts": {
+    "NEGATIVE": 11530,
+    "POSITIVE": 6707,
+    "AMBIGUOUS_UNKNOWN_EVENT_TIME": 1478,
+    "RIGHT_CENSORED": 1023
+  },
+  "ambiguous_rows": 1478,
+  "right_censored_rows": 1023,
+  "prior_visit_ineligible_rows": 0,
+  "model_feature_count": 68,
+  "categorical_model_feature_count": 27,
+  "numeric_model_feature_count": 41,
+  "policy_guardrail_count": 10,
+  "audit_only_count": 7,
+  "forbidden_columns_present_in_materialized_abt": [],
+  "split_unique_leads": {
+    "test": 698,
+    "train": 3253,
+    "val": 697
+  },
+  "observation_end": "2026-07-14 13:01:24"
+}

@@ -1,0 +1,61 @@
+{
+  "experiment_id": "E029_drift_sanitized_release_candidate",
+  "artifact_status": "FROZEN_AWAITING_PROSPECTIVE_GATE",
+  "launch_eligible": false,
+  "github_sha": "9cd37c2330f3f07678d8028d31c7acb523b8536c",
+  "historical_data_end_score_time": "2026-06-14 12:54:00",
+  "historical_target_observation_end": "2026-07-14 13:01:24",
+  "historical_diagnostic_is_confirmatory": false,
+  "fit_meta": {
+    "n_train": 7351,
+    "n_calibration": 1716,
+    "n_score": 666,
+    "n_encoded_features": 244,
+    "calibration": {
+      "status": "platt",
+      "intercept": 0.0006997844134938979,
+      "coefficient": 1.0040116285137617
+    }
+  },
+  "historical_sanity_metrics": {
+    "n": 666.0,
+    "positive_rate": 0.5075075075075075,
+    "roc_auc": 0.5428452879203347,
+    "average_precision": 0.5423915544020586,
+    "brier": 0.24927016665528012,
+    "log_loss": 0.6917298924972363,
+    "lift_top_10pct": 1.1469575200918485,
+    "recall_top_20pct": 0.22189349112426035,
+    "ap_over_prevalence": 1.0687360213957722
+  },
+  "hashes": {
+    "preprocessor_sha256": "101ac844a096216ec404baf446489605d5079ded6c94cd90fe42c8694e401f7c",
+    "model_sha256": "4d0965155d8b1dee0aeb097f8d25b80206de60af0e42e37d0c8ed7df6f852171",
+    "calibrator_sha256": "1c7265faab19377381b56940d13208a38a35d900d5d7c2c5d9ecc21b6ed9768e",
+    "feature_schema_sha256": "e787a6821107f836e67d5c5d13c3aa0e182a49bd6ff36ab92463d3b6ad8a1cfc",
+    "treatment_policy_sha256": "5c976002ae514cca648893411e7d5f89a2ab55b0577ca1cd58e286dcd7c5469a"
+  },
+  "stage_policy": {
+    "T0": "neutral",
+    "T1": "neutral",
+    "T2": "candidate only after prospective gate PASS"
+  },
+  "prospective_gate": {
+    "status": "AWAITING_POST_FREEZE_COHORT",
+    "unit": "first eligible T2 snapshot per lead",
+    "start_rule": "lead created strictly after artifact freeze/data cutoff",
+    "window_rule": "first 8 complete post-freeze lead-created weeks; if <500 matured first-T2 leads, extend by whole weeks until 500, maximum 16 weeks",
+    "extension_depends_only_on_sample_size": true,
+    "minimum_matured_leads": 500,
+    "pass_rule": {
+      "roc_auc_point_min": 0.55,
+      "roc_auc_ci95_low_strictly_gt": 0.5,
+      "ap_over_prevalence_min": 1.05,
+      "lift_top_10pct_min": 1.1,
+      "scheduled_visit_timestamp_completeness_min": 0.995,
+      "leakage_or_instrumentation_failure": "automatic fail"
+    },
+    "peeking": "No outcome inspection before the gate cohort closes.",
+    "if_less_than_500_after_16_weeks": "INCONCLUSIVE_INSUFFICIENT_SAMPLE; do not relax thresholds post hoc"
+  }
+}

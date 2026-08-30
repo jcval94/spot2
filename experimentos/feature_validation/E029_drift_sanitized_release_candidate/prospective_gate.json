@@ -1,0 +1,18 @@
+{
+  "status": "AWAITING_POST_FREEZE_COHORT",
+  "unit": "first eligible T2 snapshot per lead",
+  "start_rule": "lead created strictly after artifact freeze/data cutoff",
+  "window_rule": "first 8 complete post-freeze lead-created weeks; if <500 matured first-T2 leads, extend by whole weeks until 500, maximum 16 weeks",
+  "extension_depends_only_on_sample_size": true,
+  "minimum_matured_leads": 500,
+  "pass_rule": {
+    "roc_auc_point_min": 0.55,
+    "roc_auc_ci95_low_strictly_gt": 0.5,
+    "ap_over_prevalence_min": 1.05,
+    "lift_top_10pct_min": 1.1,
+    "scheduled_visit_timestamp_completeness_min": 0.995,
+    "leakage_or_instrumentation_failure": "automatic fail"
+  },
+  "peeking": "No outcome inspection before the gate cohort closes.",
+  "if_less_than_500_after_16_weeks": "INCONCLUSIVE_INSUFFICIENT_SAMPLE; do not relax thresholds post hoc"
+}

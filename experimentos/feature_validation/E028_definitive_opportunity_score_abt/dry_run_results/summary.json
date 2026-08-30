@@ -1,0 +1,59 @@
+{
+  "experiment_id": "E028_definitive_opportunity_score_abt",
+  "purpose": "A/A assignment and target-plumbing dry run only; not an estimate of treatment effect.",
+  "observation_end": "2026-07-14 13:01:24",
+  "horizon_days": 30,
+  "source_leads": 5000,
+  "duplicate_lead_ids": 0,
+  "mature_candidate_leads": 4841,
+  "target_status_counts": {
+    "NEGATIVE": 2812,
+    "POSITIVE": 1796,
+    "AMBIGUOUS_UNKNOWN_EVENT_TIME": 233
+  },
+  "offline_outcome_observable_leads": 4608,
+  "offline_outcome_observability_rate": 0.9518694484610618,
+  "scheduled_visit_rows_missing_event_time_rate": 0.14968861209964412,
+  "observed_primary_rate_among_observable": 0.3897569444444444,
+  "primary_rate_uncertainty_from_unknown_event_time": {
+    "lower_bound_assume_ambiguous_negative": 0.370997727742202,
+    "upper_bound_assume_ambiguous_positive": 0.41912827928114027,
+    "note": "This range is only a retrospective data-quality bound. The prospective A/B requires actual backend event timestamps."
+  },
+  "aa_assignment": {
+    "control": 2430,
+    "treatment": 2411,
+    "treatment_share": 0.49803759553811194,
+    "chi_square_1df": 0.07457136955174551,
+    "srm_p_value": 0.7847935737095629,
+    "pseudo_treatment_minus_control_pp_observable_only": 0.9695564036442561,
+    "note": "The pseudo-delta must not be interpreted causally because both arms receive no treatment."
+  },
+  "strata": {
+    "n_strata": 48,
+    "min_stratum_n": 5,
+    "max_abs_treatment_share_deviation": 0.30000000000000004
+  },
+  "power_plan": {
+    "alpha": 0.05,
+    "power": 0.8,
+    "absolute_mde": 0.02,
+    "required_matured_per_arm": 9806,
+    "required_matured_total": 19612,
+    "current_candidate_fraction_of_required": 0.2468386702019172,
+    "current_dataset_is_powered_for_definitive_test": false,
+    "note": "Retrospective candidate-data feasibility only. The prospective RCT requires the full pre-registered sample."
+  },
+  "outcome_timestamp_quality": {
+    "production_completeness_gate": 0.995,
+    "candidate_observability_passes_production_gate": false,
+    "production_requirement": "Actual backend scheduled_visit timestamp completeness >=99.5%; missing production event time is an instrumentation blocker, never a negative label."
+  },
+  "checks": {
+    "unique_lead_assignment": true,
+    "full_30d_maturation": true,
+    "srm_threshold_pass": true,
+    "outcome_one_row_per_lead": true,
+    "ambiguous_labels_not_coerced_to_zero": true
+  }
+}

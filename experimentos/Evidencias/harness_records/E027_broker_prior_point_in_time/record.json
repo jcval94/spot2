@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-30T00:48:05.377303+00:00",
+  "git_sha": "cd6d3c9f8c883dc03d8c3da3874bd6dcd1457fb9",
+  "experiment_id": "E027_broker_prior_point_in_time",
+  "parent_experiment": "E005_multihead_vs_specialists",
+  "primary_change": "add historical broker response/support and smoothed scheduled-visit prior features constructed strictly before each scoring time",
+  "spec_sha256": "b80f0aa649eb1f530649195c11c22da76ed5585fe60a1f3eb4f8cd753109bb5a",
+  "data_fingerprints": [
+    {
+      "path": "data/candidate/csv/leads.csv",
+      "sha256": "0df1e893137d5a56afb73df9870a794597aa35eb9f9ca14f89ae69615f3b65a4"
+    },
+    {
+      "path": "data/candidate/csv/inquiries.csv",
+      "sha256": "e0a59bc558e0aa4df4141751c63c4e0193e3681b771aac2f5439ebd90b752eb6"
+    },
+    {
+      "path": "data/candidate/csv/spots.csv",
+      "sha256": "e5e3640430567b2430ab5e37dba28f30c6186693f184c4c3e744018d689f7b0c"
+    },
+    {
+      "path": "data/candidate/csv/spot_attributes.csv",
+      "sha256": "a22c42f5bcf9c3b7b07c5c65d0926d43474cc82702389c8322bd1f37f3953fe9"
+    },
+    {
+      "path": "data/candidate/csv/availability_snapshot.csv",
+      "sha256": "c2e292390dd874291214a28c62e294a1d7c5d23338a4fa683352e44be877e59d"
+    }
+  ],
+  "leakage_check": "PASS",
+  "comparison": {
+    "status": "EQUIVALENT",
+    "reasons": []
+  },
+  "metrics": {
+    "roc_auc": 0.5578206664218615,
+    "average_precision": 0.5190121487797786,
+    "brier": 0.24553681117837386,
+    "log_loss": 0.6844128314654263,
+    "lift_top_10pct": 1.0788122804619353,
+    "recall_top_20pct": 0.22745111782368052
+  },
+  "metric_deltas_vs_parent": {
+    "average_precision": 0.001536230425898455,
+    "brier": 0.00033780970601410276,
+    "lift_top_10pct": -0.037634437662984244,
+    "log_loss": 0.000661653083594782,
+    "recall_top_20pct": 0.007419449167360037,
+    "roc_auc": 0.0017612416419882093
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.46965453554559766,
+      "average_precision": 0.47035967253648625,
+      "brier": 0.2505962760205188,
+      "log_loss": 0.6943419646640668,
+      "lift_top_10pct": 0.7767390391880031,
+      "recall_top_20pct": 0.1894150417827298
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.5997756746135708,
+      "average_precision": 0.5728624490911219,
+      "brier": 0.24287654847362022,
+      "log_loss": 0.678616895774972,
+      "lift_top_10pct": 1.2482142857142857,
+      "recall_top_20pct": 0.23579545454545456
+    },
+    "T2_engaged": {
+      "roc_auc": 0.604031789106416,
+      "average_precision": 0.5138143247117277,
+      "brier": 0.24313760904098253,
+      "log_loss": 0.6802796339572401,
+      "lift_top_10pct": 1.2114835164835165,
+      "recall_top_20pct": 0.2571428571428571
+    }
+  },
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "Broker history uses only response_event_at strictly before score_time; the current inquiry response can never enter its own features.",
+    "Laplace smoothing is fixed Beta(1,1) and does not use future/full-dataset target prevalence.",
+    "This is predictive association, not a causal broker-quality estimate.",
+    "T0 has no current spot/broker assignment, so broker-history features are missing there by design."
+  ],
+  "next_experiment": "If broker prior is promising, validate it on a later cohort and test routing causally; otherwise retain broker only as an analysis dimension.",
+  "spec": {
+    "experiment_id": "E027_broker_prior_point_in_time",
+    "parent_experiment": "E005_multihead_vs_specialists",
+    "scoring_time": {
+      "stage": "T0/T1/T2",
+      "timestamp_definition": "T0=leads.created_at; T1=first inquiries.inquiry_at; T2=second and later inquiries.inquiry_at while no scheduled_visit has already occurred"
+    },
+    "target": {
+      "event": "future scheduled_visit response event",
+      "horizon_days": 30,
+      "anchor": "scoring_time",
+      "censoring": "right"
+    },
+    "population": {
+      "eligibility": "Scoring snapshots with a complete 30-day future observation window; T1/T2 are generated only before a known scheduled visit has occurred.",
+      "exclusions": [
+        "Right-censored scoring snapshots.",
+        "Dynamic snapshots after an already observed scheduled visit.",
+        "Current/future broker-response information from model inputs."
+      ],
+      "period": {
+        "start": null,
+        "end": null
+      }
+    },
+    "data_sources": [
+      "data/candidate/csv/leads.csv",
+      "data/candidate/csv/inquiries.csv",
+      "data/candidate/csv/spots.csv",
+      "data/candidate/csv/spot_attributes.csv",
+      "data/candidate/csv/availability_snapshot.csv"
+    ],
+    "metrics": [
+      "roc_auc",
+      "average_precision",
+      "brier",
+      "log_loss",
+      "lift_top_10pct",
+      "recall_top_20pct"
+    ],
+    "segments": [
+      "T0_cold",
+      "T1_first_inquiry",
+      "T2_engaged"
+    ],
+    "question": "Does a strictly historical, smoothed broker performance prior add incremental signal beyond the existing Lead/Inquiry/Spot feature set?",
+    "hypothesis": "A point-in-time broker history prior will improve held-out macro AP without using broker identity or future outcomes.",
+    "primary_change": "add historical broker response/support and smoothed scheduled-visit prior features constructed strictly before each scoring time",
+    "secondary_changes": [
+      "use fixed Laplace Beta(1,1) smoothing rather than full-dataset prevalence",
+      "do not use broker_id as a model feature"
+    ],
+    "features": {
+      "inherited": [
+        "lead_intake_features",
+        "current_inquiry_features",
+        "current_spot_static_features",
+        "lead_spot_compatibility_features",
+        "availability_asof_features",
+        "historical_interactions_asof_features"
+      ],
+      "added": [
+        "broker_hist_responses",
+        "broker_hist_scheduled_visits",
+        "broker_hist_scheduled_rate_laplace",
+        "broker_hist_log_responses",
+        "broker_hist_days_since_first_response"
+      ],
+      "removed": []
+    },
+    "validation": {
+      "strategy": "temporal lead-cohort train/validation/test",
+      "time_column": "leads.created_at",
+      "split_description": "Chronological 70/15/15 split by lead creation; every T0/T1/T2 snapshot for a lead is assigned to the same partition. Validation controls early stopping and calibration; test is untouched until final evaluation."
+    },
+    "leakage": {
+      "check_status": "PASS",
+      "items": [
+        {
+          "element": "inherited_point_in_time_feature_set",
+          "source": "leads + inquiries + spots + spot_attributes + availability_snapshot",
+          "scoring_time": "T0/T1/T2",
+          "information_available_at": "same point-in-time rules as E005",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Inherited unchanged from E005; lead_score_internal, current broker outcome/timing and mutable current-state Spot aggregates remain blocked."
+        },
+        {
+          "element": "broker_hist_responses",
+          "source": "prior inquiries joined to current spot broker",
+          "scoring_time": "T1/T2 inquiry_at",
+          "information_available_at": "response_event_at strictly before score_time",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Cumulative broker event history uses searchsorted side=left; current/future response cannot enter."
+        },
+        {
+          "element": "broker_hist_scheduled_visits",
+          "source": "prior realized broker responses",
+          "scoring_time": "T1/T2 inquiry_at",
+          "information_available_at": "response_event_at strictly before score_time",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Only already-realized historical scheduled_visit events are counted."
+        },
+        {
+          "element": "broker_hist_scheduled_rate_laplace",
+          "source": "prior realized broker responses",
+          "scoring_time": "T1/T2 inquiry_at",
+          "information_available_at": "response_event_at strictly before score_time",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Rate is (scheduled+1)/(responses+2); smoothing prior is fixed and does not use future prevalence."
+        },
+        {
+          "element": "broker_hist_log_responses",
+          "source": "prior realized broker responses",
+          "scoring_time": "T1/T2 inquiry_at",
+          "information_available_at": "response_event_at strictly before score_time",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Log support is derived from the same strictly historical response count."
+        },
+        {
+          "element": "broker_hist_days_since_first_response",
+          "source": "prior realized broker responses",
+          "scoring_time": "T1/T2 inquiry_at",
+          "information_available_at": "response_event_at strictly before score_time",
+          "status": "CONDITIONAL",
+          "condition_satisfied": true,
+          "evidence": "Elapsed time starts at the broker's first already-realized response and ends at current score_time."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "experiment_id": "E025_redundancy_ablation",
+  "parent_experiment": "E005_multihead_vs_specialists",
+  "scoring_time": {
+    "stage": "T0/T1/T2",
+    "timestamp_definition": "T0=leads.created_at; T1=first inquiries.inquiry_at; T2=second and later inquiries.inquiry_at while no scheduled_visit has already occurred"
+  },
+  "target": {
+    "event": "future scheduled_visit response event",
+    "horizon_days": 30,
+    "anchor": "scoring_time",
+    "censoring": "right"
+  },
+  "population": {
+    "eligibility": "Scoring snapshots with a complete 30-day future observation window; T1/T2 are generated only before a known scheduled visit has occurred.",
+    "exclusions": [
+      "Right-censored scoring snapshots.",
+      "Dynamic snapshots after an already observed scheduled visit.",
+      "Current/future broker-response information from model inputs."
+    ],
+    "period": {
+      "start": null,
+      "end": null
+    }
+  },
+  "data_sources": [
+    "data/candidate/csv/leads.csv",
+    "data/candidate/csv/inquiries.csv",
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv",
+    "data/candidate/csv/availability_snapshot.csv"
+  ],
+  "metrics": [
+    "roc_auc",
+    "average_precision",
+    "brier",
+    "log_loss",
+    "lift_top_10pct",
+    "recall_top_20pct"
+  ],
+  "segments": [
+    "T0_cold",
+    "T1_first_inquiry",
+    "T2_engaged"
+  ],
+  "question": "Can deterministic Spot total-price columns be removed without meaningful loss of held-out discrimination?",
+  "hypothesis": "Because Spot total price is almost exactly area multiplied by price per sqm, removing the two raw total-price columns will be non-inferior within 0.01 macro AP/AUC.",
+  "primary_change": "remove deterministic raw Spot total-price columns while holding match ratios and all other features fixed",
+  "secondary_changes": [],
+  "features": {
+    "inherited": [
+      "lead_intake_features",
+      "current_inquiry_features",
+      "current_spot_static_features",
+      "lead_spot_compatibility_features",
+      "availability_asof_features",
+      "historical_interactions_asof_features"
+    ],
+    "added": [],
+    "removed": [
+      "spot_price_total_mxn_rent",
+      "spot_price_total_mxn_sale"
+    ]
+  },
+  "validation": {
+    "strategy": "temporal lead-cohort train/validation/test",
+    "time_column": "leads.created_at",
+    "split_description": "Chronological 70/15/15 split by lead creation; every T0/T1/T2 snapshot for a lead is assigned to the same partition. Validation controls early stopping and calibration; test is untouched until final evaluation."
+  },
+  "leakage": {
+    "check_status": "PASS",
+    "items": [
+      {
+        "element": "inherited_point_in_time_feature_set",
+        "source": "leads + inquiries + spots + spot_attributes + availability_snapshot",
+        "scoring_time": "T0/T1/T2",
+        "information_available_at": "same point-in-time rules as E005",
+        "status": "CONDITIONAL",
+        "condition_satisfied": true,
+        "evidence": "Inherited unchanged from E005; lead_score_internal, current broker outcome/timing and mutable current-state Spot aggregates remain blocked."
+      }
+    ]
+  }
+}

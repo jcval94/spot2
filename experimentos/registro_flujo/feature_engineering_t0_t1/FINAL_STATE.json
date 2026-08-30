@@ -1,0 +1,124 @@
+{
+  "closure_version": "v1",
+  "research_line": "feature_engineering_t0_t1",
+  "status": "CLOSED_DECISION_READY",
+  "decision_date": "2026-08-29",
+  "target": {
+    "experiment": "E028_definitive_opportunity_score_abt",
+    "name": "target_scheduled_visit_30d",
+    "status": "FROZEN",
+    "binary_training_statuses": [
+      "POSITIVE",
+      "NEGATIVE"
+    ],
+    "excluded_statuses": [
+      "AMBIGUOUS_UNKNOWN_EVENT_TIME",
+      "RIGHT_CENSORED",
+      "INELIGIBLE_PRIOR_SCHEDULED_VISIT"
+    ]
+  },
+  "abt": {
+    "experiment": "E030_definitive_abt",
+    "status": "PASS",
+    "grain": "lead_id × stage × score_time",
+    "audit_rows": 20738,
+    "model_ready_rows": 18237,
+    "model_ready_unique_leads": 4648,
+    "model_features": 68,
+    "policy_guardrails": 10,
+    "forbidden_materialized_columns": 0
+  },
+  "stage_policy": {
+    "T0": {
+      "lead_quality": "NEUTRAL_EVIDENCE_BACKED",
+      "active_layers": [
+        "Search Need",
+        "specificity/completeness"
+      ],
+      "usage": [
+        "explanation",
+        "segmentation",
+        "candidate_generation",
+        "operational_rules"
+      ]
+    },
+    "T1": {
+      "lead_quality": "NEUTRAL_EVIDENCE_BACKED",
+      "active_layers": [
+        "Dynamic Need",
+        "Need transition",
+        "Physical",
+        "Location",
+        "Lead-Spot fit"
+      ],
+      "usage": [
+        "matching",
+        "experimental_routing",
+        "explanation",
+        "fallback"
+      ]
+    },
+    "T2": {
+      "lead_quality": "E029_FROZEN_CANDIDATE_PENDING_PROSPECTIVE_GATE",
+      "usage": [
+        "predictive_candidate_after_gate"
+      ]
+    }
+  },
+  "completed_feature_engineering_families": [
+    "scale_log_transforms",
+    "budget_mid_width_specificity",
+    "search_completeness",
+    "geo_specificity",
+    "Search Need",
+    "Dynamic Need",
+    "soft_clusters",
+    "centroid_distances",
+    "Physical profile",
+    "Location profile",
+    "Lead-Spot directional fit",
+    "semantic_interactions",
+    "missingness_patterns",
+    "categorical_frequency",
+    "quantile_bins",
+    "geo_inventory_relative",
+    "preferred_geo_distance",
+    "temporal_smoothed_target_encoding"
+  ],
+  "evidence": {
+    "range": "EV-020 through EV-040",
+    "discoveries": "D060 through D091",
+    "closure": "EV-040_feature_engineering_closure.md",
+    "flow": "experimentos/registro_flujo/feature_engineering_t0_t1/"
+  },
+  "llm_extension": {
+    "experiment": "E039_llm_semantic_inquiry_features",
+    "status": "BLOCKED_BY_DATA_GAP",
+    "blocker": "raw inquiry text unavailable; only message_length exists",
+    "proposed_outputs": [
+      "message_semantics",
+      "lead_spot_semantic_compatibility",
+      "intent_trajectory"
+    ]
+  },
+  "launch_phase_not_blocking_research_closure": [
+    "E029 prospective post-freeze gate",
+    "E028 production A/A",
+    "scheduled_visit backend timestamp completeness >=99.5%"
+  ],
+  "reopen_conditions": [
+    "new raw inquiry text or other genuinely new information",
+    "new commercial target such as close/lease",
+    "new effective-dated market/inventory context",
+    "new canonical preferred geography",
+    "new independent temporal cohort"
+  ],
+  "prohibited_reopen_reasons": [
+    "another K on the same clustering inputs",
+    "more cluster interactions on the same historical holdout",
+    "mass tuning on the same feature space",
+    "additional target encoding on the consumed periods",
+    "reusing E030 test",
+    "synthetic inquiry text generated from structured columns"
+  ]
+}

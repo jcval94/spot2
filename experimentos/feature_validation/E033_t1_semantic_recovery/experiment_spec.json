@@ -1,0 +1,44 @@
+{
+  "experiment_id": "E033_t1_semantic_recovery",
+  "parent_experiments": [
+    "E031_semantic_feature_engineering_ladder",
+    "E030_definitive_abt"
+  ],
+  "status": "PRE_REGISTERED",
+  "question": "Can T1 recover genuine intent signal after removing temporal clocks by representing T0→T1 change, Dynamic Need and Lead×Spot compatibility?",
+  "primary_change": "Freeze the T1 variant selected on validation and evaluate it exactly once on E030 test against neutral and atomic sanitized baselines.",
+  "target": {
+    "name": "target_scheduled_visit_30d",
+    "source": "E028 target_contract.json"
+  },
+  "abt": {
+    "source": "E030_definitive_abt/results/abt_model_ready.csv.gz",
+    "split_unit": "lead_id"
+  },
+  "validation": "One-shot E030 test evaluation at T1; bootstrap over lead_id.",
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN",
+    "items": [
+      {
+        "element": "guardrail_1",
+        "status": "ALLOW",
+        "evidence": "Variant selection uses validation only."
+      },
+      {
+        "element": "guardrail_2",
+        "status": "ALLOW",
+        "evidence": "Dynamic Need and Spot clusters fit train-only outcome-free."
+      },
+      {
+        "element": "guardrail_3",
+        "status": "ALLOW",
+        "evidence": "No inquiry outcome/response timing enters T1 features."
+      },
+      {
+        "element": "guardrail_4",
+        "status": "ALLOW",
+        "evidence": "No temporal clocks/progress."
+      }
+    ]
+  }
+}

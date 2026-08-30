@@ -1,0 +1,30 @@
+{
+  "T0_cold": {
+    "stage": "T0_cold",
+    "variant": "missingness_frequency",
+    "folds": 3,
+    "mean_auc": 0.4978776748473688,
+    "min_auc": 0.4741452991452992,
+    "mean_ap": 0.38096955599285504,
+    "mean_ap_over_prevalence": 0.9865269181933417,
+    "min_ap_over_prevalence": 0.9333486025267059,
+    "mean_lift10": 0.8701400891877081,
+    "min_lift10": 0.7076923076923077,
+    "folds_auc_gt_05": 1,
+    "status": "NO_DEV_SIGNAL"
+  },
+  "T1_first_inquiry": {
+    "stage": "T1_first_inquiry",
+    "variant": "geo_inventory_relative",
+    "folds": 3,
+    "mean_auc": 0.5000786690298991,
+    "min_auc": 0.4933089114832536,
+    "mean_ap": 0.4172360501363206,
+    "mean_ap_over_prevalence": 1.0282900846890153,
+    "min_ap_over_prevalence": 0.9753870737981215,
+    "mean_lift10": 1.0586997211484583,
+    "min_lift10": 0.9756097560975611,
+    "folds_auc_gt_05": 1,
+    "status": "WEAK_DEV_SIGNAL"
+  }
+}

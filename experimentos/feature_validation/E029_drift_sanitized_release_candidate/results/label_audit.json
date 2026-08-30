@@ -1,0 +1,11 @@
+{
+  "all_snapshots_before_canonical_filter": 19715,
+  "eligible_t2_snapshots": 9067,
+  "eligible_t2_unique_leads": 3328,
+  "first_t2_unique_leads": 3328,
+  "positive_rate_t2_all": 0.3324142494761222,
+  "positive_rate_first_t2": 0.38912259615384615,
+  "target_observation_end": "2026-07-14 13:01:24",
+  "ambiguous_rows_all_stages": 1478,
+  "ambiguous_share_all_stages": 0.0749682982500634
+}

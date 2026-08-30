@@ -1,0 +1,55 @@
+{
+  "experiment_id": "E039_llm_semantic_inquiry_features",
+  "status": "BLOCKED_BY_DATA_GAP",
+  "parent_experiments": [
+    "E030_definitive_abt",
+    "E031_semantic_feature_engineering_ladder",
+    "E033_t1_semantic_recovery",
+    "E038_stage_aware_feature_policy"
+  ],
+  "question": "Does raw inquiry language add incremental, point-in-time signal for T1/T2 LeadQuality and Lead×Spot matching beyond structured inquiry fields?",
+  "blocker": {
+    "type": "MISSING_SOURCE_FIELD",
+    "required_field": "inquiry_message_text",
+    "current_proxy_only": "message_length",
+    "evidence": "Repository inquiry schema contains message_length but no raw message text field."
+  },
+  "proposed_outputs": [
+    "message_semantics",
+    "lead_spot_semantic_compatibility",
+    "intent_trajectory"
+  ],
+  "target": {
+    "name": "target_scheduled_visit_30d",
+    "source": "E028 target contract",
+    "change": "none"
+  },
+  "abt": {
+    "source": "E030",
+    "proposed_role": "llm_semantic_feature",
+    "stages": [
+      "T1_first_inquiry",
+      "T2_engaged"
+    ]
+  },
+  "validation": {
+    "phase_1": "Extraction quality against human-reviewed text labels; no conversion target.",
+    "phase_2": "Incremental predictive ablation vs atomic structured baseline.",
+    "phase_3": "Lead×Spot semantic compatibility evaluation.",
+    "phase_4": "T2 trajectory incremental evaluation.",
+    "independent_confirmation": "Required on a new temporal cohort because E030 test is already consumed."
+  },
+  "leakage": {
+    "check_status": "PASS_BY_DESIGN_PENDING_DATA",
+    "forbidden_inputs": [
+      "broker_response",
+      "broker_response_hours",
+      "future inquiries",
+      "future availability",
+      "scheduled_visit outcome",
+      "any field realized after score_time"
+    ],
+    "T1_rule": "Only current first inquiry message and information observable at first inquiry score_time.",
+    "T2_rule": "Only messages with inquiry_at <= score_time; no future message may enter trajectory."
+  }
+}

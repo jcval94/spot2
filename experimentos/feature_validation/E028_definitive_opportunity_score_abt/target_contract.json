@@ -1,0 +1,72 @@
+{
+  "contract_version": "v1",
+  "offline_target": {
+    "name": "target_scheduled_visit_30d",
+    "grain": "lead_id × scoring_time",
+    "anchor": "score_time",
+    "event": "broker_response == scheduled_visit",
+    "event_time": "response_event_at",
+    "interval": "(score_time, score_time + 30 days]",
+    "horizon_days": 30,
+    "eligible_if": [
+      "no known scheduled_visit with response_event_at <= score_time",
+      "score_time <= observation_end - 30 days",
+      "all features are observable at or before score_time"
+    ],
+    "statuses": {
+      "POSITIVE": "known unique scheduled_visit event inside the interval",
+      "NEGATIVE": "full 30-day maturation and no known/ambiguous event that could be inside the interval",
+      "AMBIGUOUS_UNKNOWN_EVENT_TIME": "scheduled_visit exists but event time is unknown and could intersect the target interval",
+      "INELIGIBLE_PRIOR_SCHEDULED_VISIT": "known scheduled_visit already occurred at or before score_time",
+      "RIGHT_CENSORED": "less than 30 complete days are observable after score_time"
+    },
+    "binary_training_population": [
+      "POSITIVE",
+      "NEGATIVE"
+    ],
+    "ambiguous_policy": "exclude; never coerce to 0",
+    "censoring_policy": "exclude; never coerce to 0",
+    "split_unit": "lead_id",
+    "resampling_unit": "lead_id"
+  },
+  "online_primary_outcome": {
+    "name": "lead_scheduled_visit_30d_from_assignment",
+    "grain": "one row per randomized lead_id",
+    "anchor": "assignment_at",
+    "event": "unique backend scheduled_visit",
+    "event_time": "actual backend response_event_at",
+    "interval": "(assignment_at, assignment_at + 30 days]",
+    "horizon_days": 30,
+    "aggregation": "MAX(event_indicator) after technical-event deduplication",
+    "denominator": "all eligible randomized leads (intention-to-treat), including scoring/fallback failures",
+    "maturation": "analyzed only after 30×24 complete hours",
+    "assignment_rules": [
+      "assignment persisted in UTC before experimental scoring/routing",
+      "first experiment_id × lead_id assignment wins",
+      "assignment is immutable/sticky",
+      "cross-arm assignment is invalid"
+    ]
+  },
+  "production_data_quality": {
+    "scheduled_visit_event_time_completeness_min": 0.995,
+    "missing_event_time": "instrumentation blocker; never negative",
+    "duplicate_events": "deduplicate using backend event id; deterministic key must be frozen if no id exists",
+    "timezone": "UTC"
+  },
+  "prohibited_inputs": [
+    "current/future broker response of the scored inquiry",
+    "broker_response_hours of the scored inquiry",
+    "future scheduled_visit except as label",
+    "lead_score_internal",
+    "days_on_market current-state historical value",
+    "total_views current-state historical value",
+    "total_inquiries current-state historical value",
+    "is_active current-state historical value",
+    "Market Context without publication/effective-time semantics"
+  ],
+  "online_estimand": {
+    "name": "ATE_30d_ITT_risk_difference",
+    "formula": "P(Y=1 | assigned Treatment) - P(Y=1 | assigned Control)",
+    "scale": "absolute percentage points"
+  }
+}

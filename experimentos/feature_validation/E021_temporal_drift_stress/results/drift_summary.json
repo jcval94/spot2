@@ -1,0 +1,13 @@
+{
+  "n_folds": 4,
+  "positive_rate_min": 0.3539926606191666,
+  "positive_rate_max": 0.4780491678647189,
+  "positive_rate_range": 0.12405650724555228,
+  "roc_auc_min": 0.5534668989918122,
+  "roc_auc_max": 0.5718005050941545,
+  "roc_auc_range": 0.018333606102342248,
+  "ap_over_prevalence_min": 1.0686062452122969,
+  "ap_over_prevalence_max": 1.1555936500401223,
+  "max_psi": 2.824461802753233,
+  "median_psi": 0.006159353827616552
+}

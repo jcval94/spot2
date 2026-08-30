@@ -1,0 +1,45 @@
+{
+  "experiment_id": "E027_broker_prior_point_in_time",
+  "metrics": {
+    "roc_auc": 0.5578206664218615,
+    "average_precision": 0.5190121487797786,
+    "brier": 0.24553681117837386,
+    "log_loss": 0.6844128314654263,
+    "lift_top_10pct": 1.0788122804619353,
+    "recall_top_20pct": 0.22745111782368052
+  },
+  "segment_metrics": {
+    "T0_cold": {
+      "roc_auc": 0.46965453554559766,
+      "average_precision": 0.47035967253648625,
+      "brier": 0.2505962760205188,
+      "log_loss": 0.6943419646640668,
+      "lift_top_10pct": 0.7767390391880031,
+      "recall_top_20pct": 0.1894150417827298
+    },
+    "T1_first_inquiry": {
+      "roc_auc": 0.5997756746135708,
+      "average_precision": 0.5728624490911219,
+      "brier": 0.24287654847362022,
+      "log_loss": 0.678616895774972,
+      "lift_top_10pct": 1.2482142857142857,
+      "recall_top_20pct": 0.23579545454545456
+    },
+    "T2_engaged": {
+      "roc_auc": 0.604031789106416,
+      "average_precision": 0.5138143247117277,
+      "brier": 0.24313760904098253,
+      "log_loss": 0.6802796339572401,
+      "lift_top_10pct": 1.2114835164835165,
+      "recall_top_20pct": 0.2571428571428571
+    }
+  },
+  "conclusion": "INCONCLUSIVE",
+  "caveats": [
+    "Broker history uses only response_event_at strictly before score_time; the current inquiry response can never enter its own features.",
+    "Laplace smoothing is fixed Beta(1,1) and does not use future/full-dataset target prevalence.",
+    "This is predictive association, not a causal broker-quality estimate.",
+    "T0 has no current spot/broker assignment, so broker-history features are missing there by design."
+  ],
+  "next_experiment": "If broker prior is promising, validate it on a later cohort and test routing causally; otherwise retain broker only as an analysis dimension."
+}

@@ -1,0 +1,71 @@
+{
+  "stage": "T1_first_inquiry",
+  "selected_variant": "semantic_interactions",
+  "status": "NOT_RECOVERED",
+  "candidate_metrics": {
+    "n": 672,
+    "positive_rate": 0.5297619047619048,
+    "roc_auc": 0.4637231546010525,
+    "average_precision": 0.5094653786225287,
+    "ap_over_prevalence": 0.961687456276234,
+    "brier": 0.2582275222519713,
+    "log_loss": 0.7097895699207245,
+    "lift_top_10pct": 0.8327825512227363,
+    "recall_top_20pct": 0.1601123595505618
+  },
+  "atomic_baseline_metrics": {
+    "n": 672,
+    "positive_rate": 0.5297619047619048,
+    "roc_auc": 0.4974754657943393,
+    "average_precision": 0.5244674373229039,
+    "ap_over_prevalence": 0.9900059491039085,
+    "brier": 0.2543479796907144,
+    "log_loss": 0.7018838642788632,
+    "lift_top_10pct": 0.9438202247191011,
+    "recall_top_20pct": 0.1853932584269663
+  },
+  "candidate_bootstrap": {
+    "roc_auc": {
+      "point": 0.4637231546010525,
+      "ci95_low": 0.4212902025180674,
+      "ci95_high": 0.5030658391950409
+    },
+    "average_precision": {
+      "point": 0.5094653786225287,
+      "ci95_low": 0.46352202875179543,
+      "ci95_high": 0.5619320275617412
+    },
+    "ap_over_prevalence": {
+      "point": 0.961687456276234,
+      "ci95_low": 0.906813477188978,
+      "ci95_high": 1.0301181855497445
+    },
+    "lift_top_10pct": {
+      "point": 0.8327825512227363,
+      "ci95_low": 0.6477557300849496,
+      "ci95_high": 1.0923076923076922
+    }
+  },
+  "delta_vs_atomic": {
+    "roc_auc": {
+      "point_delta": -0.03375231119328681,
+      "ci95_low": -0.06639623514970226,
+      "ci95_high": -0.002184112655672396,
+      "probability_gt_0": 0.014
+    },
+    "average_precision": {
+      "point_delta": -0.015002058700375187,
+      "ci95_low": -0.04468800799136411,
+      "ci95_high": 0.009949593903823271,
+      "probability_gt_0": 0.136
+    },
+    "lift_top_10pct": {
+      "point_delta": -0.11103767349636484,
+      "ci95_low": -0.32848385006340103,
+      "ci95_high": 0.10786407027187525,
+      "probability_gt_0": 0.12
+    }
+  },
+  "n_cat": 42,
+  "n_num": 97
+}
