@@ -1,0 +1,44 @@
+{
+  "phase": "PROMPT_8",
+  "status": "COMPLETE",
+  "pre_p8_gate": "PASS",
+  "p4_validation_mode": "INDEPENDENT_RAW_EQUIVALENCE_AUDIT",
+  "t1_changed": false,
+  "t1_champion": "BASE_RATE + RAW",
+  "t0": {
+    "target": "T0_30D_INQUIRY_INITIATION_PROGRESS_V1",
+    "decision": "NEUTRAL_EVIDENCE_BACKED",
+    "model_ready_rows": 4710,
+    "selected_model": "T0_BASE_RATE / cold-start prior only"
+  },
+  "t2": {
+    "target": "T2_CURRENT_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+    "decision": "FUTURE_EXTENSION",
+    "model_ready_rows": 9635,
+    "macro_delta_ap": 0.00500073431594767,
+    "positive_ap_folds": 3,
+    "strict_history_violations": 0,
+    "response_history_predictor_used": false
+  },
+  "numerical_incident": {
+    "id": "P8-NUM-001",
+    "first_run_authoritative": false,
+    "correction": "Same frozen L2 Logistic comparisons rerun with stable fixed FTRL optimizer",
+    "model_or_feature_search_opened": false
+  },
+  "procedural_holdout_used_for_p8_selection": false,
+  "next_phase": "P9 Inventory / Fallback / Opportunity Score",
+  "authoritative_outputs": [
+    "models/t0/RESULT.json",
+    "models/t0/metrics.csv",
+    "models/t0/exposure_drift.csv",
+    "models/t2/RESULT.json",
+    "models/t2/metrics.csv",
+    "models/t2/fold_deltas.csv",
+    "models/t2/boundary_audit.csv",
+    "evidence/T0_EXPOSURE_DRIFT.md",
+    "evidence/T2_TRAJECTORY_DECISION.md",
+    "evidence/STAGE_COMPARISON.md",
+    "evidence/P8_NUMERICAL_INCIDENT.md"
+  ]
+}
