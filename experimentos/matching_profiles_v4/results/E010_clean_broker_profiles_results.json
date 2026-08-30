@@ -3,7 +3,7 @@
   "metrics": {
     "roc_auc": 0.5015420879313406,
     "average_precision": 0.20755827869231536,
-    "brier": 0.16535784570990544,
+    "brier": 0.16535784570990547,
     "log_loss": 0.5135579571481228,
     "lift_top_10pct": 0.9479876219408645,
     "recall_top_20pct": 0.1908315565031983,
@@ -25,11 +25,11 @@
     "delta_ap_low": -0.00686030430322959,
     "delta_ap_high": 0.008431632608114827,
     "delta_ap_p_positive": 0.5325,
-    "delta_lift10": -0.10187832783377494,
+    "delta_lift10": -0.10193042784734666,
     "delta_lift10_low": -0.2641018787476779,
     "delta_lift10_high": 0.06194546866240371,
     "delta_lift10_p_positive": 0.09,
-    "delta_recall20": -0.014295264630856388,
+    "delta_recall20": -0.014292849830940826,
     "delta_recall20_low": -0.0357142857142857,
     "delta_recall20_high": 0.0075604212249339425,
     "delta_recall20_p_positive": 0.0775
