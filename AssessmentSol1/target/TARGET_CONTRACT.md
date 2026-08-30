@@ -112,3 +112,12 @@ It can change only after a **target contract version bump** caused by:
 - discovered label-construction defect.
 
 It cannot change because another target yields higher AUC/AP/Lift.
+
+
+## Input-information assumption: spot_attributes
+
+For downstream T1/T2 feature construction, this assessment explicitly assumes `spot_attributes` are immutable over the lifetime of a Spot. They are therefore historically authorized when `spots.created_at <= score_time`.
+
+The raw table still has no attribute-level timestamp. This is a declared assumption, not inferred temporal provenance.
+
+This assumption **does not affect the P2 target bake-off or labels**: Targets A/B/C are constructed from lead/inquiry timing and outcome fields, not from `spot_attributes`.
