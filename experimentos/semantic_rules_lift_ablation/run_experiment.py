@@ -300,13 +300,15 @@ def bootstrap_deltas(oof: pd.DataFrame, fold_metrics: pd.DataFrame) -> pd.DataFr
                 if g.empty:
                     continue
                 y = g[TARGET].to_numpy(dtype=int)
+                try:
+                    base_metrics = metrics(y, g["baseline"].to_numpy(dtype=float))
+                    rule_metrics = metrics(y, g["semantic_rules"].to_numpy(dtype=float))
+                except ValueError:
+                    continue
                 for metric in metric_names:
-                    try:
-                        base = metrics(y, g["baseline"].to_numpy(dtype=float))[metric]
-                        rules = metrics(y, g["semantic_rules"].to_numpy(dtype=float))[metric]
-                    except ValueError:
-                        continue
-                    fold_scope_deltas[(stage, metric)].append(rules - base)
+                    fold_scope_deltas[(stage, metric)].append(
+                        rule_metrics[metric] - base_metrics[metric]
+                    )
 
         for stage in STAGES.values():
             for metric in metric_names:
