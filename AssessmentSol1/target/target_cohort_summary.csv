@@ -1,0 +1,11 @@
+target_option,stage,horizon_days,maturity_buffer_days,semantics,total,labeled,positive,negative,ambiguous,censored,cohort_coverage,prevalence,months_ge_50,monthly_prevalence_sd_pp,monthly_prevalence_range_pp
+A,T1,,7,first inquiry eventually recorded scheduled_visit,5000,4994,1017,3977,0,6,0.9988,0.20364437324789747,18,1.6587575414670024,7.397543551823535
+A,T1,,14,first inquiry eventually recorded scheduled_visit,5000,4953,1008,3945,0,47,0.9906,0.20351302241066022,18,1.6557223316471266,7.397543551823535
+A,T1,,30,first inquiry eventually recorded scheduled_visit,5000,4794,981,3813,0,206,0.9588,0.204630788485607,18,1.7419441970773022,7.397543551823535
+B,T1,30,0,"timed scheduled_visit event in (score_time, score_time+30d]",5000,4555,1895,2660,239,206,0.911,0.41602634467618005,18,7.69696608229303,29.088302752293576
+B,T1,30,7,"timed scheduled_visit event in (score_time, score_time+30d]",5000,4494,1861,2633,235,271,0.8988,0.41410769915442813,17,7.028144102870961,26.345338983050855
+B,T1,30,14,"timed scheduled_visit event in (score_time, score_time+30d]",5000,4436,1829,2607,234,330,0.8872,0.41230838593327324,17,7.040241086514362,26.458333333333332
+B,T1,30,30,"timed scheduled_visit event in (score_time, score_time+30d]",5000,4269,1743,2526,226,505,0.8538,0.40829234012649335,17,7.339580289963441,29.057203389830505
+C,T1,30,7,an inquiry initiated within 30d eventually recorded scheduled_visit,5000,4729,2097,2632,0,271,0.9458,0.4434341298371749,17,6.886238980266881,26.251158480074142
+C,T1,30,14,an inquiry initiated within 30d eventually recorded scheduled_visit,5000,4670,2064,2606,0,330,0.934,0.44197002141327624,17,6.906506643646339,26.44219261150562
+C,T1,30,30,an inquiry initiated within 30d eventually recorded scheduled_visit,5000,4495,1970,2525,0,505,0.899,0.4382647385984427,17,7.265785993289025,29.537045821079587
