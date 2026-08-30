@@ -36,7 +36,8 @@ jobs:
       - name: Build free semantic rule sidecar
         run: python experimentos/llm_semantic_feature_pilot/build_rule_sidecar.py
 
-      - name: Run exactly the 100-record API pilot when key exists
+      - name: Run exactly the 100-record API pilot when manually dispatched
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
           if [ -z "$OPENAIKEY" ]; then
