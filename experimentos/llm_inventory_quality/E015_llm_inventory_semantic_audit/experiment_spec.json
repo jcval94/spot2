@@ -1,0 +1,41 @@
+{
+  "experiment_id": "E015_llm_inventory_semantic_audit",
+  "experiment_type": "semantic_data_quality",
+  "parent_experiment": null,
+  "question": "Does an LLM add useful semantic inconsistency detection beyond a deterministic rules baseline when auditing listing copy against structured inventory attributes?",
+  "hypothesis": "Rules + LLM increases actionable issue recall relative to Rules-only while preserving high precision on a human-labeled holdout.",
+  "primary_change": "introduce semantic claim extraction and contradiction auditing over spots.title/description against spot_attributes",
+  "data_sources": [
+    "data/candidate/csv/spots.csv",
+    "data/candidate/csv/spot_attributes.csv"
+  ],
+  "arms": [
+    "rules_only",
+    "llm_only",
+    "rules_plus_llm"
+  ],
+  "gold_standard": "human review; another LLM is not the primary judge",
+  "metrics": [
+    "precision",
+    "recall",
+    "f1",
+    "false_positive_rate",
+    "incremental_recall_vs_rules",
+    "schema_valid_rate",
+    "abstention_rate",
+    "latency_p50_ms",
+    "latency_p95_ms",
+    "input_tokens",
+    "output_tokens"
+  ],
+  "status": "PARTIAL_OFFLINE_COMPLETE",
+  "go_no_go": {
+    "validation_targets": {
+      "critical_precision_min": 0.90,
+      "incremental_recall_pp_min": 10,
+      "schema_valid_rate_min": 0.99
+    },
+    "note": "Thresholds are design targets to freeze before final labeled holdout evaluation; they are not observed results."
+  },
+  "governance_note": "The shared Spot2 classification harness is not used because its mandatory AUC/AP/Brier contract is not semantically valid for a data-quality audit. Evidence and reproducibility remain registered through the experiment sandbox."
+}
