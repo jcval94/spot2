@@ -8,7 +8,7 @@
     "T2_BASELINE",
     "T2_TRAJECTORY"
   ],
-  "model_family": "L2 logistic with fixed FTRL optimizer; no tuning",
+  "model_family": "L2 logistic with fixed stable FTRL optimizer; no tuning",
   "baseline_information": "intake + current inquiry payload + deterministic current-vs-intake refinement",
   "trajectory_information": "33 registered strict-prior inquiry-payload trajectory features",
   "response_history_predictor_used": false,
@@ -17,26 +17,26 @@
   "future_snapshot_test": "PASS_NOT_IN_INFORMATION_SET",
   "macro": {
     "T2_BASELINE": {
-      "roc_auc": 0.4860690367734116,
-      "average_precision": 0.18071213622982185,
-      "brier": 0.1524690249432543,
-      "log_loss": 0.48450828689454406,
+      "roc_auc": 0.4860000961,
+      "average_precision": 0.1864213331,
+      "brier": 0.1514008811,
+      "log_loss": 0.4814202423,
       "validation_n": 3298
     },
     "T2_TRAJECTORY": {
-      "roc_auc": 0.490801564372334,
-      "average_precision": 0.18571287054576952,
-      "brier": 0.15297348859410348,
-      "log_loss": 0.48614558386472084,
+      "roc_auc": 0.489797754,
+      "average_precision": 0.1895872333,
+      "brier": 0.1516244876,
+      "log_loss": 0.482000038,
       "validation_n": 3298
     }
   },
   "deltas": {
-    "average_precision": 0.00500073431594767,
-    "roc_auc": 0.004732527598922398,
-    "brier": 0.0005044636508491715,
-    "log_loss": 0.0016372969701767793,
-    "folds_positive_ap": 3,
+    "average_precision": 0.0031659002,
+    "roc_auc": 0.0037976579,
+    "brier": 0.0002236064,
+    "log_loss": 0.0005797957,
+    "folds_positive_ap": 2,
     "folds_total": 4
   },
   "promotion_rule": {
@@ -47,7 +47,7 @@
     "operational_interpretability_required": true
   },
   "promotion_passed": false,
-  "bootstrap_status": "NOT_REQUIRED_FOR_NON_PROMOTION_AFTER_HARD_DELTA_AP_GATE_FAILED",
+  "bootstrap_status": "NOT_DECISION_CRITICAL_AFTER_TWO_NECESSARY_PROMOTION_CONDITIONS_FAILED",
   "decision": "FUTURE_EXTENSION",
-  "interpretation": "Trajectory may contain weak incremental signal, especially in the latest fold, but the effect is too small and not stable enough to justify a deployed T2 model."
+  "interpretation": "Trajectory contains at most weak incremental signal; effect size and fold stability do not justify a deployed T2 model."
 }
