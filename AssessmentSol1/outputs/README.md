@@ -1,5 +1,14 @@
-# Outputs
+# Outputs — current status
 
-No scientific output is produced in PROMPT 0.
+Raw-derived AssessmentSol1 outputs live here.
 
-Later machine-readable outputs generated from raw data will live here. Historical outputs from `experimentos/**` will not be copied in as runtime inputs.
+Current EDA evidence includes:
+- population and numeric summaries;
+- monthly T1 development;
+- temporal drift metrics;
+- Availability/candidate-depth evidence;
+- T1 proxy rates by segment;
+- Market Context narrative highlights;
+- pre-P8 temporal/Availability sensitivity audit.
+
+Historical `experimentos/**` outputs are never runtime inputs.
