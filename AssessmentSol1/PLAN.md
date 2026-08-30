@@ -15,9 +15,11 @@ Re-profiled all six raw tables from scratch; validated CSV↔Parquet parity, phy
 
 Gate: every raw column has explicit event/observation/effective-time semantics or is blocked/EDA-only.
 
-## P2 — Target contract
+## P2 — Target contract — COMPLETE
 
-Pre-register candidate business target(s) from product meaning, observability and timestamp quality — never by which target gives the best model performance. Implement ambiguity/right-censoring tests from raw data.
+Compared Target A (first-inquiry eventual scheduled_visit), Target B (E028-style 30d reconstructed response event), and Target C (30d inquiry-initiation progress) without training a model or using AUC/AP/Lift. Frozen the primary T1 target as `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1` with a 14-day historical maturity buffer. T0 has a separate secondary progress estimand; T2 outcome semantics are frozen but its point-in-time cohort gate is deferred to the ABT phase.
+
+Gate: target estimand and maturity are frozen before FE/modeling and may not be changed because another target later gives better model performance.
 
 ## P3 — Splits and research-contamination-aware evaluation
 
