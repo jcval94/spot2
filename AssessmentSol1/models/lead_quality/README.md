@@ -1,16 +1,59 @@
-# Lead Quality T1 modeling
+# Lead Quality T1 — PROMPT 7 closed
 
-T1 is the principal predictive product.
+## Frozen champion
 
-The modeling pipeline is deliberately narrow:
+**BASE_RATE + PLATT**
 
-1. Base-rate baseline.
-2. Fixed interpretable business rule.
-3. L2 Logistic Regression.
-4. CatBoost as the only primary nonlinear challenger.
+Raw score = DEVELOPMENT prevalence: **0.2037546**.  
+Calibrated score = **0.2082788**.
 
-Feature families and ablations are frozen in `../../features/ablation_plan.json`. Promotion is frozen in `MODEL_PROMOTION_RULE.json`.
+This is an evidence-backed neutral prior, not a lead-ranking model.
 
-No script may evaluate `PROCEDURAL_HOLDOUT` unless `FROZEN_MODEL_CONFIG.json` already exists with `status = FROZEN`. Development and calibration outputs are physically separated from procedural-holdout predictions.
+## Why
 
-The code is designed to rebuild P4 ABTs/features from raw data before fitting; it never consumes historical `experimentos/**` matrices, predictions, models or preprocessors.
+No learned model demonstrated defensible superiority under the frozen temporal CV protocol. Logistic A had a modest AP point improvement but its paired IC95% crossed zero, Brier was reliably worse, and Lift@10% did not improve. CatBoost failed the pre-registered promotion rule.
+
+See:
+- `MODEL_SELECTION.md`
+- `MODEL_CARD.md`
+- `CALIBRATION.md`
+- `ERROR_ANALYSIS.md`
+- `FROZEN_MODEL_CONFIG.json`
+
+## Reproducibility
+
+`train.py`:
+- rebuilds DEVELOPMENT features;
+- runs Base Rate and the fixed business rule;
+- runs Logistic A/B/C/D/E only from the frozen ablation plan;
+- selects the core using Logistic;
+- trains CatBoost only on the selected core;
+- applies paired lead bootstrap;
+- applies the terminal baseline gate.
+
+`calibration.py`:
+- uses CALIBRATION only;
+- compares raw, Platt and eligible isotonic;
+- freezes the selected configuration.
+
+`interpretability.py`:
+- correctly reports that the frozen champion has no feature importance;
+- supports learned-model diagnostic interpretation when a model artifact is supplied.
+
+## Holdout integrity
+
+The June procedural holdout is **not pristine**. A temporary execution export encoded its target before freeze. The incident is recorded in `HOLDOUT_INCIDENT.md` and the holdout is considered consumed.
+
+The stored June predictions/metrics are therefore `DIAGNOSTIC_ONLY_NON_PRISTINE` and cannot change the champion.
+
+## Authoritative outputs
+
+- `metrics/development_fold_metrics.csv`
+- `metrics/development_macro_metrics.csv`
+- `metrics/bootstrap_comparisons.csv`
+- `metrics/calibration_metrics.csv`
+- `predictions/champion_development_oof.csv`
+- `predictions/calibration_predictions.csv`
+- `predictions/procedural_holdout_predictions.csv`
+
+True confirmatory performance requires new/hidden data.
