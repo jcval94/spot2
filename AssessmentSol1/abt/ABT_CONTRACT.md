@@ -107,7 +107,7 @@ Kept outside the primary LeadQuality feature set. Matching includes:
 
 Kept outside the primary LeadQuality feature set. Inventory includes:
 
-- Spot physical attributes under the frozen immutability assumption;
+- Spot physical attributes under the explicit AssessmentSol1 immutability assumption;
 - backward-as-of Availability state;
 - snapshot freshness/coverage semantics.
 
@@ -121,7 +121,7 @@ A candidate Spot can exist only if:
 
 `spots.created_at <= score_time`.
 
-Structural fields used for candidate policy/matching remain under the P3 business-semantics assumption that they describe the Spot from creation:
+Structural fields used for candidate policy/matching remain under an explicit **AssessmentSol1 structural-invariance assumption** that they describe the Spot from creation. This is not source-proven version history:
 
 - sector/type;
 - state/municipality/settlement/corridor/region;
