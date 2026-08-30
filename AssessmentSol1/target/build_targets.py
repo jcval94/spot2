@@ -369,12 +369,18 @@ def summarize_config(
 
     positives = sum(label for _, label in labeled)
     total = len(grouped)
+    semantics = {
+        "A": "first inquiry eventually recorded scheduled_visit",
+        "B": "timed scheduled_visit event in (score_time, score_time+30d]",
+        "C": "an inquiry initiated within 30d eventually recorded scheduled_visit",
+    }[target_option]
     result = {
         "target_option": target_option,
         "stage": "T1",
         "horizon_days": (
             None if target_option == "A" else 30
         ),
+        "semantics": semantics,
         "maturity_buffer_days": maturity_buffer_days,
         "total": total,
         "labeled": len(labeled),
