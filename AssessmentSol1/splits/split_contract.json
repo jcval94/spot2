@@ -1,0 +1,71 @@
+{
+  "version": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "frozen_before_feature_engineering": true,
+  "split_anchor": "T1 deterministic first inquiry score_time",
+  "timezone": "UTC",
+  "development_end_exclusive": "2026-05-01T00:00:00Z",
+  "calibration_start": "2026-05-01T00:00:00Z",
+  "calibration_end_exclusive": "2026-06-01T00:00:00Z",
+  "procedural_holdout_start": "2026-06-01T00:00:00Z",
+  "procedural_holdout_end_exclusive": "2026-07-01T00:00:00Z",
+  "post_holdout_audit_start": "2026-07-01T00:00:00Z",
+  "folds": [
+    {
+      "id": "F1",
+      "train_score_time_lt": "2025-09-01T00:00:00Z",
+      "validation_start": "2025-09-01T00:00:00Z",
+      "validation_end_exclusive": "2025-11-01T00:00:00Z"
+    },
+    {
+      "id": "F2",
+      "train_score_time_lt": "2025-11-01T00:00:00Z",
+      "validation_start": "2025-11-01T00:00:00Z",
+      "validation_end_exclusive": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "F3",
+      "train_score_time_lt": "2026-01-01T00:00:00Z",
+      "validation_start": "2026-01-01T00:00:00Z",
+      "validation_end_exclusive": "2026-03-01T00:00:00Z"
+    },
+    {
+      "id": "F4",
+      "train_score_time_lt": "2026-03-01T00:00:00Z",
+      "validation_start": "2026-03-01T00:00:00Z",
+      "validation_end_exclusive": "2026-05-01T00:00:00Z"
+    }
+  ],
+  "holdout_policy": "No label, metric, EDA slice, feature selection, ablation, model selection, hyperparameter selection, or calibrator selection may use PROCEDURAL_HOLDOUT before FROZEN_MODEL_CONFIG.json exists.",
+  "t2_boundary_policy": "For each fold, training T2 rows require the lead to belong to the fold training cohort AND current score_time < validation_start. Validation T2 rows require the lead to belong to the fold validation cohort AND validation_start <= current score_time < validation_end. Later T2 rows never flow backward across the boundary.",
+  "counts": {
+    "primary": {
+      "DEVELOPMENT": 4368,
+      "PROCEDURAL_HOLDOUT": 290,
+      "CALIBRATION": 312,
+      "POST_HOLDOUT_AUDIT": 30
+    },
+    "folds": {
+      "F1": {
+        "TRAIN": 1978,
+        "VALIDATION": 607,
+        "NOT_USED": 2415
+      },
+      "F2": {
+        "TRAIN": 2585,
+        "VALIDATION": 602,
+        "NOT_USED": 1813
+      },
+      "F3": {
+        "TRAIN": 3187,
+        "VALIDATION": 578,
+        "NOT_USED": 1235
+      },
+      "F4": {
+        "TRAIN": 3765,
+        "VALIDATION": 603,
+        "NOT_USED": 632
+      }
+    }
+  },
+  "labels_inspected_for_freeze": false
+}
