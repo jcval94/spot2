@@ -1,5 +1,5 @@
 {
-  "contract_version": "P2-target-v1",
+  "contract_version": "P2-target-v1.1",
   "frozen_at": "2026-08-30",
   "decision_basis": [
     "business_semantics",
@@ -202,5 +202,17 @@
       "labeling defect discovered"
     ],
     "required_process_for_change": "Create a new target contract version, rerun the non-model bake-off, document the estimand change, and never back-select based on model Lift/AUC/AP."
+  },
+  "input_information_assumptions": {
+    "spot_attributes": {
+      "immutable": true,
+      "authorized_at": [
+        "T1",
+        "T2"
+      ],
+      "condition": "spots.created_at <= score_time",
+      "raw_attribute_timestamp_present": false,
+      "impact_on_target_selection": "NONE; target labels do not depend on spot_attributes"
+    }
   }
 }
