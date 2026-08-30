@@ -56,6 +56,7 @@ Este documento consolida lo aprendido hasta ahora sin ocultar resultados negativ
 | D048 | SUPPORTED | La transición Need T0→T1 es asimétrica: N1/renta permanece DN1 en 99.8%, mientras N2/N3 se fragmentan en regímenes de presupuesto/área. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D049 | NOT_SUPPORTED | Ningún stack nuevo demuestra ser reemplazo global de E007: mejora lift puntual, pero E007 conserva el mejor AP y ranking lead-level sin delta robusto en contra. | [EV-013](../Evidencias/EV-013_matching_profiles_v4.md) |
 | D050 | PROPOSAL | El mejor uso LLM actualmente justificable es auditar consistencia semántica entre el copy de listings y sus atributos estructurados; debe superar un baseline Rules-only antes de integrarse al negocio. | [EV-014](../Evidencias/EV-014_llm_inventory_quality.md) |
+| D051 | SUPPORTED | El copy sintético es extremadamente templated (12 oraciones únicas; 84.4% de filas reutilizan descripción exacta) y Rules-only ya marca 322/3,000 spots como candidatos, por lo que el LLM enfrenta un baseline fuerte. | [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md) |
 
 ## D001 — El modelo debe ser dinámico
 
@@ -1023,3 +1024,30 @@ En cambio, `spots.title` y `spots.description` sí contienen lenguaje libre. Un 
 
 Evidencia: [EV-014](../Evidencias/EV-014_llm_inventory_quality.md).  
 Evolución de la decisión: [registro_flujo/llm_use_case](../registro_flujo/llm_use_case/).
+
+
+## D051 — El copy sintético hace de Rules-only un baseline fuerte
+
+**Estado:** SUPPORTED.
+
+E015 ejecutó el perfilado completo de `spots.description` sobre 3,000 listings:
+
+- 856 descripciones exactas únicas;
+- sólo 28.5% de unicidad exacta;
+- 84.37% de los listings comparten su descripción exacta con al menos otro;
+- únicamente 12 oraciones distintas componen todas las descripciones.
+
+El baseline inicial de cuatro familias de claims detecta **330 conflictos candidatos en 322 spots únicos (10.73%)**:
+
+- natural_light: 153;
+- readiness: 101;
+- security: 55;
+- parking: 21.
+
+**Interpretación:** la dificultad del experimento no es demostrar que un LLM puede leer el copy. Con sólo 12 oraciones, reglas explícitas pueden cubrir gran parte del lenguaje observado. Para justificar el LLM debe existir **cobertura incremental accionable** sobre Rules-only.
+
+**No demuestra:** que los 322 spots sean errores confirmados, que el texto sea la fuente correcta, ni que las reglas tengan precision alta. Esos puntos requieren gold labels humanos.
+
+**Siguiente implicación:** congelar la muestra humana de 200 listings y evaluar Rules-only vs LLM-only vs Rules+LLM antes de cualquier integración al fallback o Lead Opportunity Score.
+
+Evidencia: [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md).

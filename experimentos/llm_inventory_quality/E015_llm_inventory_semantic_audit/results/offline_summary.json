@@ -1,0 +1,55 @@
+{
+  "experiment_id": "E015_llm_inventory_semantic_audit",
+  "phase": "offline_baseline",
+  "copy_profile": {
+    "n_spots": 3000,
+    "unique_exact_descriptions": 856,
+    "exact_description_uniqueness_rate": 0.2853333333333333,
+    "share_rows_with_repeated_exact_description": 0.8436666666666667,
+    "unique_description_sentences": 12
+  },
+  "rules": {
+    "n_spots": 3000,
+    "n_rule_candidate_issues": 330,
+    "n_unique_flagged_spots": 322,
+    "share_unique_flagged_spots": 0.10733333333333334,
+    "candidate_issues_by_claim_type": {
+      "natural_light": 153,
+      "parking": 21,
+      "readiness": 101,
+      "security": 55
+    },
+    "flagged_spots_by_issue_count": {
+      "1": 314,
+      "2": 8
+    },
+    "rule_phrase_families": {
+      "natural_light": [
+        "iluminacion natural",
+        "luz natural"
+      ],
+      "security": [
+        "seguridad 24/7",
+        "control de acceso",
+        "vigilancia",
+        "circuito cerrado"
+      ],
+      "parking": [
+        "estacionamiento",
+        "cajon de estacionamiento",
+        "cajones de estacionamiento",
+        "parking"
+      ],
+      "readiness": [
+        "listo para ocupar",
+        "recien remodelado",
+        "acabados modernos",
+        "acabados de primera"
+      ]
+    },
+    "interpretation": "Rule flags are candidate semantic conflicts requiring review; they are not gold labels."
+  },
+  "human_labeling_sample_n": 200,
+  "llm_executed": false,
+  "conclusion": "INCOMPLETE_LLM_PENDING"
+}

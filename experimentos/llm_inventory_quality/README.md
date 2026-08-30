@@ -1,7 +1,7 @@
 # LLM Inventory Semantic Quality — propuesta
 
-**Estado:** PROPOSAL / diseño seleccionado para la siguiente implementación.  
-**Experimento planeado:** `E015_llm_inventory_semantic_audit`.  
+**Estado:** ACTIVE / E015 en ejecución.  
+**Experimento:** [`E015_llm_inventory_semantic_audit`](E015_llm_inventory_semantic_audit/).  
 **Evidencia central:** [EV-014](../Evidencias/EV-014_llm_inventory_quality.md).
 
 ## Problema de negocio
@@ -88,3 +88,19 @@ Si no añade cobertura útil, la conclusión será que no se justifica productiz
 - [Arquitectura](ARCHITECTURE.md)
 - [EVIDENCIA.md](EVIDENCIA.md)
 - [Flujo de decisiones LLM](../registro_flujo/llm_use_case/)
+
+
+## Estado de ejecución
+
+E015 ya completó Fase 0–1:
+
+- 3,000 spots auditados;
+- 856 descripciones exactas únicas;
+- 84.37% de filas reutilizan una descripción exacta;
+- 12 oraciones únicas componen todo el copy de description;
+- Rules-only marca 322 spots únicos como candidatos a revisión;
+- gold sample humano de 200 listings preparado.
+
+Estos resultados fortalecen la hipótesis rival: **Rules-only puede ser suficiente**. La API de OpenAI sólo se justificará si añade cobertura útil sobre el gold set.
+
+Evidencia: [EV-015](../Evidencias/EV-015_llm_inventory_semantic_audit.md).

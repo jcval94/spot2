@@ -58,3 +58,20 @@ Rules + LLM
 sobre labels humanos de consistencia semántica.
 
 El LLM sólo se justifica si demuestra que interpreta variación lingüística y encuentra issues adicionales accionables que las reglas no capturan con la misma facilidad.
+
+
+## 6. E015 — Fase 0–1 ejecutadas
+
+Se ejecutó el perfilado completo del copy y un baseline determinístico antes de consumir API.
+
+Resultados:
+
+- 3,000 spots;
+- 12 oraciones únicas en todas las descriptions;
+- 84.37% de filas comparten descripción exacta;
+- 322 spots únicos con al menos un conflicto candidato por reglas;
+- 200 listings seleccionados de forma determinística para gold labeling.
+
+**Decisión:** mantener abierta la hipótesis del LLM, pero elevar el estándar de éxito. Debido a la extrema repetición del lenguaje, el LLM debe superar Rules-only sobre labels humanos; detectar las mismas 12 frases no es valor incremental.
+
+Evidencia: [EV-015](../../Evidencias/EV-015_llm_inventory_semantic_audit.md).
