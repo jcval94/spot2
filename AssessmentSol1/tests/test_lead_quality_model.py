@@ -21,7 +21,7 @@ def test_single_frozen_champion_is_base_rate_without_features() -> None:
     assert cfg["model_family"] == "BASE_RATE"
     assert cfg["feature_set"]["variant"] == "BASE_RATE_NO_FEATURES"
     assert cfg["feature_set"]["features"] == []
-    assert cfg["calibrator"]["method"] == "PLATT"
+    assert cfg["calibrator"]["method"] == "RAW"
 
 
 def test_holdout_incident_is_explicit_and_not_used_for_selection() -> None:
@@ -41,7 +41,7 @@ def test_prediction_populations_are_physically_separate() -> None:
     hold = pd.read_csv(pred / "procedural_holdout_predictions.csv")
 
     assert set(dev["population"]) == {"DEVELOPMENT_OOF"}
-    assert set(cal["population"]) == {"CALIBRATION"}
+    assert set(cal["population"]) == {"CALIBRATION"}\n    assert cal["probability"].nunique() == 1\n    assert abs(cal["probability"].iloc[0] - 0.20375457875457875) < 1e-12
     assert set(hold["population"]) == {"DIAGNOSTIC_ONLY_NON_PRISTINE"}
     assert set(dev["lead_id"]).isdisjoint(set(cal["lead_id"]))
     assert set(dev["lead_id"]).isdisjoint(set(hold["lead_id"]))
