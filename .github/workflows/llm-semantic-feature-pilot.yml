@@ -33,6 +33,9 @@ jobs:
       - name: Validate pilot contract without API
         run: pytest -q experimentos/llm_semantic_feature_pilot/tests
 
+      - name: Build free semantic rule sidecar
+        run: python experimentos/llm_semantic_feature_pilot/build_rule_sidecar.py
+
       - name: Run exactly the 100-record API pilot when key exists
         shell: bash
         run: |
@@ -55,4 +58,5 @@ jobs:
             experimentos/llm_semantic_feature_pilot/results/pilot_usage_summary_v2.csv
             experimentos/llm_semantic_feature_pilot/results/pilot_segment_summary_v2.csv
             experimentos/llm_semantic_feature_pilot/results/pilot_diagnostic_gates_v2.csv
+            experimentos/llm_semantic_feature_pilot/results/semantic_rule_sidecar_3000.csv
           if-no-files-found: ignore
