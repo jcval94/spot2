@@ -124,3 +124,25 @@ Reporte: [PILOT_REPORT.md](../llm_semantic_feature_pilot/results/PILOT_REPORT.md
 ## Conocimiento acumulado
 
 Relacionado con [DESCUBRIMIENTOS.md](../conocimiento_agregado/DESCUBRIMIENTOS.md).
+
+
+## Deterministic semantic sidecar — full catalog
+
+The free rule sidecar was executed over all 3,000 spots:
+
+- direct conflict flag: **322** (10.73%);
+- Land × building-copy: **230** (7.67%);
+- security ambiguity (claim + basic/cctv): **327** (10.90%);
+- Retail adaptive-use language: **109** (3.63%);
+- any semantic ambiguity flag: **429** (14.30%);
+- listings with at least one semantic signal: **890**;
+- listings with two simultaneous signals: **91**.
+
+Review-tier distribution:
+
+- none: 2,110;
+- ambiguity: 386;
+- direct_conflict: 322;
+- cross_field: 182.
+
+This sidecar is generated without OpenAI API calls.
