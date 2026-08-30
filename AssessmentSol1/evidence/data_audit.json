@@ -1466,5 +1466,70 @@
     "exact_reproducible_runner": "AssessmentSol1/src/assessment_sol1/raw_audit.py",
     "exact_parity_test": "AssessmentSol1/tests/test_raw_data_contracts.py::test_csv_parquet_logical_parity",
     "note": "Direct P1 inspection validated row/schema/null/numeric-boolean parity and all reported quality metrics. The committed runner enforces full logical DataFrame parity on rerun."
+  },
+  "source_manifest_validation": {
+    "leads": {
+      "csv_sha256": "0df1e893137d5a56afb73df9870a794597aa35eb9f9ca14f89ae69615f3b65a4",
+      "csv_git_blob_sha1": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
+      "parquet_sha256": "47f187364a768708a3b7ec86a3b29585f496efec7ac5d9fcf525422a84293e4b",
+      "parquet_git_blob_sha1": "7c0922f0316c7770cf3edf06f87e28be776bb0c0"
+    },
+    "inquiries": {
+      "csv_sha256": "e0a59bc558e0aa4df4141751c63c4e0193e3681b771aac2f5439ebd90b752eb6",
+      "csv_git_blob_sha1": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
+      "parquet_sha256": "b29778e41911d29c17d339edae7270e773d59b90b97411b261ec19a7d088f3e6",
+      "parquet_git_blob_sha1": "c0bfb9d8701e74392049f2fce6b4ceb886873789"
+    },
+    "spots": {
+      "csv_sha256": "e5e3640430567b2430ab5e37dba28f30c6186693f184c4c3e744018d689f7b0c",
+      "csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808",
+      "parquet_sha256": "c9cd2de2e9d6e1212ebf9a5c5b4efdd787a98a318842a90c03dc113e1d22772a",
+      "parquet_git_blob_sha1": "10018af9fffcd498620d38068f096a2cec8d7d33"
+    },
+    "spot_attributes": {
+      "csv_sha256": "a22c42f5bcf9c3b7b07c5c65d0926d43474cc82702389c8322bd1f37f3953fe9",
+      "csv_git_blob_sha1": "9479789b881e408d0626ded8432396ba9fc749b6",
+      "parquet_sha256": "f0d9873c8bd50552b1ed89b399063f9d9dfa72d206a09bd5431ef0e557d44614",
+      "parquet_git_blob_sha1": "817d6f4601b503c96f4a799cb09b969a6db8f1ec"
+    },
+    "availability_snapshot": {
+      "csv_sha256": "c2e292390dd874291214a28c62e294a1d7c5d23338a4fa683352e44be877e59d",
+      "csv_git_blob_sha1": "82ef91a25ff5b2a330b4e1d01668c4934239c43f",
+      "parquet_sha256": "21e7b3ec2ca03f2916a385bc926caa41d34f502480fe6d11f4fb838115aca5b0",
+      "parquet_git_blob_sha1": "583fed9470bc8151a663d290675cc2f342d0a63f"
+    },
+    "market_context": {
+      "csv_sha256": "4a09bf878e593d8cefe531bcff54cb274019a6648d0afd9c268bfac36bb18f40",
+      "csv_git_blob_sha1": "47fdbba2bfddd547d691e15e1e45962e3d782d49",
+      "parquet_sha256": "6ead9d420c8d2ae46750999de1734d34b61b703565f575576956a5ca64f6dd51",
+      "parquet_git_blob_sha1": "c91d95c6c1bfb658e27f70bc3eff279594f7c003"
+    }
+  },
+  "date_validity": {
+    "leads.created_at": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    },
+    "inquiries.inquiry_at": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    },
+    "spots.created_at": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    },
+    "availability_snapshot.snapshot_date": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    },
+    "market_context.month": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    }
   }
 }
