@@ -75,3 +75,12 @@ I1–I7 equivalen casi exactamente a un día de semana distinto.
 - [bootstrap_deltas.csv](../profile_clustering_v2/results/bootstrap_deltas.csv)
 
 La continuación de esta línea está en [EV-010](EV-010_matching_ab_v3.md) y [INTERPRETABILIDAD](../matching_ab_v3/INTERPRETABILIDAD.md).
+
+
+## Descubrimientos relacionados
+
+- [D006 — Clustering balanceado mejora perfiles, no prueba lift material](../conocimiento_agregado/DESCUBRIMIENTOS.md#d006--clustering-balanceado-mejora-perfiles-no-prueba-lift-material)
+- [D009 — Persona y Search Need son facetas distintas, pero Persona necesita rediseño](../conocimiento_agregado/DESCUBRIMIENTOS.md#d009--persona-y-search-need-sí-son-facetas-distintas-pero-persona-aún-no-es-una-persona-comercial-limpia)
+- [D010 — Inquiry Intent aprende calendario](../conocimiento_agregado/DESCUBRIMIENTOS.md#d010--inquiry-intent-v1-aprende-calendario-no-intención-útil)
+- [D011 — Spot mezcla físico y geografía](../conocimiento_agregado/DESCUBRIMIENTOS.md#d011--spot-mezcla-qué-es-con-dónde-está)
+- [D012 — Compatibilidades locales sin química global demostrada](../conocimiento_agregado/DESCUBRIMIENTOS.md#d012--hay-compatibilidades-locales-pero-no-una-química-global-demostrada)
