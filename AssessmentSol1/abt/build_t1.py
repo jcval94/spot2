@@ -23,7 +23,11 @@ from _common import (
 TARGET_CONTRACT_ID = "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1"
 
 
-def build_t1(repo_root: Path) -> tuple[pl.DataFrame, pl.DataFrame]:
+def build_t1(
+    repo_root: Path,
+    *,
+    max_score_time_exclusive=None,
+) -> tuple[pl.DataFrame, pl.DataFrame]:
     """Build the principal one-row-per-lead T1 ABT.
 
     The scoring instant is the deterministically selected first inquiry after
@@ -50,6 +54,11 @@ def build_t1(repo_root: Path) -> tuple[pl.DataFrame, pl.DataFrame]:
             *CURRENT_INQUIRY_FEATURES,
         )
     )
+
+    if max_score_time_exclusive is not None:
+        first = first.filter(
+            pl.col("score_time") < pl.lit(max_score_time_exclusive)
+        )
 
     audit = (
         first.join(
