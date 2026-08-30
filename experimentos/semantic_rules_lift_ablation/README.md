@@ -51,3 +51,27 @@ Rules are promoted to the ABT only if:
 2. macro AP does not fall by more than 0.001 absolute.
 
 Otherwise the variables remain an Inventory QA sidecar.
+
+
+## Result
+
+**NOT_SUPPORTED.**
+
+Cross-validated fold-mean macro results:
+
+| Variant | AP | AUC | Lift@10% | Recall@20% |
+|---|---:|---:|---:|---:|
+| Baseline E016 | 0.5122 | 0.6063 | **1.267x** | 0.2567 |
+| + Semantic Rules | 0.5141 | 0.6114 | **1.196x** | 0.2443 |
+
+Primary delta:
+
+- ΔLift@10%: **-0.0716x**
+- 95% paired-bootstrap CI: **[-0.1438, +0.1251]**
+- P(ΔLift > 0): **45.0%**
+
+AP and AUC are essentially neutral/slightly positive in point estimate, but the requested top-decile lift does not improve. Therefore the semantic Rules remain an **Inventory QA sidecar**, not scoring features.
+
+Authoritative run: `33297920881`, artifact `9728035555`.
+
+See [results/REPORT.md](results/REPORT.md) and [results/RUN_HISTORY.md](results/RUN_HISTORY.md).
