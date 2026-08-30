@@ -43,3 +43,15 @@ No crear una nueva abstracción o carpeta global por cada idea. Una línea de tr
 Cuando una línea acumula varios experimentos o llega a una decisión de cierre, documentar su evolución en `registro_flujo/<line_name>/` usando la skill `spot2-research-chronicle`.
 
 Ese registro responde **cómo cambió la decisión**; los resultados numéricos y descubrimientos siguen teniendo como fuente canónica `Evidencias/` y `conocimiento_agregado/`.
+
+
+## Decisiones finales para el assessment
+
+La disposición de componentes auxiliares del sistema está congelada en
+[ASSESSMENT_MODEL_COMPONENT_DECISIONS.md](ASSESSMENT_MODEL_COMPONENT_DECISIONS.md).
+
+En particular:
+
+- Matching / clusters: cerrado como capa auxiliar de segmentación e hipótesis de routing; no sustituye el LOS.
+- Semantic rules: cerradas y excluidas del scoring de Lead Quality; se conservan para Catalog / Inventory QA.
+- Response-time RF: cerrado como diagnóstico de SLA; excluido del scoring current-inquiry por observabilidad temporal y falta de señal incremental robusta.
