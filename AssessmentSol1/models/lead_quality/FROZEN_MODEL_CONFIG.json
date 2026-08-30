@@ -74,7 +74,7 @@
       "used_for_selection": false
     }
   },
-  "champion_rationale": "No learned model demonstrated defensible superiority to the fold-specific base-rate baseline. Logistic A AP point estimate improved, but paired 95% CI crossed zero, Brier worsened with CI entirely above zero, and Lift@10 did not improve. The prompt's terminal gate therefore selects the simpler base-rate solution. Calibration remains RAW because learned calibration gains were numerically positive but immaterial (<0.001), so simplicity wins under the pre-registered rule.",
+  "champion_rationale": "No learned model demonstrated defensible superiority to the fold-specific base-rate baseline. Logistic A AP point estimate improved, but paired 95% CI crossed zero and Brier worsened with CI entirely above zero. The prompt's terminal gate therefore selects the simpler base-rate solution. Calibration remains RAW because learned calibration gains were numerically positive but immaterial (<0.001), so simplicity wins under the pre-registered rule.",
   "holdout_integrity": {
     "pristine": false,
     "status": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE",
