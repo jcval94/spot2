@@ -1,6 +1,6 @@
 {
   "phase": "PROMPT_7",
-  "status": "CHAMPION_FROZEN_WITH_HOLDOUT_INTEGRITY_INCIDENT",
+  "status": "CHAMPION_FROZEN_WITH_HOLDOUT_INTEGRITY_INCIDENT_AND_CALIBRATION_CORRECTION",
   "target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
   "split_version": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
   "populations": {
@@ -22,9 +22,9 @@
   ],
   "champion": {
     "model_family": "BASE_RATE",
-    "calibrator": "PLATT",
+    "calibrator": "RAW",
     "raw_probability": 0.20375457875457875,
-    "final_probability": 0.2082787838279435,
+    "final_probability": 0.20375457875457875,
     "ranking_capability": false
   },
   "bootstrap": {
@@ -60,5 +60,14 @@
     "models/lead_quality/predictions/champion_development_oof.csv",
     "models/lead_quality/predictions/calibration_predictions.csv",
     "models/lead_quality/predictions/procedural_holdout_predictions.csv"
+  ],
+  "post_selection_corrections": [
+    {
+      "id": "CAL-001",
+      "type": "METHODOLOGICAL_INCONSISTENCY",
+      "correction": "PLATT -> RAW",
+      "basis": "CALIBRATION only",
+      "holdout_reset": false
+    }
   ]
 }
