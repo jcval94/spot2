@@ -12,14 +12,12 @@ from _common import (
     UNVERSIONED_SPOT_FIELDS,
     assert_columns_absent,
     ensure_output_dir,
+    load_inquiries,
     load_leads,
     load_spots,
     parse_date,
     read_raw,
 )
-from build_t0 import build_t0
-from build_t1 import build_t1
-from build_t2 import build_t2
 
 
 def _compatible_search_modes(spot_modality: str) -> tuple[str, ...]:
@@ -28,30 +26,76 @@ def _compatible_search_modes(spot_modality: str) -> tuple[str, ...]:
     return (spot_modality, "both")
 
 
-def _score_frame(repo_root: Path) -> pl.DataFrame:
-    t0, _ = build_t0(repo_root)
-    t1, _ = build_t1(repo_root)
-    t2, _ = build_t2(repo_root)
+def _score_frame(
+    repo_root: Path,
+    *,
+    max_score_time_exclusive=None,
+) -> pl.DataFrame:
+    """Build score-event context without reading any outcome column.
 
-    s0 = t0.select(
-        "score_id", "lead_id", "stage", "score_time", "target_area_sqm",
+    This is deliberately independent of T0/T1/T2 target construction so
+    candidate generation can remain blind to procedural-holdout labels.
+    """
+    leads = load_leads(repo_root).select(
+        "lead_id",
+        pl.col("lead_created_at").alias("score_time"),
+        "target_area_sqm",
+    )
+    iq = load_inquiries(repo_root).select(
+        "lead_id",
+        "inquiry_id",
+        "spot_id",
+        "inquiry_number",
+        pl.col("_inquiry_time").alias("score_time"),
+        "requested_area_sqm",
+    )
+
+    s0 = leads.select(
+        pl.format("L{}:T0", pl.col("lead_id")).alias("score_id"),
+        "lead_id",
+        pl.lit("T0").alias("stage"),
+        "score_time",
+        "target_area_sqm",
         pl.lit(None, dtype=pl.Int64).alias("source_inquiry_id"),
         pl.lit(None, dtype=pl.Int64).alias("matching_current_spot_id"),
         pl.lit(None, dtype=pl.Float64).alias("requested_area_sqm"),
     )
-    s1 = t1.select(
-        "score_id", "lead_id", "stage", "score_time", "target_area_sqm",
-        pl.col("first_inquiry_id").alias("source_inquiry_id"),
-        "matching_current_spot_id",
+    current = iq.join(
+        leads.select("lead_id", "target_area_sqm"),
+        on="lead_id",
+        how="left",
+        validate="m:1",
+    )
+    s1 = current.filter(pl.col("inquiry_number") == 1).select(
+        pl.format(
+            "L{}:T1:I{}", pl.col("lead_id"), pl.col("inquiry_id")
+        ).alias("score_id"),
+        "lead_id",
+        pl.lit("T1").alias("stage"),
+        "score_time",
+        "target_area_sqm",
+        pl.col("inquiry_id").cast(pl.Int64).alias("source_inquiry_id"),
+        pl.col("spot_id").cast(pl.Int64).alias("matching_current_spot_id"),
         "requested_area_sqm",
     )
-    s2 = t2.select(
-        "score_id", "lead_id", "stage", "score_time", "target_area_sqm",
-        pl.col("inquiry_id").alias("source_inquiry_id"),
-        "matching_current_spot_id",
+    s2 = current.filter(pl.col("inquiry_number") >= 2).select(
+        pl.format(
+            "L{}:T2:I{}", pl.col("lead_id"), pl.col("inquiry_id")
+        ).alias("score_id"),
+        "lead_id",
+        pl.lit("T2").alias("stage"),
+        "score_time",
+        "target_area_sqm",
+        pl.col("inquiry_id").cast(pl.Int64).alias("source_inquiry_id"),
+        pl.col("spot_id").cast(pl.Int64).alias("matching_current_spot_id"),
         "requested_area_sqm",
     )
-    return pl.concat([s0, s1, s2], how="vertical").with_columns(
+    scores = pl.concat([s0, s1, s2], how="vertical")
+    if max_score_time_exclusive is not None:
+        scores = scores.filter(
+            pl.col("score_time") < pl.lit(max_score_time_exclusive)
+        )
+    return scores.with_columns(
         pl.coalesce(["requested_area_sqm", "target_area_sqm"]).alias(
             "matching_area_reference_sqm"
         )
@@ -275,8 +319,15 @@ def _attach_availability(repo_root: Path, candidates: pl.DataFrame) -> pl.DataFr
     )
 
 
-def build_inventory_candidates(repo_root: Path) -> tuple[pl.DataFrame, pl.DataFrame]:
-    scores = _score_frame(repo_root)
+def build_inventory_candidates(
+    repo_root: Path,
+    *,
+    max_score_time_exclusive=None,
+) -> tuple[pl.DataFrame, pl.DataFrame]:
+    scores = _score_frame(
+        repo_root,
+        max_score_time_exclusive=max_score_time_exclusive,
+    )
     candidates = _candidate_rows(repo_root, scores)
     audit = _attach_availability(repo_root, _attach_attributes(repo_root, candidates))
 
