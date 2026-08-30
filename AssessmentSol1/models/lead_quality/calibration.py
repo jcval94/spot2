@@ -157,7 +157,17 @@ def _cross_calibration_predictions(
     return out
 
 
+CALIBRATION_MATERIALITY_EPS = 0.001
+
+
 def _select_method(metrics: dict[str, dict]) -> tuple[str, dict]:
+    """Apply the frozen calibration rule literally.
+
+    A numerically positive but sub-material gain is not enough to justify a
+    learned calibrator. The pre-registered 0.001 practical-tie tolerance is
+    also used as the minimum material improvement threshold; otherwise RAW
+    wins the simplicity tie.
+    """
     raw = metrics["raw"]
     eligible: list[tuple[str, float]] = []
     rationale: dict[str, Any] = {}
@@ -167,14 +177,19 @@ def _select_method(metrics: dict[str, dict]) -> tuple[str, dict]:
         m = metrics[method]
         brier_gain = raw["brier"] - m["brier"]
         logloss_gain = raw["log_loss"] - m["log_loss"]
+        materially_improves = (
+            max(brier_gain, logloss_gain) >= CALIBRATION_MATERIALITY_EPS
+        )
         qualifies = (
-            max(brier_gain, logloss_gain) > 0
+            materially_improves
             and min(brier_gain, logloss_gain) >= -0.005
         )
         composite = brier_gain + logloss_gain
         rationale[method] = {
             "brier_gain": brier_gain,
             "log_loss_gain": logloss_gain,
+            "materiality_eps": CALIBRATION_MATERIALITY_EPS,
+            "materially_improves": materially_improves,
             "qualifies": qualifies,
             "composite_gain": composite,
         }
@@ -188,8 +203,7 @@ def _select_method(metrics: dict[str, dict]) -> tuple[str, dict]:
     best_method, best_score = eligible[0]
     if len(eligible) > 1:
         second_method, second_score = eligible[1]
-        if abs(best_score - second_score) < 0.001:
-            # Frozen preference: Platt before isotonic in a practical tie.
+        if abs(best_score - second_score) < CALIBRATION_MATERIALITY_EPS:
             if "platt" in {best_method, second_method}:
                 best_method = "platt"
     return best_method, rationale
