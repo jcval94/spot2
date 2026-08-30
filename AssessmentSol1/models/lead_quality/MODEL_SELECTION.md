@@ -1,6 +1,6 @@
 # MODEL_SELECTION — T1 Lead Quality
 
-**Decision:** `BASE_RATE + PLATT` is the frozen champion.
+**Decision:** `BASE_RATE + RAW` is the frozen champion.
 
 Target, maturity, split boundaries, FEATURE_REGISTRY and ablation plan were unchanged throughout model selection.
 
@@ -70,6 +70,10 @@ The fixed rule was not tuned:
 - +1 requested/original area ratio in [0.80,1.25]
 
 It does not outperform Base Rate.
+
+## Calibration finalization
+
+A post-selection audit found that Platt's CALIBRATION-only gains were <0.001 and therefore immaterial under the frozen practical-tie rule. The calibrator was corrected to **RAW** as a documented methodological inconsistency; model family and feature decision are unchanged. See `CALIBRATION_RULE_CORRECTION.md`.
 
 ## Holdout integrity
 
