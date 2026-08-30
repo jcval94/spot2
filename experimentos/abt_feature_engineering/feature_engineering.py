@@ -9,6 +9,7 @@ import pandas as pd
 HORIZON_DAYS = 30
 UNKNOWN = "__UNKNOWN__"
 UNSPECIFIED = "__UNSPECIFIED__"
+NOT_APPLICABLE = "__NOT_APPLICABLE__"
 STAGES = {0: "T0_cold", 1: "T1_first_inquiry", 2: "T2_engaged"}
 RESPONSE_STATUSES = {"accepted", "rejected", "scheduled_visit"}
 AMENITY_VOCAB = (
@@ -36,7 +37,8 @@ LEAD_NUMS = [
     "sale_budget_max", "sale_budget_mid", "sale_budget_width", "log_sale_budget_max",
     "prior_searches", "log_prior_searches", "prior_searches_zero",
     "prior_inquiries", "log_prior_inquiries", "prior_inquiries_zero",
-    "has_converted_before", "geographic_specificity", "lead_month", "lead_weekday_num",
+    "has_converted_before", "geographic_specificity", "has_corridor_preference",
+    "lead_month", "lead_weekday_num",
 ]
 INQUIRY_CATS = ["channel", "urgency_bucket", "inquiry_weekday"]
 INQUIRY_NUMS = [
@@ -156,6 +158,30 @@ def validate_raw_tables(
     if not set(availability["spot_id"]).issubset(set(spots["spot_id"])):
         raise ValueError("availability_snapshot contains orphan spot_id")
 
+    lead_modality = leads["search_modality"].astype("string")
+    rent_leads = leads[lead_modality.isin(["rent", "both"])]
+    sale_leads = leads[lead_modality.isin(["sale", "both"])]
+    if rent_leads["max_budget_mxn_rent_monthly"].isna().any():
+        raise ValueError("Rent-applicable leads must have max rent budget")
+    if sale_leads["max_budget_mxn_sale_total"].isna().any():
+        raise ValueError("Sale-applicable leads must have max sale budget")
+    rent_bad = (
+        rent_leads["min_budget_mxn_rent_monthly"].notna()
+        & (
+            safe_num(rent_leads["min_budget_mxn_rent_monthly"])
+            > safe_num(rent_leads["max_budget_mxn_rent_monthly"])
+        )
+    )
+    sale_bad = (
+        sale_leads["min_budget_mxn_sale_total"].notna()
+        & (
+            safe_num(sale_leads["min_budget_mxn_sale_total"])
+            > safe_num(sale_leads["max_budget_mxn_sale_total"])
+        )
+    )
+    if rent_bad.any() or sale_bad.any():
+        raise ValueError("Lead minimum budget exceeds maximum budget")
+
     for modality, required, forbidden in [
         ("rent", ["price_sqm_mxn_rent", "price_total_mxn_rent", "maintenance_cost_mxn"], ["price_sqm_mxn_sale", "price_total_mxn_sale"]),
         ("sale", ["price_sqm_mxn_sale", "price_total_mxn_sale"], ["price_sqm_mxn_rent", "price_total_mxn_rent", "maintenance_cost_mxn"]),
@@ -169,6 +195,21 @@ def validate_raw_tables(
             if part[col].notna().any():
                 raise ValueError(f"{col} unexpectedly populated where spots.modality={modality}")
 
+    for price_col, total_col in [
+        ("price_sqm_mxn_rent", "price_total_mxn_rent"),
+        ("price_sqm_mxn_sale", "price_total_mxn_sale"),
+    ]:
+        mask = spots[price_col].notna() & spots[total_col].notna()
+        expected = safe_num(spots.loc[mask, "area_sqm"]) * safe_num(spots.loc[mask, price_col])
+        actual = safe_num(spots.loc[mask, total_col])
+        if ((actual - expected).abs() > 0.02).any():
+            raise ValueError(f"Spot price arithmetic mismatch for {total_col}")
+
+    available = parse_bool(availability["is_available"])
+    days = safe_num(availability["days_until_available"])
+    if ((available.eq(1) & days.ne(0)) | (available.eq(0) & days.le(0))).any():
+        raise ValueError("Availability state conflicts with days_until_available")
+
 
 def engineer_leads(leads: pd.DataFrame) -> pd.DataFrame:
     d = leads.copy()
@@ -176,7 +217,8 @@ def engineer_leads(leads: pd.DataFrame) -> pd.DataFrame:
     d["company_size_fe"] = d["company_size"].astype("string").fillna(UNKNOWN)
     d["industry_fe"] = d["industry"].astype("string").fillna(UNKNOWN)
     d["preferred_corridor_fe"] = d["preferred_corridor"].astype("string").fillna(UNSPECIFIED)
-    d["geographic_specificity"] = d["preferred_corridor"].notna().astype(float) + 2.0
+    d["has_corridor_preference"] = d["preferred_corridor"].notna().astype(float)
+    d["geographic_specificity"] = d["has_corridor_preference"] + 2.0
     d["has_converted_before"] = parse_bool(d["has_converted_before"])
     d["log_target_area_sqm"] = safe_log1p(d["target_area_sqm"])
     for c in ["prior_searches", "prior_inquiries"]:
@@ -333,9 +375,14 @@ def engineer_spots(spots: pd.DataFrame, attrs: pd.DataFrame) -> pd.DataFrame:
     s["amenities_count"] = parsed.map(len).astype(float)
     for amenity in AMENITY_VOCAB:
         s[f"amenity_{amenity}"] = parsed.map(lambda xs, a=amenity: float(a in xs))
-    for c in ["luminaires", "charging_ports", "floor_level", "elevators", "vertical_height_m",
-              "natural_light", "security_type", "building_status", "floor_material"]:
+    for c in ["luminaires", "charging_ports", "floor_level", "elevators", "vertical_height_m", "natural_light"]:
         s[f"model_{c}"] = s[c].where(s["built_environment_applicable"], np.nan)
+    for c in ["security_type", "building_status", "floor_material"]:
+        model = s[c].astype("string").fillna(UNKNOWN)
+        s[f"model_{c}"] = model.where(
+            s["built_environment_applicable"],
+            NOT_APPLICABLE,
+        )
     return s
 
 
@@ -358,8 +405,14 @@ def attach_spot_features(rows: pd.DataFrame, spot_features: pd.DataFrame) -> pd.
     })
     d["spot_natural_light"] = parse_bool(d["spot_natural_light"])
     d["spot_built_environment_applicable"] = parse_bool(d["spot_built_environment_applicable"])
-    d["spot_charging_ports_missing"] = d["spot_charging_ports"].isna().astype(float)
-    d["spot_vertical_height_missing"] = d["spot_vertical_height_m"].isna().astype(float)
+    d["spot_charging_ports_missing"] = (
+        d["spot_built_environment_applicable"].eq(1)
+        & d["spot_charging_ports"].isna()
+    ).astype(float)
+    d["spot_vertical_height_missing"] = (
+        d["spot_built_environment_applicable"].eq(1)
+        & d["spot_vertical_height_m"].isna()
+    ).astype(float)
     d["log_spot_area_sqm"] = safe_log1p(d["spot_area_sqm"])
     for c in ["price_sqm_mxn_rent", "price_sqm_mxn_sale", "price_total_mxn_rent", "price_total_mxn_sale", "maintenance_cost_mxn"]:
         d[f"log_spot_{c}"] = safe_log1p(d[f"spot_{c}"])
@@ -376,6 +429,10 @@ def attach_spot_features(rows: pd.DataFrame, spot_features: pd.DataFrame) -> pd.
     d["spot_floor_level_bucket"] = pd.cut(
         safe_num(d["spot_floor_level"]), [-np.inf, 0, 3, 10, np.inf], labels=["ground", "low", "mid", "high"]
     ).astype("string").fillna(UNKNOWN)
+    d.loc[
+        d["spot_built_environment_applicable"].eq(0),
+        "spot_floor_level_bucket",
+    ] = NOT_APPLICABLE
     return d
 
 
@@ -425,7 +482,12 @@ def add_match_features(rows: pd.DataFrame) -> pd.DataFrame:
         return np.where(has_spot, d[a].astype("string").eq(d[b].astype("string")), np.nan)
     d["same_state"] = eq("preferred_state", "spot_state")
     d["same_municipality"] = eq("preferred_municipality", "spot_municipality")
-    d["same_corridor"] = eq("preferred_corridor_fe", "spot_corridor")
+    corridor_declared = d["preferred_corridor"].notna()
+    d["same_corridor"] = np.where(
+        has_spot & corridor_declared,
+        d["preferred_corridor"].astype("string").eq(d["spot_corridor"].astype("string")),
+        np.nan,
+    )
     d["same_sector"] = eq("search_sector", "spot_sector_name")
     lm, sm = d["search_modality"].astype("string"), d["spot_modality"].astype("string")
     compatible = (lm.eq("rent") & sm.isin(["rent", "both"])) | (lm.eq("sale") & sm.isin(["sale", "both"])) | lm.eq("both")
