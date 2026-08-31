@@ -2,7 +2,6 @@
   "config_version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
   "frozen_at": "2026-08-30",
   "status": "FROZEN_SCALAR_POST_RECOVERY_FALLBACK_K3",
-  "lead_quality_untouched": true,
   "selection_scope": {
     "stage": "T1",
     "development_rule": "score_time < 2026-05-01T00:00:00Z",
@@ -239,5 +238,7 @@
     "outcomes_used": false,
     "procedural_holdout_used": false,
     "reason": "Clean-room list-completion audit: any-result coverage unchanged; >=3 results 4051/4368 (92.74%) vs >=5 results 3696/4368 (84.62%). E020 is supporting evidence only."
-  }
+  },
+  "lead_quality_untouched_during_inventory_selection": true,
+  "post_recovery_note": "Lead Quality changed after Inventory freeze. Inventory scalar remains valid because its selection/build was outcome-independent; only fallback list depth changed to K=3."
 }
