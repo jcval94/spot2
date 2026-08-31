@@ -1,6 +1,6 @@
 # AssessmentSol1 — Final Spot2 Lead Opportunity Assessment
 
-Status: **FINAL ASSESSMENT BUILT — Prompt 14 submission review in progress.**
+Status: **READY TO SUBMIT. Prompt 13 packaging and Prompt 14 final red-team are complete with zero active blockers.**
 
 This directory is the clean-room source of truth for the definitive Spot2 assessment. Historical experiments may be cited as upstream supporting evidence but are not runtime dependencies and do not override reproduced/frozen AssessmentSol1 results.
 
@@ -151,4 +151,8 @@ Prompt 12 gate:
 - `llm/results/prompt12_gate.json`
 - `final/source_snapshot.json`
 
-Final submission decision will be written by Prompt 14 under `final/**`.
+Final submission authority:
+- `final/FINAL_REVIEW.md`
+- `final/SUBMISSION_STATE.json`
+
+**READY TO SUBMIT**
