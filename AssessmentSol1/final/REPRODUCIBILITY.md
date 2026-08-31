@@ -183,7 +183,14 @@ Any final deliverable containing one of the following as current authority must 
 
 Historical references are allowed only when clearly labeled as historical/supporting/diagnostic.
 
-## 10. Source-of-truth order
+## 10. Final semantic boundaries
+
+- Matching/clusters = **AUXILIARY**.
+- Semantic Rules = **INVENTORY / CATALOG QA**, excluded from Lead Quality.
+- Response-time RF = **DIAGNOSTIC ONLY**.
+- Opportunity Score is an operational ranking score, **not a jointly calibrated probability**.
+
+## 11. Source-of-truth order
 
 When values conflict, use this priority:
 
