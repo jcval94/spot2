@@ -1,16 +1,10 @@
 # Entregable 7 — Uso obligatorio de IA
 
-> ### Guía de lectura
-> El detalle técnico se conserva para auditoría, pero la idea de negocio debe poder entenderse sin jerga. En este documento:
-> - **Lift@10** indica cuánto mejora el 10% mejor priorizado frente a una selección aleatoria equivalente.
-> - **Variable objetivo (target)** es el resultado que queremos anticipar.
-> - **Información disponible en ese momento (point-in-time / as-of)** significa que no se utiliza información futura.
-> - **Muestra de evaluación (holdout)** es un periodo reservado para medir el desempeño.
-> - **Ejecución en paralelo (shadow)** significa probar sin modificar todavía decisiones reales.
-> - **Estrategia de respaldo (fallback)** describe qué hacer cuando la opción original no es defendible.
+> ### Lectura en lenguaje claro
+> **En una frase:** el LLM ayudó a descubrir problemas semánticos del catálogo, pero no mejoró lo suficiente el predictor; por eso se conserva como herramienta de control de calidad, no como dependencia del puntaje.
 >
-
-> La evidencia técnica original se conserva en `codexway/**`, `experimentos/**` y `AssessmentSol1/**` para auditoría. No es necesario navegarla para comprender este documento.
+> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **target** es el resultado que se quiere anticipar; **point-in-time / as-of** significa usar sólo información que ya era conocida en ese momento; **holdout** es una muestra apartada para evaluación; **shadow** es una ejecución en paralelo que todavía no cambia decisiones reales; y **fallback** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
+>
 
 ## 1. Decisión final
 
@@ -20,10 +14,10 @@ El requisito de IA se satisface con un caso real, auditable y económicamente ra
 
 La IA no se utiliza para:
 
-- Calidad del lead;
-- Puntaje de oportunidad;
+- Lead Quality;
+- Opportunity Score;
 - Availability;
-- estrategia de respaldo ranking;
+- fallback ranking;
 - thresholds;
 - explicación determinística del score.
 
@@ -32,11 +26,11 @@ Sí se utiliza para:
 - interpretar lenguaje no estructurado de listings;
 - descubrir incoherencias semánticas no cubiertas por reglas;
 - identificar patrones candidatos a revisión humana;
-- ampliar, cuando hay evidencia, una capa determinística de control de calidad del catálogo.
+- ampliar, cuando hay evidencia, una capa determinística de Catalog QA.
 
 La decisión final es:
 
-> **SUPPORTED como herramienta muestreada de descubrimiento semántico / control de calidad del catálogo; NOT_SUPPORTED como dependencia del predictor o filtro automático.**
+> **SUPPORTED como herramienta muestreada de semantic discovery / Catalog QA; NOT_SUPPORTED como dependencia del predictor o gate automático.**
 
 Eso no es un fracaso del experimento. Es precisamente el resultado esperado de un proceso de selección gobernado.
 
@@ -55,7 +49,7 @@ Eso crea preguntas que una regla literal puede no resolver:
 
 Pero antes de pagar inferencia se auditó cuánto lenguaje real había.
 
-### E015 — baseline histórica
+### E015 — baseline offline
 
 Sobre 3,000 Spots:
 
@@ -99,8 +93,8 @@ La proyección sobre el catálogo encontró:
 Importante:
 
 - eran **candidatos de revisión**, no errores confirmados;
-- la muestra que permitió descubrir S001 dejó de ser válida como muestra de evaluación;
-- se creó un muestra de evaluación disjunto y un challenge set separado.
+- la muestra que permitió descubrir S001 dejó de ser válida como holdout;
+- se creó un holdout disjunto y un challenge set separado.
 
 Este cambio de diseño es evidencia de buena governance: cuando una muestra participa en discovery, deja de presentarse como confirmatoria.
 
@@ -224,7 +218,7 @@ El modelo marcó 28 registros como residual ambiguity, pero esas señales ya pod
 
 ### Decisión
 
-**LLM-derived ABT variables = NOT_SUPPORTED.**
+**LLM-derived ABT features = NOT_SUPPORTED.**
 
 La razón no fue costo.
 
@@ -236,11 +230,11 @@ La razón fue:
 
 ---
 
-## 8. Estabilidad técnica y exceso de alertas
+## 8. Estabilidad técnica y overflagging
 
 La evidencia complementaria live de E015 / PR #19 amplió la prueba:
 
-- 240/240 outputs válidos en muestra de evaluación;
+- 240/240 outputs válidos en holdout;
 - 100/100 outputs válidos en challenge;
 - 0 errores API/schema;
 - costo acumulado observado: **USD 0.053522**;
@@ -263,7 +257,7 @@ El flujo fue:
 
 El LLM fue demasiado proclive a flaggear controles.
 
-Una specificity de 28% contra el challenge S001 significa que un filtro automático generaría demasiadas tareas falsas.
+Una specificity de 28% contra el challenge S001 significa que un gate automático generaría demasiadas tareas falsas.
 
 Por eso:
 
@@ -318,13 +312,13 @@ En 3,000 Spots:
 | al menos una señal | 890 | 29.67% |
 | dos señales | 91 | 3.03% |
 
-retoSol1 reprodujo estos conteos desde raw data con **0 llamadas OpenAI**.
+AssessmentSol1 reprodujo estos conteos desde raw data con **0 llamadas OpenAI**.
 
 Esto demuestra que parte del conocimiento descubierto con IA sobrevivió como ingeniería determinística.
 
 ---
 
-## 11. E018 — ¿las reglas gratuitas mejoraron Calidad del lead?
+## 11. E018 — ¿las reglas gratuitas mejoraron Lead Quality?
 
 Se ejecutó una ablation temporal manteniendo:
 
@@ -336,14 +330,14 @@ Se ejecutó una ablation temporal manteniendo:
 
 Único cambio:
 
-**añadir reglas semánticas.**
+**añadir Semantic Rules.**
 
 Resultado macro:
 
 | Sistema | Lift@10 |
 |---|---:|
 | baseline | **1.267x** |
-| baseline + reglas semánticas | **1.196x** |
+| baseline + Semantic Rules | **1.196x** |
 | delta | **-0.0716x** |
 
 Bootstrap:
@@ -355,7 +349,7 @@ AP y AUC se movieron ligeramente en punto, pero el Lift@10 no cumplió el gate.
 
 ### Decisión
 
-**reglas semánticas = NOT_SUPPORTED para Calidad del lead scoring.**
+**Semantic Rules = NOT_SUPPORTED para Lead Quality scoring.**
 
 No se hizo búsqueda post-hoc de subconjuntos sobre el mismo OOF para “rescatar” el resultado.
 
@@ -371,21 +365,21 @@ La secuencia real fue:
       ↓
     baseline de reglas fuerte
       ↓
-    descubrimiento semántico
+    semantic discovery
       ↓
     GPT-5 nano real + Structured Outputs
       ↓
-    LLM variables no aportan información incremental
+    LLM features no aportan información incremental
       ↓
     semántica reutilizable → reglas gratuitas
       ↓
-    reglas evaluadas como variables predictivas
+    reglas evaluadas como features predictivas
       ↓
     Lift@10 no mejora
       ↓
     scoring final sin LLM
       ↓
-    LLM retenido como sampled control de calidad del catálogo discovery
+    LLM retenido como sampled Catalog QA discovery
 
 No hubo un salto de “usar LLM” a “poner LLM en producción”.
 
@@ -497,7 +491,7 @@ El sistema final puede ejecutarse con costo cero.
 
 ### Scoring principal
 
-Calidad del lead + Inventory + Opportunity:
+Lead Quality + Inventory + Opportunity:
 
 - no requiere API;
 - no requiere prompt;
@@ -535,13 +529,13 @@ Evidencia real:
 | E017 V1 | 100 | GPT-5 nano | USD 0.003335 |
 | E017 V2 | 100 | GPT-5 nano | **USD 0.002579** |
 | E015 live / PR19 | 340 | GPT-5 nano | **USD 0.053522** |
-| retoSol1 Rules | 3,000 | sin LLM | **USD 0** |
+| AssessmentSol1 Rules | 3,000 | sin LLM | **USD 0** |
 
 El costo no fue el blocker.
 
 El blocker para el predictor fue **información incremental insuficiente**.
 
-El blocker para automatic QA fue **specificity insuficiente / exceso de alertas**.
+El blocker para automatic QA fue **specificity insuficiente / overflagging**.
 
 ---
 
@@ -577,7 +571,7 @@ Sin labels humanos completos no se puede reportar precision/recall natural real.
 
 ---
 
-## 18. estrategia de respaldo del subsistema de IA
+## 18. Fallback del subsistema de IA
 
 Si:
 
@@ -590,14 +584,14 @@ Si:
 
 entonces:
 
-**el Lead Puntaje de oportunidad sigue funcionando.**
+**el Lead Opportunity Score sigue funcionando.**
 
 Semantic QA:
 
 1. ejecuta Rules-only;
 2. conserva findings determinísticos;
 3. deja el residual LLM como pending/not-run;
-4. no bloquea scoring ni estrategia de respaldo comercial.
+4. no bloquea scoring ni fallback comercial.
 
 Un error LLM nunca se convierte en “listing correcto”.
 
@@ -637,7 +631,7 @@ Crear una queue de revisión con:
 
 Patrones recurrentes y validados:
 
-**LLM → etiquetas humanas de referencia → deterministic rule.**
+**LLM → human gold → deterministic rule.**
 
 ### Re-evaluación periódica
 
@@ -656,13 +650,13 @@ Medir:
 
 | Uso | Decisión |
 |---|---|
-| LLM como Calidad del lead variable | **NO** |
-| LLM dentro del Puntaje de oportunidad | **NO** |
-| LLM para estrategia de respaldo ranking | **NO** |
+| LLM como Lead Quality feature | **NO** |
+| LLM dentro del Opportunity Score | **NO** |
+| LLM para fallback ranking | **NO** |
 | LLM como automatic catalog gate | **NO con evidencia actual** |
-| LLM para descubrimiento semántico | **SÍ** |
-| Rules para control de calidad del catálogo | **SÍ** |
-| Rules para Calidad del lead | **NO** |
+| LLM para semantic discovery | **SÍ** |
+| Rules para Catalog QA | **SÍ** |
+| Rules para Lead Quality | **NO** |
 | Human validation de patterns | **SÍ** |
 | Scoring dependiente de API | **NO** |
 | Natural live export sin aprobación de privacidad | **NO** |
@@ -681,12 +675,12 @@ Es que:
 - se midió costo;
 - se corrigió un contrato defectuoso;
 - se probaron Structured Outputs;
-- se detectó exceso de alertas;
-- se rechazaron variables sin valor incremental;
+- se detectó overflagging;
+- se rechazaron features sin valor incremental;
 - se transformó semántica durable a reglas gratuitas;
 - se evaluaron esas reglas;
 - se rechazaron también para scoring cuando no mejoraron Lift;
-- se dejó el LLM donde sí tiene una ventaja plausible: **descubrimiento semántico**.
+- se dejó el LLM donde sí tiene una ventaja plausible: **semantic discovery**.
 
 Ésa es una decisión de AI governance, no una exclusión cosmética.
 
@@ -701,12 +695,12 @@ Es que:
 - **Codexway — evaluación LLM**
 - **E015 — LLM Inventory Semantic Audit**
 - **E015 — prompt histórico**
-- **E017 — GPT-5 nano semantic variable pilot**
+- **E017 — GPT-5 nano semantic feature pilot**
 - **E017 — runner V2 con prompt exacto**
-- **E017 — decisión de variables**
-- **E018 — reglas semánticas Lift Ablation**
-- [retoSol1 — LLM README](../../retoSol1/llm/README.md)
-- [retoSol1 — evaluación LLM](../../retoSol1/llm/LLM_EVALUATION.md)
-- [retoSol1 — decisión final](../../retoSol1/llm/LLM_DECISION.md)
-- [retoSol1 — uso de IA](../../retoSol1/llm/AI_USAGE.md)
-- [retoSol1 — costos históricos](../../retoSol1/llm/usage_summary.csv)
+- **E017 — decisión de features**
+- **E018 — Semantic Rules Lift Ablation**
+- **AssessmentSol1 — LLM README**
+- **AssessmentSol1 — evaluación LLM**
+- **AssessmentSol1 — decisión final**
+- **AssessmentSol1 — uso de IA**
+- **AssessmentSol1 — costos históricos**
