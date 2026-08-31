@@ -1,6 +1,6 @@
 {
-  "state_version": "POST_RECOVERY_FINAL_STATE_V1_2026-08-30",
-  "phase": "PRE_CANONICAL_UPDATE",
+  "state_version": "POST_RECOVERY_FINAL_STATE_V2_2026-08-30",
+  "phase": "FROZEN",
   "recovered_lead_quality": {
     "version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
     "status": "FROZEN",
@@ -11,27 +11,36 @@
   "inventory": {
     "version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
     "scalar_status": "UNCHANGED_FROZEN",
-    "fallback_max_k_selected": 3
+    "fallback_revision": "FALLBACK_K3_POST_RECOVERY_V1_2026-08-30",
+    "fallback_max_k": 3
   },
   "opportunity": {
-    "selected_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2",
+    "version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+    "status": "FROZEN",
     "formula": "lead_quality_probability * inventory_actionability_gate",
     "old_v1_status": "INVALIDATED_REJECTED_DIAGNOSTIC_ONLY"
   },
   "capacity": {
     "selected_pct": 20,
     "representation": "P80 / top 20% within T1",
-    "selection_population": "DEVELOPMENT_OOF_ONLY"
+    "selection_population": "DEVELOPMENT_OOF_ONLY",
+    "lead_quality_lift_at_selected_capacity": 1.1243424011848062
   },
   "holdout": {
     "used_for_selection": false,
     "status": "DIAGNOSTIC_ONLY_NON_PRISTINE"
   },
-  "red_team": {
-    "status": "PENDING_CANONICAL_UPDATE"
+  "historical_upstream": {
+    "E018": "NOT_SUPPORTED for scoring; excluded",
+    "E019": "supporting evidence only; no metrics copied",
+    "E020": "supporting evidence only; no metrics copied"
   },
-  "blockers": [
-    "Canonical post-recovery files and final red-team audit not yet updated"
-  ],
-  "gate": "DO_NOT_CONTINUE_YET"
+  "red_team": {
+    "status": "PASS",
+    "active_blockers": 0,
+    "final_leakage_audit": "AssessmentSol1/audit/FINAL_LEAKAGE_AUDIT.md",
+    "post_recovery_red_team": "AssessmentSol1/audit/POST_RECOVERY_RED_TEAM.md"
+  },
+  "blockers": [],
+  "gate": "POST-RECOVERY SYSTEM FROZEN — CONTINUE TO PROMPT 12"
 }
