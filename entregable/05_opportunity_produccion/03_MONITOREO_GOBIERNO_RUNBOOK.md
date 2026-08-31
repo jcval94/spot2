@@ -1,4 +1,14 @@
-# Monitoreo, gobierno, retraining y runbook
+# Monitoreo, gobierno, retraining y guía operativa
+
+> ### Guía de lectura
+> El detalle técnico se conserva para auditoría, pero la idea de negocio debe poder entenderse sin jerga. En este documento:
+> - **Lift@10** indica cuánto mejora el 10% mejor priorizado frente a una selección aleatoria equivalente.
+> - **Variable objetivo (target)** es el resultado que queremos anticipar.
+> - **Información disponible en ese momento (point-in-time / as-of)** significa que no se utiliza información futura.
+> - **Muestra de evaluación (holdout)** es un periodo reservado para medir el desempeño.
+> - **Ejecución en paralelo (shadow)** significa probar sin modificar todavía decisiones reales.
+> - **Estrategia de respaldo (fallback)** describe qué hacer cuando la opción original no es defendible.
+>
 
 ## 1. Principio
 
@@ -7,7 +17,7 @@ Un sistema de priorización puede fallar aunque AUC permanezca estable.
 Se monitorean por separado:
 
 1. salud de datos;
-2. Lead Quality;
+2. Calidad del lead;
 3. Inventory;
 4. Opportunity;
 5. ranking/capacidad;
@@ -21,7 +31,7 @@ Se monitorean por separado:
 
 Son referencias históricas de Codexway, no thresholds eternos.
 
-### Lead Quality — holdout procedimental
+### Calidad del lead — muestra histórica de evaluación
 
 - base rate: **21.22%**;
 - ROC-AUC: **0.5478**;
@@ -39,7 +49,7 @@ Son referencias históricas de Codexway, no thresholds eternos.
 
 ### Inventory
 
-- mean serviceability lower: **0.6936**;
+- mean capacidad de atención lower: **0.6936**;
 - upper: **0.8213**;
 - uncertainty width: **0.1277**;
 - inventory confidence: **0.5217**;
@@ -47,7 +57,7 @@ Son referencias históricas de Codexway, no thresholds eternos.
 - exact unknown: **44.30%**;
 - no known alternative: **2.38%**.
 
-### Freshness 30d
+### vigencia 30d
 
 - fresh candidate share: **57.09%**;
 - unknown/stale: **42.91%**;
@@ -116,7 +126,7 @@ Medir siempre al capacity realmente usado y conservar 5/10/20 como referencia.
 
 ## 6. Calibration
 
-Para Lead Quality:
+Para Calidad del lead:
 
 - Brier;
 - Log Loss;
@@ -128,7 +138,7 @@ Opportunity no debe forzarse a interpretarse como probabilidad conjunta si sigue
 
 ---
 
-## 7. Feature drift
+## 7. variable drift
 
 El modelo final es de baja dimensión, pero debe monitorearse:
 
@@ -136,7 +146,7 @@ El modelo final es de baja dimensión, pero debe monitorearse:
 - share small;
 - share paid;
 - share de industrial_small_or_paid_interaction;
-- missingness;
+- ausencia de datos;
 - schema violations.
 
 Codexway ya reporta PSI para la interacción.
@@ -144,13 +154,13 @@ Codexway ya reporta PSI para la interacción.
 En futuras versiones más ricas:
 
 - PSI/JS/SMD según tipo;
-- conditional missingness;
+- conditional ausencia de datos;
 - cardinalidad;
 - categorías nuevas.
 
 ---
 
-## 8. Missingness
+## 8. ausencia de datos
 
 Separar:
 
@@ -176,7 +186,7 @@ Medir:
 - leads con al menos un fresh candidate;
 - exact Spot coverage.
 
-La evidencia histórica muestra coverage drift fuerte. Es un KPI de inventario/instrumentación, no automáticamente Lead Quality drift.
+La evidencia histórica muestra coverage drift fuerte. Es un KPI de inventario/instrumentación, no automáticamente Calidad del lead drift.
 
 ### Snapshot age
 
@@ -202,11 +212,11 @@ La evidencia histórica muestra coverage drift fuerte. Es un KPI de inventario/i
 - candidates por tier;
 - candidates después de hard constraints.
 
-AssessmentSol1 encontró candidate-depth drift fuerte; debe tratarse como exposición/catálogo.
+retoSol1 encontró candidate-depth drift fuerte; debe tratarse como exposición/catálogo.
 
 ---
 
-## 10. Fallback monitoring
+## 10. estrategia de respaldo monitoring
 
 Reportar:
 
@@ -222,7 +232,7 @@ Reportar:
 - future-spot violation rate;
 - future-snapshot violation rate;
 - distance relaxation;
-- fallback acceptance cuando exista.
+- estrategia de respaldo acceptance cuando exista.
 
 No negociables:
 
@@ -233,22 +243,22 @@ Hit@K histórico no es KPI principal mientras no exista gold de recommendation r
 
 ---
 
-## 11. Serviceability rate
+## 11. capacidad de atención rate
 
 Monitorear:
 
 - exact attendable;
-- fallback attendable;
+- estrategia de respaldo attendable;
 - Serviceable;
-- Potential fallback;
+- Potential estrategia de respaldo;
 - Uncertain;
-- Low serviceability.
+- Low capacidad de atención.
 
 Cruzar Quality × Inventory:
 
 - High Quality × Serviceable;
 - High Quality × Uncertain;
-- High Quality × Low Serviceability;
+- High Quality × Low capacidad de atención;
 - Standard × Serviceable.
 
 Esto hace visible el trade-off que un score único puede ocultar.
@@ -277,7 +287,7 @@ En cada cohorte madura:
 
 ### Guardrail
 
-Si Opportunity mejora serviceability pero deteriora conversion proxy, reportar ambos valores.
+Si Opportunity mejora capacidad de atención pero deteriora conversion proxy, reportar ambos valores.
 
 Nunca esconder uno dentro de una métrica compuesta.
 
@@ -289,11 +299,11 @@ Nunca esconder uno dentro de una métrica compuesta.
 |---|---|
 | schema/error/latency | minutos |
 | Availability ingestion | minutos |
-| freshness/coverage/candidate depth | hora/día |
+| vigencia/coverage/candidate depth | hora/día |
 | score distribution | día |
 | capacity volumes | día |
-| feature drift | semana |
-| fallback metrics | semana |
+| variable drift | semana |
+| estrategia de respaldo metrics | semana |
 | base rate | tras madurez |
 | Lift/calibration | mensual tras madurez |
 | retraining review | trimestral o trigger |
@@ -302,7 +312,7 @@ Nunca esconder uno dentro de una métrica compuesta.
 
 ## 14. Alertas iniciales
 
-Son propuestas operativas, no thresholds validados por el assessment.
+Son propuestas operativas, no thresholds validados por el reto.
 
 ### Critical
 
@@ -337,7 +347,7 @@ Cada request emite logs estructurados.
 - lead/inquiry;
 - model version;
 - score;
-- feature contract;
+- variable contract;
 - latency;
 - error status.
 
@@ -348,8 +358,8 @@ Cada request emite logs estructurados.
 - snapshot age;
 - lower/upper;
 - confidence;
-- fallback;
-- reason codes;
+- estrategia de respaldo;
+- motivos de la decisión;
 - latency.
 
 ### Orchestrator log
@@ -371,7 +381,7 @@ event → Quality → Inventory → Opportunity → CRM.
 
 Automatizar:
 
-- feature hash coincide con registry;
+- variable hash coincide con registry;
 - schema version permitida;
 - model version activa;
 - calibrator correcto;
@@ -401,7 +411,7 @@ Cambió acquisition/broker workflow.
 
 ### Inventory drift
 
-Cambió catálogo, candidate depth o serviceability.
+Cambió catálogo, candidate depth o capacidad de atención.
 
 ### Instrumentation drift
 
@@ -411,7 +421,7 @@ Cambió Availability coverage/frequency.
 
 La relación score→outcome se deterioró.
 
-AssessmentSol1 muestra un caso importante: Availability coverage y candidate depth cambiaron fuertemente mientras el core categorical mix permaneció relativamente estable.
+retoSol1 muestra un caso importante: Availability coverage y candidate depth cambiaron fuertemente mientras el core categorical mix permaneció relativamente estable.
 
 ---
 
@@ -422,7 +432,7 @@ Considerar retraining si, en varias cohortes maduras:
 - Lift@10 deja de superar 1;
 - calibration se degrada materialmente;
 - score-outcome monotonicity se rompe;
-- feature mix cambia persistentemente;
+- variable mix cambia persistentemente;
 - base rate cambia y recalibration no basta.
 
 No reentrenar automáticamente por:
@@ -444,9 +454,9 @@ Model y calibrator deben ser versiones distintas.
 
 ---
 
-## 20. Champion/challenger
+## 20. Champion/alternativa evaluada
 
-Challengers futuros:
+alternativas evaluadas futuros:
 
 - nueva Logistic;
 - CatBoost;
@@ -459,7 +469,7 @@ Reglas:
 1. mismo contrato;
 2. misma población;
 3. mismas temporal folds;
-4. no usar holdout consumido para selección;
+4. no usar muestra de evaluación consumido para selección;
 5. proper scoring + Lift;
 6. shadow antes de promoción.
 
@@ -467,7 +477,7 @@ Una métrica aislada mejor no basta.
 
 ---
 
-## 21. Rollback runbook
+## 21. reversión guía operativa
 
 ### Caso A — Quality corrupto
 
@@ -488,7 +498,7 @@ Acción:
 ### Caso B — Availability atrasada
 
 1. mantener último estado conocido;
-2. marcar freshness;
+2. marcar vigencia;
 3. Uncertain si excede política;
 4. verificar inventario;
 5. no declarar UNAVAILABLE por missing.
@@ -529,7 +539,7 @@ La política funcionó correctamente y no encontró candidato válido.
 
 La política no pudo ejecutarse correctamente.
 
-Mezclarlos hace que Coverage@K y serviceability sean ininterpretables.
+Mezclarlos hace que Coverage@K y capacidad de atención sean ininterpretables.
 
 ---
 
@@ -557,7 +567,7 @@ Guardrails:
 - broker workload;
 - opt-out.
 
-### Fallback pilot
+### estrategia de respaldo pilot
 
 Primary:
 
@@ -596,7 +606,7 @@ Guardrails:
 - Availability coverage;
 - snapshot age;
 - candidate depth;
-- serviceability;
+- capacidad de atención;
 - uncertainty;
 - Coverage@K;
 - NO_RESULT.
@@ -605,7 +615,7 @@ Guardrails:
 
 - lower/upper;
 - top-K overlap vs Quality;
-- serviceability entre priority;
+- capacidad de atención entre priority;
 - conversion guardrail;
 - joint outcome cuando exista.
 
@@ -620,7 +630,7 @@ Antes de shadow → acción:
 - schema OK;
 - lineage OK;
 - cero future violations;
-- freshness aceptable.
+- vigencia aceptable.
 
 ### Quality
 
@@ -633,7 +643,7 @@ Antes de shadow → acción:
 
 - constraints correctas;
 - known-unavailable recommendations = 0;
-- coverage/freshness operacionalmente aceptables.
+- coverage/vigencia operacionalmente aceptables.
 
 ### Opportunity
 
@@ -660,12 +670,12 @@ Toda promoción registra:
 - approver;
 - versión anterior;
 - versión nueva;
-- diff de features/config;
+- diff de variables/config;
 - metrics;
-- rollback target;
+- reversión target;
 - activation date.
 
-Cambios de target o scoring moment crean un nuevo contrato, no una minor version silenciosa.
+Cambios de target o momento de evaluación crean un nuevo contrato, no una minor version silenciosa.
 
 ---
 
@@ -673,12 +683,12 @@ Cambios de target o scoring moment crean un nuevo contrato, no una minor version
 
 | Área | Qué vigilar |
 |---|---|
-| Lead Quality | base rate, score distribution, Lift@K, calibration, feature drift |
-| Inventory | Availability coverage, snapshot age, candidate depth, serviceability |
-| Fallback | Coverage@K, UNKNOWN/VERIFY, NO_RESULT, violations |
+| Calidad del lead | base rate, score distribution, Lift@K, calibration, variable drift |
+| Inventory | Availability coverage, snapshot age, candidate depth, capacidad de atención |
+| estrategia de respaldo | Coverage@K, UNKNOWN/VERIFY, NO_RESULT, violations |
 | Opportunity | lower/upper, delta vs Quality, conversion vs serviceable objective |
 | Plataforma | latency, errors, lineage, artifact versions |
 | Experimento | SRM, ITT, maturity, guardrails |
-| Gobierno | registry, retraining, approval, rollback |
+| Gobierno | registry, retraining, approval, reversión |
 
 El sistema sólo está sano cuando Quality, Inventory y Opportunity siguen siendo interpretables simultáneamente.
