@@ -1,96 +1,95 @@
 # AssessmentSol1 — clean-room definitive assessment
 
-Status: **PROMPT 11 COMPLETE. Lead Quality, calibration, Inventory, fallback and Opportunity Score remain frozen; final leakage red-team gate has zero active BLOCKERS.**
+Status: **PROMPT 11.6 COMPLETE. Post-recovery system frozen with zero active BLOCKERS. Prompt 12 has not been executed yet.**
 
 This directory is the only writable home for the definitive Spot2 assessment. Historical experiments may be read as prior evidence but are never runtime dependencies.
 
 ## Frozen foundations
 
-- raw/source audit: complete;
-- temporal semantics: frozen;
-- primary target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`;
+- target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`;
 - T1 maturity: 14 days;
 - split contract: `SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30`;
-- point-in-time ABT architecture: independently revalidated from raw;
-- feature registry / ablation plan: frozen;
-- T1 champion: **BASE_RATE + RAW**, p = **0.2037546**, no ranking capability.
+- point-in-time ABT architecture: unchanged by recovery;
+- Lead Quality champion: **`LQ_RECOVERY_R4_STATIC_MATCH_V1`**;
+- Lead Quality calibration: **RAW**;
+- Inventory scalar: **`INV_SERVICEABILITY_V1_FROZEN_2026-08-30`**, unchanged;
+- fallback maximum: **K=3**;
+- Opportunity Score: **`OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30`**;
+- capacity policy: **P80 / top 20% within T1**;
+- post-recovery red team: **PASS, 0 blockers**.
 
-## P4 runtime-equivalence gate
+## Recovered T1 Lead Quality
 
-`abt/artifacts/p4_qa_summary.json` now reports **PASS** from an independent raw-data reconstruction of the frozen P4 grains and temporal gates.
+The previous `BASE_RATE + RAW` model is historical evidence only. Prompt 11.5 recovered a small regularized Logistic ranker using:
 
-It reproduces:
-- T0 audit/model-ready: 5,000 / 4,710;
-- T1: 5,000 / 4,953;
-- T2: 17,576 / 9,635;
-- Inventory candidate universe: 1,114,990 logical rows;
-- selected future Spots: 0;
-- future Availability snapshots: 0.
+1. selected-Spot area closeness;
+2. selected-Spot geographic fit;
+3. selected-Spot attribute completeness.
 
-The exact Polars builder code path remains a **non-blocking final reproducibility follow-up** because this runtime lacks Polars. P8 does not consume P3/P4 materialized feature tables; it reconstructs stage data directly from raw under the frozen contracts.
+No Availability is used in Lead Quality.
 
-## P7 — T1 principal product
+Frozen DEVELOPMENT temporal-OOF evidence:
+- Lift@5: 0.859x;
+- Lift@10: 1.075x;
+- Lift@20 recovery gate: 1.115x;
+- AP: 0.2186 versus base-rate AP 0.2083.
 
-No learned T1 model demonstrated defensible superiority to Base Rate. The final Lead Quality output is therefore:
+Prompt 11.6 re-ranks capacities with an explicit deterministic tie policy and selects top 20%, with macro Lead Quality Lift 1.124x.
 
-**BASE_RATE + RAW = 0.2037546**
+The top-5 weakness remains explicit.
 
-It is a neutral probability prior, not an individual ranking score.
+## Post-recovery Opportunity architecture
 
-The June procedural holdout remains permanently non-pristine and diagnostic-only.
+The old formula `P_quality × InventoryServiceability` is **invalidated** after recovery because Lead Quality now contains selected-Spot matching context.
 
-## P8 — stage sensitivity
+Canonical V2:
 
-### T0
-Decision: **NEUTRAL_EVIDENCE_BACKED**.
+```
+OpportunityScoreV2 = P(LeadQuality_recovered) × InventoryActionabilityGate
+```
 
-T0 estimates a different quantity from T1. Intake-only Logistic does not provide stable discrimination:
-- macro AP 0.4803 → 0.4856;
-- macro AUC 0.4947;
-- Brier and Log Loss worsen.
+Continuous Inventory Serviceability remains a separate output. The gate is binary and only prevents true `NO_RESULT` leads from being treated as operationally actionable.
 
-T0 should not deploy a predictive ranking model.
+This removes continuous double counting. The rejected raw multiplicative product remains diagnostic-only because it improves exact-serviceability concentration while harming pure Lead Quality capture.
 
-### T2
-Decision: **FUTURE_EXTENSION**.
+## Capacity and fallback
 
-Adding the 33 strict-prior trajectory features gives:
-- AP 0.1864 → 0.1896;
-- delta AP +0.0032;
-- 2/4 folds positive;
-- Brier / Log Loss slightly worse.
+Capacity was recalculated on DEVELOPMENT OOF only at 5/10/15/20. The clean-room result is **P80/top 20%**, not the historical E019 P85/top-15 prior.
 
-The effect is below the frozen +0.01 complexity gate. No T2 predictive model is recommended now.
+Fallback list depth is independently re-supported at **K=3**:
+- any result: 4,361/4,368 DEVELOPMENT leads;
+- at least 3 recommendations: 4,051/4,368;
+- at least 5 recommendations: 3,696/4,368.
 
-## Stage product decision
+Inventory scalar/ranking itself was not rebuilt.
 
-- **T0:** cold-start prior only;
-- **T1:** principal Lead Quality product, neutral prior only;
-- **T2:** future re-scoring extension, not deployed.
+## Holdout governance
 
-Do not average T0/T1/T2 probabilities. T0 has a different target, while T2 conditions on a different stage population.
+June remains `DIAGNOSTIC_ONLY_NON_PRISTINE` because of the documented earlier incident. It was not used to select:
+- recovered Lead Quality;
+- V2 formula;
+- P80 capacity;
+- K=3.
 
-## Clean-room rule
+Post-recovery confirmation requires genuinely new/hidden data.
 
-Never consume historical fitted artifacts from `experimentos/**`: no ABTs, predictions, models, preprocessors, clusterers, target encoders or calibrators.
+## Historical upstream evidence
 
-## Key evidence
+- E018 Semantic Rules: **NOT_SUPPORTED for scoring**; excluded.
+- E019: historical top-15/P85 and Availability-30d evidence only.
+- E020: historical K=3/combined-proxy evidence only.
+- No E019/E020 metric is copied as an AssessmentSol1 result.
 
-- `target/TARGET_CONTRACT.md`
-- `splits/SPLIT_CONTRACT.md`
-- `abt/ABT_CONTRACT.md`
-- `features/FEATURE_REGISTRY.csv`
-- `models/lead_quality/MODEL_CARD.md`
-- `evidence/T0_EXPOSURE_DRIFT.md`
-- `evidence/T2_TRAJECTORY_DECISION.md`
-- `evidence/STAGE_COMPARISON.md`
-- `models/P8_EXECUTION_MANIFEST.json`
+## Current authority
 
+Start here:
+- `recovery_downstream/POST_RECOVERY_DECISION.md`
+- `recovery_downstream/POST_RECOVERY_FINAL_STATE.json`
+- `models/lead_quality_recovery/RECOVERY_DECISION.md`
+- `opportunity_score/SCORE_CONTRACT.md`
+- `opportunity_score/frozen_score_config.json`
+- `inventory/frozen_inventory_config.json`
+- `audit/FINAL_LEAKAGE_AUDIT.md`
+- `audit/POST_RECOVERY_RED_TEAM.md`
 
-## Prompt 9–11 closure
-
-- Inventory / fallback: frozen under `INV_SERVICEABILITY_V1_FROZEN_2026-08-30`.
-- Opportunity Score: frozen multiplicative score; because Lead Quality is constant, ranking equals Inventory ranking.
-- Methodological red-team: `audit/FINAL_LEAKAGE_AUDIT.md` and `audit/final_audit.json`.
-- Stress tests: isolated under `audit/stress/**`; all are NON_DEPLOYABLE and rejected by the product harness.
-- June remains procedural/non-pristine diagnostic evidence only.
+**POST-RECOVERY SYSTEM FROZEN — CONTINUE TO PROMPT 12**
