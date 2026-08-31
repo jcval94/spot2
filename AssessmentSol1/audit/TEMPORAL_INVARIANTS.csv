@@ -1,0 +1,22 @@
+id,invariant,status,class,severity,evidence
+T001,T1 score_time is deterministic first inquiry time,PASS,FEATURE_TIME_SAFE,CRITICAL,build_t1.py
+T002,Current T1 inquiry request fields are available at score_time,PASS,FEATURE_TIME_SAFE,HIGH,TEMPORAL_SEMANTICS.md
+T003,Current broker response is unavailable at score_time and excluded from predictors,PASS,FEATURE_TIME_SAFE,CRITICAL,build_t1.py + FEATURE_REGISTRY
+T004,T2 history requires inquiry_at strictly less than score_time,PASS,FEATURE_TIME_SAFE,CRITICAL,build_t2.py
+T005,Same-timestamp T2 inquiries do not see one another,PASS,FEATURE_TIME_SAFE,HIGH,build_features.py batch shift + test_features.py
+T006,Candidate Spot requires created_at <= score_time,PASS,FEATURE_TIME_SAFE,CRITICAL,build_inventory.py
+T007,Availability requires latest snapshot_date <= score_date,PASS,FEATURE_TIME_SAFE,CRITICAL,build_inventory.py
+T008,Missing prior snapshot remains UNKNOWN,PASS,FEATURE_TIME_SAFE,HIGH,FROZEN Inventory config
+T009,Stale prior snapshot remains known and only lowers confidence,PASS,FEATURE_TIME_SAFE,HIGH,TEMPORAL_CORRECTION.md
+T010,competing_inquiries_30d is blocked,PASS,FEATURE_TIME_SAFE,CRITICAL,Inventory config
+T011,Market Context is EDA-only,PASS,FEATURE_TIME_SAFE,CRITICAL,temporal_column_registry.csv
+T012,Current unversioned Spot prices are blocked historically,PASS,FEATURE_TIME_SAFE,CRITICAL,Inventory config
+T013,Learned preprocessing fits TRAIN only,PASS,FEATURE_TIME_SAFE,CRITICAL,GuardedPreprocessor
+T014,Calibration is selected/fitted on CALIBRATION only,PASS,FEATURE_TIME_SAFE,CRITICAL,calibration.py
+T015,Lead identity cannot cross TRAIN/VALIDATION within a fold,PASS,FEATURE_TIME_SAFE,HIGH,train.py + validate_abts.py
+T016,Primary target maturity uses max raw inquiry_at as observation-horizon proxy,ASSUMED,LABEL_MATURITY_ASSUMED,HIGH,TARGET_CONTRACT.md
+T017,Availability same-day observability uses business-date assumption,ASSUMED,OBSERVATION_TIME_ASSUMED,HIGH,FRESHNESS_POLICY.md
+T018,Spot structural fields are invariant from creation only by explicit modeling assumption,ASSUMED,STRUCTURAL_INVARIANCE_ASSUMED,MEDIUM,TEMPORAL_SEMANTICS.md
+T019,spot_attributes are invariant from Spot creation only by explicit modeling assumption,ASSUMED,ATTRIBUTE_INVARIANCE_ASSUMED,MEDIUM,TEMPORAL_SEMANTICS.md
+T020,June is procedural diagnostic and cannot revise frozen decisions,PASS,RESEARCH_GOVERNANCE,CRITICAL,FROZEN_MODEL_CONFIG + frozen_score_config
+T021,Stress specs marked unsafe cannot pass product harness,PASS,RESEARCH_GOVERNANCE,CRITICAL,audit/harness.py
