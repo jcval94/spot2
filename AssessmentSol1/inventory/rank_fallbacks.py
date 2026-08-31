@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import datetime, timezone
+from datetime import datetime
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
@@ -222,7 +222,7 @@ def main() -> None:
     args = parser.parse_args()
 
     repo_root = Path(__file__).resolve().parents[2]
-    cutoff = datetime(2026, 5, 1, tzinfo=timezone.utc) if args.development_only else None
+    cutoff = datetime(2026, 5, 1) if args.development_only else None
     candidates = pl.read_parquet(args.input) if args.input else build_inventory(
         repo_root, max_score_time_exclusive=cutoff
     )
