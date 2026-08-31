@@ -1,13 +1,13 @@
 # Fallback Policy
 
-The fallback layer returns at most five deterministic recommendations. It never invents a Spot and never uses an LLM for reason text.
+The fallback layer returns at most three deterministic recommendations. It never invents a Spot and never uses an LLM for reason text.
 
 ## Recommendation order
 
 1. Apply the PIT candidate/existence gate and hard modality compatibility.
 2. Require the frozen area viability threshold; if a future PIT budget fit is known, also require its frozen minimum.
 3. Rank **known available** candidates lexicographically by tier and within-tier quality.
-4. If no known-available candidate exists, return up to five viable `UNKNOWN` candidates with status `VERIFY_AVAILABILITY`.
+4. If no known-available candidate exists, return up to three viable `UNKNOWN` candidates with status `VERIFY_AVAILABILITY`.
 5. Never recommend a candidate known to be unavailable.
 6. Tier 3 remains visibly `TIER_3_EXPERIMENTAL` and cannot be described as equivalent to same-sector fallback.
 
@@ -28,3 +28,16 @@ Canonical codes include `EXACT_PREFERRED_MARKET`, `MUNICIPALITY_RELAXATION`, `ST
 - **Area impossible:** no recommendation when every candidate fails the frozen area threshold.
 
 `fallback_available` means a known-available same-sector relaxation (Tier 1/2), not merely the existence of Tier 3.
+
+
+## Post-recovery K revision
+
+Prompt 11.6 independently reevaluated recommendation-list depth using the frozen AssessmentSol1 Inventory outputs, without outcome labels or procedural holdout.
+
+- any result: 4,361 / 4,368 DEVELOPMENT leads (99.84%);
+- at least 3 recommendations: 4,051 / 4,368 (92.74%);
+- at least 5 recommendations: 3,696 / 4,368 (84.62%).
+
+The canonical maximum is therefore **K=3**. This changes only list length; candidate construction, PIT availability, viability, serviceability scalar and ranking remain frozen.
+
+E020 is historical supporting evidence only; none of its metrics are copied into this decision.
