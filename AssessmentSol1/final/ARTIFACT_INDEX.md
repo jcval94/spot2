@@ -78,3 +78,10 @@ Final deliverables use four provenance labels conceptually:
 
 - `PROMPT_13_FINAL_ASSESSMENT.md`
 - `PROMPT_14_FINAL_REVIEW.md`
+
+## Submission authority
+
+- `FINAL_REVIEW.md`
+- `SUBMISSION_STATE.json`
+
+Final decision: **READY TO SUBMIT**
