@@ -1,6 +1,6 @@
 # AssessmentSol1 — clean-room definitive assessment
 
-Status: **PROMPT 11.6 COMPLETE. Post-recovery system frozen with zero active BLOCKERS. Prompt 12 has not been executed yet.**
+Status: **PROMPT 12 COMPLETE. Post-recovery scoring system remains frozen; LLM/AI requirement is closed with zero runtime dependency in the main score.**
 
 This directory is the only writable home for the definitive Spot2 assessment. Historical experiments may be read as prior evidence but are never runtime dependencies.
 
@@ -92,4 +92,30 @@ Start here:
 - `audit/FINAL_LEAKAGE_AUDIT.md`
 - `audit/POST_RECOVERY_RED_TEAM.md`
 
-**POST-RECOVERY SYSTEM FROZEN — CONTINUE TO PROMPT 12**
+## Prompt 12 — LLM / AI closure
+
+The required AI use is now self-contained under `llm/**`.
+
+Final LLM role:
+- sampled Semantic Inventory / Catalog QA discovery;
+- Rules-first residual analysis;
+- human validation before deterministic rule promotion.
+
+Not part of:
+- Lead Quality;
+- Inventory score;
+- Opportunity Score;
+- fallback ranking;
+- capacity policy.
+
+Canonical E017 real-API evidence and E018 scoring ablation are documented with provenance. Open PR #19 is explicitly supplemental. AssessmentSol1 independently reproduces the deterministic semantic sidecar from raw data.
+
+Prompt 12 makes **no new paid API call**. The main Lead Opportunity Score remains reproducible with no OpenAI key, no network call and an empty LLM cache.
+
+Authority:
+- `llm/UPSTREAM_EVIDENCE.md`
+- `llm/LLM_EVALUATION.md`
+- `llm/LLM_DECISION.md`
+- `llm/results/prompt12_gate.json`
+
+**LLM REQUIREMENT CLOSED — MAIN SCORE REPRODUCES WITHOUT LIVE OPENAI**
