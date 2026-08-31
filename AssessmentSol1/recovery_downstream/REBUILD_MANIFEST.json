@@ -20,12 +20,7 @@
     "end-to-end Lead Quality/serviceability/joint metrics",
     "downstream dependency map"
   ],
-  "pending_canonical_updates": [
-    "Opportunity Score config/code/docs/outputs",
-    "fallback max K=3 docs/config/output lists",
-    "score-dependent figures",
-    "final red-team/leakage audit"
-  ],
+  "pending_canonical_updates": [],
   "capacity_selection": {
     "authority": "DEVELOPMENT temporal OOF macro only",
     "selected_capacity_pct": 20,
@@ -70,5 +65,20 @@
     "splits": "d20bc4df7c5ff88fc7cbf2bdcf1168586bab5465",
     "oldScored": "1e66520048ad2edfc118955d7aa7af4cf0b0e41d"
   },
-  "status": "REEVALUATION_COMPLETE_CANONICAL_UPDATE_PENDING"
+  "status": "POST_RECOVERY_SYSTEM_FROZEN",
+  "completed_canonical_updates": [
+    "Opportunity Score V2 config, code, docs and product CSV",
+    "rank-based priority bands and P80 capacity",
+    "fallback max K=3 policy and output lists",
+    "score distribution, gains and capacity outputs",
+    "outcome-blind final examples",
+    "score-dependent figures",
+    "post-recovery double-counting and final leakage audits",
+    "stale V1 Parquet removal"
+  ],
+  "final_red_team": {
+    "status": "PASS",
+    "active_blockers": 0
+  },
+  "gate": "POST-RECOVERY SYSTEM FROZEN — CONTINUE TO PROMPT 12"
 }
