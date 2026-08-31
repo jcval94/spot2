@@ -110,15 +110,15 @@ def _rank_row(i: int) -> dict:
     }
 
 
-def test_max_five_unique_rank_deterministic_and_no_inventory() -> None:
+def test_max_three_unique_rank_deterministic_and_no_inventory() -> None:
     cfg = load_config()
     rows = [_rank_row(i) for i in range(1,9)]
     rec1, summary1 = rank_score_rows(rows, cfg)
     rec2, summary2 = rank_score_rows(list(reversed(rows)), cfg)
     assert rec1 == rec2 and summary1 == summary2
-    assert len(rec1) == 5
-    assert [x["rank"] for x in rec1] == [1,2,3,4,5]
-    assert len({x["rank"] for x in rec1}) == 5
+    assert len(rec1) == 3
+    assert [x["rank"] for x in rec1] == [1,2,3]
+    assert len({x["rank"] for x in rec1}) == 3
     rec0, summary0 = rank_score_rows([], cfg)
     assert rec0 == [] and summary0["no_result_reason"] == "NO_INVENTORY"
 
