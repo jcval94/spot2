@@ -1,0 +1,7 @@
+tabla,filas,papel_en_el_eda,grano_o_riesgo_clave,fuente_autoritativa
+leads,5000,"Perfil, necesidad inicial, modalidad, presupuesto, geografía y origen","Una fila por lead; los agregados históricos entregados requieren prueba de observabilidad","codexway + auditoría AssessmentSol1"
+inquiries,22576,"Interacciones lead-spot y refinamiento T1/T2","Eventos posteriores no pueden retroceder a T0/T1; broker_response es outcome","codexway"
+spots,3000,"Catálogo, sector, modalidad, geografía, área y precios","created_at prueba existencia, no versión histórica de todos los atributos","codexway"
+spot_attributes,3000,"Características físicas del inmueble","1:1 con spot; timestamps efectivos ausentes; missingness por campo","AssessmentSol1 como auditoría complementaria"
+availability_snapshot,30000,"Estado histórico de disponibilidad","1:N temporal; sólo backward as-of; UNKNOWN != UNAVAILABLE","codexway"
+market_context,500,"Contexto agregado por mercado","month no prueba publication/effective time; EDA_ONLY","codexway"
