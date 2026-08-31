@@ -1,6 +1,6 @@
 {
-  "contract_version": "0.1.2",
-  "phase": "PROMPT_0",
+  "contract_version": "0.1.3",
+  "phase": "PROMPT_9_INVENTORY_CORRECTION",
   "stage_score_times": {
     "T0": "leads.created_at",
     "T1": "first inquiries.inquiry_at for lead_id",
@@ -9,14 +9,8 @@
   "source_policy": {
     "leads": {
       "default": "KNOWN_AT_T0_IF_CAPTURED_AT_CREATED_AT",
-      "blocked": [
-        "lead_score_internal"
-      ],
-      "audit_or_conditional": [
-        "prior_searches",
-        "prior_inquiries",
-        "has_converted_before"
-      ]
+      "blocked": ["lead_score_internal"],
+      "audit_or_conditional": ["prior_searches", "prior_inquiries", "has_converted_before"]
     },
     "inquiries": {
       "current_request_fields": "KNOWN_AT_INQUIRY_AT",
@@ -25,40 +19,18 @@
     },
     "spots": {
       "descriptive_fields": "CONDITIONAL_ON_SPOT_CREATED_AND_FIELD_IMMUTABILITY",
-      "blocked_current_state": [
-        "days_on_market",
-        "total_inquiries",
-        "total_views",
-        "is_active"
-      ],
+      "blocked_current_state": ["days_on_market", "total_inquiries", "total_views", "is_active"],
       "structural_candidate_guardrails": {
-        "fields": [
-          "sector_name",
-          "type_name",
-          "state",
-          "municipality",
-          "settlement",
-          "corridor",
-          "region",
-          "lat",
-          "lon",
-          "area_sqm",
-          "modality"
-        ],
+        "fields": ["sector_name", "type_name", "state", "municipality", "settlement", "corridor", "region", "lat", "lon", "area_sqm", "modality"],
         "policy": "ASSUMED_STRUCTURAL_FROM_SPOT_CREATION",
         "condition": "spots.created_at <= score_time",
         "model_role": "POLICY_GUARDRAIL_NOT_LEADQUALITY_FEATURE"
       },
       "potentially_mutable_unversioned": [
-        "broker_id",
-        "title",
-        "description",
-        "price_sqm_mxn_rent",
-        "price_sqm_mxn_sale",
-        "price_total_mxn_rent",
-        "price_total_mxn_sale",
-        "maintenance_cost_mxn"
-      ]
+        "broker_id", "title", "description", "price_sqm_mxn_rent", "price_sqm_mxn_sale",
+        "price_total_mxn_rent", "price_total_mxn_sale", "maintenance_cost_mxn"
+      ],
+      "inventory_price_policy": "BLOCK_CURRENT_UNVERSIONED_PRICE_FROM_HISTORICAL_SERVICEABILITY"
     },
     "spot_attributes": {
       "policy": "KNOWN_AT_T1_T2_UNDER_EXPLICIT_IMMUTABILITY_ASSUMPTION",
@@ -71,13 +43,21 @@
     },
     "availability_snapshot": {
       "policy": "BACKWARD_ASOF_ONLY",
-      "join": "max(snapshot_date) where snapshot_date <= score_time for spot_id",
-      "stale_gt_90d": "UNKNOWN_FOR_SERVICEABILITY",
-      "competing_inquiries_30d": "CONDITIONAL_PENDING_WINDOW_SEMANTICS"
+      "join": "max(snapshot_date) where snapshot_date <= score_date for spot_id; deterministic snapshot_id tie-break on same date",
+      "missing_prior_snapshot": "UNKNOWN",
+      "stale_gt_90d": "KNOWN_BUT_LOW_CONFIDENCE_NEVER_REWRITTEN_TO_UNKNOWN",
+      "freshness_policy": "AssessmentSol1/inventory/FRESHNESS_POLICY.md",
+      "competing_inquiries_30d": "FORBIDDEN_UNTIL_RETROSPECTIVE_WINDOW_AND_EFFECTIVE_TIMESTAMP_ARE_PROVEN"
     },
     "market_context": {
       "policy": "BLOCKED_UNTIL_PUBLICATION_OR_EFFECTIVE_TIME_IS_PROVEN"
     }
+  },
+  "inventory_prompt9_correction": {
+    "incident": "INV-001",
+    "previous_issue": "superseded P3 conflated snapshot age >90d with unknownness",
+    "resolution": "observability and freshness are separate; only absence of a backward snapshot is UNKNOWN",
+    "lead_quality_changed": false
   },
   "final_holdout_language": "procedural final holdout when historically inspected; never pristine unseen holdout"
 }
