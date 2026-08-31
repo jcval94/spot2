@@ -1,25 +1,21 @@
-# Entregable 5 — Lead Puntaje de oportunidad
+# Entregable 5 — Lead Opportunity Score
 
-> ### Guía de lectura
-> Este documento está escrito para poder leerse sin asumir experiencia en ciencia de datos. Se conservan algunos nombres técnicos cuando son necesarios para reproducir la solución, pero su significado es:
-> - **Lift@10:** cuánto mejora el 10% mejor priorizado frente a elegir al azar el mismo número de casos.
-> - **Variable objetivo (target):** resultado que queremos anticipar; aquí, principalmente una visita agendada.
-> - **Información disponible en ese momento (point-in-time / as-of):** sólo datos que ya podían conocerse cuando se tomó la decisión.
-> - **Muestra de evaluación (holdout):** periodo apartado para medir el modelo después del entrenamiento.
-> - **Ejecución en paralelo (shadow):** calcular recomendaciones sin cambiar todavía la operación real.
-> - **Estrategia de respaldo (fallback):** qué hacer cuando el inmueble original no puede recomendarse con suficiente confianza.
+> ### Lectura en lenguaje claro
+> **En una frase:** el Puntaje de oportunidad combina qué tan prometedor es el lead con qué tan posible es atenderlo, pero mantiene ambas señales visibles porque responden a objetivos de negocio distintos.
+>
+> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **target** es el resultado que se quiere anticipar; **point-in-time / as-of** significa usar sólo información que ya era conocida en ese momento; **holdout** es una muestra apartada para evaluación; y **fallback** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
 >
 
 ## 1. Propósito
 
-El Lead Puntaje de oportunidad integra dos señales que responden preguntas diferentes:
+El Lead Opportunity Score integra dos señales que responden preguntas diferentes:
 
-- **Calidad del lead:** probabilidad calibrada de que la primera consulta termine en `scheduled_visit`.
-- **Capacidad del inventario:** capacidad del inventario point-in-time de atender razonablemente la necesidad del lead.
+- **Lead Quality:** probabilidad calibrada de que la primera inquiry termine en `scheduled_visit`.
+- **Inventory Serviceability:** capacidad del inventario point-in-time de atender razonablemente la necesidad del lead.
 
 No se reentrena ni rediseña ninguno de los dos componentes.
 
-El objetivo del Puntaje de oportunidad es construir una capa de decisión operativa que responda:
+El objetivo del Opportunity Score es construir una capa de decisión operativa que responda:
 
 > ¿Qué leads combinan suficiente probabilidad de progresar con suficiente capacidad real de servicio?
 
@@ -37,15 +33,15 @@ La implementación canónica está en:
 La fórmula final es:
 
 ```text
-Calidad del lead Score = 100 × p_lead_quality
+Lead Quality Score = 100 × p_lead_quality
 
 Opportunity probability lower
-  = p_lead_quality × inventory_capacidad de atención_lower
+  = p_lead_quality × inventory_serviceability_lower
 
 Opportunity probability upper
-  = p_lead_quality × inventory_capacidad de atención_upper
+  = p_lead_quality × inventory_serviceability_upper
 
-Puntaje de oportunidad = 100 × Opportunity probability lower
+Opportunity Score = 100 × Opportunity probability lower
 ```
 
 La salida lower es la vista conservadora y es la que gobierna el score principal. La upper conserva el potencial cuando Inventory es UNKNOWN/stale.
@@ -58,7 +54,7 @@ Cuando Availability es desconocida o stale, Codexway no impone:
 
 `UNKNOWN = UNAVAILABLE`.
 
-En lugar de eso, el componente de Inventory puede tener una cota inferior conservadora y una cota superior optimista. El Puntaje de oportunidad hereda esa incertidumbre.
+En lugar de eso, el componente de Inventory puede tener una cota inferior conservadora y una cota superior optimista. El Opportunity Score hereda esa incertidumbre.
 
 Esto evita dos errores:
 
@@ -81,12 +77,12 @@ Un **score de priorización operacional** que combina:
 
 - probabilidad causal de venta;
 - probabilidad conjunta perfectamente calibrada;
-- probabilidad de éxito del estrategia de respaldo;
+- probabilidad de éxito del fallback;
 - garantía de que el Spot será aceptado;
-- sustituto de Calidad del lead para cualquier objetivo;
+- sustituto de Lead Quality para cualquier objetivo;
 - evidencia de valor causal de Inventory.
 
-El target observado de Codexway es `scheduled_visit` en la primera consulta. Ese target **no observa aceptación de un estrategia de respaldo recomendado**, por lo que el valor incremental de Inventory no puede validarse de forma limpia contra ese outcome.
+El target observado de Codexway es `scheduled_visit` en la primera inquiry. Ese target **no observa aceptación de un fallback recomendado**, por lo que el valor incremental de Inventory no puede validarse de forma limpia contra ese outcome.
 
 ---
 
@@ -110,7 +106,7 @@ Pregunta:
 
 Señal correcta:
 
-`Calidad del lead + Capacidad del inventario + Puntaje de oportunidad`.
+`Lead Quality + Inventory Serviceability + Opportunity Score`.
 
 No debe evaluarse el segundo objetivo sólo con el target del primero.
 
@@ -118,11 +114,11 @@ No debe evaluarse el segundo objetivo sólo con el target del primero.
 
 ## 5. Trade-off observado
 
-En el muestra histórica de evaluación común de Codexway:
+En el holdout procedimental común de Codexway:
 
 | Score | ROC-AUC | PR-AUC | Brier | Lift@5 | Lift@10 | Recall@10 |
 |---|---:|---:|---:|---:|---:|---:|
-| Calidad del lead | 0.5478 | 0.2391 | **0.1658** | **1.689x** | **1.689x** | **16.98%** |
+| Lead Quality | 0.5478 | 0.2391 | **0.1658** | **1.689x** | **1.689x** | **16.98%** |
 | Opportunity lower | 0.5119 | **0.2477** | 0.1707 | 1.589x | 1.370x | 13.77% |
 | Opportunity upper | 0.5235 | 0.2613 | 0.1695 | 1.809x | 1.507x | 15.15% |
 
@@ -136,13 +132,13 @@ La comparación pareada Quality → Opportunity lower muestra:
 
 ### Interpretación
 
-El Puntaje de oportunidad conservador:
+El Opportunity Score conservador:
 
-- **sí** supera aleatoria de forma absoluta: Lift@10 1.370x, IC95% [1.078x, 1.690x];
-- **no** demuestra valor incremental sobre Calidad del lead para ordenar el target T1;
+- **sí** supera random de forma absoluta: Lift@10 1.370x, IC95% [1.078x, 1.690x];
+- **no** demuestra valor incremental sobre Lead Quality para ordenar el target T1;
 - reduce la concentración de `scheduled_visit` cuando penaliza leads con inventario menos servible.
 
-Esto no es una contradicción: refleja que **conversión proxy y capacidad de atención son objetivos diferentes**.
+Esto no es una contradicción: refleja que **conversión proxy y serviceability son objetivos diferentes**.
 
 ---
 
@@ -152,21 +148,21 @@ Codexway no recomienda esconder todo dentro de un único ranking.
 
 La política diagnóstica del sistema distingue:
 
-| Calidad del lead | Inventory | Acción |
+| Lead Quality | Inventory | Acción |
 |---|---|---|
 | Alta/Priority | Serviceable | trabajar si el gate del modelo está activo |
 | Alta/Priority | Uncertain | verificar inventario primero |
-| Alta/Priority | baja capacidad de atención | buscar/ofrecer estrategia de respaldo |
+| Alta/Priority | baja serviceability | buscar/ofrecer fallback |
 | Standard | cualquiera | workflow estándar |
 
 El código define la banda de Inventory como:
 
 - **Uncertain:** `inventory_confidence < 0.50` o `uncertainty_width > 0.20`;
 - **Serviceable:** lower >= 0.75;
-- **Potential estrategia de respaldo:** upper >= 0.50;
-- **Low capacidad de atención:** resto.
+- **Potential fallback:** upper >= 0.50;
+- **Low serviceability:** resto.
 
-Esta vista de dos ejes debe permanecer visible aun cuando se use Puntaje de oportunidad.
+Esta vista de dos ejes debe permanecer visible aun cuando se use Opportunity Score.
 
 ---
 
@@ -193,13 +189,13 @@ Priority = p_lead_quality
 ### 7.2 Quality × Inventory — producto continuo simple
 
 ```text
-p_quality × inventory_capacidad de atención
+p_quality × inventory_serviceability
 ```
 
 **Tiene sentido cuando:**
-- Calidad del lead es verdaderamente independiente de señales de Spot/Inventory;
+- Lead Quality es verdaderamente independiente de señales de Spot/Inventory;
 - Inventory tiene escala interpretable;
-- el objetivo exige castigar gradualmente la baja capacidad de atención.
+- el objetivo exige castigar gradualmente la baja serviceability.
 
 **Riesgos:**
 - una señal de inventario mal calibrada puede dominar el ranking;
@@ -210,7 +206,7 @@ p_quality × inventory_capacidad de atención
 
 ### 7.3 Quality × InventoryActionabilityGate
 
-Arquitectura de retoSol1 V2:
+Arquitectura de AssessmentSol1 V2:
 
 ```text
 p_quality × inventory_actionability_gate
@@ -219,19 +215,19 @@ p_quality × inventory_actionability_gate
 El gate evita multiplicar de nuevo una señal continua de matching.
 
 **Tiene sentido cuando:**
-- el modelo de Calidad del lead ya incluye selected-Spot matching o contexto de capacidad de atención;
+- el modelo de Lead Quality ya incluye selected-Spot matching o contexto de serviceability;
 - volver a multiplicar Inventory introduciría solapamiento;
 - se quiere que Inventory actúe como elegibilidad/abstención más que como segundo scorer.
 
-retoSol1 llegó a esta arquitectura porque su Calidad del lead recuperado utiliza:
+AssessmentSol1 llegó a esta arquitectura porque su Lead Quality recuperado utiliza:
 
 - `selected_spot_area_closeness`;
 - `selected_spot_geographic_fit`;
 - `selected_spot_attribute_completeness`.
 
-En esa arquitectura, multiplicar `Inventorycapacidad de atención` de nuevo podía double-count matching.
+En esa arquitectura, multiplicar `InventoryServiceability` de nuevo podía double-count matching.
 
-**No se promueve aquí**, porque ese no es el Calidad del lead canónico de Codexway.
+**No se promueve aquí**, porque ese no es el Lead Quality canónico de Codexway.
 
 ---
 
@@ -240,18 +236,18 @@ En esa arquitectura, multiplicar `Inventorycapacidad de atención` de nuevo pod�
 Codexway utiliza:
 
 ```text
-p_quality × inventory_capacidad de atención_lower
+p_quality × inventory_serviceability_lower
 ```
 
 y conserva en paralelo:
 
 ```text
 p_quality
-inventory_capacidad de atención_lower
-inventory_capacidad de atención_upper
+inventory_serviceability_lower
+inventory_serviceability_upper
 inventory_confidence
 inventory_uncertainty_width
-estrategia de respaldo
+fallback
 ```
 
 **Por qué no es equivalente al producto simple:**
@@ -261,15 +257,15 @@ estrategia de respaldo
 3. mantiene los componentes visibles;
 4. define acciones diferentes para Inventory incierto;
 5. no afirma una probabilidad conjunta calibrada;
-6. no autoriza despliegue por el solo hecho de que el producto sea >0.
+6. no autoriza deployment por el solo hecho de que el producto sea >0.
 
 **Por qué no hay double counting estructural en Codexway:**
 
-El Calidad del lead final de Codexway es `stable_segment_logistic` con la interacción T0-safe:
+El Lead Quality final de Codexway es `stable_segment_logistic` con la interacción T0-safe:
 
 `Industrial AND (company_size=small OR source=paid)`.
 
-No utiliza Availability ni selected-Spot capacidad de atención. Inventory permanece en un componente separado. Por eso la razón que llevó a retoSol1 a un Actionability Gate **no aplica automáticamente** a la arquitectura canónica.
+No utiliza Availability ni selected-Spot serviceability. Inventory permanece en un componente separado. Por eso la razón que llevó a AssessmentSol1 a un Actionability Gate **no aplica automáticamente** a la arquitectura canónica.
 
 ---
 
@@ -291,9 +287,9 @@ Es un robustness check valioso porque exhibe el mismo trade-off:
 
 No se copian sus métricas como performance de Codexway.
 
-### retoSol1 V2 — Actionability Gate
+### AssessmentSol1 V2 — Actionability Gate
 
-Es evidencia metodológica de que una arquitectura debe revisarse cuando cambia el contenido del Calidad del lead.
+Es evidencia metodológica de que una arquitectura debe revisarse cuando cambia el contenido del Lead Quality.
 
 No invalida Codexway; explica cuándo un producto continuo **sí** podría ser double counting.
 
@@ -307,20 +303,20 @@ Las etiquetas “V1” y “V2” no son globales al repositorio.
 
 La arquitectura histórica fue un producto continuo entre Quality y una probabilidad de Inventory top-3. Es evidencia de integración, no la autoridad final de Codexway.
 
-### retoSol1
+### AssessmentSol1
 
 En esa rama:
 
-- Opportunity V1 = producto continuo Quality × Capacidad del inventario;
+- Opportunity V1 = producto continuo Quality × Inventory Serviceability;
 - Opportunity V2 = Quality × InventoryActionabilityGate.
 
-V1 fue rechazado allí por double counting después de que su Calidad del lead recuperado incorporara selected-Spot matching.
+V1 fue rechazado allí por double counting después de que su Lead Quality recuperado incorporara selected-Spot matching.
 
 ### Codexway
 
-Codexway no hereda automáticamente esa invalidación porque su Calidad del lead final no contiene Availability ni selected-Spot capacidad de atención. Su arquitectura final sigue siendo:
+Codexway no hereda automáticamente esa invalidación porque su Lead Quality final no contiene Availability ni selected-Spot serviceability. Su arquitectura final sigue siendo:
 
-    p_quality × inventory_capacidad de atención_lower
+    p_quality × inventory_serviceability_lower
 
 con upper bound, confidence y política de dos ejes.
 
@@ -332,11 +328,11 @@ con upper bound, confidence y política de dos ejes.
 | Opportunity upper | potencial bajo incertidumbre de Inventory |
 | Quality-only | benchmark para maximizar target T1 |
 | Capacity 5/10/20% | sensibilidad operacional congelada en Codexway |
-| K interno top-3 | sensibilidad incorporada al componente de capacidad de atención |
-| hasta K=5 visible | política final de estrategia de respaldo de Codexway |
-| Actionability Gate | alternativa evaluada sólo si Calidad del lead incorpora matching solapado |
+| K interno top-3 | sensibilidad incorporada al componente de serviceability |
+| hasta K=5 visible | política final de fallback de Codexway |
+| Actionability Gate | challenger sólo si Lead Quality incorpora matching solapado |
 
-La regla de interpretación es: **no trasladar el nombre V1/V2 entre ramas sin trasladar también el modelo de Calidad del lead, el contrato, la población y la política de Inventory que le dieron significado.**
+La regla de interpretación es: **no trasladar el nombre V1/V2 entre ramas sin trasladar también el modelo de Lead Quality, el contrato, la población y la política de Inventory que le dieron significado.**
 
 ---
 
@@ -347,7 +343,7 @@ Codexway congela una política capacity-first:
 - default: **top 10%**;
 - escenarios: **5%, 10%, 20%**.
 
-Para Calidad del lead, el threshold de prioridad derivado de validation es:
+Para Lead Quality, el threshold de prioridad derivado de validation es:
 
 `p ≈ 0.2530980692`.
 
@@ -384,7 +380,7 @@ Es el scoring principal.
 
 Trigger:
 
-`primera consulta persisted → score before respuesta del intermediario`.
+`first inquiry persisted → score before broker response`.
 
 ### T0 — sensibilidad/cold start
 
@@ -394,9 +390,9 @@ Su señal es débil y el target cambia con exposición futura. No debe sustituir
 
 **Producción:** no usar T0 como prioridad automática con la evidencia actual.
 
-### T2 — alternativa evaluada de rescore
+### T2 — challenger de rescore
 
-T2 usa consultas posteriores con historia estrictamente previa.
+T2 usa inquiries posteriores con historia estrictamente previa.
 
 Puede ser útil como extensión dinámica, pero:
 
@@ -412,7 +408,7 @@ Puede ser útil como extensión dinámica, pero:
 
 Hay que distinguir dos tipos de cambio.
 
-### Cambia el lead / llega otra consulta
+### Cambia el lead / llega otra inquiry
 
 No sobrescribir el score T1.
 
@@ -421,14 +417,14 @@ No sobrescribir el score T1.
 
 ### Cambia Inventory
 
-Calidad del lead T1 puede permanecer fijo, pero capacidad de atención puede cambiar.
+Lead Quality T1 puede permanecer fijo, pero Serviceability puede cambiar.
 
 Para una cola operacional viva se puede recalcular:
 
 ```text
 p_quality_T1 fijo
 ×
-inventory_capacidad de atención_as_of(now)
+inventory_serviceability_as_of(now)
 ```
 
 Esto debe guardarse como **inventory refresh / operational rescore**, no como si hubiera sido el score histórico T1 original.
@@ -441,15 +437,15 @@ Así se conserva:
 
 ---
 
-## 12. estrategia de respaldo dentro de Opportunity
+## 12. Fallback dentro de Opportunity
 
-El estrategia de respaldo ya está definido en el Entregable 4 y no se modifica.
+El fallback ya está definido en el Entregable 4 y no se modifica.
 
 Reglas relevantes:
 
 - Availability strict backward-as-of;
 - `UNKNOWN != UNAVAILABLE`;
-- top-3 interno para componente de capacidad de atención;
+- top-3 interno para componente de serviceability;
 - hasta K=5 recomendaciones visibles;
 - `NO_RESULT` antes que violar hard constraints.
 
@@ -461,7 +457,7 @@ Opportunity consume el resultado de Inventory; no reconstruye candidatos por su 
 
 ### Si el objetivo es conversión proxy
 
-1. ordenar por Calidad del lead;
+1. ordenar por Lead Quality;
 2. usar Inventory como contexto/guardrail;
 3. no penalizar automáticamente Quality por Inventory salvo decisión de producto explícita.
 
@@ -471,7 +467,7 @@ Opportunity consume el resultado de Inventory; no reconstruye candidatos por su 
 2. priorizar por lower dentro de capacidad;
 3. conservar Quality visible;
 4. si Inventory es Uncertain, verificar antes;
-5. si hay baja capacidad de atención, ofrecer estrategia de respaldo;
+5. si hay baja serviceability, ofrecer fallback;
 6. si no hay candidato válido, permitir `NO_RESULT`.
 
 ### Activación
@@ -485,7 +481,7 @@ Secuencia:
 1. nueva cohorte forward en shadow;
 2. esperar madurez;
 3. validar Quality y Opportunity por separado;
-4. revisar drift/coverage/vigencia;
+4. revisar drift/coverage/freshness;
 5. si persiste señal, piloto A/B sticky por `lead_id`;
 6. análisis intention-to-treat.
 
@@ -507,13 +503,13 @@ No basta con AUC.
 
 ### Inventory
 
-- capacidad de atención lower/upper;
+- serviceability lower/upper;
 - confidence;
 - uncertainty width;
 - availability coverage;
 - snapshot age;
 - candidate depth;
-- estrategia de respaldo Coverage@K;
+- fallback Coverage@K;
 - UNKNOWN/stale;
 - `NO_RESULT`.
 
@@ -524,7 +520,7 @@ No basta con AUC.
 - recall/capture a capacidad;
 - delta vs Quality;
 - share de Priority con Inventory incierto;
-- capacidad de atención entre leads priorizados;
+- serviceability entre leads priorizados;
 - conversion guardrail;
 - joint/serviceable outcomes cuando exista un gold alineado.
 
@@ -535,15 +531,15 @@ No basta con AUC.
 | Pregunta | Decisión |
 |---|---|
 | ¿Qué arquitectura manda? | Codexway |
-| ¿Calidad del lead cambia? | No |
+| ¿Lead Quality cambia? | No |
 | ¿Inventory cambia? | No |
-| ¿Fórmula final? | `p_quality × inventory_capacidad de atención_lower` |
+| ¿Fórmula final? | `p_quality × inventory_serviceability_lower` |
 | ¿Se conserva upper bound? | Sí |
 | ¿Es probabilidad conjunta calibrada? | No |
 | ¿Inventory mejora el target T1 vs Quality-only? | No demostrado; gate incremental NO-GO |
-| ¿Opportunity supera aleatoria? | Sí, Lift@10 1.370x; IC95% >1 |
+| ¿Opportunity supera random? | Sí, Lift@10 1.370x; IC95% >1 |
 | ¿Uso inmediato automático? | No |
 | ¿Siguiente paso? | Forward shadow + piloto guardado |
-| ¿Actionability Gate final? | No; alternativa evaluada de retoSol1 bajo otra arquitectura |
+| ¿Actionability Gate final? | No; challenger de AssessmentSol1 bajo otra arquitectura |
 | ¿Objetivo de conversión pura? | Quality-only |
 | ¿Objetivo serviceable? | Opportunity + dos ejes |
