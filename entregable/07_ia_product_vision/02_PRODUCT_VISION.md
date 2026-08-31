@@ -10,6 +10,8 @@
 > - **Estrategia de respaldo (fallback)** describe qué hacer cuando la opción original no es defendible.
 >
 
+> La evidencia técnica original se conserva en `codexway/**`, `experimentos/**` y `AssessmentSol1/**` para auditoría. No es necesario navegarla para comprender este documento.
+
 ## 1. Principio
 
 La Visión de producto no parte de “agregar más modelos”.
@@ -643,13 +645,13 @@ Evidencia principal:
 
 ## 15. Evidencia fuente
 
-- [Codexway](../../codexway/README.md)
+- **Codexway**
 - [Entregable 3 — Calidad del lead](../03_lead_quality/README.md)
 - [Entregable 4 — Inventory + estrategia de respaldo](../04_inventory_estrategia de respaldo/README.md)
 - [Entregables 5/6 — Opportunity + Producción](../05_opportunity_produccion/README.md)
-- [EV-007 — Geographic Enrichment](../../experimentos/Evidencias/EV-007_geographic_enrichment.md)
-- [EV-010 — Matching A/B](../../experimentos/Evidencias/EV-010_matching_ab_v3.md)
-- [EV-012 — Trajectory](../../experimentos/Evidencias/EV-012_modelo_3_trajectory_cv.md)
-- [EV-013 — Dynamic Need / Broker Service / local compatibility](../../experimentos/Evidencias/EV-013_matching_profiles_v4.md)
-- [E019 — Calibrated Availability](../../experimentos/E019_operational_threshold_availability/results/REPORT.md)
+- **EV-007 — Geographic Enrichment**
+- **EV-010 — Matching A/B**
+- **EV-012 — Trajectory**
+- **EV-013 — Dynamic Need / Broker Service / local compatibility**
+- **E019 — Calibrated Availability**
 - [retoSol1 — LLM](../../retoSol1/llm/README.md)
