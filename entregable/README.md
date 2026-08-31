@@ -21,7 +21,8 @@ Cuando dos líneas de trabajo usan distinto target, población, grano, ventana t
 Entregables materializados actualmente en esta carpeta:
 
 1. [Entregable 1 — Análisis exploratorio de datos (EDA)](01_EDA.md)
-2. [Entregable 4 — Inventory Availability + Fallback](04_inventory_fallback/README.md)
+2. [Entregable 3 — Modelo de Calidad del Lead](03_lead_quality/README.md)
+3. [Entregable 4 — Inventory Availability + Fallback](04_inventory_fallback/README.md)
 
 Los demás entregables se incorporarán manteniendo la misma regla: **Codexway como base; experimentos y AssessmentSol1 como capa de evidencia y profundidad**.
 
