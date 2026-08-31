@@ -1,112 +1,72 @@
-# Final methodological leakage audit
+# Final methodological leakage audit — post-recovery
 
 ## Overall verdict
 
 **READY — zero active BLOCKERS.**
 
-This means the frozen T1 product pipeline is methodologically coherent enough to package under its explicit limitations. It does **not** mean performance is strong, causality is established, the historical holdout is independent, or every source has perfect observation-time provenance.
+Authority:
+- Lead Quality: `LQ_RECOVERY_R4_STATIC_MATCH_V1`;
+- Opportunity: `OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30`;
+- capacity: P80 / top 20%;
+- fallback: K=3;
+- Inventory scalar: unchanged `INV_SERVICEABILITY_V1_FROZEN_2026-08-30`.
 
-## Pipeline audit
+This file supersedes the prior final audit for every claim that depended on the old Base-Rate Lead Quality or V1 multiplicative score.
 
-### RAW DATA
+## Target, time and split
 
-Raw CSV/Parquet are alternate representations, not concatenated sources. Outcome/current-state bait fields are identified in temporal registries.
+Target, maturity semantics, scoring stage and split contract did not change during recovery. T1 remains first-inquiry score time and eventual `scheduled_visit` under the frozen target contract.
 
-`lead_score_internal` is forbidden from the clean system. Current-state Spot fields, unversioned prices, Market Context and `competing_inquiries_30d` are blocked from historical prediction where provenance is insufficient.
+The recovered selected Spot passes an explicit existence check: **0 / 5,000** selected Spots have `created_at > score_time`.
 
-### Temporal semantics
+Temporal OOF alignment passes with 2,390 validation predictions and no fold-role, partition, score-time or target mismatches.
 
-The clean pipeline separates event, observation, effective and extraction/current-state time.
+## New Feature Engineering
 
-T2 inquiry aggregates use only strict-prior events. Candidate Spots require creation by score time. Availability is backward-as-of only. Same-day Availability remains conditional on a business-date assumption because no ingestion timestamp exists.
+The final three recovered features are built from the selected inquiry Spot and PIT-defensible structural information:
+- area closeness;
+- geographic fit;
+- attribute completeness.
 
-### Target and maturity
+No Availability, response, internal score, Market Context or mutable current price enters Lead Quality.
 
-The primary target is first-inquiry eventual `scheduled_visit`, not commercial conversion.
+## Calibration
 
-`broker_response` is label-only. `broker_response_hours` is not a predictive feature.
+Calibration is RAW. The obsolete Base-Rate calibrator/probability is not reused.
 
-The 14-day maturity policy is **LABEL_MATURITY_ASSUMED**, not an observed label-publication timestamp. The raw package lacks extraction time, so the maximum inquiry timestamp is a conservative observation-horizon proxy.
+## Inventory and fallback
 
-### Splits and entity isolation
+Inventory candidate construction, backward as-of Availability and scalar serviceability remain frozen and outcome-independent.
 
-The split contract is calendar based. Each T1 lead has one partition row. Fold training and validation lead sets are explicitly checked for intersection and temporal order. ABT validators reject duplicate grain and cross-partition entity leakage.
+Prompt 11.6 changes only recommendation list depth from K=5 to K=3, supported by clean-room list completion without labels. `NO_RESULT` and `VERIFY_AVAILABILITY` remain explicit.
 
-### Score spine / ABTs
+## Opportunity Score and double counting
 
-T1 has one deterministic first-inquiry row per lead. T2 has one row per second-or-later inquiry and strict-prior history. P3 ABTs are explicitly superseded and forbidden downstream; the P4 raw-equivalence authority is the relevant contract.
+The old continuous multiplicative score is invalidated.
 
-### Feature Engineering
+V2 uses `P_quality × InventoryActionabilityGate`; continuous serviceability is not multiplied. Row-wise verification finds **0 / 5,000 formula mismatches**.
 
-Core T1 deterministic features use score-time inputs only.
+The product table has **5,000 unique lead rows**, no forbidden outcome/internal-score columns, and no fallback list above K=3.
 
-Learned preprocessing is guarded: median imputation, StandardScaler and OneHotEncoder fit only after an all-TRAIN role assertion. Optional KMeans has the same guard and is not part of the frozen core. No target encoding or frequency encoding is used in the final core.
+## Capacity
 
-Selected-Spot context exists only as pre-registered Ablation E and is challenger-only.
+Capacity is recalculated on DEVELOPMENT temporal OOF at 5/10/15/20. The selected P80/top-20 policy has macro Lead Quality Lift **1.124x**.
 
-### Model
+The procedural holdout was not used for this selection.
 
-Model/feature-family selection uses DEVELOPMENT folds. The final champion is `BASE_RATE + RAW`, no features. This substantially reduces final predictor leakage surface.
+## Claims
 
-### Calibration
+Lead Quality, serviceability and joint operational success are reported separately. Serviceability and joint proxies are not called conversion.
 
-Calibrator comparison/selection is internal to CALIBRATION. The final corrected calibrator is RAW. The procedural holdout is not used to select calibration.
+## Historical evidence handling
 
-### Inventory / fallback
+- E018: Semantic Rules NOT_SUPPORTED for scoring and excluded.
+- E019: top-15/P85 and Availability 30d are supporting historical evidence only.
+- E020: K=3 and combined proxy findings are supporting historical evidence only.
+- No E019/E020 final metric is copied as an AssessmentSol1 result.
 
-Inventory is deterministic and separate from Lead Quality. It rejects future Spots, future snapshots, unversioned price history and unproven competing-inquiry windows. Fallback returns deterministic, explicitly tiered candidates and preserves UNKNOWN availability.
+## Remaining limitations
 
-### Opportunity Score
+The non-pristine June holdout, unversioned Spot prices, weak top-5 Lead Quality tail, high actionability coverage and tied score mass remain explicit limitations. None creates an active leakage/blocker under the current contract.
 
-The frozen score is `P(LeadQuality) × InventoryServiceability`. Clean Lead Quality has no Spot/Inventory inputs; double-counting audit therefore passes.
-
-Because Lead Quality is constant, the final ranking is Inventory ranking. The assessment correctly avoids claiming incremental ranking power from the multiplication.
-
-### Metrics / research contamination
-
-DEVELOPMENT metrics are development evidence.
-
-The June period was already consumed by a documented method incident before final freeze and remains `PROCEDURAL_HOLDOUT_DIAGNOSTIC_ONLY`. No claim of pristine/unseen/independent confirmation is allowed.
-
-## Findings by severity
-
-### BLOCKER
-
-**None active.**
-
-### MATERIAL
-
-1. **Research contamination / holdout incident.** June cannot support independent-confirmation claims. It is contained because it is diagnostic-only and did not drive frozen decisions.
-2. **Exact canonical Polars execution unavailable in the active review runtime.** Raw-equivalence evidence and static code review are strong, but the exact project build/tests should be run in the intended environment before external handoff.
-3. **T2 historical stage eligibility is only partially observable.** Timed prior scheduled visits use reconstructed response timing; untimed prior visits become ambiguous. T2 is already classified FUTURE_EXTENSION and is not the deployed T1 product.
-
-### MINOR
-
-1. Product `data_fingerprint` directly lists CSV leaf SHAs even though canonical readers prefer Parquet. The included raw-source-manifest SHA pins both CSV and Parquet representations, so score provenance is still recoverable; use direct canonical-Parquet leaves in the next metadata version.
-2. Superseded P3 builders remain visible for chronology. Authority files clearly forbid them downstream.
-3. The root AssessmentSol1 README has historical phase wording from Prompt 8; authoritative component READMEs/configs are newer.
-
-### ACCEPTED_LIMITATION
-
-- label maturity observation horizon is assumed from available raw activity;
-- Availability is business-date, not proven intraday observation time;
-- Spot structural fields and `spot_attributes` rely on explicit invariance assumptions where raw field-level timestamps are absent;
-- unversioned Spot prices cannot support historical budget fit;
-- June is procedural/non-pristine;
-- current Opportunity ranking has no demonstrated positive-outcome enrichment.
-
-## Stress-test conclusion
-
-S001 demonstrates that unknown provenance is unacceptable even when it does not improve metrics.
-
-S002 demonstrates that later inquiry information can make offline metrics look better.
-
-S003 demonstrates that nearest-snapshot joining selects future information at material frequency and can also improve offline ranking metrics.
-
-None of these results changed the clean pipeline.
-
-## Gate
-
-`final_audit.json` may declare READY because active BLOCKER count is zero.
-
-READY should be read as **methodologically ready under explicit limitations**, not as “validated business impact.”
+See `POST_RECOVERY_RED_TEAM.md` for the full reexecution matrix.
