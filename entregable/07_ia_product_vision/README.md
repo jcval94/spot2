@@ -7,11 +7,15 @@ Esta carpeta cierra dos preguntas diferentes pero relacionadas:
 
 La autoridad de solución continúa siendo **Codexway**. La historia experimental de IA se reconstruye especialmente desde `experimentos/**` y `AssessmentSol1/llm/**`.
 
-## Documentos
+## Entry points oficiales
 
-- [01 — Uso obligatorio de IA](01_USO_OBLIGATORIO_IA.md)
-- [02 — Product Vision y roadmap de tres meses](02_PRODUCT_VISION.md)
-- [03 — Diseño causal y experimentación](03_EXPERIMENTACION_CAUSAL.md)
+- [Entregable 7 — Uso obligatorio de IA](01_USO_OBLIGATORIO_IA.md)
+- [Entregable 8 — Product Vision ejecutiva, máximo 2 párrafos](04_PRODUCT_VISION_EJECUTIVA.md)
+
+## Anexos
+
+- [Roadmap detallado de Product Vision](02_PRODUCT_VISION.md)
+- [Diseño causal y experimentación](03_EXPERIMENTACION_CAUSAL.md)
 
 ## Respuesta ejecutiva
 
@@ -32,6 +36,6 @@ Posteriormente, las reglas determinísticas derivadas de la investigación tampo
 
 La Product Vision parte de esa misma disciplina: **mejor instrumentación, outcomes y causalidad antes que más complejidad**.
 
-## Fuera de alcance
+## Relación con el paquete final
 
-No se construye todavía el One-Pager final.
+El One-Pager ejecutivo ya está cerrado en [../02_one_pager/README.md](../02_one_pager/README.md). La Product Vision oficial es la versión de dos párrafos; el roadmap largo se conserva como anexo.
