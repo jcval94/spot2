@@ -1,86 +1,59 @@
 {
-  "freeze_id": "OPPORTUNITY_MULTIPLICATIVE_V1_FROZEN_2026-08-30",
-  "status": "GATE_COMPLETE_WITH_BUSINESS_EFFICACY_NOT_DEMONSTRATED",
-  "score_freeze_commit": "1d036f69891dd8ba42798596af3888ece68dd76d",
+  "freeze_id": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+  "status": "POST_RECOVERY_SYSTEM_FROZEN",
+  "supersedes": "OPPORTUNITY_MULTIPLICATIVE_V1_FROZEN_2026-08-30",
   "freeze_order": {
-    "score_config_created_before_combined_procedural_holdout_evaluation": true,
-    "procedural_holdout_policy_after_freeze": "DIAGNOSTIC_ONLY_NON_PRISTINE",
-    "post_holdout_formula_change": false,
-    "post_holdout_threshold_change": false,
-    "post_holdout_capacity_change": false,
-    "post_holdout_model_or_inventory_change": false
+    "recovery_11_5_frozen_before_downstream_rebuild": true,
+    "reevaluation_persisted_before_canonical_updates": true,
+    "final_red_team_after_canonical_updates": true,
+    "procedural_holdout_used_for_selection": false
   },
   "frozen_dependencies": {
-    "lead_quality_frozen_config_git_blob_sha1": "2dd65734dedf2548a3d30dbadfec6eb3f3512b03",
-    "lead_quality_calibrator_git_blob_sha1": "599341a0118e933cefead8ad9c997009d9f6b437",
-    "inventory_frozen_config_git_blob_sha1": "383a8a16e85d5ea651edca85903304a7038279fe",
-    "score_frozen_config_git_blob_sha1": "f27b1ce981005cdac15edbd5123844d9162cd49c"
+    "lead_quality": "AssessmentSol1/models/lead_quality_recovery/frozen_recovered_model_config.json",
+    "inventory": "AssessmentSol1/inventory/frozen_inventory_config.json",
+    "fallback": "AssessmentSol1/inventory/FALLBACK_POLICY.md",
+    "score": "AssessmentSol1/opportunity_score/frozen_score_config.json"
   },
-  "canonical_implementation": {
-    "build_score_py_git_blob_sha1": "4a655b8d2a25631f64cc848c2b80383c34eba0df",
-    "evaluate_score_py_git_blob_sha1": "98ceba0afaffef552efad09999c5bcb810680214",
-    "test_opportunity_score_py_git_blob_sha1": "1a3783970482f0586777c01054cff5970001daba",
-    "score_contract_git_blob_sha1": "f86f42d78e88bd9991a5a149a14db66b59ba6f83",
-    "decision_policy_git_blob_sha1": "8f3bee87d1fd4b679fe2f7756289054cd40c8efa"
+  "canonical_formula": "lead_quality_probability * inventory_actionability_gate",
+  "rejected_formula": "lead_quality_probability * inventory_serviceability",
+  "capacity": {
+    "selected_pct": 20,
+    "representation": "P80 / top 20% within T1",
+    "selection_population": "DEVELOPMENT_OOF_ONLY"
+  },
+  "fallback": {
+    "max_k": 3
   },
   "product_outputs": {
     "scored_population_csv": {
       "rows": 5000,
-      "git_blob_sha1": "1e66520048ad2edfc118955d7aa7af4cf0b0e41d",
       "contains_outcome_columns": false
     },
     "scored_population_parquet": {
-      "rows": 5000,
-      "git_blob_sha1": "77852d3ed8f89f9ceba661d3afe0bce5a0ebd9aa",
-      "bytes": 2883243
+      "committed": false,
+      "reason": "stale V1 binary removed; build_score.py regenerates V2 Parquet at runtime"
     },
-    "priority_leads_csv_git_blob_sha1": "bf7433669594955ac57c3c8056a044bbfc8eead4",
-    "capacity_metrics_csv_git_blob_sha1": "74f150214ebd846279e18036f06c027455d2c319",
-    "gains_curve_csv_git_blob_sha1": "81debedf19915e1964ba2e1ec434928ad75fa2ec",
-    "score_distribution_csv_git_blob_sha1": "50010088d10cee0692e14f0d118b8bdb6b0eb92f",
-    "score_distribution_summary_csv_git_blob_sha1": "606265039982e038ba2965463328070448a1b90b"
-  },
-  "data_fingerprints": {
-    "raw_source_manifest_git_blob_sha1": "f59b77ddcf991399bb35ec7be1e131db280f017d",
-    "leads_csv_git_blob_sha1": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
-    "inquiries_csv_git_blob_sha1": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
-    "spots_csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808",
-    "availability_snapshot_csv_git_blob_sha1": "82ef91a25ff5b2a330b4e1d01668c4934239c43f"
+    "priority_leads_csv": {
+      "rows": 1000,
+      "definition": "exact top 20% of current 5000-row batch"
+    },
+    "capacity_metrics_csv": "post-recovery macro DEVELOPMENT OOF",
+    "gains_curve_csv": "post-recovery macro DEVELOPMENT OOF",
+    "score_distribution": "post-recovery V2"
   },
   "gates": {
-    "single_final_score": "PASS",
-    "formula_reproducible": "PASS",
-    "double_counting": "PASS",
-    "selected_spot_challenger_excluded": "PASS",
-    "lead_quality_frozen": "PASS",
-    "calibration_frozen": "PASS",
-    "inventory_frozen": "PASS",
-    "fallback_frozen": "PASS",
-    "priority_thresholds_frozen_before_holdout": "PASS",
-    "default_capacity_declared_as_assumption": "PASS",
-    "lead_score_internal_non_deployable_only": "PASS",
-    "product_output_has_no_target_or_broker_response": "PASS",
-    "inventory_and_opportunity_rank_identity_documented": "PASS",
-    "positive_enrichment_demonstrated": "NO"
+    "recovered_lead_quality_frozen": "PASS",
+    "inventory_scalar_unchanged": "PASS",
+    "double_counting_removed": "PASS",
+    "capacity_recalculated": "PASS",
+    "fallback_recalculated": "PASS",
+    "product_output_no_outcomes": "PASS",
+    "final_red_team": "PASS",
+    "active_blockers": 0
   },
-  "development_evidence": {
-    "n": 4368,
-    "positives": 890,
-    "top_10pct_n": 437,
-    "top_10pct_positives_captured": 87,
-    "top_10pct_recall": 0.09775280898876404,
-    "top_10pct_precision": 0.19908466819221968,
-    "top_10pct_lift": 0.977080708610804
-  },
-  "post_freeze_june_diagnostic": {
-    "n": 273,
-    "positives": 53,
-    "top_10pct_n": 28,
-    "top_10pct_positives_captured": 3,
-    "top_10pct_recall": 0.05660377358490566,
-    "top_10pct_precision": 0.10714285714285714,
-    "top_10pct_lift": 0.5518867924528301,
-    "used_for_any_policy_change": false
-  },
-  "runtime_note": "The active tool container does not have Polars installed, so exact pytest/build execution was not possible here. Deterministic policy evidence and all requested product tables were independently materialized from the frozen raw Git blobs. The committed project tests are the exact-runtime rerun gate."
+  "historical_upstream": {
+    "E018": "NOT_SUPPORTED; excluded",
+    "E019": "supporting only",
+    "E020": "supporting only"
+  }
 }
