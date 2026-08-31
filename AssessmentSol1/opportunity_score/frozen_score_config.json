@@ -1,73 +1,97 @@
 {
-  "score_version": "OPPORTUNITY_MULTIPLICATIVE_V1_FROZEN_2026-08-30",
-  "status": "FROZEN_BEFORE_PROCEDURAL_HOLDOUT_EVALUATION",
+  "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+  "status": "POST_RECOVERY_FROZEN_BEFORE_ANY_NEW_HOLDOUT_USE",
   "frozen_at": "2026-08-30",
   "stage": "T1",
   "formula": {
-    "internal_0_1": "lead_quality_probability * inventory_serviceability",
-    "published_0_100": "100 * lead_quality_probability * inventory_serviceability",
-    "alternative_blender": null,
+    "internal_0_1": "lead_quality_probability * inventory_actionability_gate",
+    "published_0_100": "100 * lead_quality_probability * inventory_actionability_gate",
+    "inventory_actionability_gate": "1 for KNOWN_AVAILABLE, TIER3_ONLY_EXPERIMENTAL or VERIFY_AVAILABILITY; else 0",
+    "rejected_diagnostic": "lead_quality_probability * inventory_serviceability",
     "grid_search": false,
     "exponent_search": false,
     "stacking": false
   },
   "lead_quality": {
-    "version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1__BASE_RATE_RAW",
-    "frozen_config_path": "AssessmentSol1/models/lead_quality/FROZEN_MODEL_CONFIG.json",
-    "frozen_config_git_blob_sha1": "2dd65734dedf2548a3d30dbadfec6eb3f3512b03",
-    "model_family": "BASE_RATE",
-    "probability": 0.20375457875457875,
-    "feature_set": "BASE_RATE_NO_FEATURES",
-    "selected_spot_context": false,
-    "calibrator": "RAW",
-    "calibrator_path": "AssessmentSol1/models/lead_quality/artifacts/raw_calibrator.json",
-    "calibrator_git_blob_sha1": "599341a0118e933cefead8ad9c997009d9f6b437"
+    "version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+    "frozen_config_path": "AssessmentSol1/models/lead_quality_recovery/frozen_recovered_model_config.json",
+    "frozen_config_git_blob_sha1": "85ee240be12fa0d1a00b384f2ad50ac5ff5f288e",
+    "model_family": "LOGISTIC_REGRESSION",
+    "features": [
+      "selected_spot_area_closeness",
+      "selected_spot_geographic_fit",
+      "selected_spot_attribute_completeness"
+    ],
+    "selected_spot_context": true,
+    "availability_used": false,
+    "calibrator": "RAW"
   },
   "double_counting_check": {
-    "status": "PASS",
-    "core_lead_quality_inventory_features": false,
-    "selected_spot_challenger_exists": true,
-    "selected_spot_challenger_id": "E",
-    "selected_spot_challenger_policy": "CHALLENGER_ONLY_NOT_PROMOTED",
-    "selected_spot_challenger_used_in_opportunity_score": false
+    "status": "PASS_AFTER_DEDUPLICATION",
+    "continuous_inventory_serviceability_multiplied": false,
+    "reason": "Recovered Lead Quality already contains selected-Spot matching context. Inventory continuous match strength is reported separately and only a binary actionability gate enters V2.",
+    "raw_multiplicative_status": "DIAGNOSTIC_ONLY_REJECTED"
   },
   "inventory": {
     "version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
     "config_path": "AssessmentSol1/inventory/frozen_inventory_config.json",
-    "config_git_blob_sha1": "383a8a16e85d5ea651edca85903304a7038279fe",
+    "config_git_blob_sha1": "771dca279fce251cb0fc617063b7cca8c5a064f4",
+    "scalar_rebuilt": false,
+    "scalar_role": "SEPARATE_SERVICEABILITY_OUTPUT",
     "fallback_policy_path": "AssessmentSol1/inventory/FALLBACK_POLICY.md",
+    "fallback_policy_git_blob_sha1": "08ebcf2194867d9f82fa153642fa34d20fd4c67d",
+    "fallback_max_k": 3,
     "confidence_multiplied_into_score": false
   },
   "capacity_policy": {
-    "default_capacity_pct": 10,
-    "status": "OPERATIONAL_ASSUMPTION_NOT_UNIVERSAL_OPTIMUM",
-    "reported_capacity_pct": [5, 10, 20]
+    "selected_capacity_pct": 20,
+    "representation": "P80 / stage-relative top 20%",
+    "selection_population": "DEVELOPMENT temporal OOF only",
+    "reported_capacity_pct": [
+      5,
+      10,
+      15,
+      20
+    ],
+    "procedural_holdout_used": false,
+    "rationale": "Top 20% has the strongest macro Lead Quality Lift among passing 10/15/20 capacities while maximizing recall; top 5% remains below random."
   },
   "priority_bands": {
-    "reference_population": "DEVELOPMENT_PLUS_CALIBRATION",
-    "reference_n": 4680,
+    "role": "DISPLAY_THRESHOLDS_FROM_DEVELOPMENT_FULL_FIT_SCORE_DISTRIBUTION; capacity authority remains rank-based percentile",
+    "reference_population": "DEVELOPMENT",
+    "reference_n": 4368,
     "labels_used": false,
-    "PRIORITY": {"reference_slice": "top_5pct", "min_score_0_100": 20.238639201707386},
-    "HIGH": {"reference_slice": "5_to_10pct", "min_score_0_100": 20.085657848051518},
-    "MEDIUM": {"reference_slice": "10_to_20pct", "min_score_0_100": 19.735627531406365},
-    "LOW": {"reference_slice": "remaining", "min_score_0_100": 0.0},
-    "tie_break": ["opportunity_score_0_100 desc", "inventory_confidence desc", "lead_id asc"],
-    "reference_counts": {"PRIORITY": 234, "HIGH": 234, "MEDIUM": 468, "LOW": 3744}
+    "PRIORITY": {
+      "reference_slice": "top_5pct",
+      "min_score_0_100": 22.298344072628932
+    },
+    "HIGH": {
+      "reference_slice": "5_to_10pct",
+      "min_score_0_100": 22.298344072628932
+    },
+    "MEDIUM": {
+      "reference_slice": "10_to_20pct",
+      "min_score_0_100": 21.307940332937303
+    },
+    "LOW": {
+      "reference_slice": "remaining",
+      "min_score_0_100": 0
+    },
+    "tie_break": [
+      "opportunity_score_0_100 desc",
+      "lead_id asc"
+    ]
   },
-  "development_capacity_evidence": {
-    "population_n": 4368,
-    "observed_positives": 890,
-    "selection_authority": "DESCRIPTIVE_ONLY_FORMULA_ALREADY_MANDATED",
-    "top_5pct": {"n": 219, "positives_captured": 39, "recall": 0.043820224719101124, "precision": 0.1780821917808219, "lift": 0.874003386178236},
-    "top_10pct": {"n": 437, "positives_captured": 87, "recall": 0.09775280898876404, "precision": 0.19908466819221968, "lift": 0.977080708610804},
-    "top_20pct": {"n": 874, "positives_captured": 179, "recall": 0.20112359550561798, "precision": 0.2048054919908467, "lift": 1.0051577404674363}
-  },
-  "ranking_identity": {
-    "inventory_only_equals_opportunity_ranking": true,
-    "reason": "Frozen Lead Quality probability is constant and positive."
+  "development_oof_evidence": {
+    "lead_quality_lift_5": 0.8593333701555245,
+    "lead_quality_lift_10": 1.0753559720916863,
+    "lead_quality_lift_15": 1.084132654444449,
+    "lead_quality_lift_20": 1.1243424011848062,
+    "raw_multiplicative_lift_15": 0.9771767868804355,
+    "raw_multiplicative_joint_exact_lift_15": 1.2441236948516265
   },
   "external_reference": {
-    "lead_score_internal": "NON_DEPLOYABLE_REFERENCE_ONLY",
+    "lead_score_internal": "PROHIBITED_FROM_V2",
     "allowed_as_predictor": false,
     "allowed_for_policy_selection": false
   },
@@ -77,13 +101,19 @@
     "leads_csv_git_blob_sha1": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
     "inquiries_csv_git_blob_sha1": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
     "spots_csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808",
+    "spot_attributes_csv_git_blob_sha1": "9479789b881e408d0626ded8432396ba9fc749b6",
     "availability_snapshot_csv_git_blob_sha1": "82ef91a25ff5b2a330b4e1d01668c4934239c43f"
   },
   "holdout_policy": {
     "procedural_holdout_start": "2026-06-01T00:00:00Z",
     "procedural_holdout_end_exclusive": "2026-07-01T00:00:00Z",
     "status": "DIAGNOSTIC_ONLY_NON_PRISTINE",
-    "opened_for_combined_score_evaluation_after_this_freeze": false,
-    "formula_or_threshold_change_after_holdout": "FORBIDDEN"
+    "used_for_post_recovery_selection": false,
+    "formula_or_capacity_change_from_holdout": "FORBIDDEN"
+  },
+  "historical_upstream_evidence": {
+    "E018": "NOT_SUPPORTED for scoring; excluded",
+    "E019": "supporting prior only; no metrics copied",
+    "E020": "supporting prior only; no metrics copied"
   }
 }
