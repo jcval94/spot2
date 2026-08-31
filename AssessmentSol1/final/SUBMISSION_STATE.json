@@ -1,0 +1,70 @@
+{
+  "state_version": "PROMPT_14_SUBMISSION_STATE_V1_2026-08-30",
+  "phase": "READY_TO_SUBMIT",
+  "decision": "READY TO SUBMIT",
+  "active_blockers": [],
+  "blocker_count": 0,
+  "authorities": {
+    "lead_quality": {
+      "version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+      "sha": "85ee240be12fa0d1a00b384f2ad50ac5ff5f288e"
+    },
+    "inventory": {
+      "version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+      "sha": "478d54dee13ad701da627088994ea4437a17f7e5"
+    },
+    "opportunity": {
+      "version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+      "sha": "474ca28b3e6b6b2939fd2c76f0e50db2460858d3",
+      "formula": "lead_quality_probability * inventory_actionability_gate"
+    },
+    "post_recovery_state": {
+      "phase": "FROZEN",
+      "sha": "1d3d42b9caab7a15d6e4f6502e6f2e232b0d1820"
+    },
+    "final_audit": {
+      "status": "READY",
+      "blockers": 0,
+      "sha": "8627d3e020b8cf4ee399f7e826297e0472ad61bd"
+    },
+    "llm_gate": {
+      "status": "PASS",
+      "sha": "de2ec3f485390f8861d8deb951bc23272cc57434"
+    }
+  },
+  "policy": {
+    "scoring_moment": "T1_FIRST_INQUIRY",
+    "capacity": "P80 / top 20% within T1",
+    "fallback_k": 3
+  },
+  "deliverables": {
+    "notebook": "AssessmentSol1/final/notebook/final_assessment.ipynb",
+    "notebook_html": "AssessmentSol1/final/notebook/final_assessment.html",
+    "one_pager": "AssessmentSol1/final/EXECUTIVE_ONE_PAGER.html",
+    "presentation": "AssessmentSol1/final/presentation/index.html",
+    "assessment_report": "AssessmentSol1/final/ASSESSMENT_REPORT.md",
+    "methodology_defense": "AssessmentSol1/final/FINAL_DEFENSE_QA.md",
+    "reproducibility": "AssessmentSol1/final/REPRODUCIBILITY.md",
+    "artifact_index": "AssessmentSol1/final/ARTIFACT_INDEX.md"
+  },
+  "checks": {
+    "frozen_configs_unchanged": "PASS",
+    "post_recovery_consistency": "PASS",
+    "source_of_truth": "PASS",
+    "stale_metrics": "PASS",
+    "architecture_boundaries": "PASS",
+    "opportunity_probability_language": "PASS",
+    "tradeoff_visible": "PASS",
+    "capacity": "PASS",
+    "fallback": "PASS",
+    "llm": "PASS",
+    "html_structure": "PASS",
+    "external_html_assets": "NONE",
+    "notebook_structure": "PASS",
+    "filesystem_scope": "PASS",
+    "main_score_live_openai_dependency": false,
+    "main_score_experimentos_runtime_dependency": false
+  },
+  "environment_limitation": "Connector-only GitHub editing environment does not provide local checkout; exact pytest/notebook runtime execution was not performed during packaging and is documented rather than fabricated.",
+  "gate": "READY TO SUBMIT"
+}
