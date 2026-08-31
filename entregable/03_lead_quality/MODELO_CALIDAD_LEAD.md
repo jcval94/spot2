@@ -3,14 +3,14 @@
 > ### Lectura en lenguaje claro
 > **En una frase:** el modelo no intenta predecir perfectamente quién convertirá; busca ordenar mejor los leads cuando el equipo tiene capacidad limitada, con una señal sencilla y defendible en el tiempo.
 >
-> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **target** es el resultado que se quiere anticipar; **point-in-time / as-of** significa usar sólo información que ya era conocida en ese momento; **holdout** es una muestra apartada para evaluación; y **fallback** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
+> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **variable objetivo** es el resultado que se quiere anticipar; **disponible en ese momento / as-of** significa usar sólo información que ya era conocida en ese momento; **muestra de evaluación** es una muestra apartada para evaluación; y **respaldo** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
 >
 
 ## Resumen ejecutivo
 
-El **Lead Quality Model** responde una pregunta muy concreta:
+El **modelo de Calidad del lead** responde una pregunta muy concreta:
 
-> **En el instante T1, inmediatamente después de persistir la primera inquiry y antes de conocer la respuesta del broker, ¿qué tan probable es que esa primera inquiry termine registrada como `scheduled_visit`?**
+> **En el instante T1, inmediatamente después de persistir la primera consulta y antes de conocer la respuesta del intermediario, ¿qué tan probable es que esa primera consulta termine registrada como `scheduled_visit`?**
 
 La solución final mantiene a **Codexway** como autoridad. El componente promovido es un modelo deliberadamente parsimonioso:
 
@@ -23,22 +23,22 @@ Su única señal final es una interacción T0-safe y de baja cardinalidad:
 Esta elección no surge de preferir simplicidad por principio. Surge de una investigación amplia en la que se probaron:
 
 - reglas de negocio;
-- regresiones logísticas con feature sets amplios;
+- regresiones logísticas con conjuntos de variables amplios;
 - CatBoost;
 - modelos especialistas por etapa;
 - pooled models con stage;
 - arquitecturas multi-head;
-- trajectory/progression features;
+- trajectory/progression variables;
 - Dynamic Need;
 - clustering y perfiles;
 - semantic rules;
-- features derivadas con LLM;
+- variables derivadas con LLM;
 - selected-Spot matching;
 - distintas estrategias de calibración y capacidad.
 
-La conclusión final es que **la complejidad adicional no fue suficientemente estable o comparable para desplazar el contrato de Codexway**. El modelo final sacrifica separación global a cambio de una señal de ranking acotada, interpretable, temporalmente defendible y reproducible.
+La conclusión final es que **la complejidad adicional no fue suficientemente estable o comparable para desplazar el contrato de Codexway**. El modelo final sacrifica separación global a cambio de una señal de ordenamiento acotada, interpretable, temporalmente defendible y reproducible.
 
-En el holdout procedimental de Codexway:
+En el muestra histórica de evaluación de Codexway:
 
 | Métrica | Resultado |
 |---|---:|
@@ -59,19 +59,19 @@ En el holdout procedimental de Codexway:
 
 El Lift@10% tiene IC95% bootstrap **[1.381x, 1.982x]**.
 
-La decisión operativa es **GO para nueva validación forward**, no autorización de automatización inmediata. El holdout histórico ya había sido consumido globalmente por investigación previa, por lo que el resultado final debe tratarse como evidencia retrospectiva y confirmarse en un nuevo periodo shadow antes de cualquier A/B productivo.
+La decisión operativa es **GO para nueva validación forward**, no autorización de automatización inmediata. El muestra de evaluación histórico ya había sido consumido globalmente por investigación previa, por lo que el resultado final debe tratarse como evidencia retrospectiva y confirmarse en un nuevo periodo shadow antes de cualquier A/B productivo.
 
 ---
 
-# 1. ¿Qué significa “Lead Quality”?
+# 1. ¿Qué significa “Calidad del lead”?
 
-En este assessment, Lead Quality no significa “valor total del cliente”, “probabilidad de cierre”, “revenue esperado” ni “calidad absoluta”.
+En este reto, Calidad del lead no significa “valor total del cliente”, “probabilidad de cierre”, “revenue esperado” ni “calidad absoluta”.
 
 Significa:
 
-> **probabilidad de progreso comercial temprano de una primera inquiry, medida mediante el proxy `scheduled_visit`.**
+> **probabilidad de progreso comercial temprano de una primera consulta, medida mediante el proxy `scheduled_visit`.**
 
-La variable de calidad está deliberadamente separada de **Inventory Serviceability**.
+La variable de calidad está deliberadamente separada de **Capacidad del inventario**.
 
 Esto evita confundir dos preguntas distintas:
 
@@ -80,7 +80,7 @@ Esto evita confundir dos preguntas distintas:
 
 Un lead puede ser comercialmente atractivo y no contar con inventario atendible. También puede existir inventario adecuado para un lead de baja propensión.
 
-Por eso Codexway no inserta Availability ni atributos de servicio del inventario dentro del predictor final de Lead Quality.
+Por eso Codexway no inserta Availability ni atributos de servicio del inventario dentro del predictor final de Calidad del lead.
 
 Fuentes:
 - **Codexway README**
@@ -97,11 +97,11 @@ Este entregable utiliza tres capas de evidencia.
 
 Codexway define:
 
-- target;
-- scoring moment;
+- variable objetivo;
+- momento de evaluación;
 - maturity;
 - ABT;
-- feature allowlist;
+- variable allowlist;
 - modelo final;
 - calibración;
 - split temporal;
@@ -117,13 +117,13 @@ AssessmentSol1 aporta principalmente:
 
 - auditoría temporal;
 - distinción event / observation / effective time;
-- tratamiento de structural missingness;
-- clean-room target semantics;
+- tratamiento de structural ausencia de datos;
+- clean-room variable objetivo semantics;
 - pruebas de recovery;
-- auditoría final de leakage;
+- auditoría final de fuga de información futura;
 - evidencia sobre T0/T1/T2 y selected-Spot context.
 
-Sus resultados de Lead Quality no se presentan como leaderboard contra Codexway porque usa contratos diferentes, incluyendo otra madurez y otros artefactos de ABT.
+Sus resultados de Calidad del lead no se presentan como leaderboard contra Codexway porque usa contratos diferentes, incluyendo otra madurez y otros artefactos de ABT.
 
 ## 2.3 Evidencia complementaria: experimentos
 
@@ -138,20 +138,20 @@ La carpeta `experimentos/` aporta:
 - Dynamic Need;
 - matching;
 - semantic rules;
-- LLM semantic feature pilot;
+- LLM semantic variable pilot;
 - resultados negativos y ablations.
 
-Algunas de estas líneas usan snapshots, targets, poblaciones y ventanas diferentes. Sus métricas se reportan **dentro de cada familia de experimento**, no como si fueran directamente comparables con el modelo final.
+Algunas de estas líneas usan snapshots, variables objetivo, poblaciones y ventanas diferentes. Sus métricas se reportan **dentro de cada familia de experimento**, no como si fueran directamente comparables con el modelo final.
 
 ---
 
-# 3. Scoring moment: T1
+# 3. momento de evaluación: T1
 
 ## 3.1 Definición
 
 La predicción principal se calcula en:
 
-**T1 = primera inquiry del lead**
+**T1 = primera consulta del lead**
 
 Grano:
 
@@ -163,13 +163,13 @@ Timestamp:
 
 Instante operativo:
 
-1. la inquiry actual ya fue persistida;
+1. la consulta actual ya fue persistida;
 2. su payload ya es observable;
-3. la respuesta del broker todavía no existe para el modelo.
+3. la respuesta del intermediario todavía no existe para el modelo.
 
 ## 3.2 Por qué T1 es el contrato principal
 
-T0 tiene menos información y mezcla la calidad del lead con su futura exposición a generar inquiries.
+T0 tiene menos información y mezcla la calidad del lead con su futura exposición a generar consultas.
 
 T2 puede usar historia previa, pero sólo existe para leads que ya sobrevivieron hasta interacciones posteriores; por tanto, su población es condicional y no es directamente comparable con T1.
 
@@ -179,14 +179,14 @@ T1 es el mejor punto de equilibrio entre:
 - señal contemporánea;
 - suficiente cobertura;
 - interpretación clara;
-- control de leakage.
+- control de fuga de información futura.
 
 ## 3.3 T0 y T2
 
 Codexway conserva:
 
 - **T0** como sensibilidad a 30 días;
-- **T2** como challenger de re-scoring con historia estrictamente desplazada.
+- **T2** como alternativa evaluada de re-scoring con historia estrictamente desplazada.
 
 No se promedian T0, T1 y T2.
 
@@ -194,20 +194,20 @@ AssessmentSol1 llegó a la misma conclusión conceptual: T1 debe conservarse com
 
 Fuentes:
 - **Codexway README — Prediction timestamp**
-- **Codexway targets.py**
+- **Codexway variables objetivo.py**
 - **AssessmentSol1 Stage Comparison**
 
 ---
 
-# 4. Target, maturity y censoring
+# 4. variable objetivo, maturity y censoring
 
-## 4.1 Target final de Codexway
+## 4.1 variable objetivo final de Codexway
 
-El target T1 es positivo cuando:
+El variable objetivo T1 es positivo cuando:
 
 `first_inquiry.broker_response == "scheduled_visit"`
 
-Negativo cuando la primera inquiry madura tiene otra respuesta.
+Negativo cuando la primera consulta madura tiene otra respuesta.
 
 La variable es un **proxy de progreso comercial**.
 
@@ -217,7 +217,7 @@ No debe llamarse:
 - venta;
 - revenue;
 - causal conversion;
-- éxito del fallback.
+- éxito del respaldo.
 
 ## 4.2 Maturity
 
@@ -227,14 +227,14 @@ Codexway fija:
 - maturity buffer: **7 días**;
 - cutoff de madurez: **2026-06-24**.
 
-Una primera inquiry posterior al cutoff puede scorearse, pero no se usa todavía para evaluar el target.
+Una primera consulta posterior al cutoff puede scorearse, pero no se usa todavía para evaluar el variable objetivo.
 
 Población:
 
 - 4,898 leads maduros;
 - 1,001 positivos;
 - prevalencia: **20.44%**;
-- 102 leads recientes con target NA pero scoreables.
+- 102 leads recientes con variable objetivo NA pero scoreables.
 
 ## 4.3 Sensibilidades
 
@@ -243,9 +243,9 @@ Codexway también construye:
 - maturity 14 días;
 - maturity 30 días;
 - `accepted_or_scheduled`;
-- cualquier inquiry con scheduled visit iniciada dentro de 30 días.
+- cualquier consulta con scheduled visit iniciada dentro de 30 días.
 
-Estas variantes se usan para sensibilidad, no para elegir post-hoc el target que produzca mayor AUC.
+Estas variantes se usan para sensibilidad, no para elegir post-hoc el variable objetivo que produzca mayor AUC.
 
 ## 4.4 Evidencia clean-room
 
@@ -254,12 +254,12 @@ AssessmentSol1 usa un contrato más conservador con madurez de 14 días y explic
 Ese análisis complementario refuerza dos decisiones de Codexway:
 
 1. no usar `broker_response_hours` como reloj confiable de label;
-2. congelar target y maturity antes de optimizar modelos.
+2. congelar variable objetivo y maturity antes de optimizar modelos.
 
 Fuentes:
-- **Codexway README — Target**
+- **Codexway README — variable objetivo**
 - **Codexway base config**
-- **AssessmentSol1 Target Contract**
+- **AssessmentSol1 variable objetivo Contract**
 
 ---
 
@@ -269,17 +269,17 @@ Fuentes:
 
 La ABT T1 tiene:
 
-**una fila por lead en su primera inquiry**
+**una fila por lead en su primera consulta**
 
 con:
 
 - `lead_id`;
-- `inquiry_id` de la primera inquiry;
+- `inquiry_id` de la primera consulta;
 - `prediction_timestamp`;
 - variables intake;
-- payload de la inquiry actual;
+- payload de la consulta actual;
 - transforms determinísticos;
-- target sólo para evaluación.
+- variable objetivo sólo para evaluación.
 
 La función `first_inquiries()` ordena por:
 
@@ -289,11 +289,11 @@ y valida que `lead_id` quede único.
 
 ## 5.2 Separación del inventario
 
-Spot state y Availability no forman parte del Lead Quality final.
+Spot state y Availability no forman parte del Calidad del lead final.
 
-Se reservan para Inventory Serviceability y para el score combinado posterior.
+Se reservan para Capacidad del inventario y para el score combinado posterior.
 
-Esto es importante porque AssessmentSol1 encontró señal de ranking al introducir selected-Spot matching. Sin embargo, también documentó que eso crea solapamiento conceptual con Inventory y obliga a revisar la combinación posterior.
+Esto es importante porque AssessmentSol1 encontró señal de ordenamiento al introducir selected-Spot matching. Sin embargo, también documentó que eso crea solapamiento conceptual con Inventory y obliga a revisar la combinación posterior.
 
 Codexway evita ese doble conteo desde la arquitectura base.
 
@@ -321,7 +321,7 @@ La allowlist limpia de Codexway incluye:
 - preferred_corridor;
 - source.
 
-### Inquiry actual
+### consulta actual
 
 - channel;
 - message_length;
@@ -340,7 +340,7 @@ La allowlist limpia de Codexway incluye:
 
 ## 6.2 Excluido por incertidumbre temporal
 
-Codexway no promueve como clean features:
+Codexway no promueve como clean variables:
 
 - prior_searches;
 - prior_inquiries;
@@ -355,8 +355,8 @@ Se bloquean:
 - `lead_score_internal`;
 - `broker_response`;
 - `broker_response_hours`;
-- future inquiries;
-- future scheduled outcomes;
+- future consultas;
+- future scheduled resultados;
 - `days_on_market`;
 - `total_inquiries`;
 - `total_views`;
@@ -371,19 +371,19 @@ Availability sí puede ser históricamente reconstruida únicamente cuando:
 
 `snapshot_date <= prediction_timestamp`
 
-con backward as-of.
+con último estado conocido hasta ese momento.
 
-Aun así, se mantiene fuera del predictor de Lead Quality.
+Aun así, se mantiene fuera del predictor de Calidad del lead.
 
 Fuentes:
-- **Feature policy**
-- **Features implementation**
-- **Leakage Matrix**
+- **variable policy**
+- **variables implementation**
+- **fuga de información futura Matrix**
 - **AssessmentSol1 Temporal Semantics**
 
 ---
 
-# 7. Structural missingness y preprocessing
+# 7. Structural ausencia de datos y preprocessing
 
 AssessmentSol1 aporta un punto metodológico importante: **missing no siempre significa desconocido**.
 
@@ -402,7 +402,7 @@ Codexway, para los modelos logísticos amplios, aplica preprocessing dentro del 
 - escalado numérico;
 - transformación entrenada sólo con el fold/train correspondiente.
 
-El modelo final promovido usa únicamente una interacción binaria, por lo que reduce radicalmente la dependencia de imputación, cardinalidad y drift de variables continuas.
+El modelo final promovido usa únicamente una interacción binaria, por lo que reduce radicalmente la dependencia de imputación, cardinalidad y cambio temporal de variables continuas.
 
 ---
 
@@ -412,11 +412,11 @@ El modelo final promovido usa únicamente una interacción binaria, por lo que r
 
 Codexway congela:
 
-| Partición | Intervalo first inquiry | N | Positive rate |
+| Partición | Intervalo first consulta | N | Positive rate |
 |---|---|---:|---:|
 | Train | 2025-01-01 a 2025-09-23 | 2,191 | 20.22% |
 | Validation | 2025-10-01 a 2025-12-23 | 847 | 19.48% |
-| Holdout procedimental | 2026-01-01 a 2026-06-23 | 1,711 | 21.22% |
+| muestra histórica de evaluación | 2026-01-01 a 2026-06-23 | 1,711 | 21.22% |
 
 Entre particiones existe purge temporal de siete días.
 
@@ -424,7 +424,7 @@ Entre particiones existe purge temporal de siete días.
 
 La selección no depende sólo de un split único.
 
-Codexway usa cuatro folds temporales para comparar familias y para evaluar el challenger de segmento estable.
+Codexway usa cuatro folds temporales para comparar familias y para evaluar el alternativa evaluada de segmento estable.
 
 Lift@10 del modelo estable por fold:
 
@@ -463,9 +463,9 @@ En validation:
 
 Pasa el gate.
 
-## 8.4 Holdout procedimental, no pristine
+## 8.4 muestra histórica de evaluación, no pristine
 
-El holdout no se utilizó en el gate de promoción de esta ejecución, pero había sido inspeccionado en investigación previa.
+El muestra de evaluación no se utilizó en el gate de promoción de esta ejecución, pero había sido inspeccionado en investigación previa.
 
 Por tanto:
 
@@ -484,7 +484,7 @@ Fuentes:
 
 El benchmark canónico de Codexway es pequeño por diseño.
 
-| Modelo | ROC-AUC holdout | PR-AUC | Brier | Lift@10 |
+| Modelo | ROC-AUC muestra de evaluación | PR-AUC | Brier | Lift@10 |
 |---|---:|---:|---:|---:|
 | Positive rate | 0.5000 | 0.2122 | 0.1672 | 1.000x |
 | Business rule | 0.5157 | 0.2165 | 0.2501 | 0.986x |
@@ -498,7 +498,7 @@ El benchmark canónico de Codexway es pequeño por diseño.
 Conclusión:
 
 - CatBoost no supera a la solución simple;
-- más variables no garantizan mejor ranking;
+- más variables no garantizan mejor ordenamiento;
 - la señal que sí sobrevive al gate es de baja cardinalidad y concentrada.
 
 Esto evita premiar complejidad por sí misma.
@@ -513,7 +513,7 @@ Modelo:
 
 **Regresión Logística regularizada**
 
-Feature final:
+variable final:
 
 `industrial_small_or_paid_interaction`
 
@@ -527,7 +527,7 @@ Coeficiente estandarizado:
 
 El efecto es positivo en el score, pero no se interpreta causalmente.
 
-## 10.2 Por qué esta feature
+## 10.2 Por qué esta variable
 
 La hipótesis fue elegida por:
 
@@ -536,12 +536,12 @@ La hipótesis fue elegida por:
 - ausencia de mutable history;
 - ausencia de geografía de alta cardinalidad;
 - mejor concentración bajo capacidad;
-- menor superficie de leakage;
+- menor superficie de fuga de información futura;
 - facilidad de explicación y monitoreo.
 
 ## 10.3 Granularidad del score
 
-Después de Platt, el modelo produce esencialmente dos niveles observados en el holdout:
+Después de Platt, el modelo produce esencialmente dos niveles observados en el muestra de evaluación:
 
 - **0.187899**
 - **0.253098**
@@ -568,20 +568,20 @@ Después:
 
 La mejora es pequeña, pero cumple la regla de retención: mejorar Brier o Log Loss.
 
-En holdout:
+En muestra de evaluación:
 
 - Brier seleccionado = 0.16577;
 - Brier baseline de prevalencia = 0.16725;
 - Brier skill score ≈ **0.0088**.
 
-Tabla de calibración holdout:
+Tabla de calibración muestra de evaluación:
 
 | Predicción media | Tasa observada |
 |---:|---:|
 | 0.1879 | 0.1942 |
 | 0.2531 | 0.3583 |
 
-La segunda banda queda subcalibrada en el holdout: la tasa observada es mayor que la probabilidad predicha.
+La segunda banda queda subcalibrada en el muestra de evaluación: la tasa observada es mayor que la probabilidad predicha.
 
 Eso refuerza que la calibración actual es útil pero no definitiva y debe revisarse con nueva evidencia forward.
 
@@ -591,7 +591,7 @@ Fuentes:
 
 ---
 
-# 12. Evaluación adecuada para un problema de ranking desbalanceado
+# 12. Evaluación adecuada para un problema de ordenamiento desbalanceado
 
 ROC-AUC se reporta, pero no es la métrica operativa principal.
 
@@ -610,7 +610,7 @@ Por eso se priorizan:
 - estabilidad temporal;
 - intervalos bootstrap.
 
-## 12.1 Holdout
+## 12.1 muestra de evaluación
 
 | Capacidad | Precision | Recall | Lift |
 |---:|---:|---:|---:|
@@ -629,7 +629,7 @@ Al trabajar:
 
 La ganancia marginal cae conforme se amplía capacidad, como debe esperarse.
 
-## 12.3 Tie-aware ranking
+## 12.3 Tie-aware ordenamiento
 
 Debido a que existen muchos empates, Codexway **no usa row order como desempate**.
 
@@ -649,7 +649,7 @@ Fuente:
 
 # 13. Incertidumbre
 
-Bootstrap de 1,000 iteraciones sobre el holdout:
+Bootstrap de 1,000 iteraciones sobre el muestra de evaluación:
 
 | Métrica | Estimación | IC95% |
 |---|---:|---:|
@@ -666,10 +666,10 @@ El intervalo de Lift@10 queda por encima de 1 en esta evidencia procedimental.
 
 Sin embargo, la incertidumbre real no es sólo sampling uncertainty:
 
-- el holdout histórico no es pristine;
-- la feature estable fue formulada después de consumo global de evidencia;
-- existe drift temporal fold-to-fold;
-- el target es proxy;
+- el muestra de evaluación histórico no es pristine;
+- la variable estable fue formulada después de consumo global de evidencia;
+- existe cambio temporal temporal fold-to-fold;
+- el variable objetivo es proxy;
 - el score tiene baja resolución.
 
 Por eso la recomendación final sigue siendo forward shadow.
@@ -684,7 +684,7 @@ El cutoff operacional derivado de validation es:
 
 Ese valor coincide con la banda alta del modelo.
 
-En el archivo de error analysis del holdout:
+En el archivo de error analysis del muestra de evaluación:
 
 - 120 false positives de prioridad;
 - 296 false negatives;
@@ -702,7 +702,7 @@ Por tanto, la siguiente mejora real no consiste en afinar un threshold sobre los
 
 Fuente:
 - **Error analysis**
-- **Deployment readiness**
+- **despliegue readiness**
 
 ---
 
@@ -717,7 +717,7 @@ Fuente:
 | Office | 478 | 0.500 | 0.205 | 1.000x |
 | Retail | 518 | 0.500 | 0.193 | 1.000x |
 
-Esto es consistente con la arquitectura: la feature final sólo discrimina dentro del régimen Industrial.
+Esto es consistente con la arquitectura: la variable final sólo discrimina dentro del régimen Industrial.
 
 Fuera de Industrial, el modelo es esencialmente un prior.
 
@@ -759,7 +759,7 @@ Fuente:
 
 # 16. Estabilidad temporal
 
-Lift@10 mensual en holdout:
+Lift@10 mensual en muestra de evaluación:
 
 | Mes 2026 | Lift@10 |
 |---|---:|
@@ -770,7 +770,7 @@ Lift@10 mensual en holdout:
 | Mayo | 1.650x |
 | Junio | 1.823x |
 
-Todos los meses del holdout quedan por encima de 1, pero marzo es claramente atípico en magnitud.
+Todos los meses del muestra de evaluación quedan por encima de 1, pero marzo es claramente atípico en magnitud.
 
 La estabilidad temporal debe monitorearse con:
 
@@ -779,7 +779,7 @@ La estabilidad temporal debe monitorearse con:
 - Recall@10/20;
 - Brier;
 - distribución del segmento Industrial-small/paid;
-- PSI de la feature final;
+- PSI de la variable final;
 - volumen y composición por source/sector.
 
 Fuente:
@@ -787,9 +787,9 @@ Fuente:
 
 ---
 
-# 17. Challengers: investigación por hipótesis
+# 17. alternativas evaluadas: investigación por hipótesis
 
-Esta sección demuestra amplitud de investigación sin convertir el assessment en un leaderboard incomparable.
+Esta sección demuestra amplitud de investigación sin convertir el reto en un leaderboard incomparable.
 
 ## 17.1 Hipótesis: “un modelo no lineal generalista capturará mejor las interacciones”
 
@@ -869,7 +869,7 @@ Multi-head mejoró al pooled neural inicial, pero después fue superado por fami
 
 **Aprendizaje**
 
-El resultado inicial fue útil como challenger arquitectónico, no como decisión final.
+El resultado inicial fue útil como alternativa evaluada arquitectónico, no como decisión final.
 
 **Decisión**
 
@@ -906,7 +906,7 @@ Trajectory puede ser útil en T2, pero es arquitectura- y contrato-dependiente.
 
 **Decisión**
 
-No contaminar T1 con features de historia futura. Mantener T2 como extensión.
+No contaminar T1 con variables de historia futura. Mantener T2 como extensión.
 
 Fuentes:
 - **EV-012**
@@ -940,7 +940,7 @@ No demuestra mejora global robusta suficiente para formar parte del scorer final
 
 **Decisión**
 
-Auxiliar/challenger, no feature canónica del Lead Quality final.
+Auxiliar/alternativa evaluada, no variable canónica del Calidad del lead final.
 
 Fuente:
 - **EV-013**
@@ -966,7 +966,7 @@ Pero:
 - hubo múltiples comparaciones;
 - el mismo future test fue usado para discovery;
 - no existe confirmación independiente;
-- las mejoras globales entre challengers no se separan robustamente.
+- las mejoras globales entre alternativas evaluadas no se separan robustamente.
 
 **Aprendizaje**
 
@@ -989,7 +989,7 @@ Fuentes:
 
 ---
 
-## 17.7 Hipótesis: “semantic features derivadas con LLM aportan señal nueva”
+## 17.7 Hipótesis: “semantic variables derivadas con LLM aportan señal nueva”
 
 **Experimento**
 
@@ -1007,11 +1007,11 @@ La semántica reutilizable se expresó mejor como reglas determinísticas gratui
 
 **Aprendizaje**
 
-El LLM aportó discovery metodológico, no una familia de features justificable para el ABT.
+El LLM aportó discovery metodológico, no una familia de variables justificable para el ABT.
 
 **Decisión**
 
-No incluir `llm_*` en Lead Quality.
+No incluir `llm_*` en Calidad del lead.
 
 Fuente:
 - **EV-017**
@@ -1026,7 +1026,7 @@ EV-018.
 
 **Resultado**
 
-Manteniendo target, folds, CatBoost e hiperparámetros:
+Manteniendo variable objetivo, folds, CatBoost e hiperparámetros:
 
 - baseline Lift@10 macro: 1.267x;
 - +Rules: 1.196x;
@@ -1049,7 +1049,7 @@ Fuente:
 
 ---
 
-## 17.9 Hipótesis: “selected-Spot matching puede recuperar ranking”
+## 17.9 Hipótesis: “selected-Spot matching puede recuperar ordenamiento”
 
 **Experimento**
 
@@ -1074,11 +1074,11 @@ En DEVELOPMENT OOF de esa línea:
 
 Existe señal en selected-Spot context.
 
-Pero AssessmentSol1 también reconoce que incorporar esta capa dentro de Lead Quality solapa la arquitectura con Inventory y obliga a revisar el score combinado.
+Pero AssessmentSol1 también reconoce que incorporar esta capa dentro de Calidad del lead solapa la arquitectura con Inventory y obliga a revisar el score combinado.
 
 **Decisión**
 
-Se conserva como evidencia complementaria. Codexway mantiene Lead Quality separado de serviceability.
+Se conserva como evidencia complementaria. Codexway mantiene Calidad del lead separado de capacidad de atención.
 
 Fuente:
 - **Recovery Decision**
@@ -1093,7 +1093,7 @@ EV-002.
 
 **Resultado**
 
-No aporta señal incremental robusta y, para la inquiry actual, ocurre después del scoring point.
+No aporta señal incremental robusta y, para la consulta actual, ocurre después del scoring point.
 
 **Aprendizaje**
 
@@ -1104,7 +1104,7 @@ Una variable puede parecer útil descriptivamente y ser inválida operacionalmen
 `broker_response_hours` se excluye del scorer.
 
 Fuente:
-- **Assessment model component decisions**
+- **reto model component decisions**
 
 ---
 
@@ -1119,30 +1119,30 @@ Se consideran robustez y sensibilidad en varios ejes.
 - rolling CV;
 - estabilidad mensual.
 
-## Target
+## variable objetivo
 
 - 7/14/30 días de maturity;
 - accepted_or_scheduled;
-- any scheduled inquiry 30d;
+- any scheduled consulta 30d;
 - T0/T2 como preguntas separadas.
 
-## Features
+## variables
 
 - lead-only;
-- lead + inquiry;
+- lead + consulta;
 - sin asked_visit;
 - interaction stable;
 - CatBoost;
 - clustering;
 - semantic rules;
-- selected-Spot challenger.
+- selected-Spot alternativa evaluada.
 
-## Leakage
+## fuga de información futura
 
-- feature allowlist;
+- variable allowlist;
 - forbidden list;
 - stress tests con internal score;
-- future inquiry information;
+- future consulta information;
 - future/nearest availability;
 - backward-as-of obligatorio.
 
@@ -1152,7 +1152,7 @@ Se consideran robustez y sensibilidad en varios ejes.
 - proper scoring rules;
 - calibration table.
 
-## Ranking
+## ordenamiento
 
 - tie-aware Lift;
 - capacity 5/10/20%;
@@ -1204,9 +1204,9 @@ Estado:
 Secuencia recomendada:
 
 1. shadow score sobre nueva cohorte;
-2. esperar madurez del target;
+2. esperar madurez del variable objetivo;
 3. recalcular Lift/Recall/calibración;
-4. revisar drift;
+4. revisar cambio temporal;
 5. si persiste la señal, A/B 50/50 sticky por `lead_id`;
 6. análisis intention-to-treat.
 
@@ -1218,27 +1218,27 @@ Guardrails:
 
 - time to first contact;
 - contact attempts;
-- broker workload;
+- intermediario workload;
 - opt-out rate.
 
 Fuente:
-- **Deployment readiness**
+- **despliegue readiness**
 - **Online A/B protocol**
 
 ---
 
 # 20. Limitaciones
 
-1. **Target proxy.** Scheduled visit no equivale a outcome comercial final.
-2. **Holdout no pristine.** La evidencia final es retrospectiva.
+1. **variable objetivo proxy.** Scheduled visit no equivale a resultado comercial final.
+2. **muestra de evaluación no pristine.** La evidencia final es retrospectiva.
 3. **Baja resolución.** El score final tiene esencialmente dos bandas.
 4. **Señal concentrada.** La discriminación está principalmente en Industrial.
 5. **Weak rolling folds.** Dos de cuatro folds de promoción quedan bajo random.
 6. **Synthetic/small dataset.**
-7. **Feature hypothesis retrospectiva.**
+7. **variable hypothesis retrospectiva.**
 8. **No causalidad.** Asociaciones predictivas no implican efecto causal.
-9. **Inventory separado.** Lead Quality no dice si existe un Spot realmente atendible.
-10. **No outcome de fallback.** No se puede calibrar Lead Quality contra éxito de recomendaciones alternativas.
+9. **Inventory separado.** Calidad del lead no dice si existe un Spot realmente atendible.
+10. **No resultado de respaldo.** No se puede calibrar Calidad del lead contra éxito de recomendaciones alternativas.
 11. **Unversioned listing state.** Parte de la información de Spots no tiene effective-time histórico.
 12. **Nueva evidencia necesaria.** El paso siguiente correcto es validación forward, no más tuning sobre el mismo histórico.
 
@@ -1248,11 +1248,11 @@ Fuente:
 
 | Pregunta | Evidencia principal |
 |---|---|
-| Definición de Lead Quality | **Codexway README** |
-| Scoring moment | **targets.py** |
+| Definición de Calidad del lead | **Codexway README** |
+| momento de evaluación | **variables objetivo.py** |
 | Maturity y splits | **base.yaml** |
-| Feature allowlist | **feature_policy.yaml** |
-| Leakage | **LEAKAGE_MATRIX.md** |
+| variable allowlist | **feature_policy.yaml** |
+| fuga de información futura | **LEAKAGE_MATRIX.md** |
 | Modelo final | **MODEL_CARD.md** |
 | Métricas | **t1_model_metrics.json** |
 | Incertidumbre | **t1_metric_intervals.csv** |
@@ -1264,7 +1264,7 @@ Fuente:
 | Multi-head / especialistas | **EV-009**, **EV-011** |
 | Trajectory | **EV-012** |
 | Dynamic Need / clusters | **EV-013** |
-| Semantic features | **EV-017**, **EV-018** |
+| Semantic variables | **EV-017**, **EV-018** |
 | Auditoría temporal independiente | **AssessmentSol1 Temporal Semantics** |
 | Recovery selected-Spot | **AssessmentSol1 Recovery** |
 
@@ -1275,23 +1275,23 @@ Fuente:
 | Decisión de modelado | Alternativas evaluadas | Evidencia | Razón de decisión |
 |---|---|---|---|
 | Scoring principal en T1 | T0, T1, T2 | Codexway + AssessmentSol1 | T1 equilibra señal contemporánea, cobertura y utilidad operativa sin condicionar a interacciones posteriores |
-| Target = first inquiry scheduled_visit | accepted_or_scheduled, any scheduled 30d, targets T0/T2 | Codexway sensitivities + target audit | Proxy observable, simple y congelado antes de modelar |
-| Maturity = 7d | 14d, 30d | Codexway target sensitivity | Contrato final de autoridad; sensibilidades no cambian el target post-hoc |
-| ABT = una fila por lead en primera inquiry | snapshots multi-stage | targets.py + ABT | Grain operativo único, sin duplicar leads |
-| Lead Quality separado de Inventory | selected-Spot matching, Availability dentro del scorer | Codexway architecture + AssessmentSol1 recovery | Evita doble conteo y conserva significado del componente |
-| Feature policy explícita | ingestión automática de columnas | feature_policy + leakage matrix | Reduce leakage y hace auditable el information set |
-| Modelo final = stable segment logistic | Business rule, broad logistic, CatBoost | rolling CV + validation + holdout procedimental | Única señal que supera el gate de concentración con complejidad mínima |
+| variable objetivo = first consulta scheduled_visit | accepted_or_scheduled, any scheduled 30d, variables objetivo T0/T2 | Codexway sensitivities + variable objetivo audit | Proxy observable, simple y congelado antes de modelar |
+| Maturity = 7d | 14d, 30d | Codexway variable objetivo sensitivity | Contrato final de autoridad; sensibilidades no cambian el variable objetivo post-hoc |
+| ABT = una fila por lead en primera consulta | snapshots multi-stage | variables objetivo.py + ABT | Grain operativo único, sin duplicar leads |
+| Calidad del lead separado de Inventory | selected-Spot matching, Availability dentro del scorer | Codexway architecture + AssessmentSol1 recovery | Evita doble conteo y conserva significado del componente |
+| variable policy explícita | ingestión automática de columnas | feature_policy + fuga de información futura matrix | Reduce fuga de información futura y hace auditable el information set |
+| Modelo final = stable segment logistic | Business rule, broad logistic, CatBoost | rolling CV + validation + muestra histórica de evaluación | Única señal que supera el gate de concentración con complejidad mínima |
 | No CatBoost final | CatBoost generalista / pooled / specialists | Codexway + EV-009/011 | No gana bajo contrato Codexway; resultados positivos históricos no son equivalentes |
 | No multi-head | multi-head vs tabular | EV-003/009/011 | Tabulares superan al multi-head en CV histórico y el router por etapa es inestable |
-| T2 trajectory no entra a T1 | 19/33 trajectory features | EV-012 + AssessmentSol1 T2 | Señal T2 dependiente de arquitectura y población; no corresponde al scoring T1 |
-| Clusters auxiliares | Persona, Need, Dynamic Need, Physical, Location, Broker Service | EV-006/013 | Útiles para interpretación/routing hypothesis; sin lift global confirmado |
+| T2 trajectory no entra a T1 | 19/33 trajectory variables | EV-012 + AssessmentSol1 T2 | Señal T2 dependiente de arquitectura y población; no corresponde al scoring T1 |
+| Clusters auxiliares | Persona, Need, Dynamic Need, Physical, Location, intermediario Service | EV-006/013 | Útiles para interpretación/routing hypothesis; sin lift global confirmado |
 | No semantic rules en scorer | Rules-only, LLM-derived | EV-017/018 | No mejoran Lift@10; utilidad queda en QA de catálogo |
-| No response time | Response-time RF | EV-002 | Post-treatment para inquiry actual y sin señal incremental robusta |
+| No response time | Response-time RF | EV-002 | Post-treatment para consulta actual y sin señal incremental robusta |
 | Platt calibration | Raw | validation proper scoring | Mejora marginalmente Brier/Log Loss y se mantiene |
 | Tie-aware capacity metrics | row-order top-k | E116/evaluation.py | Evita que empates hagan Lift dependiente del orden físico |
 | Default capacity = 10% | 5%, 20% | config + gains | Punto operativo principal; escenarios adicionales quedan reportados |
 | Threshold ≈ 0.2531 | 0.5, cutoff arbitrario | validation P90 | Derivado de capacidad/validation, no de convención de clasificación |
-| Activación = forward shadow + A/B | automatización inmediata | deployment readiness | Holdout retrospectivo; hace falta confirmación independiente |
+| Activación = forward shadow + A/B | automatización inmediata | despliegue readiness | muestra de evaluación retrospectivo; hace falta confirmación independiente |
 
 ---
 
@@ -1299,73 +1299,73 @@ Fuente:
 
 | Riesgo metodológico | Mitigación |
 |---|---|
-| Target leakage por broker response | Outcome excluido del feature set; sólo se usa para construir/evaluar target |
-| Uso de información futura | Primera inquiry determinista; future inquiries prohibidas |
-| Snapshot futuro de Availability | Backward as-of obligatorio; Availability fuera de Lead Quality |
+| variable objetivo fuga de información futura por respuesta del intermediario | resultado excluido del variable set; sólo se usa para construir/evaluar variable objetivo |
+| Uso de información futura | Primera consulta determinista; future consultas prohibidas |
+| Snapshot futuro de Availability | último estado conocido hasta ese momento obligatorio; Availability fuera de Calidad del lead |
 | Mutable current-state fields | `days_on_market`, counters e `is_active` bloqueados |
-| Internal score leakage | `lead_score_internal` sólo stress/benchmark, nunca clean model |
+| Internal score fuga de información futura | `lead_score_internal` sólo stress/benchmark, nunca clean model |
 | Market Context sin publication time | EDA only |
-| Texto/LLM sin version history | No entra al backtest de Lead Quality |
-| Structural missingness | Tratamiento semántico en investigación; final model reduce exposición a este riesgo |
-| Preprocessing leakage | Pipelines fit dentro de train/fold |
-| Lead leakage entre folds | Splits temporales por entidad/lead |
-| Ranking con scores empatados | Expected fractional capture / tie-aware metrics |
-| Holdout históricamente consumido | Etiquetado como procedimental; nueva validación forward obligatoria |
+| Texto/LLM sin version history | No entra al backtest de Calidad del lead |
+| Structural ausencia de datos | Tratamiento semántico en investigación; final model reduce exposición a este riesgo |
+| Preprocessing fuga de información futura | Pipelines fit dentro de train/fold |
+| Lead fuga de información futura entre folds | Splits temporales por entidad/lead |
+| ordenamiento con scores empatados | Expected fractional capture / tie-aware metrics |
+| muestra de evaluación históricamente consumido | Etiquetado como procedimental; nueva validación forward obligatoria |
 | Multiple testing en clusters | Pockets tratados como hipótesis, no reglas |
 | Selección post-hoc de semantic rules | E018 cierra la línea al fallar gate; no rescate sobre mismo OOF |
 | Model-family shopping | Gate predefinido y benchmark pequeño en autoridad final |
 | Calibration overfit | Calibración exclusivamente en validation |
 | Threshold arbitrario | Percentil de validation y capacity-first policy |
-| Drift temporal | Rolling CV + métricas mensuales + shadow monitoring |
+| cambio temporal temporal | Rolling CV + métricas mensuales + shadow monitoring |
 | Causal overclaim | Todas las conclusiones se expresan como asociación predictiva |
-| Doble conteo Lead Quality/Inventory | Arquitectura separada en Codexway |
+| Doble conteo Calidad del lead/Inventory | Arquitectura separada en Codexway |
 | Exceso de confianza por una sola métrica | PR-AUC, Lift/Recall@K, Brier, temporal stability e intervalos bootstrap |
 
 ---
 
 # 24. Respuestas directas a las 12 preguntas del evaluador
 
-**1. ¿Qué significa Lead Quality?**  
-Probabilidad de que la primera inquiry termine registrada como `scheduled_visit`; proxy de progreso temprano.
+**1. ¿Qué significa Calidad del lead?**  
+Probabilidad de que la primera consulta termine registrada como `scheduled_visit`; proxy de progreso temprano.
 
 **2. ¿Cuándo se calcula?**  
-En T1, inmediatamente después de persistir la primera inquiry y antes de la respuesta del broker.
+En T1, inmediatamente después de persistir la primera consulta y antes de la respuesta del intermediario.
 
 **3. ¿Qué información puede conocerse válidamente?**  
-Intake del lead, payload de la inquiry actual y transforms determinísticos disponibles a T1. No outcomes, futuro, current-state no versionado ni internal score.
+Intake del lead, payload de la consulta actual y transforms determinísticos disponibles a T1. No resultados, futuro, current-state no versionado ni internal score.
 
-**4. ¿Cómo se construye el target?**  
-Primera inquiry determinista; positivo si su broker_response final es `scheduled_visit`; maturity de 7 días.
+**4. ¿Cómo se construye el variable objetivo?**  
+Primera consulta determinista; positivo si su broker_response final es `scheduled_visit`; maturity de 7 días.
 
-**5. ¿Cómo se evita leakage?**  
-Allowlist, forbidden list, PIT ABT, splits temporales, fold-fit preprocessing, backward as-of y stress tests.
+**5. ¿Cómo se evita fuga de información futura?**  
+Allowlist, forbidden list, PIT ABT, splits temporales, fold-fit preprocessing, último estado conocido hasta ese momento y stress tests.
 
 **6. ¿Por qué se eligió el modelo final?**  
-Porque el `stable_segment_logistic` fue el único challenger canónico que superó el gate temporal de Lift@10 y proper scoring sin añadir complejidad innecesaria.
+Porque el `stable_segment_logistic` fue el único alternativa evaluada canónico que superó el gate temporal de Lift@10 y proper scoring sin añadir complejidad innecesaria.
 
 **7. ¿Qué alternativas se probaron?**  
-Business rules, broad logistic, CatBoost, specialists, pooled models, multi-head, trajectory, Dynamic Need, clusters, selected-Spot matching, semantic rules y LLM features.
+Business rules, broad logistic, CatBoost, specialists, pooled models, multi-head, trajectory, Dynamic Need, clusters, selected-Spot matching, semantic rules y LLM variables.
 
 **8. ¿Por qué se descartaron?**  
 Por falta de lift estable, no equivalencia contractual, riesgo temporal, complejidad sin evidencia incremental o solapamiento con Inventory.
 
-**9. ¿Cómo se evalúa el ranking desbalanceado?**  
+**9. ¿Cómo se evalúa el ordenamiento desbalanceado?**  
 Con PR-AUC, Precision/Recall@5/10/20, Lift@5/10/20, cumulative gains, proper scoring y bootstrap.
 
 **10. ¿Dónde funciona mejor y peor?**  
 Mejor en Industrial y en subpoblaciones donde la banda alta se concentra; fuera de Industrial el modelo prácticamente no discrimina.
 
 **11. ¿Qué incertidumbre tiene?**  
-Lift@10 1.689x con IC95% [1.381, 1.982], pero con riesgo adicional por holdout retrospectivo, baja resolución y heterogeneidad temporal.
+Lift@10 1.689x con IC95% [1.381, 1.982], pero con riesgo adicional por muestra de evaluación retrospectivo, baja resolución y heterogeneidad temporal.
 
 **12. ¿Cómo se usaría operativamente?**  
-Como ranking de capacidad, inicialmente en shadow mode; default top 10%, cutoff validado ≈0.2531, desempate justo en ties y posterior A/B sticky por lead si la nueva cohorte confirma la señal.
+Como ordenamiento de capacidad, inicialmente en ejecución en paralelo; default top 10%, cutoff validado ≈0.2531, desempate justo en ties y posterior A/B sticky por lead si la nueva cohorte confirma la señal.
 
 ---
 
 ## Conclusión
 
-El valor de este Lead Quality Model no está en presentar un AUC espectacular.
+El valor de este modelo de Calidad del lead no está en presentar un AUC espectacular.
 
 Está en haber encontrado una señal de priorización **pequeña pero defendible**, después de descartar múltiples caminos más complejos, y en definir con precisión:
 
@@ -1377,4 +1377,4 @@ Está en haber encontrado una señal de priorización **pequeña pero defendible
 - cómo se mide incertidumbre;
 - cuándo el modelo debe abstenerse de reclamar más de lo que demuestra.
 
-La solución final de Codexway es, por tanto, una **capa de ranking conservadora, temporalmente explícita y preparada para confirmación forward**, no una promesa de automatización basada en un backtest retrospectivo.
+La solución final de Codexway es, por tanto, una **capa de ordenamiento conservadora, temporalmente explícita y preparada para confirmación forward**, no una promesa de automatización basada en un backtest retrospectivo.
