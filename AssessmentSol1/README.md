@@ -1,6 +1,6 @@
 # AssessmentSol1 — clean-room definitive assessment
 
-Status: **PROMPT 8 COMPLETE. T1 remains frozen; T0 is neutral; T2 is future extension. Next: Inventory / Fallback / Opportunity Score.**
+Status: **PROMPT 11 COMPLETE. Lead Quality, calibration, Inventory, fallback and Opportunity Score remain frozen; final leakage red-team gate has zero active BLOCKERS.**
 
 This directory is the only writable home for the definitive Spot2 assessment. Historical experiments may be read as prior evidence but are never runtime dependencies.
 
@@ -85,3 +85,12 @@ Never consume historical fitted artifacts from `experimentos/**`: no ABTs, predi
 - `evidence/T2_TRAJECTORY_DECISION.md`
 - `evidence/STAGE_COMPARISON.md`
 - `models/P8_EXECUTION_MANIFEST.json`
+
+
+## Prompt 9–11 closure
+
+- Inventory / fallback: frozen under `INV_SERVICEABILITY_V1_FROZEN_2026-08-30`.
+- Opportunity Score: frozen multiplicative score; because Lead Quality is constant, ranking equals Inventory ranking.
+- Methodological red-team: `audit/FINAL_LEAKAGE_AUDIT.md` and `audit/final_audit.json`.
+- Stress tests: isolated under `audit/stress/**`; all are NON_DEPLOYABLE and rejected by the product harness.
+- June remains procedural/non-pristine diagnostic evidence only.
