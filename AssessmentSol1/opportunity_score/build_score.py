@@ -41,14 +41,19 @@ def load_recovered_config() -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _band_expr(cfg: dict[str, Any]) -> pl.Expr:
-    b = cfg["priority_bands"]
-    return (
-        pl.when(pl.col("opportunity_score_0_100") >= b["PRIORITY"]["min_score_0_100"]).then(pl.lit("PRIORITY"))
-        .when(pl.col("opportunity_score_0_100") >= b["HIGH"]["min_score_0_100"]).then(pl.lit("HIGH"))
-        .when(pl.col("opportunity_score_0_100") >= b["MEDIUM"]["min_score_0_100"]).then(pl.lit("MEDIUM"))
+def _assign_priority_bands(scored: pl.DataFrame, cfg: dict[str, Any]) -> pl.DataFrame:
+    """Exact percentile bands; score ties are resolved only by the frozen lead_id tie-break."""
+    n = scored.height
+    n5 = math.ceil(n * 0.05)
+    n10 = math.ceil(n * 0.10)
+    n20 = math.ceil(n * 0.20)
+    ranked = scored.sort(["opportunity_score_0_100", "lead_id"], descending=[True, False]).with_row_index("_rank", offset=1)
+    return ranked.with_columns(
+        pl.when(pl.col("_rank") <= n5).then(pl.lit("PRIORITY"))
+        .when(pl.col("_rank") <= n10).then(pl.lit("HIGH"))
+        .when(pl.col("_rank") <= n20).then(pl.lit("MEDIUM"))
         .otherwise(pl.lit("LOW")).alias("priority_band")
-    )
+    ).drop("_rank")
 
 
 def _recovered_probability_frame(repo_root: Path) -> pl.DataFrame:
@@ -160,7 +165,8 @@ def build_scored_population(repo_root: Path, cfg: dict[str, Any] | None = None) 
         (100.0 * pl.col("lead_quality_probability")).alias("lead_quality_score_0_100"),
     ).with_columns(
         (100.0 * pl.col("lead_quality_probability") * pl.col("inventory_actionability_gate")).alias("opportunity_score_0_100")
-    ).with_columns(_band_expr(cfg))
+    )
+    scored = _assign_priority_bands(scored, cfg)
 
     scored = scored.with_columns(
         pl.when(pl.col("recommendation_status") == "KNOWN_AVAILABLE")
