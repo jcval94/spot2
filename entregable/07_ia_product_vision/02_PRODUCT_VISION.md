@@ -1,30 +1,30 @@
-# Entregable 8 — Product Vision
+# Entregable 8 — Visión de producto
 
 > ### Lectura en lenguaje claro
 > **En una frase:** los siguientes tres meses deben priorizar mejores datos, mejores resultados observables y validación causal antes que agregar más modelos.
 >
-> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **target** es el resultado que se quiere anticipar; **point-in-time / as-of** significa usar sólo información que ya era conocida en ese momento; **holdout** es una muestra apartada para evaluación; **shadow** es una ejecución en paralelo que todavía no cambia decisiones reales; y **fallback** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
+> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **variable objetivo** es el resultado que se quiere anticipar; **disponible en ese momento / as-of** significa usar sólo información que ya era conocida en ese momento; **muestra de evaluación** es una muestra apartada para evaluación; **shadow** es una ejecución en paralelo que todavía no cambia decisiones reales; y **respaldo** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
 >
 
 ## 1. Principio
 
-La Product Vision no parte de “agregar más modelos”.
+La Visión de producto no parte de “agregar más modelos”.
 
 Parte de los gaps que quedaron demostrados por la investigación.
 
 La arquitectura actual ya resuelve de forma defendible:
 
-- Lead Quality en T1;
-- Inventory Serviceability point-in-time;
-- fallback gobernado;
-- Opportunity Score lower/upper;
+- Calidad del lead en T1;
+- Capacidad del inventario disponible en ese momento;
+- respaldo gobernado;
+- Puntaje de oportunidad lower/upper;
 - Semantic Catalog QA desacoplado del predictor.
 
 Los siguientes tres meses deberían concentrarse en cuatro frentes:
 
 1. **instrumentación y versionado**;
-2. **outcomes más alineados al producto**;
-3. **challengers con evidencia previa real**;
+2. **resultados más alineados al producto**;
+3. **alternativas evaluadas con evidencia previa real**;
 4. **validación causal online**.
 
 ---
@@ -38,12 +38,12 @@ La evolución natural de Spot2 sería pasar de un score estático a un sistema d
        v
     T0 — prior / cold-start
        |
-    primera inquiry
+    primera consulta
        |
        v
-    T1 — Lead Quality + Inventory Serviceability
+    T1 — Calidad del lead + Capacidad del inventario
        |
-       +--> fallback contextual
+       +--> respaldo contextual
        |
     nuevas interacciones
        |
@@ -51,10 +51,10 @@ La evolución natural de Spot2 sería pasar de un score estático a un sistema d
     T2 — rescore con trajectory, sólo si pasa gate
        |
        v
-    broker / producto actúa
+    intermediario / producto actúa
        |
        v
-    outcomes instrumentados
+    resultados instrumentados
        |
        +--> visita
        +--> alternativa aceptada
@@ -125,12 +125,12 @@ Por cada exposure:
 - treatment arm;
 - shown_at;
 - accepted/rejected;
-- broker/user action;
+- intermediario/user action;
 - reason.
 
 Sin exposure logs no puede existir un gold limpio de recommendation relevance.
 
-#### D. Instrumentar outcomes
+#### D. Instrumentar resultados
 
 Solicitar/crear:
 
@@ -150,9 +150,9 @@ Esto permite dejar de usar scheduled_visit como único proxy.
 
 Necesitamos timestamps confiables de:
 
-- inquiry created;
-- assigned to broker;
-- first broker seen;
+- consulta created;
+- assigned to intermediario;
+- first intermediario seen;
 - first response;
 - first qualified response;
 - visit offered;
@@ -162,7 +162,7 @@ broker_response_hours actual no es suficiente como SLA limpio.
 
 ---
 
-## Mes 2 — Challengers priorizados por evidencia
+## Mes 2 — alternativas evaluadas priorizados por evidencia
 
 No todos los experimentos históricos merecen la misma prioridad.
 
@@ -184,14 +184,14 @@ Para Multi-Head:
 
 Conclusión:
 
-**trajectory es el challenger dinámico con evidencia predictiva más concreta.**
+**trajectory es el alternativa evaluada dinámico con evidencia predictiva más concreta.**
 
 Nueva prueba:
 
 - historia estrictamente previa;
 - eventos con timestamps efectivos;
 - response events sólo si realmente ocurrieron antes del score;
-- comparación T2 champion/challenger;
+- comparación T2 champion/alternativa evaluada;
 - no mezclar scores T1 y T2.
 
 ### Prioridad A — Calibrated Availability
@@ -206,11 +206,11 @@ Macro:
 
 No se promueve automáticamente sobre Codexway.
 
-Con mejor historial de Availability, debe re-evaluarse como challenger de:
+Con mejor historial de Availability, debe re-evaluarse como alternativa evaluada de:
 
-- serviceability lower/upper;
+- capacidad de atención lower/upper;
 - prioritización de verificación;
-- contextual fallback.
+- contextual respaldo.
 
 ### Prioridad B — Dynamic Need
 
@@ -225,9 +225,9 @@ Uso futuro:
 - segmentación de intención;
 - explicación;
 - routing;
-- personalización del fallback.
+- personalización del respaldo.
 
-No promover como feature de score sin nueva réplica.
+No promover como variable de score sin nueva réplica.
 
 ### Prioridad B — Localized Compatibility
 
@@ -246,9 +246,9 @@ Roadmap:
 - usar shrinkage;
 - no convertir celdas a multiplicadores post-hoc.
 
-### Prioridad B — Broker Service Profiles
+### Prioridad B — intermediario Service Profiles
 
-Broker Service sí generó una segmentación balanceada e interpretable.
+intermediario Service sí generó una segmentación balanceada e interpretable.
 
 Su mejora predictiva marginal fue inconclusive.
 
@@ -260,7 +260,7 @@ Uso futuro:
 - carga de trabajo;
 - strata experimentales.
 
-No usar como multiplicador de Lead Quality.
+No usar como multiplicador de Calidad del lead.
 
 ### Prioridad B — Mejor geografía
 
@@ -302,13 +302,13 @@ Es crear un gold humano y medir:
 
 La interfaz debe mostrar por lead:
 
-- Lead Quality;
-- Inventory Serviceability;
+- Calidad del lead;
+- Capacidad del inventario;
 - Inventory Confidence;
 - Opportunity lower/upper;
-- fallback;
+- respaldo;
 - reason codes;
-- freshness;
+- vigencia;
 - acción recomendada.
 
 No mostrar sólo un score opaco.
@@ -322,7 +322,7 @@ Durante el primer período online:
 - registrar candidate set;
 - registrar action que habría recomendado;
 - comparar con operación real;
-- esperar madurez del outcome.
+- esperar madurez del resultado.
 
 ### C. RCT
 
@@ -330,7 +330,7 @@ Lanzar experimentación sólo después de:
 
 - assignment estable;
 - exposure logging;
-- outcomes completos;
+- resultados completos;
 - SRM checks;
 - inventory health checks.
 
@@ -340,7 +340,7 @@ El diseño se detalla en el documento causal.
 
 ## 4. ¿Cómo integraríamos la solución al producto?
 
-## Superficie para broker/operador
+## Superficie para intermediario/operador
 
 Una tarjeta de oportunidad podría mostrar:
 
@@ -352,12 +352,12 @@ Una tarjeta de oportunidad podría mostrar:
 
 ### Estado de inventario
 
-- Serviceable / Potential fallback / Uncertain / Low;
-- freshness;
+- Serviceable / Potential respaldo / Uncertain / Low;
+- vigencia;
 - exact Spot attendable;
 - candidate depth.
 
-### Fallback
+### respaldo
 
 - hasta K final permitido;
 - availability state;
@@ -381,7 +381,7 @@ No generar explanation libre con LLM.
 
 Usar:
 
-- feature/model facts;
+- variable/model facts;
 - reason codes;
 - availability status;
 - constraint decisions.
@@ -396,9 +396,9 @@ Con evidencia actual:
 
 - prior poblacional;
 - planning;
-- no ranking automático.
+- no ordenamiento automático.
 
-Antes de revisitarlo necesitamos más señales pre-inquiry.
+Antes de revisitarlo necesitamos más señales pre-consulta.
 
 ### T1
 
@@ -406,11 +406,11 @@ Momento principal.
 
 Trigger:
 
-first inquiry persisted.
+first consulta persisted.
 
 ### T2
 
-Cuando haya una nueva inquiry:
+Cuando haya una nueva consulta:
 
 - crear nuevo score event;
 - conservar T1;
@@ -428,9 +428,9 @@ La UI debe diferenciar:
 
 ---
 
-## 6. Contextual fallback
+## 6. Contextual respaldo
 
-El fallback futuro puede usar contexto adicional sólo después de instrumentación.
+El respaldo futuro puede usar contexto adicional sólo después de instrumentación.
 
 Posibles señales:
 
@@ -439,7 +439,7 @@ Posibles señales:
 - real travel/geographic distance;
 - price histórico efectivo;
 - availability calibrated;
-- broker capacity;
+- intermediario capacity;
 - previous recommendations rejected;
 - accepted/rejected reason.
 
@@ -462,16 +462,16 @@ El modelo nunca debería aprender a violar:
 | Precios versionados | budget fit PIT real |
 | Historial de cambios del Spot | reconstruir candidate state histórico |
 | Effective timestamp de Availability | as-of intradía correcto |
-| Availability histórica completa | calibrated availability y drift |
+| Availability histórica completa | calibrated availability y cambio temporal |
 | Exposure de recomendaciones | gold de recommendation evaluation |
 | Rank/candidate set mostrado | propensity y causal analysis |
-| Acceptance/rejection de alternativa | fallback outcome |
-| Visita agendada y completada | outcome intermedio limpio |
-| Cierre won/lost | outcome comercial |
+| Acceptance/rejection de alternativa | respaldo resultado |
+| Visita agendada y completada | resultado intermedio limpio |
+| Cierre won/lost | resultado comercial |
 | Valor/revenue | optimización económica |
 | Timestamps de respuesta | response SLA y trajectory |
-| Assignment de broker | routing/interference |
-| Broker workload/capacity | guardrail y routing |
+| Assignment de intermediario | routing/interference |
+| intermediario workload/capacity | guardrail y routing |
 | Coordenadas/geocoding | distancia real y localized compatibility |
 | Human-gold Catalog QA | precision/recall natural del LLM/rules |
 | Copy versionado | semantic QA histórica reproducible |
@@ -479,13 +479,13 @@ El modelo nunca debería aprender a violar:
 
 ---
 
-## 8. Outcome hierarchy futura
+## 8. resultado hierarchy futura
 
 No usar un único label para todo.
 
-### Lead Quality
+### Calidad del lead
 
-Puede seguir usando un outcome temprano si es operacionalmente útil.
+Puede seguir usando un resultado temprano si es operacionalmente útil.
 
 ### Product impact
 
@@ -517,25 +517,25 @@ No debe adoptarse sin validación con Negocio, pero es más alineada que AUC.
 #### Demand
 
 - lead volume;
-- lead quality;
+- Calidad del lead;
 - response rate.
 
 #### Inventory
 
-- serviceability;
+- capacidad de atención;
 - fresh coverage;
 - candidate depth.
 
 #### Matching
 
-- fallback acceptance;
+- respaldo acceptance;
 - recommendation coverage;
 - no-result.
 
 #### Execution
 
 - time to first contact;
-- broker workload;
+- intermediario workload;
 - response SLA.
 
 #### Commercial
@@ -551,11 +551,11 @@ No debe adoptarse sin validación con Negocio, pero es más alineada que AUC.
 Durante esos tres meses no recomendaría:
 
 - buscar una arquitectura neuronal más compleja por defecto;
-- incorporar LLM features al predictor;
-- tuning adicional sobre el holdout consumido;
+- incorporar LLM variables al predictor;
+- tuning adicional sobre el muestra de evaluación consumido;
 - promover pockets locales sin cohorte nueva;
 - usar current price como histórico;
-- evaluar fallback con historical chosen Spot como gold;
+- evaluar respaldo con historical chosen Spot como gold;
 - mezclar T1 y T2 scores;
 - usar AUC como criterio único;
 - automatizar QA semántico sin human gold.
@@ -566,16 +566,16 @@ Durante esos tres meses no recomendaría:
 
 | Candidato | Evidencia actual | Próximo gate |
 |---|---|---|
-| T0 | débil / exposure drift | nuevos pre-inquiry signals |
-| T1 | canónico | forward validation |
+| T0 | débil / exposure cambio temporal | nuevos pre-consulta signals |
+| T1 | canónico | validación con datos futuros |
 | T2 trajectory | positiva en experimentos | réplica en nuevos datos/versiones |
 | Dynamic Need | direccional | confirmación temporal |
 | Localized compatibility | pockets | preregister + new cohort |
-| Broker Service | interpretable, predictive inconclusive | routing experiment |
-| Calibrated Availability | fuerte challenger | nueva historia completa + comparison |
+| intermediario Service | interpretable, predictive inconclusive | routing experiment |
+| Calibrated Availability | fuerte alternativa evaluada | nueva historia completa + comparison |
 | Better geography | propuesta preliminar | PIT enrichment |
 | Semantic Catalog QA | supported discovery | human gold |
-| Contextual fallback | conceptualmente fuerte | exposure/outcome logs + RCT |
+| Contextual respaldo | conceptualmente fuerte | exposure/resultado logs + RCT |
 
 ---
 
@@ -588,12 +588,12 @@ Esperaría:
 1. una plataforma de decisión con lineage;
 2. Spot e Inventory versionados;
 3. recommendation exposure logs;
-4. outcomes comerciales;
-5. un T2 challenger limpio;
+4. resultados comerciales;
+5. un T2 alternativa evaluada limpio;
 6. Availability calibrada evaluada contra Codexway;
 7. Catalog QA con human gold;
 8. uno o más RCTs registrados;
-9. evidencia causal sobre ranking/fallback;
+9. evidencia causal sobre ordenamiento/respaldo;
 10. una base real para decidir qué componentes merecen promoción.
 
 ---
@@ -602,7 +602,7 @@ Esperaría:
 
 ### 1. ¿Qué haríamos con tres meses adicionales?
 
-Primero instrumentación, después challengers con evidencia, y finalmente shadow/RCT.
+Primero instrumentación, después alternativas evaluadas con evidencia, y finalmente shadow/RCT.
 
 ### 2. ¿Cómo integraríamos la solución al producto?
 
@@ -610,11 +610,11 @@ Como una capa de decisión T1 en CRM/queue que conserva Quality, Inventory y Opp
 
 ### 3. ¿Qué nuevos datos solicitaríamos?
 
-Versionado de Spot/precios, timestamps efectivos, recommendation exposures, visits, closes, value, full Availability history, broker assignment/workload, response SLA y human semantic gold.
+Versionado de Spot/precios, timestamps efectivos, recommendation exposures, visits, closes, value, full Availability history, intermediario assignment/workload, response SLA y human semantic gold.
 
 ### 4. ¿Cómo mediríamos causalmente impacto?
 
-Con RCT sticky por lead cuando la interferencia sea controlable; si shared broker/inventory produce spillovers materiales, con randomización por clusters/tiempo. El plan completo está en [03_EXPERIMENTACION_CAUSAL.md](03_EXPERIMENTACION_CAUSAL.md).
+Con RCT sticky por lead cuando la interferencia sea controlable; si shared intermediario/inventory produce spillovers materiales, con randomización por clusters/tiempo. El plan completo está en [03_EXPERIMENTACION_CAUSAL.md](03_EXPERIMENTACION_CAUSAL.md).
 
 ---
 
@@ -627,9 +627,9 @@ Evidencia principal:
 - EV-007 Geographic Enrichment;
 - EV-010 Matching A/B;
 - EV-012 Trajectory;
-- EV-013 Dynamic Need / Broker Service / local pockets;
+- EV-013 Dynamic Need / intermediario Service / local pockets;
 - E019 Calibrated Availability;
-- Entregable 3 Lead Quality;
+- Entregable 3 Calidad del lead;
 - Entregable 4 Inventory;
 - Entregables 5/6 Opportunity + Producción;
 - AssessmentSol1 LLM closure.
@@ -640,12 +640,12 @@ Evidencia principal:
 ## 15. Evidencia fuente
 
 - **Codexway**
-- [Entregable 3 — Lead Quality](../03_lead_quality/README.md)
-- [Entregable 4 — Inventory + Fallback](../04_inventory_fallback/README.md)
+- [Entregable 3 — Calidad del lead](../03_lead_quality/README.md)
+- [Entregable 4 — Inventory + respaldo](../04_inventory_fallback/README.md)
 - [Entregables 5/6 — Opportunity + Producción](../05_opportunity_produccion/README.md)
 - **EV-007 — Geographic Enrichment**
 - **EV-010 — Matching A/B**
 - **EV-012 — Trajectory**
-- **EV-013 — Dynamic Need / Broker Service / local compatibility**
+- **EV-013 — Dynamic Need / intermediario Service / local compatibility**
 - **E019 — Calibrated Availability**
 - **AssessmentSol1 — LLM**
