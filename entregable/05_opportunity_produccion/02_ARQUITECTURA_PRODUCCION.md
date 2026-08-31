@@ -1,20 +1,16 @@
 # Entregable 6 — Escalabilidad y puesta en producción
 
-> ### Guía de lectura
-> Este documento está escrito para poder leerse sin asumir experiencia en ciencia de datos. Se conservan algunos nombres técnicos cuando son necesarios para reproducir la solución, pero su significado es:
-> - **Lift@10:** cuánto mejora el 10% mejor priorizado frente a elegir al azar el mismo número de casos.
-> - **Variable objetivo (target):** resultado que queremos anticipar; aquí, principalmente una visita agendada.
-> - **Información disponible en ese momento (point-in-time / as-of):** sólo datos que ya podían conocerse cuando se tomó la decisión.
-> - **Muestra de evaluación (holdout):** periodo apartado para medir el modelo después del entrenamiento.
-> - **Ejecución en paralelo (shadow):** calcular recomendaciones sin cambiar todavía la operación real.
-> - **Estrategia de respaldo (fallback):** qué hacer cuando el inmueble original no puede recomendarse con suficiente confianza.
+> ### Lectura en lenguaje claro
+> **En una frase:** la propuesta de producción separa modelo, inventario y decisión para poder versionarlos, monitorearlos y revertirlos de forma independiente antes de automatizar.
+>
+> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **target** es el resultado que se quiere anticipar; **point-in-time / as-of** significa usar sólo información que ya era conocida en ese momento; **holdout** es una muestra apartada para evaluación; y **fallback** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
 >
 
 ## 1. Principio de diseño
 
 La arquitectura productiva debe reflejar la arquitectura metodológica, no esconderla.
 
-Calidad del lead e Capacidad del inventario son componentes separados y deben poder evolucionar, fallar, monitorearse y versionarse de forma independiente. Opportunity es una capa de orquestación, no un nuevo modelo que reentrena los dos subsistemas.
+Lead Quality e Inventory Serviceability son componentes separados y deben poder evolucionar, fallar, monitorearse y versionarse de forma independiente. Opportunity es una capa de orquestación, no un nuevo modelo que reentrena los dos subsistemas.
 
 Arquitectura lógica:
 
@@ -24,15 +20,15 @@ Arquitectura lógica:
     Inventory State Store
             |
             v
-    Capacidad del inventario ---------
+    Inventory Serviceability ---------
             |                          |
             |                          v
-    Lead --> Calidad del lead --> Opportunity Orchestration
+    Lead --> Lead Quality --> Opportunity Orchestration
                                    |
                                    +--> Quality
                                    +--> Inventory lower/upper
                                    +--> Opportunity lower/upper
-                                   +--> estrategia de respaldo / motivos de la decisión
+                                   +--> fallback / reason codes
                                    +--> action
                                    |
                                    v
@@ -41,9 +37,9 @@ Arquitectura lógica:
 La dirección solicitada queda preservada:
 
     Lead
-    → Calidad del lead
+    → Lead Quality
     → Opportunity orchestration
-    ← Capacidad del inventario
+    ← Inventory Serviceability
     ← Availability snapshots
 
 ---
@@ -55,34 +51,34 @@ La dirección solicitada queda preservada:
 - contrato T1 explícito;
 - modelo stable_segment_logistic;
 - calibración Platt;
-- variable allowlist;
+- feature allowlist;
 - Availability backward-as-of;
-- estrategia de respaldo determinista;
+- fallback determinista;
 - Opportunity lower/upper;
-- fingerprints de raw data, variable policy y predictions;
+- fingerprints de raw data, feature policy y predictions;
 - run manifest reproducible;
 - métricas mensuales;
 - drift básico;
 - tests de snapshots futuros;
 - protocolo A/B sticky por lead_id;
 - helper de sample-ratio mismatch;
-- gate de validación en paralelo antes de activación.
+- gate de shadow validation antes de activación.
 
 ### Debe implementarse para producción real
 
 - serving API o event consumer;
-- variable service operativo;
+- feature service operativo;
 - snapshot store incremental;
 - model registry administrado;
 - artifact/container registry;
 - latency/load benchmarks;
 - alerting y dashboards;
-- reversión automatizado;
+- rollback automatizado;
 - canary/shadow routing;
 - scheduler/orchestrator;
 - schema registry/data contracts;
 - decision log inmutable;
-- on-call/guía operativa;
+- on-call/runbook;
 - retraining pipeline;
 - approval workflow.
 
@@ -96,9 +92,9 @@ La solución recomendada es híbrida.
 
 | Componente | Modo | Razón |
 |---|---|---|
-| Calidad del lead T1 | online/event-driven | el momento válido es inmediatamente después de persistir la primera consulta |
-| Capacidad del inventario | online sobre estado materializado | necesita responder con el estado conocido más reciente |
-| Availability ingestion | incremental/micro-batch | los snapshots cambian independientemente de las consultas |
+| Lead Quality T1 | online/event-driven | el momento válido es inmediatamente después de persistir la primera inquiry |
+| Inventory Serviceability | online sobre estado materializado | necesita responder con el estado conocido más reciente |
+| Availability ingestion | incremental/micro-batch | los snapshots cambian independientemente de las inquiries |
 | Candidate index | batch + incremental | evita escanear todo el catálogo por cada lead |
 | Opportunity orchestration | online | combina outputs ya calculados |
 | Priority queue | streaming o micro-batch corto | depende de capacidad operativa |
@@ -112,19 +108,19 @@ La solución recomendada es híbrida.
 
 ### Paso 1 — Evento
 
-Se recibe FIRST_INQUIRY_PERSISTED con lead_id, consulta_id, consulta_at, payload permitido y correlation id.
+Se recibe FIRST_INQUIRY_PERSISTED con lead_id, inquiry_id, inquiry_at, payload permitido y correlation id.
 
-consulta_at es el score_time contractual.
+inquiry_at es el score_time contractual.
 
-### Paso 2 — Calidad del lead
+### Paso 2 — Lead Quality
 
 El servicio:
 
 1. valida schema;
-2. reconstruye únicamente variables autorizadas;
+2. reconstruye únicamente features autorizadas;
 3. aplica stable_segment_logistic;
 4. aplica calibración Platt;
-5. devuelve probabilidad, score, versión del modelo, versión de variable policy y quality band.
+5. devuelve probabilidad, score, versión del modelo, versión de feature policy y quality band.
 
 No consulta Availability.
 
@@ -137,7 +133,7 @@ El servicio:
 3. exige spot.created_at <= score_time;
 4. obtiene el último snapshot <= score_time para la decisión histórica;
 5. calcula lower/upper, confidence y candidate depth;
-6. construye estrategia de respaldo según el Entregable 4.
+6. construye fallback según el Entregable 4.
 
 Para una decisión operacional posterior puede utilizarse el último snapshot conocido al nuevo decision_time, pero debe guardarse como refresh separado.
 
@@ -145,8 +141,8 @@ Para una decisión operacional posterior puede utilizarse el último snapshot co
 
 Se calcula:
 
-    opportunity_lower = p_quality × capacidad de atención_lower
-    opportunity_upper = p_quality × capacidad de atención_upper
+    opportunity_lower = p_quality × serviceability_lower
+    opportunity_upper = p_quality × serviceability_upper
 
 y se conservan Quality e Inventory por separado.
 
@@ -158,13 +154,13 @@ Se guarda un decision_record inmutable.
 
 Se publica a CRM/queue:
 
-- Calidad del lead;
+- Lead Quality;
 - Opportunity lower/upper;
 - Inventory band;
 - confidence;
 - acción;
-- estrategia de respaldo;
-- vigencia;
+- fallback;
+- freshness;
 - status.
 
 ---
@@ -175,24 +171,24 @@ Cada decisión debe conservar al menos:
 
 - decision_id;
 - lead_id;
-- consulta_id;
+- inquiry_id;
 - stage;
 - score_time;
 - scored_at;
 - p_lead_quality;
 - lead_quality_score;
 - quality_band;
-- inventory_capacidad de atención_lower;
-- inventory_capacidad de atención_upper;
+- inventory_serviceability_lower;
+- inventory_serviceability_upper;
 - inventory_uncertainty_width;
 - inventory_confidence;
-- capacidad de atención_band;
+- serviceability_band;
 - opportunity_probability_lower;
 - opportunity_probability_upper;
 - opportunity_score;
 - priority_band;
-- estrategia de respaldo_spot_ids;
-- estrategia de respaldo_reason_codes;
+- fallback_spot_ids;
+- fallback_reason_codes;
 - candidate_depth;
 - no_result;
 - inventory_status;
@@ -200,20 +196,20 @@ Cada decisión debe conservar al menos:
 - calibrator_version;
 - inventory_policy_version;
 - opportunity_policy_version;
-- variable_policy_hash;
+- feature_policy_hash;
 - config_hash;
 - code_commit_sha o image_digest;
 - input schema version;
 - availability snapshot references;
 - catalog/listing version.
 
-El output nunca debe contener target futuro ni broker outcome como variable.
+El output nunca debe contener target futuro ni broker outcome como feature.
 
 ---
 
-## 6. variable computation
+## 6. Feature computation
 
-### Calidad del lead
+### Lead Quality
 
 El modelo final es pequeño, pero el pipeline sigue siendo contractual.
 
@@ -279,15 +275,15 @@ Así se elimina ambigüedad de snapshots del mismo día.
 
 ---
 
-## 8. vigencia
+## 8. Freshness
 
-Codexway usa 30 días como lens histórico de vigencia.
+Codexway usa 30 días como lens histórico de freshness.
 
 Eso no significa que un pipeline productivo deba tardar 30 días en actualizar inventario.
 
 Separar:
 
-- vigencia semántica: edad máxima antes de considerar Inventory incierto;
+- freshness semántica: edad máxima antes de considerar Inventory incierto;
 - ingestion latency: cuánto tarda una actualización de fuente en estar disponible para serving.
 
 Un atraso técnico del pipeline debe generar un incidente propio y no confundirse con un Spot legítimamente stale.
@@ -298,8 +294,8 @@ Un atraso técnico del pipeline debe generar un incidente propio y no confundirs
 
 ### T1
 
-- una vez al persistir la primera consulta;
-- idempotente por lead_id + first_consulta_id + model_version.
+- una vez al persistir la primera inquiry;
+- idempotente por lead_id + first_inquiry_id + model_version.
 
 ### Inventory refresh
 
@@ -365,7 +361,7 @@ Política recomendada:
 
 1. score descendente;
 2. hard operational constraints;
-3. si persiste empate, stable aleatoriaized hash versionado.
+3. si persiste empate, stable randomized hash versionado.
 
 La evaluación offline continúa usando expected fractional capture tie-aware.
 
@@ -375,11 +371,11 @@ La evaluación offline continúa usando expected fractional capture tie-aware.
 
 El registry debe versionar el paquete lógico completo.
 
-### Calidad del lead package
+### Lead Quality package
 
 - model binary/coefficient set;
 - calibrator;
-- variable allowlist;
+- feature allowlist;
 - transform version;
 - training window;
 - validation window;
@@ -394,8 +390,8 @@ El registry debe versionar el paquete lógico completo.
 
 Aunque no sea un modelo ML tradicional:
 
-- vigencia days;
-- max estrategia de respaldo recommendations;
+- freshness days;
+- max fallback recommendations;
 - candidate policy;
 - compatibility functions;
 - ranking policy;
@@ -423,7 +419,7 @@ Versionar explícitamente:
 - inventory_policy_version;
 - opportunity_policy_version;
 - schema_version;
-- variable_contract_version;
+- feature_contract_version;
 - availability_source_version.
 
 Nunca depender de una etiqueta “latest” como fuente de verdad.
@@ -432,18 +428,18 @@ Nunca depender de una etiqueta “latest” como fuente de verdad.
 
 ## 14. Lineage
 
-Codexway ya genera raw-data fingerprint, variable-policy fingerprint, prediction fingerprint, split manifest y run manifest.
+Codexway ya genera raw-data fingerprint, feature-policy fingerprint, prediction fingerprint, split manifest y run manifest.
 
 Producción debe extender esa idea al nivel de cada decisión:
 
     source event
       → normalized payload
-      → variable contract
+      → feature contract
       → model/calibrator
       → p_quality
       → inventory candidate set
       → availability snapshot ids
-      → capacidad de atención lower/upper
+      → serviceability lower/upper
       → opportunity policy
       → decision
       → CRM action
@@ -472,7 +468,7 @@ Estos valores son objetivos iniciales propuestos, no SLAs medidos.
 | Availability ingestion tras publicación | <=15 min |
 | Error rate serving | <0.5% |
 | Future-snapshot violations | 0 |
-| Known-unavailable estrategia de respaldo recommendation | 0 |
+| Known-unavailable fallback recommendation | 0 |
 
 Antes de fijar un SLA contractual deben ejecutarse load tests, soak tests, peak concurrency, cold-start benchmark y candidate-depth worst case.
 
@@ -528,20 +524,20 @@ Si Inventory se degrada:
 
 ---
 
-## 17. Arquitectura de despliegue
+## 17. Arquitectura de deployment
 
 Servicios lógicos:
 
 1. Lead Event Service;
-2. variable/Contract Service;
-3. Calidad del lead Service;
+2. Feature/Contract Service;
+3. Lead Quality Service;
 4. Inventory Candidate Service;
 5. Availability State Service;
 6. Opportunity Orchestrator;
 7. Decision Store;
 8. Queue/CRM Adapter;
 9. Monitoring + Label Maturity Jobs;
-10. Registry / despliegue Controller.
+10. Registry / Deployment Controller.
 
 No es obligatorio que sean diez microservicios físicos.
 
@@ -579,7 +575,7 @@ Codexway propone:
 
 Tratamiento:
 
-- trabajar leads por Puntaje de oportunidad top-down.
+- trabajar leads por Opportunity Score top-down.
 
 Control:
 
@@ -597,7 +593,7 @@ Sólo si:
 
 ---
 
-## 19. Piloto específico de estrategia de respaldo
+## 19. Piloto específico de fallback
 
 Debe medirse separado del ranking general cuando sea posible.
 
@@ -607,7 +603,7 @@ Tratamiento:
 
 Control:
 
-- estrategia de respaldo actual.
+- fallback actual.
 
 Métrica primaria propuesta por Codexway:
 
@@ -640,7 +636,7 @@ Pipeline:
 2. reconstruir PIT ABT;
 3. rolling temporal CV;
 4. calibración separada;
-5. comparar champion/alternativa evaluada;
+5. comparar champion/challenger;
 6. validar Lift@K;
 7. validar Brier/Log Loss;
 8. revisar drift;
@@ -652,7 +648,7 @@ Reentrenar no significa promover.
 
 ---
 
-## 21. reversión
+## 21. Rollback
 
 Cada despliegue conserva last-known-good.
 
@@ -666,7 +662,7 @@ Triggers:
 - severe performance degradation confirmada;
 - recommendation constraint violation.
 
-reversión por componente:
+Rollback por componente:
 
 - Quality → versión previa;
 - Inventory policy → versión previa;
@@ -678,11 +674,11 @@ No es necesario revertir todo el stack si sólo falló una capa.
 
 ## 22. Cambios que exigen nueva validación
 
-- variable nueva;
+- feature nueva;
 - target;
 - maturity;
 - calibrator;
-- vigencia;
+- freshness;
 - K;
 - hard constraint;
 - matching;
@@ -700,7 +696,7 @@ Cambios de dashboards/logging no requieren revalidar el scorer si no alteran la 
 |---|---|
 | Quality timeout | no inventar score; último score válido sólo si mismo stage/version o workflow estándar |
 | Inventory timeout | conservar Quality; marcar Inventory técnicamente no resuelto; no convertir en UNAVAILABLE |
-| Availability atrasada | usar estado conocido con vigencia explícita; si excede política, Uncertain/verify |
+| Availability atrasada | usar estado conocido con freshness explícita; si excede política, Uncertain/verify |
 | Candidate generation falla | TECHNICAL_ERROR, no NO_RESULT |
 | Candidate set vacío legítimo | NO_RESULT |
 | Registry no disponible | servir versión pinned last-known-good |
@@ -725,6 +721,6 @@ La solución escala mejor como arquitectura modular que como modelo monolítico:
 - Inventory refresh sin sobrescribir score histórico;
 - shadow → A/B → rollout;
 - registry y lineage por componente;
-- reversión independiente;
+- rollback independiente;
 - fail-safe conservador;
 - monitoreo multiobjetivo.
