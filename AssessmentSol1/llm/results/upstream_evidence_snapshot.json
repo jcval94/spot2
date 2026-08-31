@@ -1,0 +1,79 @@
+{
+  "snapshot_version": "LLM_UPSTREAM_EVIDENCE_SNAPSHOT_V1_2026-08-30",
+  "canonical": {
+    "E017": {
+      "status": "MERGED_CANONICAL",
+      "pr": 18,
+      "pr_head_sha": "9e1f6d4b92ca515edd0720d64be993ec669dc351",
+      "model": "gpt-5-nano",
+      "authoritative_run": 33296462871,
+      "artifact_id": 9727563377,
+      "n": 100,
+      "input_tokens": 12634,
+      "output_tokens": 4869,
+      "estimated_cost_usd": 0.002579,
+      "new_rule_candidates": 0,
+      "residual_actionable": 0,
+      "decision": "NOT_SUPPORTED_LLM_DERIVED_ABT_FEATURES"
+    },
+    "E018": {
+      "status": "MERGED_CANONICAL",
+      "pr": 20,
+      "pr_head_sha": "bc0593d8d580a6748f991d64033e41cacb5da239",
+      "authoritative_run": 33297920881,
+      "artifact_id": 9728035555,
+      "baseline_macro_lift10": 1.267,
+      "semantic_rules_macro_lift10": 1.196,
+      "delta_lift10": -0.07156541405728604,
+      "ci95": [
+        -0.14378320140631923,
+        0.12510695204798955
+      ],
+      "decision": "NOT_SUPPORTED_SEMANTIC_RULES_FOR_LEAD_QUALITY_SCORING"
+    }
+  },
+  "supplemental_open_pr": {
+    "E015_live_PR19": {
+      "status": "OPEN_SUPPLEMENTAL_NON_CANONICAL",
+      "pr": 19,
+      "pr_head_sha": "31c58cb6c43f47ea9945fccef2bbc1b352ecfdc1",
+      "authoritative_live_run": 33296510774,
+      "artifact_id": 9727712667,
+      "artifact_sha256": "a7c7d5ebdcd389c50d98917bb9d7adb263a56f9d39cb92da829280e1042f9be7",
+      "holdout_valid": "240/240",
+      "challenge_valid": "100/100",
+      "api_schema_errors": 0,
+      "cumulative_observed_cost_usd": 0.053522,
+      "s001_sensitivity": 0.76,
+      "s001_specificity": 0.28,
+      "decision": "SUPPORTED_DISCOVERY_NOT_SUPPORTED_AUTOMATIC_QA_GATE",
+      "human_gold_status": "UNAVAILABLE"
+    }
+  },
+  "assessment_reproduction": {
+    "reproduction_id": "ASSESSMENTSOL1_LLM_RULES_BASELINE_V1_2026-08-30",
+    "execution_type": "INDEPENDENT_RAW_REPRODUCTION_NO_OPENAI_API",
+    "raw_sources": {
+      "spots_csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808",
+      "spot_attributes_csv_git_blob_sha1": "9479789b881e408d0626ded8432396ba9fc749b6"
+    },
+    "n_listings": 3000,
+    "metrics": {
+      "rule_direct_conflict_flag": 322,
+      "rule_land_building_copy_flag": 230,
+      "rule_security_ambiguity_flag": 327,
+      "rule_retail_adaptive_use_flag": 109,
+      "rule_semantic_ambiguity_flag": 429,
+      "at_least_one_semantic_signal": 890,
+      "two_simultaneous_semantic_signals": 91
+    },
+    "review_tiers": {
+      "none": 2110,
+      "ambiguity": 386,
+      "direct_conflict": 322,
+      "cross_field": 182
+    },
+    "upstream_match": "EXACT_MATCH_TO_E017_REPORTED_DETERMINISTIC_SIDECAR_COUNTS",
+    "score_dependencies_modified": false
+  }
+}
