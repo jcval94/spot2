@@ -1,0 +1,35 @@
+{
+  "gate_version": "PROMPT_12_LLM_CLOSURE_V1_2026-08-30",
+  "status": "PASS",
+  "prerequisites": {
+    "post_recovery_system_frozen": true,
+    "target_modified": false,
+    "lead_quality_modified": false,
+    "inventory_modified": false,
+    "opportunity_score_modified": false,
+    "capacity_policy_modified": false
+  },
+  "requirement_evidence": {
+    "real_ai_use": true,
+    "real_prompt": true,
+    "structured_outputs_schema": true,
+    "reproducible_runner": true,
+    "cache": true,
+    "cost_accounting": true,
+    "evaluation_logic": true,
+    "rules_first_comparison": true,
+    "real_cost_reported": true,
+    "limitations_reported": true,
+    "human_gold_invented": false,
+    "score_requires_live_openai": false
+  },
+  "real_api_evidence": {
+    "canonical_E017_cost_usd": 0.002579,
+    "canonical_E017_records": 100,
+    "open_PR19_supplemental_cost_usd": 0.053522,
+    "new_prompt12_api_spend_usd": 0
+  },
+  "final_decision": "LLM_SAMPLED_CATALOG_INVENTORY_QA_DISCOVERY_ONLY",
+  "lead_opportunity_score_runtime_dependency_on_llm": false,
+  "gate": "LLM REQUIREMENT CLOSED — MAIN SCORE REPRODUCES WITHOUT LIVE OPENAI"
+}
