@@ -68,3 +68,17 @@ def test_inventory_and_opportunity_rank_identity_for_constant_positive_lq() -> N
     a = df.sort(["inventory_serviceability", "inventory_confidence", "lead_id"], descending=[True, True, False])["lead_id"].to_list()
     b = df.sort(["opportunity_score_0_100", "inventory_confidence", "lead_id"], descending=[True, True, False])["lead_id"].to_list()
     assert a == b
+
+
+def test_internal_reference_is_explicitly_non_deployable() -> None:
+    df = pl.DataFrame({
+        "lead_id": list(range(1, 21)),
+        "target_value": [1, 0] * 10,
+        "lead_score_internal": [float(i) for i in range(20)],
+        "inventory_confidence": [1.0] * 20,
+    })
+    rows = _evaluate_ranked(
+        df, "lead_score_internal",
+        "LEAD_SCORE_INTERNAL_NON_DEPLOYABLE_REFERENCE", "TEST"
+    )
+    assert all(r["status"] == "NON_DEPLOYABLE_REFERENCE" for r in rows)
