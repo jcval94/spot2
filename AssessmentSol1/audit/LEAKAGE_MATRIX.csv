@@ -1,0 +1,33 @@
+id,layer,risk,severity,status,evidence,decision
+L001,RAW,lead_score_internal provenance unknown,CRITICAL,FORBIDDEN,temporal_column_registry.csv + FEATURE_REGISTRY gate,Never predictor; S001 audit only
+L002,TARGET,broker_response as feature,CRITICAL,PASS,build_t1.py/build_t2.py model-ready views + registry,Never predictor
+L003,TARGET,broker_response_hours as feature,CRITICAL,PASS,FORBIDDEN_RAW_FEATURES + model-ready tests,Never predictor
+L004,TARGET,target_status or target_value leaking into predictor,CRITICAL,PASS,variant feature allowlist + FeatureRegistryGate,Labels retained only for evaluation/training target
+L005,TEMPORAL,future inquiries in engineered history,CRITICAL,PASS,build_t2.py strict _inquiry_time < score_time + same-time batch shift,FEATURE_TIME_SAFE
+L006,TEMPORAL,future Spot in candidate universe,CRITICAL,PASS,spots.created_at <= score_time assertions,FEATURE_TIME_SAFE
+L007,TEMPORAL,future Availability snapshot,CRITICAL,PASS,backward join only + future snapshot assertions,FEATURE_TIME_SAFE
+L008,TEMPORAL,nearest Availability snapshot,CRITICAL,PROHIBITED,inventory frozen config + S003,Nearest is stress-only
+L009,TEMPORAL,global/future broker response history,CRITICAL,PASS,T2 response history disabled as predictive feature,No response-history predictor
+L010,TEMPORAL,current-state Spot fields,CRITICAL,PASS,days_on_market/total_views/total_inquiries/is_active forbidden,Blocked
+L011,TEMPORAL,Market Context without effective time,CRITICAL,PASS,temporal registry + builders do not consume market_context,EDA_ONLY
+L012,TEMPORAL,unversioned Spot prices,CRITICAL,PASS,Inventory budget fit null + UNKNOWN_PRICE_NOT_PIT,Blocked historically
+L013,CV,global scaler/imputer/one-hot fit,HIGH,PASS,GuardedPreprocessor requires all TRAIN roles,Fold-fit only
+L014,CV,global clustering fit,HIGH,PASS,FoldAwareKMeans requires TRAIN and cluster not in frozen core,Not used by champion
+L015,CV,global target encoding,HIGH,PASS,No target encoder in frozen pipeline,NOT_USED
+L016,CV,global category-frequency encoding,HIGH,PASS,No frequency encoder in frozen core,NOT_USED
+L017,CV,feature selection using CALIBRATION/HOLDOUT,CRITICAL,PASS,train.py development-only core/architecture selection,DEVELOPMENT_ONLY
+L018,CV,calibrator fit using holdout,CRITICAL,PASS,calibration.py selects/refits on CALIBRATION only,CALIBRATION_ONLY
+L019,CV,hyperparameter tuning on procedural holdout,CRITICAL,PASS,FROZEN_MODEL_CONFIG says used_for_selection=false,No holdout tuning
+L020,ENTITY,same lead in TRAIN and VALIDATION,HIGH,PASS,_fold_masks lead intersection assertion + split validator,Lead isolated
+L021,ENTITY,duplicate prediction keys,HIGH,PASS,ABT grain assertions + one-to-one joins,Unique score_id/prediction_key
+L022,ENTITY,same-time event leaking through history,HIGH,PASS,T2 trajectory batch shift after scoring,Strict prior
+L023,LABEL,label maturity presented as observed certainty,HIGH,ACCEPTED_LIMITATION,TARGET_CONTRACT states extraction timestamp absent,LABEL_MATURITY_ASSUMED
+L024,INVENTORY,snapshot_date treated as intraday observation timestamp,HIGH,ACCEPTED_LIMITATION,FRESHNESS_POLICY + inventory README,Business-date assumption only
+L025,DOUBLE_COUNTING,selected Spot match enters clean Lead Quality,HIGH,PASS,Frozen champion BASE_RATE_NO_FEATURES + Ablation E challenger-only,No duplication
+L026,DOUBLE_COUNTING,availability/location/area fit in both final components,HIGH,PASS,Clean Lead Quality has no features; Inventory owns these constructs,No duplication
+L027,RESEARCH,June called pristine/unseen/independent,HIGH,PASS,RESEARCH_CONTAMINATION + HOLDOUT_INCIDENT + product docs,PROCEDURAL_HOLDOUT_DIAGNOSTIC_ONLY
+L028,RESEARCH,stress-test result influences model/FE/formula,CRITICAL,PASS,stress specs selection_use=FORBIDDEN + isolated directory,Audit only
+L029,PROVENANCE,direct product fingerprint names CSV while canonical read prefers Parquet,MINOR,OPEN,raw_source_manifest SHA is also included and pins canonical Parquet bytes,No score impact; fix in next metadata version
+L030,REPRODUCIBILITY,exact Polars canonical path not executed in active review runtime,MATERIAL,OPEN,repository documents independent raw-equivalence validation and runtime limitation,Run pytest/build in project environment before external handoff
+L031,HISTORICAL,superseded P3 builders remain in tree,MINOR,CONTAINED,abt/artifacts/AUTHORITY.json marks P3 evidence only,Do not import downstream
+L032,T2,broker_response_hours used to reconstruct timed prior stage eligibility,MATERIAL,ACCEPTED_LIMITATION,T2 only; untimed prior visits become ambiguous; T2 is FUTURE_EXTENSION,Do not present T2 cohort as fully observed
