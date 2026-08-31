@@ -1,0 +1,14 @@
+{
+  "id": "S002",
+  "name": "future-inquiry aggregate challenger",
+  "unsafe": true,
+  "deployable": false,
+  "tags": ["FUTURE_LEAKAGE", "NON_DEPLOYABLE"],
+  "source": "inquiries after T1 score_time",
+  "evaluation_population": "T1 DEVELOPMENT",
+  "split": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "pre_registered_rule": "future_inquiry_count + 2 * any_future_asked_visit",
+  "note": "No future broker_response is used. The invalidity comes solely from using inquiries that had not occurred at score_time.",
+  "selection_use": "FORBIDDEN",
+  "feature_engineering_use": "FORBIDDEN"
+}
