@@ -1,0 +1,5 @@
+evidence_id,version,status,model,n_records,input_tokens,output_tokens,estimated_cost_usd,scope,human_gold_status,notes
+E017,V1,MERGED_CANONICAL,gpt-5-nano,100,12564,6767,0.003335,REAL_API_PILOT,UNAVAILABLE,"First live contract; redundant model booleans rejected"
+E017,V2,MERGED_CANONICAL,gpt-5-nano,100,12634,4869,0.002579,REAL_API_PILOT,UNAVAILABLE,"Authoritative run 33296462871; 0/100 new-rule candidates; 0/100 residual actionable"
+E015_PR19,LIVE,OPEN_SUPPLEMENTAL_NON_CANONICAL,gpt-5-nano,340,,,0.053522,REAL_API_HOLDOUT_PLUS_CHALLENGE,UNAVAILABLE,"240/240 holdout + 100/100 challenge valid; S001 sensitivity 76%; specificity 28%; candidates are not human gold"
+ASSESSMENTSOL1,RULES_BASELINE,LOCAL_REPRODUCTION,NO_LLM,3000,0,0,0.0,DETERMINISTIC_RULES,NOT_APPLICABLE,"Reproduces E017 semantic sidecar counts from raw data with zero API calls"

@@ -1,0 +1,56 @@
+{
+  "version": "T1_MODEL_PROMOTION_RULE_V1_FROZEN_2026-08-30",
+  "frozen_before_model_results": true,
+  "target_version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+  "split_version": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "architecture_selection": {
+    "reference_feature_family": "The core T1 feature set is selected using Logistic Regression on DEVELOPMENT folds before CatBoost promotion.",
+    "core_feature_progression": [
+      "A",
+      "B",
+      "C"
+    ],
+    "simpler_tie_breaker": "If macro AP gain over the immediately simpler set is < 0.002 absolute, retain the simpler set unless Lift@10% improves by >=0.10x with no Brier degradation >0.003.",
+    "asked_visit_sensitivity": "D_WITHOUT may remove asked_visit only if macro AP improves by >=0.005 OR WITH_ASKED_VISIT shows a systematic calibration/segment failure. Otherwise retain the valid contemporaneous signal.",
+    "selected_spot_context": "E is challenger-only. Even if E scores better, it does not redefine LeadQuality core; any incremental benefit is reported for later Opportunity/Inventory integration."
+  },
+  "catboost_promotion": {
+    "promote_over_logistic_if_all": [
+      "macro_delta_average_precision > 0",
+      "CatBoost AP is >= Logistic AP in at least 3 of 4 development folds OR macro paired-bootstrap P(delta_AP>0) >= 0.80",
+      "macro_delta_brier <= 0.005",
+      "no systematic material collapse in a segment with N >= 100: AP delta < -0.03 in the same segment across >=2 eligible folds OR Brier delta > +0.02 across >=2 eligible folds",
+      "incremental gain is operationally meaningful: macro delta AP >= 0.005 OR macro delta Lift@10% >= 0.10x"
+    ],
+    "otherwise": "Logistic Regression remains champion; simplicity wins ties and inconclusive comparisons."
+  },
+  "bootstrap": {
+    "unit": "lead_id",
+    "paired": true,
+    "n_resamples": 2000,
+    "confidence_level": 0.95,
+    "seed": 20260830,
+    "key_metrics": [
+      "average_precision",
+      "brier",
+      "lift_at_10pct"
+    ]
+  },
+  "calibration": {
+    "architecture_locked_before_calibration": true,
+    "calibration_partition": "CALIBRATION",
+    "candidate_methods": [
+      "raw",
+      "platt",
+      "isotonic"
+    ],
+    "isotonic_eligibility": "N >= 300 and positives >= 50 and negatives >= 50",
+    "selection": "Choose calibrated method only if 5-fold calibration-OOF Brier OR Log Loss improves over raw without worsening the other metric by >0.005 absolute. If improvements are tied within 0.001, prefer Platt over isotonic and raw over either if neither materially improves.",
+    "procedural_holdout_forbidden": true
+  },
+  "procedural_holdout": {
+    "may_open_only_after": "FROZEN_MODEL_CONFIG.json exists with status=FROZEN and immutable hashes/config",
+    "evaluations_allowed": 1,
+    "post_result_model_changes": "Only documented bug/leakage/methodological inconsistency; holdout then remains consumed."
+  }
+}

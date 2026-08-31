@@ -1,0 +1,44 @@
+{
+  "phase": "PROMPT_8_T0",
+  "target": "T0_30D_INQUIRY_INITIATION_PROGRESS_V1",
+  "score_time": "leads.created_at",
+  "model_ready_rows": 4710,
+  "statement": "T0 and T1 probabilities estimate different quantities.",
+  "models": [
+    "T0_BASE_RATE",
+    "T0_INTAKE_LOGISTIC"
+  ],
+  "solver": "L2 logistic with fixed stable FTRL optimizer; no tuning",
+  "macro": {
+    "T0_BASE_RATE": {
+      "roc_auc": 0.5,
+      "average_precision": 0.4803025053,
+      "brier": 0.263109356,
+      "log_loss": 0.7206560213,
+      "validation_n": 2245
+    },
+    "T0_INTAKE_LOGISTIC": {
+      "roc_auc": 0.494708003,
+      "average_precision": 0.4855859643,
+      "brier": 0.2641826935,
+      "log_loss": 0.7234330517,
+      "validation_n": 2245
+    }
+  },
+  "deltas": {
+    "average_precision": 0.005283459,
+    "roc_auc": -0.005291997,
+    "brier": 0.0010733375,
+    "log_loss": 0.0027770304
+  },
+  "decision": "NEUTRAL_EVIDENCE_BACKED",
+  "promotion_gate": {
+    "min_delta_ap": 0.01,
+    "auc_min": 0.55,
+    "max_brier_degradation": 0.002,
+    "passed": false,
+    "short_circuit_reason": "Fails delta AP and AUC criteria; paired bootstrap cannot rescue promotion."
+  },
+  "forbidden_predictors_used": false,
+  "future_exposure_used_as_predictor": false
+}

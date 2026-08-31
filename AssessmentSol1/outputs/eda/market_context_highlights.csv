@@ -1,0 +1,17 @@
+highlight_type,state,municipality,corridor,sector,months,mean_occupancy,mean_absorption_days,mean_similar_available,mean_recent_inquiries,mean_price_sqm_mxn
+FAST_ABSORPTION,Chihuahua,Chihuahua,centro-chihuahua,Retail,5,0.7652,74.12,18.8,337.4,314.3
+FAST_ABSORPTION,Estado de México,Naucalpan de Juárez,lomas-verdes-satelite,Retail,6,0.7495,81.93333333333332,16.5,266.1666666666667,233.33
+FAST_ABSORPTION,Estado de México,Naucalpan de Juárez,lomas-verdes-satelite,Office,4,0.86325,82.775,14.75,312.5,364.0175
+FAST_ABSORPTION,CDMX,Benito Juárez,del-valle-narvarte,Retail,4,0.817,83.55,13.75,255.75,284.205
+FAST_ABSORPTION,Puebla,Puebla,angelopolis-lomas,Retail,9,0.768,84.14444444444446,13.444444444444445,313.3333333333333,314.1611111111111
+FAST_ABSORPTION,Nuevo León,San Pedro Garza García,vasconcelos-calzada,Retail,5,0.7874,85.52,19,201.2,287.06
+FAST_ABSORPTION,Querétaro,Querétaro,juriquilla-juncos,Retail,7,0.7634285714285713,86.31428571428572,14,297.7142857142857,335.67
+FAST_ABSORPTION,Sonora,Hermosillo,centenario-colosio,Office,5,0.8446,86.72,18.8,287,361.392
+HIGH_OCCUPANCY,Querétaro,Querétaro,juriquilla-juncos,Industrial,4,0.90325,169.025,14.75,309,155.4375
+HIGH_OCCUPANCY,Puebla,Puebla,angelopolis-lomas,Industrial,6,0.8995,185.45,11,185.16666666666666,134.0366666666667
+HIGH_OCCUPANCY,Nuevo León,Monterrey,macroplaza,Industrial,7,0.8962857142857142,152.5,17.714285714285715,387,143.37285714285716
+HIGH_OCCUPANCY,Sonora,Hermosillo,centenario-colosio,Industrial,10,0.8945,156.16,17.6,288.4,131.564
+HIGH_OCCUPANCY,Estado de México,Toluca,metepec-toluca,Industrial,4,0.88775,176.525,13,188.25,155.15
+HIGH_OCCUPANCY,CDMX,Cuauhtémoc,roma-condesa,Industrial,6,0.8778333333333334,155.6333333333333,16.166666666666668,274.6666666666667,150.62833333333336
+HIGH_OCCUPANCY,Jalisco,Zapopan,andares-puerta-hierro,Industrial,10,0.8749,180.14,16.8,200.3,141.602
+HIGH_OCCUPANCY,San Luis Potosí,San Luis Potosí,lomas-carranza,Industrial,8,0.87425,149.675,13.125,351.5,131.16625

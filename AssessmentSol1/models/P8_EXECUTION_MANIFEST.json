@@ -1,0 +1,56 @@
+{
+  "phase": "PROMPT_8",
+  "status": "COMPLETE",
+  "protocol": "P8_PROTOCOL_V1_FROZEN_BEFORE_RESULTS_2026-08-30",
+  "t1_modified": false,
+  "p4_pre_gate": "PASS",
+  "execution": {
+    "evidence_runtime": "independent raw execution with fixed L2 logistic objective",
+    "final_optimizer": "stable FTRL logistic, fixed configuration",
+    "provisional_numerical_run_discarded": true,
+    "numerical_incident": "P8_NUMERICAL_INCIDENT.md",
+    "canonical_python_runners": [
+      "models/t0/train.py",
+      "models/t2/train.py"
+    ],
+    "canonical_python_exact_runtime_in_this_session": false,
+    "rationale": "Interactive environment lacks the full Polars execution path; decisions are based on raw-derived stable protocol-equivalent execution. Canonical sklearn runners are supplied for final packaging reproduction."
+  },
+  "t0": {
+    "model_ready_rows": 4710,
+    "target": "T0_30D_INQUIRY_INITIATION_PROGRESS_V1",
+    "decision": "NEUTRAL_EVIDENCE_BACKED",
+    "base_macro_ap": 0.4803025053,
+    "logistic_macro_ap": 0.4855859643,
+    "delta_ap": 0.005283459,
+    "logistic_macro_auc": 0.494708003,
+    "base_brier": 0.263109356,
+    "logistic_brier": 0.2641826935,
+    "promotion": false
+  },
+  "t2": {
+    "model_ready_rows": 9635,
+    "target": "T2_CURRENT_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+    "decision": "FUTURE_EXTENSION",
+    "baseline_macro_ap": 0.1864213331,
+    "trajectory_macro_ap": 0.1895872333,
+    "delta_ap": 0.0031659002,
+    "baseline_macro_auc": 0.4860000961,
+    "trajectory_macro_auc": 0.489797754,
+    "baseline_brier": 0.1514008811,
+    "trajectory_brier": 0.1516244876,
+    "positive_ap_folds": 2,
+    "strict_history_violations": 0,
+    "response_history_predictors": 0,
+    "promotion": false,
+    "bootstrap_short_circuit": "Not required for promotion decision because two necessary frozen conditions already fail: delta AP < 0.01 and positive folds < 3/4."
+  },
+  "final_stage_policy": {
+    "principal_product": "T1",
+    "t0_deploy_predictive_ranking": false,
+    "t1_deploy_learned_ranking": false,
+    "t1_current_output": "BASE_RATE + RAW prior only",
+    "t2_deploy_predictive_ranking": false,
+    "next_priority": "Inventory / serviceability / Opportunity integration"
+  }
+}

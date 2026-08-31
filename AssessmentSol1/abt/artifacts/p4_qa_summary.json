@@ -1,0 +1,79 @@
+{
+  "phase": "PROMPT_4_POINT_IN_TIME_ABT",
+  "audit_date": "2026-08-30",
+  "status": "PASS",
+  "validation_mode": "INDEPENDENT_RAW_EQUIVALENCE_AUDIT",
+  "exact_polars_builder_runtime_executed": false,
+  "rationale": "The active environment lacks Polars. This audit independently reconstructs the frozen P4 grains and temporal gates directly from raw candidate CSVs, without consuming P3 artifacts. Downstream P8 also rebuilds from raw; the missing exact Polars code-path execution remains a reproducibility caveat, not a temporal-validity blocker.",
+  "raw_source": "data/candidate/csv/**",
+  "historical_abts_used_as_inputs": false,
+  "activity_horizon": "2026-07-13T17:35:37.000Z",
+  "objects": {
+    "abt_t0": {
+      "audit_rows": 5000,
+      "model_ready_rows": 4710,
+      "target_status": {
+        "POSITIVE": 1957,
+        "NEGATIVE": 2753,
+        "CENSORED": 290
+      }
+    },
+    "abt_t1": {
+      "audit_rows": 5000,
+      "model_ready_rows": 4953,
+      "target_status": {
+        "POSITIVE": 1008,
+        "NEGATIVE": 3945,
+        "CENSORED": 47,
+        "AMBIGUOUS": 0
+      }
+    },
+    "abt_t2": {
+      "audit_rows": 17576,
+      "model_ready_rows": 9635,
+      "target_status": {
+        "POSITIVE": 1887,
+        "NEGATIVE": 7748,
+        "CENSORED": 171,
+        "AMBIGUOUS": 932,
+        "INELIGIBLE": 6838
+      }
+    },
+    "inventory_candidates": {
+      "logical_rows": 1114990,
+      "availability_known_rows": 1061397,
+      "no_backward_snapshot_rows": 53593,
+      "stale_gt_90d_rows": 62003,
+      "observed_current_override_rows": 20037,
+      "tier_counts": {
+        "CORRIDOR": 581429,
+        "MUNICIPALITY": 108030,
+        "STATE": 405494,
+        "OBSERVED_OVERRIDE": 20037
+      }
+    }
+  },
+  "invariants": {
+    "t0_one_row_per_lead": true,
+    "t1_one_row_per_lead": true,
+    "t2_second_plus_row_count": true,
+    "future_snapshot_count": 0,
+    "same_timestamp_rows_excluded_from_history_design": true,
+    "same_timestamp_pair_potential": 0,
+    "missing_snapshot_is_unknown": true,
+    "response_history_predictor_used": false,
+    "split_rows": 5000,
+    "split_unique_leads": 5000,
+    "lineage_rows": 111,
+    "lineage_unique_columns": 111,
+    "invalid_lineage_roles": 0,
+    "future_spot_rejected_by_existence_gate": 989568,
+    "selected_future_spot_count": 0
+  },
+  "caveats": [
+    "Exact Polars materialization code path was not executed in this environment.",
+    "Availability snapshot_date is date-only; same-day observability remains conditional on the documented business-date assumption.",
+    "Spot structural/attribute historical use remains under explicit AssessmentSol1 invariance assumptions."
+  ],
+  "gate_interpretation": "989,568 index hits referenced Spots created after a historical score_time and were rejected before candidate selection; selected future-Spot rows = 0."
+}

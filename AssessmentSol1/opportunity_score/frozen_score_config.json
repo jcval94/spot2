@@ -1,0 +1,120 @@
+{
+  "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+  "status": "POST_RECOVERY_SYSTEM_FROZEN",
+  "frozen_at": "2026-08-30",
+  "stage": "T1",
+  "formula": {
+    "internal_0_1": "lead_quality_probability * inventory_actionability_gate",
+    "published_0_100": "100 * lead_quality_probability * inventory_actionability_gate",
+    "inventory_actionability_gate": "1 for KNOWN_AVAILABLE, TIER3_ONLY_EXPERIMENTAL or VERIFY_AVAILABILITY; else 0",
+    "rejected_diagnostic": "lead_quality_probability * inventory_serviceability",
+    "grid_search": false,
+    "exponent_search": false,
+    "stacking": false
+  },
+  "lead_quality": {
+    "version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+    "frozen_config_path": "AssessmentSol1/models/lead_quality_recovery/frozen_recovered_model_config.json",
+    "frozen_config_git_blob_sha1": "85ee240be12fa0d1a00b384f2ad50ac5ff5f288e",
+    "model_family": "LOGISTIC_REGRESSION",
+    "features": [
+      "selected_spot_area_closeness",
+      "selected_spot_geographic_fit",
+      "selected_spot_attribute_completeness"
+    ],
+    "selected_spot_context": true,
+    "availability_used": false,
+    "calibrator": "RAW"
+  },
+  "double_counting_check": {
+    "status": "PASS_AFTER_DEDUPLICATION",
+    "continuous_inventory_serviceability_multiplied": false,
+    "reason": "Recovered Lead Quality already contains selected-Spot matching context. Inventory continuous match strength is reported separately and only a binary actionability gate enters V2.",
+    "raw_multiplicative_status": "DIAGNOSTIC_ONLY_REJECTED"
+  },
+  "inventory": {
+    "version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+    "config_path": "AssessmentSol1/inventory/frozen_inventory_config.json",
+    "config_git_blob_sha1": "478d54dee13ad701da627088994ea4437a17f7e5",
+    "scalar_rebuilt": false,
+    "scalar_role": "SEPARATE_SERVICEABILITY_OUTPUT",
+    "fallback_policy_path": "AssessmentSol1/inventory/FALLBACK_POLICY.md",
+    "fallback_policy_git_blob_sha1": "08ebcf2194867d9f82fa153642fa34d20fd4c67d",
+    "fallback_max_k": 3,
+    "confidence_multiplied_into_score": false
+  },
+  "capacity_policy": {
+    "selected_capacity_pct": 20,
+    "representation": "P80 / stage-relative top 20%",
+    "selection_population": "DEVELOPMENT temporal OOF only",
+    "reported_capacity_pct": [
+      5,
+      10,
+      15,
+      20
+    ],
+    "procedural_holdout_used": false,
+    "rationale": "Top 20% has the strongest macro Lead Quality Lift among passing 10/15/20 capacities while maximizing recall; top 5% remains below random."
+  },
+  "priority_bands": {
+    "assignment": "RANK_BASED_PER_SCORING_BATCH",
+    "reference_population": "DEVELOPMENT",
+    "reference_n": 4368,
+    "labels_used": false,
+    "slices": {
+      "PRIORITY": "rank <= ceil(N*0.05)",
+      "HIGH": "ceil(N*0.05) < rank <= ceil(N*0.10)",
+      "MEDIUM": "ceil(N*0.10) < rank <= ceil(N*0.20)",
+      "LOW": "remaining"
+    },
+    "tie_break": [
+      "opportunity_score_0_100 desc",
+      "lead_id asc"
+    ],
+    "reference_thresholds_descriptive": {
+      "top_5pct_score": 22.298344072628932,
+      "top_10pct_score": 22.298344072628932,
+      "top_20pct_score": 21.307940332937303,
+      "note": "Top-5 and top-10 thresholds tie in DEVELOPMENT; thresholds are descriptive only and never used to force band separation."
+    }
+  },
+  "development_oof_evidence": {
+    "lead_quality_lift_5": 0.8593333701555245,
+    "lead_quality_lift_10": 1.0753559720916863,
+    "lead_quality_lift_15": 1.084132654444449,
+    "lead_quality_lift_20": 1.1243424011848062,
+    "raw_multiplicative_lift_15": 0.9771767868804355,
+    "raw_multiplicative_joint_exact_lift_15": 1.2441236948516265
+  },
+  "external_reference": {
+    "lead_score_internal": "PROHIBITED_FROM_V2",
+    "allowed_as_predictor": false,
+    "allowed_for_policy_selection": false
+  },
+  "data_fingerprints": {
+    "raw_source_manifest_path": "AssessmentSol1/config/raw_source_manifest.json",
+    "raw_source_manifest_git_blob_sha1": "f59b77ddcf991399bb35ec7be1e131db280f017d",
+    "leads_csv_git_blob_sha1": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
+    "inquiries_csv_git_blob_sha1": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
+    "spots_csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808",
+    "spot_attributes_csv_git_blob_sha1": "9479789b881e408d0626ded8432396ba9fc749b6",
+    "availability_snapshot_csv_git_blob_sha1": "82ef91a25ff5b2a330b4e1d01668c4934239c43f"
+  },
+  "holdout_policy": {
+    "procedural_holdout_start": "2026-06-01T00:00:00Z",
+    "procedural_holdout_end_exclusive": "2026-07-01T00:00:00Z",
+    "status": "DIAGNOSTIC_ONLY_NON_PRISTINE",
+    "used_for_post_recovery_selection": false,
+    "formula_or_capacity_change_from_holdout": "FORBIDDEN"
+  },
+  "historical_upstream_evidence": {
+    "E018": "NOT_SUPPORTED for scoring; excluded",
+    "E019": "supporting prior only; no metrics copied",
+    "E020": "supporting prior only; no metrics copied"
+  },
+  "final_red_team": {
+    "status": "PASS",
+    "audit_path": "AssessmentSol1/audit/POST_RECOVERY_RED_TEAM.md",
+    "active_blockers": 0
+  }
+}

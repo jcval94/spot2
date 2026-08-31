@@ -1,0 +1,4 @@
+candidate,comparison,metric,point_delta,ci95_low,ci95_high,p_delta_gt_0,n_resamples,interpretation
+R4_MATCH_CORE,random_ranking_lift_1,macro_lift_at_10_minus_1,0.037367,-0.173116,0.327844,0.689,1000,Point estimate positive; uncertainty wide
+R4_MATCH_INTERACTION,random_ranking_lift_1,macro_lift_at_10_minus_1,0.038840,-0.162288,0.322973,0.720,1000,Point estimate positive; uncertainty wide
+R4_DROP_SECTOR_FINAL,random_ranking_lift_1,macro_lift_at_10_minus_1,0.075356,-0.216539,0.279870,0.595,1000,Gate does not require CI entirely above zero; 4/4 fold point lifts exceed 1

@@ -1,0 +1,55 @@
+{
+  "source": "T1 DEVELOPMENT independent raw audit",
+  "budget_note": "budget_gap is null because Spot prices are not historically versioned/PIT-authorized",
+  "examples": [
+    {
+      "case": "EXACT_AND_FALLBACK",
+      "lead_id": 1,
+      "score_time": "2025-05-12T16:10:27.000Z",
+      "requested_area_sqm": 342.5,
+      "recommendation_status": "KNOWN_AVAILABLE",
+      "recommendations": [
+        {"spot_id": 613, "rank": 1, "relaxation_tier": "TIER_0", "modality_match": true, "sector_match": true, "area_gap": 0.02481751824817513, "budget_gap": null, "geographic_match": "CORRIDOR", "availability_state": "AVAILABLE_WITHIN_URGENCY", "snapshot_age": 14, "reason_codes": ["EXACT_PREFERRED_MARKET", "AVAILABLE_WITHIN_URGENCY", "AREA_WITHIN_50PCT_RELATIVE_GAP", "UNKNOWN_PRICE_NOT_PIT"]},
+        {"spot_id": 1337, "rank": 2, "relaxation_tier": "TIER_2", "modality_match": true, "sector_match": true, "area_gap": 0.44467153284671534, "budget_gap": null, "geographic_match": "STATE", "availability_state": "AVAILABLE_NOW", "snapshot_age": 0, "reason_codes": ["STATE_RELAXATION", "AVAILABLE_NOW", "AREA_WITHIN_50PCT_RELATIVE_GAP", "UNKNOWN_PRICE_NOT_PIT"]}
+      ]
+    },
+    {
+      "case": "SAME_SECTOR_FALLBACK",
+      "lead_id": 14,
+      "score_time": "2025-03-02T19:56:40.000Z",
+      "requested_area_sqm": 100.0,
+      "recommendation_status": "KNOWN_AVAILABLE",
+      "recommendations": [
+        {"spot_id": 2411, "rank": 1, "relaxation_tier": "TIER_2", "modality_match": true, "sector_match": true, "area_gap": 0.264, "budget_gap": null, "geographic_match": "STATE", "availability_state": "AVAILABLE_NOW", "snapshot_age": 4, "reason_codes": ["STATE_RELAXATION", "AVAILABLE_NOW", "AREA_WITHIN_50PCT_RELATIVE_GAP", "UNKNOWN_PRICE_NOT_PIT"]}
+      ]
+    },
+    {
+      "case": "TIER3_EXPERIMENTAL_ONLY",
+      "lead_id": 4,
+      "score_time": "2025-10-29T12:13:42.000Z",
+      "requested_area_sqm": 2094.0,
+      "recommendation_status": "KNOWN_AVAILABLE",
+      "recommendations": [
+        {"spot_id": 1342, "rank": 1, "relaxation_tier": "TIER_3_EXPERIMENTAL", "modality_match": true, "sector_match": false, "area_gap": 0.0339063992359121, "budget_gap": null, "geographic_match": "STATE", "availability_state": "AVAILABLE_NOW", "snapshot_age": 1, "reason_codes": ["EXPERIMENTAL_SECTOR_RELAXATION", "AVAILABLE_NOW", "AREA_WITHIN_50PCT_RELATIVE_GAP", "UNKNOWN_PRICE_NOT_PIT"]}
+      ]
+    },
+    {
+      "case": "UNKNOWN_VERIFY",
+      "lead_id": 38,
+      "score_time": "2025-01-15T16:44:54.000Z",
+      "requested_area_sqm": 266.5,
+      "recommendation_status": "VERIFY_AVAILABILITY",
+      "recommendations": [
+        {"spot_id": 599, "rank": 1, "relaxation_tier": "TIER_3_EXPERIMENTAL", "modality_match": true, "sector_match": false, "area_gap": 0.006378986866791725, "budget_gap": null, "geographic_match": "MUNICIPALITY", "availability_state": "UNKNOWN", "snapshot_age": null, "reason_codes": ["EXPERIMENTAL_SECTOR_RELAXATION", "VERIFY_AVAILABILITY", "AREA_WITHIN_50PCT_RELATIVE_GAP", "UNKNOWN_PRICE_NOT_PIT"]}
+      ]
+    },
+    {
+      "case": "NO_RESULT_AREA",
+      "lead_id": 870,
+      "score_time": "2025-02-06T20:15:28.000Z",
+      "requested_area_sqm": 28498.9,
+      "recommendation_status": "NO_RESULT",
+      "recommendations": []
+    }
+  ]
+}

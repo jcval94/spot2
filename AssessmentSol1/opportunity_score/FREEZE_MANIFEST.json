@@ -1,0 +1,59 @@
+{
+  "freeze_id": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+  "status": "POST_RECOVERY_SYSTEM_FROZEN",
+  "supersedes": "OPPORTUNITY_MULTIPLICATIVE_V1_FROZEN_2026-08-30",
+  "freeze_order": {
+    "recovery_11_5_frozen_before_downstream_rebuild": true,
+    "reevaluation_persisted_before_canonical_updates": true,
+    "final_red_team_after_canonical_updates": true,
+    "procedural_holdout_used_for_selection": false
+  },
+  "frozen_dependencies": {
+    "lead_quality": "AssessmentSol1/models/lead_quality_recovery/frozen_recovered_model_config.json",
+    "inventory": "AssessmentSol1/inventory/frozen_inventory_config.json",
+    "fallback": "AssessmentSol1/inventory/FALLBACK_POLICY.md",
+    "score": "AssessmentSol1/opportunity_score/frozen_score_config.json"
+  },
+  "canonical_formula": "lead_quality_probability * inventory_actionability_gate",
+  "rejected_formula": "lead_quality_probability * inventory_serviceability",
+  "capacity": {
+    "selected_pct": 20,
+    "representation": "P80 / top 20% within T1",
+    "selection_population": "DEVELOPMENT_OOF_ONLY"
+  },
+  "fallback": {
+    "max_k": 3
+  },
+  "product_outputs": {
+    "scored_population_csv": {
+      "rows": 5000,
+      "contains_outcome_columns": false
+    },
+    "scored_population_parquet": {
+      "committed": false,
+      "reason": "stale V1 binary removed; build_score.py regenerates V2 Parquet at runtime"
+    },
+    "priority_leads_csv": {
+      "rows": 1000,
+      "definition": "exact top 20% of current 5000-row batch"
+    },
+    "capacity_metrics_csv": "post-recovery macro DEVELOPMENT OOF",
+    "gains_curve_csv": "post-recovery macro DEVELOPMENT OOF",
+    "score_distribution": "post-recovery V2"
+  },
+  "gates": {
+    "recovered_lead_quality_frozen": "PASS",
+    "inventory_scalar_unchanged": "PASS",
+    "double_counting_removed": "PASS",
+    "capacity_recalculated": "PASS",
+    "fallback_recalculated": "PASS",
+    "product_output_no_outcomes": "PASS",
+    "final_red_team": "PASS",
+    "active_blockers": 0
+  },
+  "historical_upstream": {
+    "E018": "NOT_SUPPORTED; excluded",
+    "E019": "supporting only",
+    "E020": "supporting only"
+  }
+}

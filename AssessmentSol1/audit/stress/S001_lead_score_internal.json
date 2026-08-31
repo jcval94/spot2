@@ -1,0 +1,13 @@
+{
+  "id": "S001",
+  "name": "lead_score_internal unknown-provenance challenger",
+  "unsafe": true,
+  "deployable": false,
+  "tags": ["LEAKAGE_EXPECTED", "UNKNOWN_PROVENANCE", "NON_DEPLOYABLE"],
+  "source": "leads.lead_score_internal",
+  "evaluation_population": "T1 DEVELOPMENT",
+  "split": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "rule": "Use raw lead_score_internal directly as ranking score.",
+  "selection_use": "FORBIDDEN",
+  "feature_engineering_use": "FORBIDDEN"
+}

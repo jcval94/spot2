@@ -1,0 +1,1539 @@
+{
+  "audit_version": "P1-raw-audit-v1",
+  "audit_date": "2026-08-30",
+  "canonical_format": "parquet",
+  "canonical_path": "data/candidate/parquet",
+  "csv_role": "parity/reference only; never concatenated with parquet",
+  "parity": {
+    "leads": {
+      "status": "PASS",
+      "csv_rows": 5000,
+      "parquet_rows": 5000,
+      "same_column_names_and_order": true,
+      "method": "row count + ordered schema + per-column null counts + numeric/boolean extrema; long BYTE_ARRAY extrema excluded because Parquet may store truncated bounds; exact dataframe parity is enforced by raw_audit.py",
+      "parquet_created_by": "Polars",
+      "csv_git_blob_sha1": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
+      "parquet_git_blob_sha1": "7c0922f0316c7770cf3edf06f87e28be776bb0c0",
+      "csv_sha256": "0df1e893137d5a56afb73df9870a794597aa35eb9f9ca14f89ae69615f3b65a4",
+      "parquet_sha256": "47f187364a768708a3b7ec86a3b29585f496efec7ac5d9fcf525422a84293e4b"
+    },
+    "inquiries": {
+      "status": "PASS",
+      "csv_rows": 22576,
+      "parquet_rows": 22576,
+      "same_column_names_and_order": true,
+      "method": "row count + ordered schema + per-column null counts + numeric/boolean extrema; long BYTE_ARRAY extrema excluded because Parquet may store truncated bounds; exact dataframe parity is enforced by raw_audit.py",
+      "parquet_created_by": "Polars",
+      "csv_git_blob_sha1": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
+      "parquet_git_blob_sha1": "c0bfb9d8701e74392049f2fce6b4ceb886873789",
+      "csv_sha256": "e0a59bc558e0aa4df4141751c63c4e0193e3681b771aac2f5439ebd90b752eb6",
+      "parquet_sha256": "b29778e41911d29c17d339edae7270e773d59b90b97411b261ec19a7d088f3e6"
+    },
+    "spots": {
+      "status": "PASS",
+      "csv_rows": 3000,
+      "parquet_rows": 3000,
+      "same_column_names_and_order": true,
+      "method": "row count + ordered schema + per-column null counts + numeric/boolean extrema; long BYTE_ARRAY extrema excluded because Parquet may store truncated bounds; exact dataframe parity is enforced by raw_audit.py",
+      "parquet_created_by": "Polars",
+      "csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808",
+      "parquet_git_blob_sha1": "10018af9fffcd498620d38068f096a2cec8d7d33",
+      "csv_sha256": "e5e3640430567b2430ab5e37dba28f30c6186693f184c4c3e744018d689f7b0c",
+      "parquet_sha256": "c9cd2de2e9d6e1212ebf9a5c5b4efdd787a98a318842a90c03dc113e1d22772a"
+    },
+    "spot_attributes": {
+      "status": "PASS",
+      "csv_rows": 3000,
+      "parquet_rows": 3000,
+      "same_column_names_and_order": true,
+      "method": "row count + ordered schema + per-column null counts + numeric/boolean extrema; long BYTE_ARRAY extrema excluded because Parquet may store truncated bounds; exact dataframe parity is enforced by raw_audit.py",
+      "parquet_created_by": "Polars",
+      "csv_git_blob_sha1": "9479789b881e408d0626ded8432396ba9fc749b6",
+      "parquet_git_blob_sha1": "817d6f4601b503c96f4a799cb09b969a6db8f1ec",
+      "csv_sha256": "a22c42f5bcf9c3b7b07c5c65d0926d43474cc82702389c8322bd1f37f3953fe9",
+      "parquet_sha256": "f0d9873c8bd50552b1ed89b399063f9d9dfa72d206a09bd5431ef0e557d44614"
+    },
+    "availability_snapshot": {
+      "status": "PASS",
+      "csv_rows": 30000,
+      "parquet_rows": 30000,
+      "same_column_names_and_order": true,
+      "method": "row count + ordered schema + per-column null counts + numeric/boolean extrema; long BYTE_ARRAY extrema excluded because Parquet may store truncated bounds; exact dataframe parity is enforced by raw_audit.py",
+      "parquet_created_by": "Polars",
+      "csv_git_blob_sha1": "82ef91a25ff5b2a330b4e1d01668c4934239c43f",
+      "parquet_git_blob_sha1": "583fed9470bc8151a663d290675cc2f342d0a63f",
+      "csv_sha256": "c2e292390dd874291214a28c62e294a1d7c5d23338a4fa683352e44be877e59d",
+      "parquet_sha256": "21e7b3ec2ca03f2916a385bc926caa41d34f502480fe6d11f4fb838115aca5b0"
+    },
+    "market_context": {
+      "status": "PASS",
+      "csv_rows": 500,
+      "parquet_rows": 500,
+      "same_column_names_and_order": true,
+      "method": "row count + ordered schema + per-column null counts + numeric/boolean extrema; long BYTE_ARRAY extrema excluded because Parquet may store truncated bounds; exact dataframe parity is enforced by raw_audit.py",
+      "parquet_created_by": "Polars",
+      "csv_git_blob_sha1": "47fdbba2bfddd547d691e15e1e45962e3d782d49",
+      "parquet_git_blob_sha1": "c91d95c6c1bfb658e27f70bc3eff279594f7c003",
+      "csv_sha256": "4a09bf878e593d8cefe531bcff54cb274019a6648d0afd9c268bfac36bb18f40",
+      "parquet_sha256": "6ead9d420c8d2ae46750999de1734d34b61b703565f575576956a5ca64f6dd51"
+    }
+  },
+  "physical_fingerprints": {
+    "leads": {
+      "csv": {
+        "bytes": 822426,
+        "sha256": "0df1e893137d5a56afb73df9870a794597aa35eb9f9ca14f89ae69615f3b65a4"
+      },
+      "parquet": {
+        "bytes": 145967,
+        "sha256": "47f187364a768708a3b7ec86a3b29585f496efec7ac5d9fcf525422a84293e4b"
+      }
+    },
+    "inquiries": {
+      "csv": {
+        "bytes": 2124891,
+        "sha256": "e0a59bc558e0aa4df4141751c63c4e0193e3681b771aac2f5439ebd90b752eb6"
+      },
+      "parquet": {
+        "bytes": 555734,
+        "sha256": "b29778e41911d29c17d339edae7270e773d59b90b97411b261ec19a7d088f3e6"
+      }
+    },
+    "spots": {
+      "csv": {
+        "bytes": 997045,
+        "sha256": "e5e3640430567b2430ab5e37dba28f30c6186693f184c4c3e744018d689f7b0c"
+      },
+      "parquet": {
+        "bytes": 172430,
+        "sha256": "c9cd2de2e9d6e1212ebf9a5c5b4efdd787a98a318842a90c03dc113e1d22772a"
+      }
+    },
+    "spot_attributes": {
+      "csv": {
+        "bytes": 214661,
+        "sha256": "a22c42f5bcf9c3b7b07c5c65d0926d43474cc82702389c8322bd1f37f3953fe9"
+      },
+      "parquet": {
+        "bytes": 38538,
+        "sha256": "f0d9873c8bd50552b1ed89b399063f9d9dfa72d206a09bd5431ef0e557d44614"
+      }
+    },
+    "availability_snapshot": {
+      "csv": {
+        "bytes": 933919,
+        "sha256": "c2e292390dd874291214a28c62e294a1d7c5d23338a4fa683352e44be877e59d"
+      },
+      "parquet": {
+        "bytes": 178265,
+        "sha256": "21e7b3ec2ca03f2916a385bc926caa41d34f502480fe6d11f4fb838115aca5b0"
+      }
+    },
+    "market_context": {
+      "csv": {
+        "bytes": 41590,
+        "sha256": "4a09bf878e593d8cefe531bcff54cb274019a6648d0afd9c268bfac36bb18f40"
+      },
+      "parquet": {
+        "bytes": 12522,
+        "sha256": "6ead9d420c8d2ae46750999de1734d34b61b703565f575576956a5ca64f6dd51"
+      }
+    }
+  },
+  "table_profiles": {
+    "leads": {
+      "grain": "one row per lead",
+      "rows": 5000,
+      "columns": 20,
+      "pk": [
+        "lead_id"
+      ],
+      "pk_duplicate_rows": 0,
+      "exact_duplicate_rows": 0,
+      "missingness": {
+        "lead_id": {
+          "count": 0,
+          "rate": 0
+        },
+        "user_type": {
+          "count": 0,
+          "rate": 0
+        },
+        "company_size": {
+          "count": 257,
+          "rate": 0.0514
+        },
+        "industry": {
+          "count": 151,
+          "rate": 0.0302
+        },
+        "search_sector": {
+          "count": 0,
+          "rate": 0
+        },
+        "search_modality": {
+          "count": 0,
+          "rate": 0
+        },
+        "target_area_sqm": {
+          "count": 0,
+          "rate": 0
+        },
+        "min_budget_mxn_rent_monthly": {
+          "count": 1608,
+          "rate": 0.3216
+        },
+        "max_budget_mxn_rent_monthly": {
+          "count": 1490,
+          "rate": 0.298
+        },
+        "min_budget_mxn_sale_total": {
+          "count": 2593,
+          "rate": 0.5186
+        },
+        "max_budget_mxn_sale_total": {
+          "count": 2503,
+          "rate": 0.5006
+        },
+        "preferred_state": {
+          "count": 0,
+          "rate": 0
+        },
+        "preferred_municipality": {
+          "count": 0,
+          "rate": 0
+        },
+        "preferred_corridor": {
+          "count": 380,
+          "rate": 0.076
+        },
+        "source": {
+          "count": 0,
+          "rate": 0
+        },
+        "prior_searches": {
+          "count": 0,
+          "rate": 0
+        },
+        "prior_inquiries": {
+          "count": 0,
+          "rate": 0
+        },
+        "has_converted_before": {
+          "count": 0,
+          "rate": 0
+        },
+        "lead_score_internal": {
+          "count": 0,
+          "rate": 0
+        },
+        "created_at": {
+          "count": 0,
+          "rate": 0
+        }
+      },
+      "distinct_count": {
+        "lead_id": 5000,
+        "user_type": 4,
+        "company_size": 4,
+        "industry": 7,
+        "search_sector": 4,
+        "search_modality": 3,
+        "target_area_sqm": 3869,
+        "min_budget_mxn_rent_monthly": 3392,
+        "max_budget_mxn_rent_monthly": 3508,
+        "min_budget_mxn_sale_total": 2407,
+        "max_budget_mxn_sale_total": 2497,
+        "preferred_state": 12,
+        "preferred_municipality": 17,
+        "preferred_corridor": 18,
+        "source": 6,
+        "prior_searches": 61,
+        "prior_inquiries": 160,
+        "has_converted_before": 2,
+        "lead_score_internal": 3683,
+        "created_at": 545
+      },
+      "temporal_range": {
+        "created_at": {
+          "min": "2025-01-01T00:00:00.000Z",
+          "max": "2026-06-30T00:00:00.000Z",
+          "invalid": 0,
+          "future_vs_audit_date": 0,
+          "before_2000": 0
+        }
+      },
+      "numeric_profile": {
+        "target_area_sqm": {
+          "min": 31.1,
+          "q1": 244.275,
+          "median": 393.4,
+          "q3": 643.75,
+          "max": 9961.5,
+          "iqr_outlier_count": 346,
+          "iqr_outlier_rate": 0.0692
+        },
+        "min_budget_mxn_rent_monthly": {
+          "min": 2476.59,
+          "q1": 32831.8425,
+          "median": 67461.455,
+          "q3": 119904.5,
+          "max": 2206712.28,
+          "iqr_outlier_count": 202,
+          "iqr_outlier_rate": 0.05955188679245283
+        },
+        "max_budget_mxn_rent_monthly": {
+          "min": 2777.45,
+          "q1": 42858.195,
+          "median": 88575.73499999999,
+          "q3": 164342.95500000002,
+          "max": 3141759.69,
+          "iqr_outlier_count": 245,
+          "iqr_outlier_rate": 0.0698005698005698
+        },
+        "min_budget_mxn_sale_total": {
+          "min": 449617.17,
+          "q1": 6031749.074999999,
+          "median": 12108680.42,
+          "q3": 22394743.33,
+          "max": 124540633.25,
+          "iqr_outlier_count": 142,
+          "iqr_outlier_rate": 0.05899459908599917
+        },
+        "max_budget_mxn_sale_total": {
+          "min": 512810.67,
+          "q1": 7997741.88,
+          "median": 16166057.03,
+          "q3": 30337950.81,
+          "max": 385519956.28,
+          "iqr_outlier_count": 165,
+          "iqr_outlier_rate": 0.06607929515418502
+        },
+        "prior_searches": {
+          "min": 0,
+          "q1": 0,
+          "median": 2,
+          "q3": 7,
+          "max": 60,
+          "iqr_outlier_count": 653,
+          "iqr_outlier_rate": 0.1306
+        },
+        "prior_inquiries": {
+          "min": 0,
+          "q1": 0,
+          "median": 1,
+          "q3": 7,
+          "max": 199,
+          "iqr_outlier_count": 645,
+          "iqr_outlier_rate": 0.129
+        },
+        "lead_score_internal": {
+          "min": 0,
+          "q1": 0.30565000000000003,
+          "median": 0.556,
+          "q3": 0.7944249999999999,
+          "max": 1,
+          "iqr_outlier_count": 0,
+          "iqr_outlier_rate": 0
+        }
+      }
+    },
+    "inquiries": {
+      "grain": "one row per lead↔spot inquiry event",
+      "rows": 22576,
+      "columns": 13,
+      "pk": [
+        "inquiry_id"
+      ],
+      "pk_duplicate_rows": 0,
+      "exact_duplicate_rows": 0,
+      "missingness": {
+        "inquiry_id": {
+          "count": 0,
+          "rate": 0
+        },
+        "lead_id": {
+          "count": 0,
+          "rate": 0
+        },
+        "spot_id": {
+          "count": 0,
+          "rate": 0
+        },
+        "inquiry_at": {
+          "count": 0,
+          "rate": 0
+        },
+        "channel": {
+          "count": 0,
+          "rate": 0
+        },
+        "message_length": {
+          "count": 0,
+          "rate": 0
+        },
+        "requested_area_sqm": {
+          "count": 0,
+          "rate": 0
+        },
+        "requested_budget_mxn_rent_monthly": {
+          "count": 6671,
+          "rate": 0.2954907866761162
+        },
+        "requested_budget_mxn_sale_total": {
+          "count": 11265,
+          "rate": 0.4989812189936215
+        },
+        "urgency_days": {
+          "count": 6918,
+          "rate": 0.30643160878809356
+        },
+        "asked_visit": {
+          "count": 0,
+          "rate": 0
+        },
+        "broker_response": {
+          "count": 0,
+          "rate": 0
+        },
+        "broker_response_hours": {
+          "count": 3398,
+          "rate": 0.15051381998582566
+        }
+      },
+      "distinct_count": {
+        "inquiry_id": 22576,
+        "lead_id": 5000,
+        "spot_id": 2998,
+        "inquiry_at": 22442,
+        "channel": 5,
+        "message_length": 747,
+        "requested_area_sqm": 7500,
+        "requested_budget_mxn_rent_monthly": 14252,
+        "requested_budget_mxn_sale_total": 10176,
+        "urgency_days": 363,
+        "asked_visit": 2,
+        "broker_response": 4,
+        "broker_response_hours": 676
+      },
+      "temporal_range": {
+        "inquiry_at": {
+          "min": "2025-01-01T10:21:59.000Z",
+          "max": "2026-07-13T17:35:37.000Z",
+          "invalid": 0,
+          "future_vs_audit_date": 0,
+          "before_2000": 0
+        }
+      },
+      "numeric_profile": {
+        "message_length": {
+          "min": 24,
+          "q1": 143,
+          "median": 200,
+          "q3": 280,
+          "max": 1450,
+          "iqr_outlier_count": 817,
+          "iqr_outlier_rate": 0.03618887313961729
+        },
+        "requested_area_sqm": {
+          "min": 35.5,
+          "q1": 246,
+          "median": 484.3,
+          "q3": 1075.6999999999998,
+          "max": 40920.9,
+          "iqr_outlier_count": 2611,
+          "iqr_outlier_rate": 0.11565379163713678
+        },
+        "requested_budget_mxn_rent_monthly": {
+          "min": 2241.95,
+          "q1": 37877.53,
+          "median": 79418.29,
+          "q3": 147231.3,
+          "max": 3141759.69,
+          "iqr_outlier_count": 1134,
+          "iqr_outlier_rate": 0.07129833385727759
+        },
+        "requested_budget_mxn_sale_total": {
+          "min": 373190.77,
+          "q1": 7164314.045,
+          "median": 14454449.31,
+          "q3": 26509969.335,
+          "max": 385519956.28,
+          "iqr_outlier_count": 751,
+          "iqr_outlier_rate": 0.06639554416055167
+        },
+        "urgency_days": {
+          "min": 1,
+          "q1": 36,
+          "median": 75,
+          "q3": 189,
+          "max": 364,
+          "iqr_outlier_count": 0,
+          "iqr_outlier_rate": 0
+        },
+        "broker_response_hours": {
+          "min": 0.5,
+          "q1": 3.5,
+          "median": 8.4,
+          "q3": 16.6,
+          "max": 108.9,
+          "iqr_outlier_count": 979,
+          "iqr_outlier_rate": 0.05104807592032537
+        }
+      }
+    },
+    "spots": {
+      "grain": "one row per spot listing extract/current record",
+      "rows": 3000,
+      "columns": 25,
+      "pk": [
+        "spot_id"
+      ],
+      "pk_duplicate_rows": 0,
+      "exact_duplicate_rows": 0,
+      "missingness": {
+        "spot_id": {
+          "count": 0,
+          "rate": 0
+        },
+        "broker_id": {
+          "count": 0,
+          "rate": 0
+        },
+        "sector_name": {
+          "count": 0,
+          "rate": 0
+        },
+        "type_name": {
+          "count": 0,
+          "rate": 0
+        },
+        "state": {
+          "count": 0,
+          "rate": 0
+        },
+        "municipality": {
+          "count": 0,
+          "rate": 0
+        },
+        "settlement": {
+          "count": 0,
+          "rate": 0
+        },
+        "corridor": {
+          "count": 0,
+          "rate": 0
+        },
+        "region": {
+          "count": 0,
+          "rate": 0
+        },
+        "lat": {
+          "count": 0,
+          "rate": 0
+        },
+        "lon": {
+          "count": 0,
+          "rate": 0
+        },
+        "title": {
+          "count": 0,
+          "rate": 0
+        },
+        "description": {
+          "count": 0,
+          "rate": 0
+        },
+        "area_sqm": {
+          "count": 0,
+          "rate": 0
+        },
+        "price_sqm_mxn_rent": {
+          "count": 761,
+          "rate": 0.25366666666666665
+        },
+        "price_sqm_mxn_sale": {
+          "count": 1192,
+          "rate": 0.3973333333333333
+        },
+        "price_total_mxn_rent": {
+          "count": 761,
+          "rate": 0.25366666666666665
+        },
+        "price_total_mxn_sale": {
+          "count": 1192,
+          "rate": 0.3973333333333333
+        },
+        "maintenance_cost_mxn": {
+          "count": 761,
+          "rate": 0.25366666666666665
+        },
+        "modality": {
+          "count": 0,
+          "rate": 0
+        },
+        "days_on_market": {
+          "count": 0,
+          "rate": 0
+        },
+        "total_inquiries": {
+          "count": 0,
+          "rate": 0
+        },
+        "total_views": {
+          "count": 0,
+          "rate": 0
+        },
+        "is_active": {
+          "count": 0,
+          "rate": 0
+        },
+        "created_at": {
+          "count": 0,
+          "rate": 0
+        }
+      },
+      "distinct_count": {
+        "spot_id": 3000,
+        "broker_id": 300,
+        "sector_name": 4,
+        "type_name": 2,
+        "state": 12,
+        "municipality": 17,
+        "settlement": 15,
+        "corridor": 18,
+        "region": 9,
+        "lat": 2990,
+        "lon": 2983,
+        "title": 1245,
+        "description": 856,
+        "area_sqm": 2610,
+        "price_sqm_mxn_rent": 2066,
+        "price_sqm_mxn_sale": 1808,
+        "price_total_mxn_rent": 2239,
+        "price_total_mxn_sale": 1808,
+        "maintenance_cost_mxn": 2236,
+        "modality": 3,
+        "days_on_market": 426,
+        "total_inquiries": 36,
+        "total_views": 393,
+        "is_active": 2,
+        "created_at": 858
+      },
+      "temporal_range": {
+        "created_at": {
+          "min": "2024-01-01T00:00:00.000Z",
+          "max": "2026-06-30T00:00:00.000Z",
+          "invalid": 0,
+          "future_vs_audit_date": 0,
+          "before_2000": 0
+        }
+      },
+      "numeric_profile": {
+        "lat": {
+          "min": 19.013025,
+          "q1": 19.43754875,
+          "median": 20.711683999999998,
+          "q3": 25.656761499999998,
+          "max": 32.534772,
+          "iqr_outlier_count": 0,
+          "iqr_outlier_rate": 0
+        },
+        "lon": {
+          "min": -117.062907,
+          "q1": -103.37509275000001,
+          "median": -100.376022,
+          "q3": -99.1907095,
+          "max": -89.594228,
+          "iqr_outlier_count": 491,
+          "iqr_outlier_rate": 0.16366666666666665
+        },
+        "area_sqm": {
+          "min": 20,
+          "q1": 125.275,
+          "median": 617.2,
+          "q3": 3075.025,
+          "max": 136403,
+          "iqr_outlier_count": 355,
+          "iqr_outlier_rate": 0.11833333333333333
+        },
+        "price_sqm_mxn_rent": {
+          "min": 15,
+          "q1": 112.755,
+          "median": 216.62,
+          "q3": 329.56,
+          "max": 833,
+          "iqr_outlier_count": 16,
+          "iqr_outlier_rate": 0.007146047342563644
+        },
+        "price_sqm_mxn_sale": {
+          "min": 2261.14,
+          "q1": 20444.7725,
+          "median": 39260.765,
+          "q3": 58492.4325,
+          "max": 152747.85,
+          "iqr_outlier_count": 14,
+          "iqr_outlier_rate": 0.007743362831858407
+        },
+        "price_total_mxn_rent": {
+          "min": 2000,
+          "q1": 33463.205,
+          "median": 107931.21,
+          "q3": 382734.255,
+          "max": 18172971.69,
+          "iqr_outlier_count": 251,
+          "iqr_outlier_rate": 0.11210361768646718
+        },
+        "price_total_mxn_sale": {
+          "min": 464628.2,
+          "q1": 5594708.68,
+          "median": 19780450.439999998,
+          "q3": 66002864.475,
+          "max": 1879730204.72,
+          "iqr_outlier_count": 188,
+          "iqr_outlier_rate": 0.10398230088495575
+        },
+        "maintenance_cost_mxn": {
+          "min": 135.13,
+          "q1": 3102.355,
+          "median": 10449.09,
+          "q3": 35682.265,
+          "max": 1665495.14,
+          "iqr_outlier_count": 282,
+          "iqr_outlier_rate": 0.12594908441268424
+        },
+        "days_on_market": {
+          "min": 1,
+          "q1": 27,
+          "median": 69,
+          "q3": 145,
+          "max": 730,
+          "iqr_outlier_count": 163,
+          "iqr_outlier_rate": 0.05433333333333333
+        },
+        "total_inquiries": {
+          "min": 0,
+          "q1": 3,
+          "median": 5,
+          "q3": 7,
+          "max": 39,
+          "iqr_outlier_count": 170,
+          "iqr_outlier_rate": 0.056666666666666664
+        },
+        "total_views": {
+          "min": 0,
+          "q1": 53,
+          "median": 90,
+          "q3": 149.25,
+          "max": 904,
+          "iqr_outlier_count": 160,
+          "iqr_outlier_rate": 0.05333333333333334
+        }
+      }
+    },
+    "spot_attributes": {
+      "grain": "one unversioned attribute row per spot",
+      "rows": 3000,
+      "columns": 12,
+      "pk": [
+        "spot_id"
+      ],
+      "pk_duplicate_rows": 0,
+      "exact_duplicate_rows": 0,
+      "missingness": {
+        "spot_id": {
+          "count": 0,
+          "rate": 0
+        },
+        "natural_light": {
+          "count": 0,
+          "rate": 0
+        },
+        "luminaires": {
+          "count": 0,
+          "rate": 0
+        },
+        "charging_ports": {
+          "count": 606,
+          "rate": 0.202
+        },
+        "security_type": {
+          "count": 0,
+          "rate": 0
+        },
+        "floor_level": {
+          "count": 0,
+          "rate": 0
+        },
+        "elevators": {
+          "count": 0,
+          "rate": 0
+        },
+        "vertical_height_m": {
+          "count": 457,
+          "rate": 0.15233333333333332
+        },
+        "parking_spaces": {
+          "count": 0,
+          "rate": 0
+        },
+        "building_status": {
+          "count": 0,
+          "rate": 0
+        },
+        "floor_material": {
+          "count": 236,
+          "rate": 0.07866666666666666
+        },
+        "amenities": {
+          "count": 0,
+          "rate": 0
+        }
+      },
+      "distinct_count": {
+        "spot_id": 3000,
+        "natural_light": 2,
+        "luminaires": 41,
+        "charging_ports": 21,
+        "security_type": 4,
+        "floor_level": 31,
+        "elevators": 99,
+        "vertical_height_m": 107,
+        "parking_spaces": 302,
+        "building_status": 4,
+        "floor_material": 5,
+        "amenities": 986
+      },
+      "temporal_range": {},
+      "numeric_profile": {
+        "luminaires": {
+          "min": 0,
+          "q1": 0,
+          "median": 2,
+          "q3": 8,
+          "max": 40,
+          "iqr_outlier_count": 229,
+          "iqr_outlier_rate": 0.07633333333333334
+        },
+        "charging_ports": {
+          "min": 0,
+          "q1": 0,
+          "median": 0,
+          "q3": 0,
+          "max": 20,
+          "iqr_outlier_count": 498,
+          "iqr_outlier_rate": 0.20802005012531327
+        },
+        "floor_level": {
+          "min": 0,
+          "q1": 0,
+          "median": 1,
+          "q3": 3,
+          "max": 30,
+          "iqr_outlier_count": 462,
+          "iqr_outlier_rate": 0.154
+        },
+        "elevators": {
+          "min": 0,
+          "q1": 1,
+          "median": 3,
+          "q3": 9,
+          "max": 273,
+          "iqr_outlier_count": 264,
+          "iqr_outlier_rate": 0.088
+        },
+        "vertical_height_m": {
+          "min": 0,
+          "q1": 2.6,
+          "median": 3.6,
+          "q3": 6.5,
+          "max": 12.8,
+          "iqr_outlier_count": 1,
+          "iqr_outlier_rate": 0.00039323633503735744
+        },
+        "parking_spaces": {
+          "min": 0,
+          "q1": 3,
+          "median": 10,
+          "q3": 38,
+          "max": 1171,
+          "iqr_outlier_count": 354,
+          "iqr_outlier_rate": 0.118
+        }
+      }
+    },
+    "availability_snapshot": {
+      "grain": "one availability snapshot per spot-date (snapshot_id PK)",
+      "rows": 30000,
+      "columns": 6,
+      "pk": [
+        "snapshot_id"
+      ],
+      "pk_duplicate_rows": 0,
+      "exact_duplicate_rows": 0,
+      "missingness": {
+        "snapshot_id": {
+          "count": 0,
+          "rate": 0
+        },
+        "spot_id": {
+          "count": 0,
+          "rate": 0
+        },
+        "snapshot_date": {
+          "count": 0,
+          "rate": 0
+        },
+        "is_available": {
+          "count": 0,
+          "rate": 0
+        },
+        "days_until_available": {
+          "count": 0,
+          "rate": 0
+        },
+        "competing_inquiries_30d": {
+          "count": 0,
+          "rate": 0
+        }
+      },
+      "distinct_count": {
+        "snapshot_id": 30000,
+        "spot_id": 3000,
+        "snapshot_date": 545,
+        "is_available": 2,
+        "days_until_available": 354,
+        "competing_inquiries_30d": 18
+      },
+      "temporal_range": {
+        "snapshot_date": {
+          "min": "2024-12-28T00:00:00.000Z",
+          "max": "2026-06-30T00:00:00.000Z",
+          "invalid": 0,
+          "future_vs_audit_date": 0,
+          "before_2000": 0
+        }
+      },
+      "numeric_profile": {
+        "days_until_available": {
+          "min": 0,
+          "q1": 0,
+          "median": 0,
+          "q3": 27,
+          "max": 671,
+          "iqr_outlier_count": 3869,
+          "iqr_outlier_rate": 0.12896666666666667
+        },
+        "competing_inquiries_30d": {
+          "min": 0,
+          "q1": 4,
+          "median": 5,
+          "q3": 7,
+          "max": 17,
+          "iqr_outlier_count": 294,
+          "iqr_outlier_rate": 0.0098
+        }
+      }
+    },
+    "market_context": {
+      "grain": "one market aggregate per state×municipality×corridor×sector×month",
+      "rows": 500,
+      "columns": 10,
+      "pk": [
+        "state",
+        "municipality",
+        "corridor",
+        "sector",
+        "month"
+      ],
+      "pk_duplicate_rows": 0,
+      "exact_duplicate_rows": 0,
+      "missingness": {
+        "state": {
+          "count": 0,
+          "rate": 0
+        },
+        "municipality": {
+          "count": 0,
+          "rate": 0
+        },
+        "corridor": {
+          "count": 0,
+          "rate": 0
+        },
+        "sector": {
+          "count": 0,
+          "rate": 0
+        },
+        "month": {
+          "count": 0,
+          "rate": 0
+        },
+        "similar_available_spots": {
+          "count": 0,
+          "rate": 0
+        },
+        "avg_price_sqm_mxn": {
+          "count": 0,
+          "rate": 0
+        },
+        "recent_occupancy_rate": {
+          "count": 0,
+          "rate": 0
+        },
+        "absorption_velocity_days": {
+          "count": 0,
+          "rate": 0
+        },
+        "recent_inquiry_volume": {
+          "count": 0,
+          "rate": 0
+        }
+      },
+      "distinct_count": {
+        "state": 12,
+        "municipality": 17,
+        "corridor": 18,
+        "sector": 4,
+        "month": 30,
+        "similar_available_spots": 22,
+        "avg_price_sqm_mxn": 495,
+        "recent_occupancy_rate": 283,
+        "absorption_velocity_days": 447,
+        "recent_inquiry_volume": 311
+      },
+      "temporal_range": {
+        "month": {
+          "min": "2024-01-01T00:00:00.000Z",
+          "max": "2026-06-01T00:00:00.000Z",
+          "invalid": 0,
+          "future_vs_audit_date": 0,
+          "before_2000": 0
+        }
+      },
+      "numeric_profile": {
+        "similar_available_spots": {
+          "min": 6,
+          "q1": 11,
+          "median": 16,
+          "q3": 21,
+          "max": 27,
+          "iqr_outlier_count": 0,
+          "iqr_outlier_rate": 0
+        },
+        "avg_price_sqm_mxn": {
+          "min": 34.13,
+          "q1": 119.44749999999999,
+          "median": 214.685,
+          "q3": 325.24,
+          "max": 427.31,
+          "iqr_outlier_count": 0,
+          "iqr_outlier_rate": 0
+        },
+        "recent_occupancy_rate": {
+          "min": 0.503,
+          "q1": 0.70475,
+          "median": 0.804,
+          "q3": 0.856,
+          "max": 0.948,
+          "iqr_outlier_count": 0,
+          "iqr_outlier_rate": 0
+        },
+        "absorption_velocity_days": {
+          "min": 45.1,
+          "q1": 101.05,
+          "median": 139.85,
+          "q3": 187.525,
+          "max": 363.2,
+          "iqr_outlier_count": 23,
+          "iqr_outlier_rate": 0.046
+        },
+        "recent_inquiry_volume": {
+          "min": 50,
+          "q1": 155.75,
+          "median": 262,
+          "q3": 387,
+          "max": 500,
+          "iqr_outlier_count": 0,
+          "iqr_outlier_rate": 0
+        }
+      }
+    }
+  },
+  "foreign_key_orphans": {
+    "inquiries.lead_id->leads.lead_id": 0,
+    "inquiries.spot_id->spots.spot_id": 0,
+    "spot_attributes.spot_id->spots.spot_id": 0,
+    "availability_snapshot.spot_id->spots.spot_id": 0
+  },
+  "temporal_relational_checks": {
+    "inquiry_before_lead_created": 0,
+    "inquiry_before_spot_created": 0,
+    "snapshot_before_spot_created": 0,
+    "duplicate_spot_snapshot_date_rows": 0,
+    "availability_state_conflicts": 0
+  },
+  "inquiries_response_audit": {
+    "by_status": {
+      "rejected": {
+        "rows": 3395,
+        "hours_missing": 506,
+        "hours_present": 2889
+      },
+      "scheduled_visit": {
+        "rows": 4496,
+        "hours_missing": 673,
+        "hours_present": 3823
+      },
+      "accepted": {
+        "rows": 10202,
+        "hours_missing": 1522,
+        "hours_present": 8680
+      },
+      "no_response": {
+        "rows": 4483,
+        "hours_missing": 697,
+        "hours_present": 3786
+      }
+    },
+    "no_response_with_hours": 3786,
+    "realized_status_missing_hours": 2701,
+    "scheduled_visit_missing_hours": 673,
+    "scheduled_visit_missing_rate": 0.14968861209964412,
+    "policy": "OUTCOME_ONLY after P2; prohibited as model feature. broker_response_hours may be used only for Target B methodological audit; primary Target A ignores it."
+  },
+  "spots_current_state_audit": {
+    "total_inquiries_exact_agreement": 212,
+    "total_inquiries_exact_agreement_rate": 0.07066666666666667,
+    "days_on_market": "FORBIDDEN_BACKTEST",
+    "total_inquiries": "FORBIDDEN_BACKTEST",
+    "total_views": "FORBIDDEN_BACKTEST",
+    "is_active": "FORBIDDEN_BACKTEST"
+  },
+  "availability_audit": {
+    "backward_coverage_count": 20856,
+    "backward_coverage_rate": 0.9238128986534373,
+    "lag_days_median": 6.613159722222223,
+    "lag_days_p90": 58.66216435185185,
+    "lag_days_p95": 83.35458043981482,
+    "lag_days_max": 261.5221296296296,
+    "lag_gt90_rate": 0.04195435366321442,
+    "nearest_would_choose_future_count": 7758,
+    "nearest_would_choose_future_rate": 0.3436392629340893,
+    "naive_join_rows": 226151,
+    "naive_join_expansion_factor": 10.017319277108435,
+    "coverage_by_month": {
+      "2025-01": {
+        "n": 263,
+        "rate": 0.06463878326996197
+      },
+      "2025-02": {
+        "n": 433,
+        "rate": 0.26096997690531176
+      },
+      "2025-03": {
+        "n": 532,
+        "rate": 0.40977443609022557
+      },
+      "2025-04": {
+        "n": 580,
+        "rate": 0.5758620689655173
+      },
+      "2025-05": {
+        "n": 833,
+        "rate": 0.7226890756302521
+      },
+      "2025-06": {
+        "n": 947,
+        "rate": 0.8468848996832101
+      },
+      "2025-07": {
+        "n": 1020,
+        "rate": 0.9058823529411765
+      },
+      "2025-08": {
+        "n": 1092,
+        "rate": 0.9413919413919414
+      },
+      "2025-09": {
+        "n": 1138,
+        "rate": 0.9657293497363796
+      },
+      "2025-10": {
+        "n": 1412,
+        "rate": 0.9922096317280453
+      },
+      "2025-11": {
+        "n": 1284,
+        "rate": 0.9953271028037384
+      },
+      "2025-12": {
+        "n": 1594,
+        "rate": 0.998745294855709
+      },
+      "2026-01": {
+        "n": 1688,
+        "rate": 1
+      },
+      "2026-02": {
+        "n": 1598,
+        "rate": 1
+      },
+      "2026-03": {
+        "n": 1941,
+        "rate": 1
+      },
+      "2026-04": {
+        "n": 1893,
+        "rate": 1
+      },
+      "2026-05": {
+        "n": 1955,
+        "rate": 1
+      },
+      "2026-06": {
+        "n": 2104,
+        "rate": 1
+      },
+      "2026-07": {
+        "n": 269,
+        "rate": 1
+      }
+    }
+  },
+  "market_context_audit": {
+    "publication_time_column": null,
+    "effective_time_column": null,
+    "same_month_inquiry_coverage": 0.23843905031892276,
+    "same_month_matches": 5383,
+    "temporal_decision": "EDA_ONLY",
+    "reason": "month is a period label; no publication/observation/effective timestamp proves values were known at scoring time",
+    "distinct_months": 30
+  },
+  "gates": {
+    "csv_parquet_parity": "PASS",
+    "pk_fk_duplicates": "PASS",
+    "impossible_dates": "PASS",
+    "availability_join_safety": "PASS_WITH_BACKWARD_ASOF_ONLY",
+    "spots_current_state": "FORBIDDEN_BACKTEST",
+    "market_context": "EDA_ONLY",
+    "spot_attributes": "AUTHORIZED_IMMUTABLE_ASSUMPTION",
+    "broker_response_fields": "OUTCOME_ONLY_PRIMARY_A_IGNORES_HOURS",
+    "target_built": false,
+    "every_source_has_explicit_temporal_semantics": "PASS"
+  },
+  "cardinalities": {
+    "inquiries_per_lead": {
+      "parents": 5000,
+      "min": 1,
+      "p50": 5,
+      "p90": 8,
+      "p95": 8,
+      "max": 8,
+      "mean": 4.5152
+    },
+    "inquiries_per_spot": {
+      "parents": 2998,
+      "min": 1,
+      "p50": 7,
+      "p90": 12,
+      "p95": 14,
+      "max": 22,
+      "mean": 7.530353569046031
+    },
+    "snapshots_per_spot": {
+      "parents": 3000,
+      "min": 1,
+      "p50": 10,
+      "p90": 16,
+      "p95": 17,
+      "max": 24,
+      "mean": 10
+    },
+    "spots_per_broker": {
+      "parents": 300,
+      "min": 1,
+      "p50": 10,
+      "p90": 14,
+      "p95": 16,
+      "max": 18,
+      "mean": 10
+    }
+  },
+  "temporal_source_classification": {
+    "leads": {
+      "class": "T0_INTAKE_SNAPSHOT_WITH_CONDITIONAL_HISTORY",
+      "blocked": [
+        "lead_score_internal"
+      ],
+      "conditional": [
+        "prior_searches",
+        "prior_inquiries",
+        "has_converted_before"
+      ]
+    },
+    "inquiries": {
+      "class": "EVENT_TABLE_WITH_POST_EVENT_RESPONSE_FIELDS",
+      "event_time": "inquiry_at",
+      "blocked_in_p1": [
+        "broker_response",
+        "broker_response_hours"
+      ]
+    },
+    "spots": {
+      "class": "MIXED_ENTITY_AND_UNVERSIONED_EXTRACT_STATE",
+      "forbidden_backtest": [
+        "days_on_market",
+        "total_inquiries",
+        "total_views",
+        "is_active"
+      ],
+      "other_fields": "CONDITIONAL_ON_IMMUTABILITY_OR_VERSION_PROOF"
+    },
+    "spot_attributes": "IMMUTABLE_BY_EXPLICIT_ASSESSMENT_ASSUMPTION",
+    "availability_snapshot": {
+      "class": "DATED_MUTABLE_STATE",
+      "effective_time_candidate": "snapshot_date",
+      "policy": "BACKWARD_ASOF_ONLY",
+      "blocked": [
+        "competing_inquiries_30d"
+      ]
+    },
+    "market_context": {
+      "class": "MONTHLY_AGGREGATE_WITHOUT_PUBLICATION_TIME",
+      "policy": "EDA_ONLY"
+    }
+  },
+  "source_provenance": {
+    "initial_data_commit": "8f850cf152bbbefb2f0b8af897e4c94916c88bb6",
+    "commit_message": "Add files via upload",
+    "committed_at": "2026-08-29T02:27:53Z",
+    "observation": "All six CSV files and all six Parquet files were introduced together in the same commit, alongside assessment.md, README-candidate.md and feature_dictionary.md."
+  },
+  "column_temporality": {
+    "leads": {
+      "static_columns": [
+        "lead_id",
+        "user_type",
+        "company_size",
+        "industry",
+        "search_sector",
+        "search_modality",
+        "target_area_sqm",
+        "min_budget_mxn_rent_monthly",
+        "max_budget_mxn_rent_monthly",
+        "min_budget_mxn_sale_total",
+        "max_budget_mxn_sale_total",
+        "preferred_state",
+        "preferred_municipality",
+        "preferred_corridor",
+        "source",
+        "created_at"
+      ],
+      "mutable_columns": [],
+      "temporal_unknown_columns": [
+        "prior_searches",
+        "prior_inquiries",
+        "has_converted_before",
+        "lead_score_internal"
+      ],
+      "note": "Intake fields are treated as the delivered creation snapshot. Historical counters/internal score lack a separate observation/effective-time contract."
+    },
+    "inquiries": {
+      "static_columns": [
+        "inquiry_id",
+        "lead_id",
+        "spot_id",
+        "inquiry_at",
+        "channel",
+        "message_length",
+        "requested_area_sqm",
+        "requested_budget_mxn_rent_monthly",
+        "requested_budget_mxn_sale_total",
+        "urgency_days",
+        "asked_visit"
+      ],
+      "mutable_columns": [
+        "broker_response",
+        "broker_response_hours"
+      ],
+      "temporal_unknown_columns": [
+        "broker_response",
+        "broker_response_hours"
+      ],
+      "note": "Request fields are event facts at inquiry_at. Response fields arrive after inquiry and lack a reliable event/observation timestamp."
+    },
+    "spots": {
+      "static_columns": [
+        "spot_id",
+        "created_at"
+      ],
+      "mutable_columns": [
+        "days_on_market",
+        "total_inquiries",
+        "total_views",
+        "is_active"
+      ],
+      "temporal_unknown_columns": [
+        "broker_id",
+        "sector_name",
+        "type_name",
+        "state",
+        "municipality",
+        "settlement",
+        "corridor",
+        "region",
+        "lat",
+        "lon",
+        "title",
+        "description",
+        "area_sqm",
+        "price_sqm_mxn_rent",
+        "price_sqm_mxn_sale",
+        "price_total_mxn_rent",
+        "price_total_mxn_sale",
+        "maintenance_cost_mxn",
+        "modality"
+      ],
+      "note": "Descriptive/pricing fields may be stable in practice but have no version/effective timestamps, so historical mutability is not invented."
+    },
+    "spot_attributes": {
+      "static_columns": [
+        "spot_id",
+        "natural_light",
+        "luminaires",
+        "charging_ports",
+        "security_type",
+        "floor_level",
+        "elevators",
+        "vertical_height_m",
+        "parking_spaces",
+        "building_status",
+        "floor_material",
+        "amenities"
+      ],
+      "mutable_columns": [],
+      "temporal_unknown_columns": [],
+      "note": "All non-key values are treated as immutable by explicit assessment assumption. Raw contains no attribute timestamp; historical T1/T2 use is authorized only when spots.created_at <= score_time."
+    },
+    "availability_snapshot": {
+      "static_columns": [
+        "snapshot_id",
+        "spot_id",
+        "snapshot_date"
+      ],
+      "mutable_columns": [
+        "is_available",
+        "days_until_available",
+        "competing_inquiries_30d"
+      ],
+      "temporal_unknown_columns": [
+        "competing_inquiries_30d"
+      ],
+      "note": "State changes across snapshots. Snapshot_date is the only historical anchor; competing_inquiries_30d window direction is unproven."
+    },
+    "market_context": {
+      "static_columns": [
+        "state",
+        "municipality",
+        "corridor",
+        "sector",
+        "month"
+      ],
+      "mutable_columns": [
+        "similar_available_spots",
+        "avg_price_sqm_mxn",
+        "recent_occupancy_rate",
+        "absorption_velocity_days",
+        "recent_inquiry_volume"
+      ],
+      "temporal_unknown_columns": [
+        "similar_available_spots",
+        "avg_price_sqm_mxn",
+        "recent_occupancy_rate",
+        "absorption_velocity_days",
+        "recent_inquiry_volume"
+      ],
+      "note": "Month is a period label, not publication/effective time. Aggregates are EDA_ONLY."
+    }
+  },
+  "execution_evidence": {
+    "direct_raw_audit": "Executed against repository raw blobs during P1",
+    "exact_reproducible_runner": "AssessmentSol1/src/assessment_sol1/raw_audit.py",
+    "exact_parity_test": "AssessmentSol1/tests/test_raw_data_contracts.py::test_csv_parquet_logical_parity",
+    "note": "Direct P1 inspection validated row/schema/null/numeric-boolean parity and all reported quality metrics. The committed runner enforces full logical DataFrame parity on rerun."
+  },
+  "source_manifest_validation": {
+    "leads": {
+      "csv_sha256": "0df1e893137d5a56afb73df9870a794597aa35eb9f9ca14f89ae69615f3b65a4",
+      "csv_git_blob_sha1": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
+      "parquet_sha256": "47f187364a768708a3b7ec86a3b29585f496efec7ac5d9fcf525422a84293e4b",
+      "parquet_git_blob_sha1": "7c0922f0316c7770cf3edf06f87e28be776bb0c0"
+    },
+    "inquiries": {
+      "csv_sha256": "e0a59bc558e0aa4df4141751c63c4e0193e3681b771aac2f5439ebd90b752eb6",
+      "csv_git_blob_sha1": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
+      "parquet_sha256": "b29778e41911d29c17d339edae7270e773d59b90b97411b261ec19a7d088f3e6",
+      "parquet_git_blob_sha1": "c0bfb9d8701e74392049f2fce6b4ceb886873789"
+    },
+    "spots": {
+      "csv_sha256": "e5e3640430567b2430ab5e37dba28f30c6186693f184c4c3e744018d689f7b0c",
+      "csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808",
+      "parquet_sha256": "c9cd2de2e9d6e1212ebf9a5c5b4efdd787a98a318842a90c03dc113e1d22772a",
+      "parquet_git_blob_sha1": "10018af9fffcd498620d38068f096a2cec8d7d33"
+    },
+    "spot_attributes": {
+      "csv_sha256": "a22c42f5bcf9c3b7b07c5c65d0926d43474cc82702389c8322bd1f37f3953fe9",
+      "csv_git_blob_sha1": "9479789b881e408d0626ded8432396ba9fc749b6",
+      "parquet_sha256": "f0d9873c8bd50552b1ed89b399063f9d9dfa72d206a09bd5431ef0e557d44614",
+      "parquet_git_blob_sha1": "817d6f4601b503c96f4a799cb09b969a6db8f1ec"
+    },
+    "availability_snapshot": {
+      "csv_sha256": "c2e292390dd874291214a28c62e294a1d7c5d23338a4fa683352e44be877e59d",
+      "csv_git_blob_sha1": "82ef91a25ff5b2a330b4e1d01668c4934239c43f",
+      "parquet_sha256": "21e7b3ec2ca03f2916a385bc926caa41d34f502480fe6d11f4fb838115aca5b0",
+      "parquet_git_blob_sha1": "583fed9470bc8151a663d290675cc2f342d0a63f"
+    },
+    "market_context": {
+      "csv_sha256": "4a09bf878e593d8cefe531bcff54cb274019a6648d0afd9c268bfac36bb18f40",
+      "csv_git_blob_sha1": "47fdbba2bfddd547d691e15e1e45962e3d782d49",
+      "parquet_sha256": "6ead9d420c8d2ae46750999de1734d34b61b703565f575576956a5ca64f6dd51",
+      "parquet_git_blob_sha1": "c91d95c6c1bfb658e27f70bc3eff279594f7c003"
+    }
+  },
+  "date_validity": {
+    "leads.created_at": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    },
+    "inquiries.inquiry_at": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    },
+    "spots.created_at": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    },
+    "availability_snapshot.snapshot_date": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    },
+    "market_context.month": {
+      "invalid_parse": 0,
+      "before_2000": 0,
+      "after_audit_date": 0
+    }
+  },
+  "assumptions": {
+    "spot_attributes_immutability": {
+      "status": "ACCEPTED_CONTRACT_ASSUMPTION",
+      "statement": "spot_attributes values are immutable over the life of a spot",
+      "historical_use": "T1/T2 allowed when spots.created_at <= score_time",
+      "raw_timestamp_present": false
+    }
+  }
+}

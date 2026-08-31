@@ -1,0 +1,35 @@
+{
+  "state_version": "PROMPT_13_FINAL_ASSESSMENT_STATE_V1_2026-08-30",
+  "phase": "BUILT",
+  "gate": "FINAL ASSESSMENT BUILT — CONTINUE TO PROMPT 14",
+  "source_snapshot": "AssessmentSol1/final/source_snapshot.json",
+  "authorities": {
+    "lead_quality": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+    "opportunity": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+    "formula": "lead_quality_probability * inventory_actionability_gate",
+    "capacity_pct": 20,
+    "fallback_k": 3,
+    "final_audit": "READY",
+    "blockers": 0,
+    "llm_gate": "PASS"
+  },
+  "deliverables": {
+    "notebook": "AssessmentSol1/final/notebook/final_assessment.ipynb",
+    "notebook_html": "AssessmentSol1/final/notebook/final_assessment.html",
+    "one_pager_md": "AssessmentSol1/final/EXECUTIVE_ONE_PAGER.md",
+    "one_pager_html": "AssessmentSol1/final/EXECUTIVE_ONE_PAGER.html",
+    "presentation_html": "AssessmentSol1/final/presentation/index.html",
+    "assessment_report": "AssessmentSol1/final/ASSESSMENT_REPORT.md",
+    "reproducibility": "AssessmentSol1/final/REPRODUCIBILITY.md",
+    "artifact_index": "AssessmentSol1/final/ARTIFACT_INDEX.md"
+  },
+  "checks": {
+    "post_recovery_consistency": "PASS",
+    "stale_metric_scan": "PASS",
+    "html_structural_scan": "PASS",
+    "notebook_json_structural_scan": "PASS",
+    "filesystem_scope": "PASS",
+    "score_requires_live_openai": false
+  },
+  "runtime_caveat": "Exact local pytest/notebook execution unavailable in connector-only editing environment; no PASS fabricated."
+}

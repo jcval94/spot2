@@ -1,0 +1,21 @@
+encoded_feature,coefficient,odds_ratio,direction
+cat__preferred_municipality_San Pedro Garza García,-0.5192079153450507,0.594991645123076,NEGATIVE
+cat__preferred_municipality_Monterrey,0.4832450313450252,1.6213271323114733,POSITIVE
+cat__preferred_corridor_polanco,0.4318022824857415,1.5400305940366041,POSITIVE
+cat__preferred_corridor_zona-rio-aguacaliente,-0.42322754167469967,0.6549295923797,NEGATIVE
+cat__preferred_corridor_centro-queretaro,-0.3543425663400887,0.7016345697950344,NEGATIVE
+cat__preferred_corridor_centenario-colosio,0.3446194597485146,1.4114527028913204,POSITIVE
+cat__preferred_municipality_Naucalpan de Juárez,0.3392610150377503,1.4039097389470179,POSITIVE
+cat__search_sector_Office,-0.33291030080814704,0.716834490746492,NEGATIVE
+cat__preferred_corridor_centro-leon,-0.3172448675336196,0.7281524324036484,NEGATIVE
+cat__preferred_state_CDMX,-0.3108033765544928,0.7328579587607499,NEGATIVE
+cat__preferred_corridor_juriquilla-juncos,-0.3097625070511119,0.7336211653906815,NEGATIVE
+cat__preferred_municipality_Benito Juárez,-0.30941893795268594,0.7338732582562405,NEGATIVE
+num__max_budget_mxn_sale_total,-0.30578113084766084,0.7365478094104052,NEGATIVE
+cat__preferred_municipality_Toluca,-0.2968778842342022,0.7431347552909893,NEGATIVE
+cat__preferred_corridor_lomas-verdes-satelite,-0.2666715025046337,0.7659246344682658,NEGATIVE
+cat__preferred_corridor_macroplaza,-0.26013827137741896,0.770944978809254,NEGATIVE
+cat__preferred_corridor_vasconcelos-calzada,0.25948549432298035,1.2962629804031804,POSITIVE
+cat__preferred_corridor_centro-chihuahua,0.25732270655790423,1.293462468237219,POSITIVE
+cat__intake_rent_budget_state_OBSERVED,-0.24004572684519085,0.7865918918785126,NEGATIVE
+cat__preferred_municipality_Tijuana,0.2180892923816107,1.243698115427858,POSITIVE

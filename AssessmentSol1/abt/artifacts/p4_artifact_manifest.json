@@ -1,0 +1,32 @@
+{
+  "manifest_version": "P4-INDEPENDENT-RUNTIME-AUDIT-V1",
+  "authority": "P4_TEMPORAL_VALIDITY_AUTHORITY",
+  "status": "PASS",
+  "validation_mode": "INDEPENDENT_RAW_EQUIVALENCE_AUDIT",
+  "raw_counts": {
+    "leads": 5000,
+    "inquiries": 22576,
+    "spots": 3000,
+    "availability_snapshot": 30000
+  },
+  "logical_objects": {
+    "abt_t0": {
+      "audit_rows": 5000,
+      "model_ready_rows": 4710
+    },
+    "abt_t1": {
+      "audit_rows": 5000,
+      "model_ready_rows": 4953
+    },
+    "abt_t2": {
+      "audit_rows": 17576,
+      "model_ready_rows": 9635
+    },
+    "inventory_candidates": {
+      "logical_rows": 1114990
+    }
+  },
+  "full_parquet_materialization_committed": false,
+  "downstream_runtime_policy": "P8 rebuilds directly from raw under frozen contracts and does not consume P3 or materialized P4 feature tables.",
+  "exact_polars_runtime_followup": "Recommended for final reproducibility packaging, but no longer a blocker for stage analysis after independent raw-equivalence PASS."
+}

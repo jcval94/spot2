@@ -1,0 +1,51 @@
+{
+  "version": "P8_PROTOCOL_V1_FROZEN_BEFORE_RESULTS_2026-08-30",
+  "frozen_before_results": true,
+  "t1_immutable": true,
+  "procedural_holdout_selection_allowed": false,
+  "t0": {
+    "target": "T0_30D_INQUIRY_INITIATION_PROGRESS_V1",
+    "scoring_time": "leads.created_at",
+    "estimand_note": "T0 and T1 probabilities estimate different quantities.",
+    "models": [
+      "T0_BASE_RATE",
+      "T0_INTAKE_LOGISTIC"
+    ],
+    "predictor_scope": "lead intake only; no inquiry, Spot, Availability, outcome, lead_score_internal or historical counters",
+    "folds": "Same frozen calendar boundaries applied to T0 score_time; expanding train before validation window.",
+    "logistic": {
+      "penalty": "L2",
+      "regularization_lambda": 1,
+      "learned_transforms": "train-only median/standardization/one-hot vocabulary"
+    },
+    "decision_rule": "PROMOTE only if macro delta AP >= 0.01, paired lead-bootstrap AP CI95 lower > 0, macro AUC >= 0.55, and Brier does not worsen by >0.002; otherwise NEUTRAL_EVIDENCE_BACKED."
+  },
+  "t2": {
+    "target": "T2_CURRENT_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+    "models": [
+      "T2_BASELINE",
+      "T2_TRAJECTORY"
+    ],
+    "model_family": "regularized logistic regression for both variants",
+    "baseline_scope": "frozen intake + current inquiry payload + deterministic current-vs-intake refinement only",
+    "trajectory_scope": "add only the 33 registered strict-prior T2 trajectory features",
+    "response_history_features": false,
+    "current_inquiry_in_own_history": false,
+    "split_policy": "T1 lead membership plus current T2 score_time boundary truncation exactly as SPLIT_CONTRACT.",
+    "logistic": {
+      "penalty": "L2",
+      "regularization_lambda": 1,
+      "learned_transforms": "train-only median/standardization/one-hot vocabulary"
+    },
+    "promotion_rule": {
+      "min_macro_delta_average_precision": 0.01,
+      "min_folds_with_positive_delta_ap": 3,
+      "paired_lead_bootstrap_delta_ap_ci95_low_gt": 0,
+      "max_macro_brier_degradation": 0.002,
+      "temporal_validity_required": true,
+      "operational_interpretability_required": true
+    }
+  },
+  "random_seed": 20260830,
+  "no_new_models_after_results": true
+}

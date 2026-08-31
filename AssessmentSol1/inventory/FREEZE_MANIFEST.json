@@ -1,0 +1,40 @@
+{
+  "freeze_id": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+  "status": "FROZEN_SCALAR_POST_RECOVERY_FALLBACK_K3",
+  "selection_scope": "T1 DEVELOPMENT only; score_time < 2026-05-01 UTC",
+  "outcomes_used_for_inventory_selection": false,
+  "procedural_holdout_used_for_inventory_selection": false,
+  "lead_quality_state": {
+    "during_inventory_selection": "old Lead Quality not used by Inventory",
+    "changed_after_inventory_freeze": true,
+    "consequence": "Inventory scalar remains valid and was not rebuilt"
+  },
+  "scalar_rebuilt_after_recovery": false,
+  "post_recovery_fallback_revision": {
+    "version": "FALLBACK_K3_POST_RECOVERY_V1_2026-08-30",
+    "max_recommendations": 3,
+    "any_result_development": "4361/4368",
+    "at_least_3_development": "4051/4368",
+    "at_least_5_development": "3696/4368",
+    "outcomes_used": false,
+    "historical_E020_metrics_copied": false
+  },
+  "gates": {
+    "future_spot_forbidden": true,
+    "future_snapshot_forbidden": true,
+    "hard_modality": true,
+    "max_three_recommendations": true,
+    "deterministic_ranking": true,
+    "missing_snapshot_is_unknown": true,
+    "unavailable_never_recommended": true,
+    "outcome_independent": true,
+    "current_unversioned_price_blocked": true,
+    "competing_inquiries_30d_blocked": true
+  },
+  "authority": {
+    "config": "AssessmentSol1/inventory/frozen_inventory_config.json",
+    "fallback_policy": "AssessmentSol1/inventory/FALLBACK_POLICY.md",
+    "build": "AssessmentSol1/inventory/build_inventory.py",
+    "ranking": "AssessmentSol1/inventory/rank_fallbacks.py"
+  }
+}

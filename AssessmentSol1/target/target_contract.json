@@ -1,0 +1,218 @@
+{
+  "contract_version": "P2-target-v1.1",
+  "frozen_at": "2026-08-30",
+  "decision_basis": [
+    "business_semantics",
+    "temporal_identifiability",
+    "label_coverage",
+    "prevalence_stability",
+    "censoring",
+    "real_world_implementability"
+  ],
+  "prohibited_selection_basis": [
+    "AUC",
+    "average_precision",
+    "AP",
+    "Lift",
+    "model_accuracy",
+    "any_predictive_model_performance"
+  ],
+  "activity_horizon": {
+    "definition": "max(inquiries.inquiry_at) in the frozen raw candidate package",
+    "observed_value": "2026-07-13T17:35:37.000Z",
+    "caveat": "Raw extraction timestamp is absent; this is a conservative activity-horizon proxy, not a claimed extraction time."
+  },
+  "primary_target": {
+    "id": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+    "stage": "T1",
+    "target_option": "A",
+    "grain": "one label per lead at the deterministic first inquiry",
+    "score_time": "minimum inquiries.inquiry_at for lead_id; if tied, minimum inquiry_id is deterministic metadata tie-breaker",
+    "scoring_instant": "immediately after first inquiry is persisted and before broker response is known",
+    "estimand": "P(first inquiry eventually has broker_response == 'scheduled_visit' | information known at T1 score_time)",
+    "positive_label": "first inquiry broker_response == 'scheduled_visit'",
+    "negative_label": "first inquiry has a non-null broker_response different from 'scheduled_visit'",
+    "ambiguous_label": "first inquiry broker_response is missing/blank",
+    "broker_response_hours_used": false,
+    "response_event_at_used": false,
+    "horizon_days": null,
+    "maturity_buffer_days": 14,
+    "maturity_rule": "score_time + 14 days <= activity_horizon",
+    "maturity_semantics": "The 14-day buffer approximates label finality only. It does NOT mean the visit was scheduled within 14 days.",
+    "observed_audit": {
+      "total_leads": 5000,
+      "labeled_mature": 4953,
+      "positive": 1008,
+      "negative": 3945,
+      "ambiguous": 0,
+      "censored_by_maturity": 47,
+      "cohort_coverage": 0.9906,
+      "prevalence": 0.20351302241066022,
+      "monthly_prevalence_sd_pp": 1.6557223316471266,
+      "monthly_prevalence_range_pp": 7.397543551823535
+    },
+    "product_question": "Will this first inquiry eventually be recorded as scheduled_visit?",
+    "interpretation_limitations": [
+      "not final commercial conversion",
+      "does not credit a later inquiry that eventually becomes scheduled_visit",
+      "actual response resolution timestamp is absent for some rows",
+      "maturity relies on an activity-horizon proxy because extraction time is absent"
+    ]
+  },
+  "alternatives": {
+    "B": {
+      "id": "T1_SCHEDULED_VISIT_30D_RECONSTRUCTED_EVENT_V1",
+      "status": "NOT_SELECTED_PRIMARY",
+      "estimand": "P(a reconstructable scheduled_visit response event occurs in (T1 score_time, T1 score_time + 30d])",
+      "response_event_at": "inquiry_at + broker_response_hours",
+      "boundary": "score_time < response_event_at <= score_time + 30 days",
+      "broker_response_hours_dependency": "REQUIRED_FOR_EVENT_TIME",
+      "observed_audit_no_extra_maturity": {
+        "labeled": 4555,
+        "positive": 1895,
+        "negative": 2660,
+        "ambiguous": 239,
+        "censored": 206,
+        "coverage": 0.911,
+        "prevalence": 0.41602634467618005,
+        "monthly_prevalence_sd_pp": 7.69696608229303,
+        "monthly_prevalence_range_pp": 29.088302752293576
+      },
+      "timing_quality": {
+        "scheduled_visit_rows": 4496,
+        "scheduled_visit_with_hours": 3823,
+        "scheduled_visit_missing_hours": 673,
+        "scheduled_visit_timing_coverage": 0.8503113879003559
+      },
+      "rejection_reason": "The target claims event timing that raw data cannot identify for all scheduled_visit rows; additional maturity does not repair missing event timestamps."
+    },
+    "C": {
+      "id": "T1_30D_INQUIRY_INITIATION_PROGRESS_V1",
+      "status": "PREFERRED_TO_B_FOR_30D_LEAD_PROGRESS_BUT_NOT_PRIMARY_T1_LEAD_QUALITY",
+      "inquiry_horizon_days": 30,
+      "estimand": "P(an inquiry initiated in [T1 score_time, T1 score_time + 30d] eventually has broker_response == 'scheduled_visit')",
+      "important_semantic_guardrail": "A positive does NOT imply the visit was scheduled inside 30 days; only the successful inquiry was initiated inside the 30-day window.",
+      "maturity_buffer_days": 14,
+      "maturity_rule": "score_time + 30-day inquiry window + 14-day maturity buffer <= activity_horizon",
+      "observed_audit": {
+        "labeled": 4670,
+        "positive": 2064,
+        "negative": 2606,
+        "ambiguous": 0,
+        "censored": 330,
+        "coverage": 0.934,
+        "prevalence": 0.44197002141327624,
+        "monthly_prevalence_sd_pp": 6.906506643646339,
+        "monthly_prevalence_range_pp": 26.44219261150562
+      },
+      "nonselection_reason": "It measures future lead progress across later inquiries, not the outcome of the current first inquiry; later interactions and operational actions can create the positive label."
+    }
+  },
+  "maturity_bakeoff": {
+    "A": {
+      "7": {
+        "labeled": 4994,
+        "censored": 6,
+        "coverage": 0.9988,
+        "prevalence": 0.20364437324789747
+      },
+      "14": {
+        "labeled": 4953,
+        "censored": 47,
+        "coverage": 0.9906,
+        "prevalence": 0.20351302241066022
+      },
+      "30": {
+        "labeled": 4794,
+        "censored": 206,
+        "coverage": 0.9588,
+        "prevalence": 0.204630788485607
+      }
+    },
+    "C_30d": {
+      "7": {
+        "labeled": 4729,
+        "censored": 271,
+        "coverage": 0.9458,
+        "prevalence": 0.4434341298371749
+      },
+      "14": {
+        "labeled": 4670,
+        "censored": 330,
+        "coverage": 0.934,
+        "prevalence": 0.44197002141327624
+      },
+      "30": {
+        "labeled": 4495,
+        "censored": 505,
+        "coverage": 0.899,
+        "prevalence": 0.4382647385984427
+      }
+    },
+    "rationale_for_14": "All 15,392 realized accepted/rejected/scheduled_visit rows with numeric timing resolve within 108.9 hours (<7 days), but untimed rows remain. Fourteen days adds a conservative margin at only 0.82 percentage points less cohort coverage than 7 days; 30 days gives no material prevalence-stability benefit and costs more coverage."
+  },
+  "secondary_targets": {
+    "T0": {
+      "id": "T0_30D_INQUIRY_INITIATION_PROGRESS_V1",
+      "status": "FROZEN_SECONDARY",
+      "score_time": "leads.created_at",
+      "estimand": "P(at least one inquiry initiated in [lead.created_at, lead.created_at + 30d] eventually has broker_response == 'scheduled_visit' | T0 information)",
+      "inquiry_horizon_days": 30,
+      "maturity_buffer_days": 14,
+      "observed_audit": {
+        "labeled": 4710,
+        "positive": 1957,
+        "negative": 2753,
+        "coverage": 0.942,
+        "prevalence": 0.41549893842887475
+      },
+      "same_estimand_as_primary": false
+    },
+    "T2": {
+      "id": "T2_CURRENT_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+      "status": "SEMANTICS_FROZEN_COHORT_GATE_DEFERRED",
+      "proposed_score_time": "current second-or-later inquiries.inquiry_at",
+      "estimand": "P(current T2 inquiry eventually has broker_response == 'scheduled_visit' | valid T2 information set and stage membership)",
+      "maturity_buffer_days": 14,
+      "same_outcome_definition_as_T1_A": true,
+      "same_estimand_as_primary": false,
+      "reason": "Population is conditional on reaching T2 and on no prior known scheduled visit. Historical T2 stage membership cannot yet be fully reconstructed when prior scheduled_visit timing is missing; cohort construction is deferred to the point-in-time ABT gate."
+    }
+  },
+  "outcome_fields": {
+    "label_construction_only": [
+      "broker_response",
+      "broker_response_hours"
+    ],
+    "blocked_as_features": [
+      "broker_response",
+      "broker_response_hours"
+    ],
+    "rule": "Outcome fields may be read only inside target/audit construction. They must never enter the scoring information set or feature matrices."
+  },
+  "freeze_policy": {
+    "frozen_before_feature_engineering": true,
+    "frozen_before_model_training": true,
+    "model_performance_can_change_target": false,
+    "allowed_change_triggers": [
+      "business definition changes",
+      "new authoritative outcome source",
+      "new response/event timestamp instrumentation",
+      "source semantics proven materially different",
+      "labeling defect discovered"
+    ],
+    "required_process_for_change": "Create a new target contract version, rerun the non-model bake-off, document the estimand change, and never back-select based on model Lift/AUC/AP."
+  },
+  "input_information_assumptions": {
+    "spot_attributes": {
+      "immutable": true,
+      "authorized_at": [
+        "T1",
+        "T2"
+      ],
+      "condition": "spots.created_at <= score_time",
+      "raw_attribute_timestamp_present": false,
+      "impact_on_target_selection": "NONE; target labels do not depend on spot_attributes"
+    }
+  }
+}

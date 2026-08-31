@@ -1,0 +1,9 @@
+{
+  "artifact_type": "RAW_CALIBRATOR",
+  "selected": true,
+  "reason": "Frozen calibration rule requires material improvement; Platt/Isotonic gains are <0.001 absolute.",
+  "fit_population": "NONE",
+  "input_probability": 0.20375457875457875,
+  "output_probability": 0.20375457875457875,
+  "ranking_capability": false
+}

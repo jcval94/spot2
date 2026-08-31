@@ -1,0 +1,97 @@
+{
+  "status": "FROZEN",
+  "frozen_at": "2026-08-30",
+  "target_version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+  "target_stage": "T1",
+  "maturity_buffer_days": 14,
+  "split_version": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "hashes": {
+    "feature_registry": {
+      "algorithm": "git_blob_sha1",
+      "value": "aa2fc38f36d050e05c071f9ef2e8fd4a6de823bf"
+    },
+    "ablation_plan": {
+      "algorithm": "git_blob_sha1",
+      "value": "5a4bf0a998c4614d639427a7e5843bf3f4adf95c"
+    },
+    "split_contract": {
+      "algorithm": "git_blob_sha1",
+      "value": "11d3d2bd5fb8d3502cffcf9fec66c477c6a71d30"
+    },
+    "promotion_rule": {
+      "algorithm": "git_blob_sha1",
+      "value": "b3c924c03114169866c9b06f93a17297b020b419"
+    },
+    "champion_artifact": {
+      "algorithm": "git_blob_sha1",
+      "value": "6373103a07c216980b5c7f3953ae876c4a387f42"
+    },
+    "calibrator_artifact": {
+      "algorithm": "git_blob_sha1",
+      "value": "599341a0118e933cefead8ad9c997009d9f6b437"
+    }
+  },
+  "feature_set": {
+    "variant": "BASE_RATE_NO_FEATURES",
+    "features": [],
+    "uses_feature_registry_for_challengers": true
+  },
+  "model_family": "BASE_RATE",
+  "hyperparameters": {
+    "constant_source": "DEVELOPMENT prevalence",
+    "constant_probability": 0.20375457875457875,
+    "development_n": 4368
+  },
+  "calibrator": {
+    "method": "RAW",
+    "fit_population": "NONE",
+    "fit_n": 0,
+    "reason": "Calibration OOF gains from Platt/Isotonic were <0.001 absolute and therefore not material under the frozen practical-tie rule.",
+    "calibrated_constant_probability": 0.20375457875457875
+  },
+  "random_seed": 20260830,
+  "package_versions": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.8.0",
+    "scipy": "1.17.0",
+    "catboost": "1.2.8",
+    "joblib": "1.5.3",
+    "matplotlib": "3.10.8"
+  },
+  "selection_populations": {
+    "development": {
+      "n": 4368,
+      "used_for": "baselines, ablations, model selection"
+    },
+    "calibration": {
+      "n": 312,
+      "used_for": "calibrator selection only"
+    },
+    "procedural_holdout": {
+      "n_total": 290,
+      "status": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE",
+      "used_for_selection": false
+    }
+  },
+  "champion_rationale": "No learned model demonstrated defensible superiority to the fold-specific base-rate baseline. Logistic A AP point estimate improved, but paired 95% CI crossed zero and Brier worsened with CI entirely above zero. The prompt's terminal gate therefore selects the simpler base-rate solution. Calibration remains RAW because learned calibration gains were numerically positive but immaterial (<0.001), so simplicity wins under the pre-registered rule.",
+  "holdout_integrity": {
+    "pristine": false,
+    "status": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE",
+    "incident_document": "HOLDOUT_INCIDENT.md",
+    "note": "A temporary execution export encoded procedural-holdout labels before this config existed. No holdout metric or individual label was inspected and no selection/calibration decision used holdout rows, but the procedural-final claim is invalidated."
+  },
+  "development_model_artifact": "models/lead_quality/artifacts/base_rate_champion.json",
+  "calibrator_artifact": "models/lead_quality/artifacts/raw_calibrator.json",
+  "procedural_holdout_consumed": true,
+  "procedural_holdout_evaluation_status": "DIAGNOSTIC_ONLY_NON_PRISTINE",
+  "post_holdout_methodological_corrections": [
+    {
+      "id": "CAL-001",
+      "type": "METHODOLOGICAL_INCONSISTENCY",
+      "decision_basis": "CALIBRATION only; no holdout result used",
+      "correction": "PLATT -> RAW",
+      "holdout_status_after_correction": "CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE"
+    }
+  ]
+}

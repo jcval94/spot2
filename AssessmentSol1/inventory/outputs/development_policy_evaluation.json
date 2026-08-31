@@ -1,0 +1,56 @@
+{
+  "evaluation_id": "INV_P9_DEVELOPMENT_POLICY_AUDIT_2026-08-30",
+  "scope": "T1 DEVELOPMENT ONLY: score_time < 2026-05-01T00:00:00Z",
+  "n_leads": 4368,
+  "n_candidates_with_tier3": 567869,
+  "mean_candidates_per_lead": 130.00663919413918,
+  "outcomes_used": false,
+  "lead_quality_predictions_used": false,
+  "calibration_used": false,
+  "procedural_holdout_used": false,
+  "candidate_tier_counts": {"TIER_0": 78697, "TIER_1": 13674, "TIER_2": 55026, "TIER_3_EXPERIMENTAL": 420472},
+  "canonical_backward_snapshot_view": {
+    "candidate_snapshot_coverage": 0.9044533158175565,
+    "candidate_unknown_no_snapshot_share": 0.0955466841824435,
+    "exact_serviceability_rate": 0.7046703296703297,
+    "same_sector_fallback_rate": 0.11446886446886446,
+    "tier3_only_serviceability_rate": 0.1453754578754579,
+    "no_available_viable_rate": 0.035485347985347984,
+    "unknown_verification_only_rate": 0.03388278388278388
+  },
+  "area_fit_selection": {
+    "champion": "RELATIVE_GAP",
+    "challenger": "LOG_RATIO",
+    "pairs": 567869,
+    "mean_abs_difference": 0.08112266319212223,
+    "median_abs_difference": 0.003420804287866841,
+    "top5_overlap": 0.9485347985348128
+  },
+  "ranking_selection": {
+    "champion": "TIERED_LEXICOGRAPHIC",
+    "challenger": "SIMPLE_CONTINUOUS_AUDIT_ONLY",
+    "top5_overlap": 0.6010989010988996,
+    "continuous_relaxes_despite_tier0_rate": 0.11561355311355312,
+    "continuous_tier3_despite_same_sector_rate": 0.05723443223443223,
+    "weight_search_performed": false
+  },
+  "budget_temporal_guardrail": {
+    "canonical_price_source": "BLOCKED_UNVERSIONED_SPOT_PRICE",
+    "pit_authorized_price_pairs": 0,
+    "current_price_formula_diagnostic_pairs": 567869,
+    "current_price_formula_diagnostic_mean_fit": 0.6025119489852185,
+    "diagnostic_used_for_ranking": false
+  },
+  "execution": {
+    "mode": "INDEPENDENT_RAW_REPOSITORY_BLOB_AUDIT",
+    "raw_blob_shas": {
+      "leads_csv": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
+      "inquiries_csv": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
+      "spots_csv": "3dd32ff87a466e45d5637715725718e4bed9d808",
+      "availability_snapshot_csv": "82ef91a25ff5b2a330b4e1d01668c4934239c43f"
+    },
+    "exact_polars_inventory_builder_executed_in_current_environment": false,
+    "python_syntax_check": true,
+    "note": "Current execution environment lacks Polars. Policy evidence was independently recomputed from raw repository blobs without target/outcome fields; committed pytest guards cover the exact Polars path for reproducible rerun."
+  }
+}

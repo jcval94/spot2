@@ -1,0 +1,118 @@
+{
+  "note": "Outcome-blind post-recovery V2 examples. No target or broker response fields.",
+  "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+  "examples": [
+    {
+      "lead_id": 109,
+      "score_time": "2025-02-03T12:14:05.000Z",
+      "lead_quality_probability": 0.24631877503064825,
+      "inventory_actionability_gate": 1,
+      "inventory_serviceability": 0.670398386283409,
+      "inventory_confidence": 0,
+      "opportunity_score_0_100": 24.631877503064825,
+      "priority_band": "PRIORITY",
+      "exact_spot_serviceable": false,
+      "fallback_status": "VERIFY_AVAILABILITY",
+      "fallback_spot_ids": [
+        1399,
+        407,
+        1859
+      ],
+      "model_version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+      "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+      "interpretation": "Recovered Lead Quality is ranked first; Inventory remains explicit and the fallback list is capped at K=3."
+    },
+    {
+      "lead_id": 1929,
+      "score_time": "2026-05-28T20:41:12.000Z",
+      "lead_quality_probability": 0.24631877503064825,
+      "inventory_actionability_gate": 1,
+      "inventory_serviceability": 0.9693393847705497,
+      "inventory_confidence": 0.8,
+      "opportunity_score_0_100": 24.631877503064825,
+      "priority_band": "PRIORITY",
+      "exact_spot_serviceable": true,
+      "fallback_status": "KNOWN_AVAILABLE",
+      "fallback_spot_ids": [
+        2421,
+        2630,
+        2298
+      ],
+      "model_version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+      "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+      "interpretation": "Recovered Lead Quality is ranked first; Inventory remains explicit and the fallback list is capped at K=3."
+    },
+    {
+      "lead_id": 2651,
+      "score_time": "2026-04-25T11:05:27.000Z",
+      "lead_quality_probability": 0.24631877503064825,
+      "inventory_actionability_gate": 1,
+      "inventory_serviceability": 0.8976802824004034,
+      "inventory_confidence": 1,
+      "opportunity_score_0_100": 24.631877503064825,
+      "priority_band": "PRIORITY",
+      "exact_spot_serviceable": true,
+      "fallback_status": "KNOWN_AVAILABLE",
+      "fallback_spot_ids": [
+        2304,
+        2945,
+        1859
+      ],
+      "model_version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+      "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+      "interpretation": "Recovered Lead Quality is ranked first; Inventory remains explicit and the fallback list is capped at K=3."
+    },
+    {
+      "lead_id": 3800,
+      "score_time": "2026-05-09T16:27:08.000Z",
+      "lead_quality_probability": 0.21307940332937303,
+      "inventory_actionability_gate": 1,
+      "inventory_serviceability": 0.9553333333333334,
+      "inventory_confidence": 1,
+      "opportunity_score_0_100": 21.307940332937303,
+      "priority_band": "MEDIUM",
+      "exact_spot_serviceable": true,
+      "fallback_status": "KNOWN_AVAILABLE",
+      "fallback_spot_ids": [
+        1956,
+        2556,
+        1147
+      ],
+      "model_version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+      "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+      "interpretation": "Recovered Lead Quality is ranked first; Inventory remains explicit and the fallback list is capped at K=3."
+    },
+    {
+      "lead_id": 870,
+      "score_time": "2025-02-06T20:15:28.000Z",
+      "lead_quality_probability": 0.21192267588445549,
+      "inventory_actionability_gate": 0,
+      "inventory_serviceability": 0,
+      "inventory_confidence": 0,
+      "opportunity_score_0_100": 0,
+      "priority_band": "LOW",
+      "exact_spot_serviceable": false,
+      "fallback_status": "NO_AREA_COMPATIBLE_INVENTORY",
+      "fallback_spot_ids": [],
+      "model_version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+      "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+      "interpretation": "True NO_RESULT: Inventory actionability gates V2 to zero."
+    },
+    {
+      "lead_id": 876,
+      "score_time": "2025-06-30T10:07:47.000Z",
+      "lead_quality_probability": 0.21192267588445549,
+      "inventory_actionability_gate": 0,
+      "inventory_serviceability": 0,
+      "inventory_confidence": 0,
+      "opportunity_score_0_100": 0,
+      "priority_band": "LOW",
+      "exact_spot_serviceable": false,
+      "fallback_status": "NO_AREA_COMPATIBLE_INVENTORY",
+      "fallback_spot_ids": [],
+      "model_version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+      "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+      "interpretation": "True NO_RESULT: Inventory actionability gates V2 to zero."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "reproduction_id": "ASSESSMENTSOL1_LLM_RULES_BASELINE_V1_2026-08-30",
+  "execution_type": "INDEPENDENT_RAW_REPRODUCTION_NO_OPENAI_API",
+  "raw_sources": {
+    "spots_csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808",
+    "spot_attributes_csv_git_blob_sha1": "9479789b881e408d0626ded8432396ba9fc749b6"
+  },
+  "n_listings": 3000,
+  "metrics": {
+    "rule_direct_conflict_flag": 322,
+    "rule_land_building_copy_flag": 230,
+    "rule_security_ambiguity_flag": 327,
+    "rule_retail_adaptive_use_flag": 109,
+    "rule_semantic_ambiguity_flag": 429,
+    "at_least_one_semantic_signal": 890,
+    "two_simultaneous_semantic_signals": 91
+  },
+  "review_tiers": {
+    "none": 2110,
+    "ambiguity": 386,
+    "direct_conflict": 322,
+    "cross_field": 182
+  },
+  "upstream_match": "EXACT_MATCH_TO_E017_REPORTED_DETERMINISTIC_SIDECAR_COUNTS",
+  "score_dependencies_modified": false
+}

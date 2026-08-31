@@ -1,0 +1,25 @@
+{
+  "gate": "PRE_P8",
+  "audited_at": "2026-08-30",
+  "status": "PASS",
+  "blockers": [],
+  "p4_validation": {
+    "status": "PASS",
+    "mode": "INDEPENDENT_RAW_EQUIVALENCE_AUDIT",
+    "exact_polars_builder_runtime_executed": false,
+    "exact_polars_runtime_status": "NON_BLOCKING_REPRODUCIBILITY_FOLLOWUP",
+    "evidence": "../abt/artifacts/p4_qa_summary.json"
+  },
+  "frozen_foundations": {
+    "t1_target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+    "split": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+    "t1_champion": "BASE_RATE + RAW",
+    "t1_final_probability": 0.20375457875457875
+  },
+  "permanent_caveats": [
+    "Procedural holdout remains CONSUMED_BY_METHOD_INCIDENT_BEFORE_FREEZE.",
+    "Availability same-day observability is conditional because snapshot_date is date-only.",
+    "Exact Polars builder materialization remains a final reproducibility follow-up, not a P8 selection input."
+  ],
+  "clean_room": "PASS"
+}

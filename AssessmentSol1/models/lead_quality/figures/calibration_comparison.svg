@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+<rect width="100%" height="100%" fill="white"/><text x="360" y="28" text-anchor="middle" font-family="sans-serif" font-size="20">Calibration — Brier / Log Loss</text>
+<g font-family="sans-serif" font-size="12">
+<text x="75" y="70">Lower is better</text>
+<rect x="120" y="201.54364999999999" width="55" height="148.45635000000001" fill="#777"/><rect x="185" y="237.403054" width="55" height="112.596946" fill="#bbb"/><text x="180" y="375" text-anchor="middle">Raw</text><rect x="300" y="201.56111" width="55" height="148.43889" fill="#777"/><rect x="365" y="237.416188" width="55" height="112.583812" fill="#bbb"/><text x="360" y="375" text-anchor="middle">Platt</text><rect x="480" y="201.56111" width="55" height="148.43889" fill="#777"/><rect x="545" y="237.416188" width="55" height="112.583812" fill="#bbb"/><text x="540" y="375" text-anchor="middle">Isotonic</text>
+<text x="120" y="400">dark = Brier; light = Log Loss. RAW selected: learned gains are <0.001 materiality floor.</text>
+</g><line x1="70" y1="350" x2="650" y2="350" stroke="black"/></svg>

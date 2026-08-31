@@ -1,0 +1,64 @@
+{
+  "version": "LQ_RECOVERY_PLAN_V1_2026-08-30",
+  "source": "USER_PROMPT_11_5",
+  "target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+  "split": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "selection_population": "DEVELOPMENT_OOF_ONLY",
+  "procedural_holdout_allowed": false,
+  "objective": "Recover temporally valid ranking signal; do not optimize leakage or holdout.",
+  "ladder": [
+    {
+      "step": "BUG_GATE",
+      "status": "PASS_NO_BUG",
+      "action": "Metric orientation/alignment/CV/calibration audit + synthetic perfect/inverted test"
+    },
+    {
+      "step": "SIGNAL_AUDIT",
+      "status": "COMPLETE",
+      "action": "Individual and family OOF signal diagnostics"
+    },
+    {
+      "step": "R1_SIMPLIFICATION",
+      "status": "FAILED_GATE",
+      "evidence": "Lead-only Logistic A Lift@10=0.993; CatBoost A Lift@10=0.803"
+    },
+    {
+      "step": "R2_INTENT",
+      "status": "FAILED_GATE",
+      "evidence": "D_WITHOUT_ASKED Lift@10=1.073 but Lift@20=0.942; broad intent remains unstable"
+    },
+    {
+      "step": "R3_SELECTED_SPOT_NO_AVAILABILITY",
+      "status": "SIGNAL_FOUND_BUT_UNSTABLE",
+      "evidence": "Static matching Lift@10=1.016; Lift@20=1.024; only 2/4 folds >1"
+    },
+    {
+      "step": "R4_GOVERNED_FE",
+      "status": "GATE_PASSED",
+      "evidence": "Bounded area closeness + geographic fit + attribute completeness after inverse ablation"
+    },
+    {
+      "step": "R5_CATBOOST_TUNING",
+      "status": "NOT_RUN_STOPPED_AT_R4_GATE",
+      "reason": "Recovery ladder stops once a stable solution exists; further tuning would increase development overfit risk"
+    }
+  ],
+  "r4_preregistered_transforms": [
+    "bounded selected-Spot relative area closeness",
+    "deterministic geographic fit from corridor/municipality/state",
+    "selected-Spot static attribute completeness",
+    "modality/sector compatibility tested then inverse-ablated"
+  ],
+  "absolute_prohibitions": [
+    "broker_response as predictor",
+    "broker_response_hours as predictor",
+    "future inquiries",
+    "future responses",
+    "nearest/future availability",
+    "lead_score_internal",
+    "current-state Spot fields",
+    "Market Context without effective time",
+    "global target encoding",
+    "procedural holdout selection"
+  ]
+}

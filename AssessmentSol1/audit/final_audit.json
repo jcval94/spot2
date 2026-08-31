@@ -1,0 +1,96 @@
+{
+  "audit_version": "PROMPT_11_POST_RECOVERY_FINAL_AUDIT_V2_2026-08-30",
+  "status": "READY",
+  "status_interpretation": "Post-recovery methodologically ready under explicit limitations; not a claim of causal impact, pristine holdout or online conversion lift.",
+  "authorities": {
+    "target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+    "split": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+    "lead_quality": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+    "inventory": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+    "opportunity": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
+    "capacity_pct": 20,
+    "fallback_max_k": 3
+  },
+  "gate": {
+    "ready_requires_zero_blockers": true,
+    "active_blockers": [],
+    "blocker_count": 0,
+    "procedural_holdout_used_for_recovery_or_downstream_selection": false,
+    "inventory_scalar_rebuilt": false,
+    "continuous_inventory_serviceability_used_in_v2": false
+  },
+  "executed_checks": {
+    "selected_spot_future_rows": 0,
+    "selected_spot_rows": 5000,
+    "missing_selected_spot_rows": 0,
+    "missing_selected_spot_attribute_rows": 0,
+    "oof_rows": 2390,
+    "oof_fold_counts": {
+      "F1": 607,
+      "F2": 602,
+      "F3": 578,
+      "F4": 603
+    },
+    "oof_validation_role_mismatches": 0,
+    "oof_development_partition_mismatches": 0,
+    "oof_score_time_mismatches": 0,
+    "oof_target_mismatches": 0,
+    "product_rows": 5000,
+    "product_unique_leads": 5000,
+    "product_formula_mismatches": 0,
+    "product_forbidden_columns": [],
+    "fallback_lists_over_k3": 0,
+    "capacity_populations": [
+      "DEVELOPMENT_OOF"
+    ],
+    "capacity_slices": [
+      5,
+      10,
+      15,
+      20
+    ]
+  },
+  "decisions": {
+    "rejected_score": "lead_quality_probability * inventory_serviceability",
+    "canonical_score": "lead_quality_probability * inventory_actionability_gate",
+    "capacity": "P80 / top 20% T1",
+    "fallback": "K=3",
+    "semantic_rules": "NOT_SUPPORTED_EXCLUDED"
+  },
+  "development_oof": {
+    "canonical_lead_quality_lift_5": 0.8593333701555245,
+    "canonical_lead_quality_lift_10": 1.0753559720916863,
+    "canonical_lead_quality_lift_15": 1.084132654444449,
+    "canonical_lead_quality_lift_20": 1.1243424011848062,
+    "rejected_raw_product_lift_15_lead_quality": 0.9771767868804355,
+    "rejected_raw_product_lift_15_joint_exact": 1.2441236948516265
+  },
+  "material_findings": [
+    {
+      "id": "MAT-001",
+      "finding": "June procedural holdout is non-pristine.",
+      "containment": "Diagnostic-only; not reconsumed for post-recovery selection."
+    },
+    {
+      "id": "MAT-002",
+      "finding": "Exact Polars/pytest project runtime not executed in active review environment.",
+      "containment": "Independent raw reconstruction plus row-wise persisted-output red team; project tests required before external handoff."
+    },
+    {
+      "id": "MAT-003",
+      "finding": "Current Spot prices are unversioned.",
+      "containment": "Budget fit remains blocked/unknown in canonical Inventory."
+    }
+  ],
+  "accepted_limitations": [
+    "Top-5 Lead Quality Lift remains below 1.",
+    "Inventory actionability is very high, so V2 is intentionally close to recovered Lead Quality.",
+    "Real score ties require rank-based priority bands.",
+    "No commercial conversion claim is supported."
+  ],
+  "historical_upstream": {
+    "E018": "NOT_SUPPORTED for scoring; excluded",
+    "E019": "supporting evidence only",
+    "E020": "supporting evidence only"
+  }
+}

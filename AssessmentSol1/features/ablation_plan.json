@@ -1,0 +1,75 @@
+{
+  "version": "T1_ABLATION_PLAN_V1_FROZEN_2026-08-30",
+  "frozen_before_training": true,
+  "split_version": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+  "procedural_holdout_allowed": false,
+  "variants": [
+    {
+      "id": "A",
+      "name": "Lead intake only",
+      "groups": [
+        "A_LEAD_INTAKE"
+      ],
+      "asked_visit": "ABSENT",
+      "selected_spot_context": false
+    },
+    {
+      "id": "B",
+      "name": "Lead + current inquiry",
+      "groups": [
+        "A_LEAD_INTAKE",
+        "B_CURRENT_INQUIRY"
+      ],
+      "asked_visit": "PRESENT",
+      "selected_spot_context": false
+    },
+    {
+      "id": "C",
+      "name": "Lead + inquiry + T0→T1 refinement",
+      "groups": [
+        "A_LEAD_INTAKE",
+        "B_CURRENT_INQUIRY",
+        "C_REFINEMENT"
+      ],
+      "asked_visit": "PRESENT",
+      "selected_spot_context": false
+    },
+    {
+      "id": "D_WITH_ASKED_VISIT",
+      "name": "C with asked_visit",
+      "base": "C",
+      "remove_features": [],
+      "asked_visit": "PRESENT",
+      "selected_spot_context": false
+    },
+    {
+      "id": "D_WITHOUT_ASKED_VISIT",
+      "name": "C without asked_visit",
+      "base": "C",
+      "remove_features": [
+        "asked_visit"
+      ],
+      "asked_visit": "REMOVED",
+      "selected_spot_context": false
+    },
+    {
+      "id": "E",
+      "name": "Selected-Spot-context challenger",
+      "groups": [
+        "A_LEAD_INTAKE",
+        "B_CURRENT_INQUIRY",
+        "C_REFINEMENT",
+        "E_SELECTED_SPOT_CONTEXT"
+      ],
+      "asked_visit": "PRESENT",
+      "selected_spot_context": true,
+      "policy": "CHALLENGER_ONLY; cannot redefine core LeadQuality"
+    }
+  ],
+  "semantic_rules": {
+    "status": "QA_ONLY_NOT_ABLATED",
+    "reason": "E018 NOT_SUPPORTED; macro delta Lift@10%=-0.0716 with CI crossing zero and P(delta>0)=45%"
+  },
+  "no_new_variants_after_results": true
+}

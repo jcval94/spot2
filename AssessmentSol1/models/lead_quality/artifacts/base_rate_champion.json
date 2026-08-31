@@ -1,0 +1,10 @@
+{
+  "artifact_type": "BASE_RATE_CHAMPION",
+  "target_version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+  "fit_population": "DEVELOPMENT",
+  "fit_n": 4368,
+  "fit_positive_rate": 0.20375457875457875,
+  "prediction": "constant development prevalence",
+  "ranking_capability": false,
+  "random_seed": 20260830
+}

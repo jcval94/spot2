@@ -1,0 +1,128 @@
+{
+  "version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+  "status": "FROZEN_RECOVERED_RANKING_CHAMPION",
+  "frozen_at": "2026-08-30",
+  "target_version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+  "split_version": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "selection_population": "DEVELOPMENT_OOF_ONLY",
+  "procedural_holdout_used": false,
+  "calibration_partition_used_for_selection": false,
+  "model_family": "LOGISTIC_REGRESSION",
+  "solver": {
+    "name": "ADAM_DETERMINISTIC",
+    "steps": 160,
+    "learning_rate": 0.04,
+    "l2": 0.001,
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "epsilon": 1e-8,
+    "initialization": "intercept=development logit prevalence; coefficients=0",
+    "randomness": "NONE"
+  },
+  "features": [
+    {
+      "name": "selected_spot_area_closeness",
+      "formula": "max(0, 1 - min(abs(selected_spot_area_sqm - requested_area_sqm) / requested_area_sqm, 1))",
+      "missing_policy": "TRAIN_MEDIAN",
+      "temporal_contract": "selected Spot must exist at score_time; Spot area is structural under frozen invariance assumption"
+    },
+    {
+      "name": "selected_spot_geographic_fit",
+      "formula": "1.0 corridor match; else 0.8 municipality match; else 0.5 state match; else 0",
+      "missing_policy": "deterministic 0 when no geography match",
+      "temporal_contract": "selected Spot structural geography must exist at score_time"
+    },
+    {
+      "name": "selected_spot_attribute_completeness",
+      "formula": "share of 11 frozen spot_attributes fields observed",
+      "missing_policy": "TRAIN_MEDIAN",
+      "temporal_contract": "spot_attributes available under existing explicit immutability-from-Spot-creation assumption"
+    }
+  ],
+  "prohibited_inputs": [
+    "availability_snapshot",
+    "is_available_asof",
+    "snapshot_age_days",
+    "broker_response as feature",
+    "broker_response_hours as feature",
+    "future inquiries",
+    "lead_score_internal",
+    "current-state Spot fields",
+    "unversioned Spot prices",
+    "market_context"
+  ],
+  "full_development_fit": {
+    "n": 4368,
+    "prevalence": 0.20375457875457875,
+    "preprocessing": [
+      {
+        "name": "selected_spot_area_closeness",
+        "median": 0.19999999999999996,
+        "mean": 0.2274559337248017,
+        "std": 0.27123990277928095
+      },
+      {
+        "name": "selected_spot_geographic_fit",
+        "median": 0,
+        "mean": 0.242284798534798,
+        "std": 0.39717343361063623
+      },
+      {
+        "name": "selected_spot_attribute_completeness",
+        "median": 1,
+        "mean": 0.9599983349983576,
+        "std": 0.05682526630745371
+      }
+    ],
+    "intercept": -1.3654809238334253,
+    "coefficients": {
+      "selected_spot_area_closeness": -0.07879291027743833,
+      "selected_spot_geographic_fit": -0.023995826779180347,
+      "selected_spot_attribute_completeness": -0.04063668515481601
+    }
+  },
+  "calibration": {
+    "method": "RAW",
+    "note": "No previous Base-Rate calibrator is reused. Recovery gate concerns ranking; any future post-hoc calibration must be fit without procedural holdout and cannot change ranking."
+  },
+  "development_oof_metrics": {
+    "macro_roc_auc": 0.5133713675566375,
+    "macro_average_precision": 0.2186060774162438,
+    "macro_brier": 0.16498306872663251,
+    "macro_lift_at_5pct": 0.8593333701555245,
+    "macro_lift_at_10pct": 1.0753559720916863,
+    "macro_lift_at_20pct": 1.1146248038487407,
+    "lift10_folds_gt_1": 4,
+    "lift20_folds_gt_1": 3,
+    "macro_base_rate_ap": 0.20833315900749377
+  },
+  "bootstrap_lift10_vs_random": {
+    "delta": 0.07535597209168626,
+    "ci95_low": -0.21653908765361862,
+    "ci95_high": 0.2798698452664126,
+    "probability_delta_gt_0": 0.595,
+    "n_resamples": 1000
+  },
+  "inverse_ablation": {
+    "feature_family_hurting_generalization": "selected_spot_sector_match",
+    "redundant_feature": "selected_spot_modality_match"
+  },
+  "gate": {
+    "lift10_gt_1": true,
+    "lift20_gt_1": true,
+    "ap_gt_base_rate": true,
+    "majority_folds_lift10_gt_1": true,
+    "majority_folds_lift20_gt_1": true,
+    "leakage_violations": 0,
+    "status": "PASS"
+  },
+  "downstream": {
+    "prior_opportunity_score_status": "INVALIDATED_PENDING_REBUILD",
+    "reason": "Recovered Lead Quality contains selected-Spot matching information that overlaps Inventory; combined score requires explicit de-duplication before reuse."
+  },
+  "data_fingerprints": {
+    "leads_csv_git_blob_sha1": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
+    "inquiries_csv_git_blob_sha1": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
+    "spots_csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808"
+  }
+}

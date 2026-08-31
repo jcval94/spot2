@@ -1,0 +1,5 @@
+fold,train_rows,validation_rows,train_lead_late_rows_excluded,validation_lead_rows_after_window_excluded,train_validation_lead_overlap,max_train_score_time,min_validation_score_time
+F1,2469,680,1713,465,0,2025-08-31T19:24:40.000Z,2025-09-01T17:17:55.000Z
+F2,3582,856,1745,394,0,2025-10-31T19:37:15.000Z,2025-11-02T13:40:52.000Z
+F3,4939,846,1638,252,0,2025-12-31T20:28:00.000Z,2026-01-01T08:21:38.000Z
+F4,6394,916,1281,120,0,2026-02-28T20:52:00.000Z,2026-03-01T11:42:55.000Z

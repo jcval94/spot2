@@ -1,0 +1,25 @@
+metric,value,notes
+spots_existing_before_development_end,2754,Spot created_at < 2026-05-01
+mean_candidate_depth,34.62591575091575,T1 development scores; PIT candidate policy
+median_candidate_depth,29,T1 development scores
+availability_known_candidate_share,0.8393178722376429,Backward as-of only
+median_snapshot_age_days,22.5,Median of score-level median backward snapshot ages
+no_serviceable_inventory_rate,0.031364468864468864,No candidate with known backward snapshot and is_available=true
+spots_sector_Office,814,Source inventory
+spots_sector_Industrial,812,Source inventory
+spots_sector_Retail,675,Source inventory
+spots_sector_Land,453,Source inventory
+spots_modality_rent,1093,Source inventory
+spots_modality_sale,694,Source inventory
+spots_modality_both,967,Source inventory
+physical_missing_rate_natural_light,0,Raw immutable-assumption attribute table
+physical_missing_rate_luminaires,0,Raw immutable-assumption attribute table
+physical_missing_rate_charging_ports,0.202,Raw immutable-assumption attribute table
+physical_missing_rate_security_type,0,Raw immutable-assumption attribute table
+physical_missing_rate_floor_level,0,Raw immutable-assumption attribute table
+physical_missing_rate_elevators,0,Raw immutable-assumption attribute table
+physical_missing_rate_vertical_height_m,0.15233333333333332,Raw immutable-assumption attribute table
+physical_missing_rate_parking_spaces,0,Raw immutable-assumption attribute table
+physical_missing_rate_building_status,0,Raw immutable-assumption attribute table
+physical_missing_rate_floor_material,0.07866666666666666,Raw immutable-assumption attribute table
+physical_missing_rate_amenities,0,Raw immutable-assumption attribute table

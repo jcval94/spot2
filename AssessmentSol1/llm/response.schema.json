@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "spot_id": {
+      "type": "integer"
+    },
+    "residual_class": {
+      "type": "string",
+      "enum": [
+        "no_residual_issue",
+        "residual_ambiguous",
+        "residual_actionable"
+      ]
+    },
+    "semantic_class": {
+      "type": "string",
+      "enum": [
+        "none",
+        "sector_copy_mismatch",
+        "use_case_mismatch",
+        "cross_field_incoherence",
+        "ambiguous_semantics",
+        "other"
+      ]
+    },
+    "use_case_family": {
+      "type": "string",
+      "enum": [
+        "generic",
+        "office",
+        "retail",
+        "industrial",
+        "land",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "adaptive_reuse_plausible": {
+      "type": "boolean"
+    },
+    "pattern_candidate": {
+      "type": "string",
+      "enum": [
+        "none",
+        "review_candidate"
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "evidence_text": {
+      "type": "string"
+    },
+    "reason_code": {
+      "type": "string",
+      "enum": [
+        "no_incremental_issue",
+        "covered_by_rules",
+        "semantic_mismatch",
+        "plausible_adaptive_reuse",
+        "unverifiable_marketing_claim",
+        "insufficient_evidence"
+      ]
+    }
+  },
+  "required": [
+    "spot_id",
+    "residual_class",
+    "semantic_class",
+    "use_case_family",
+    "adaptive_reuse_plausible",
+    "pattern_candidate",
+    "confidence",
+    "evidence_text",
+    "reason_code"
+  ]
+}
