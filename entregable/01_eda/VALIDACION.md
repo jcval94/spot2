@@ -1,101 +1,98 @@
 # Validación del Entregable 1 — EDA
 
-**Estado:** PASS
+**Estado final: APROBADO**
 
-Esta validación revisa la integridad del paquete final sin cambiar ninguna decisión de Codexway.
+Este anexo comprueba que las cifras principales del EDA son consistentes y que la narrativa final respeta la solución seleccionada.
 
-## 1. Completitud del paquete
+## 1. Completitud
 
-- README de entrada: PASS
-- Documento principal: PASS
-- Referencias: PASS
-- Figuras: **6**
-- Tablas resumen: **4**
-- Enlaces relativos rotos: **0**
+- Documento de entrada: **APROBADO**
+- EDA completo: **APROBADO**
+- Referencias y trazabilidad: **APROBADO**
+- Figuras: **disponibles**
+- Tablas resumen: **disponibles**
+- Enlaces principales: **revisados**
 
-## 2. Reconciliación de cifras críticas
+## 2. Cifras críticas reconciliadas
 
-| Claim del EDA | Fuente verificada | Resultado |
-|---|---|---|
-| T1 maduros = 4,898 | codexway/outputs/metrics/eda_summary.json | PASS |
-| T1 positivos = 1,001 | 4,898 × 0.204369... | PASS |
-| T1 prevalence = 20.44% | codexway/outputs/metrics/eda_summary.json | PASS |
-| Inventory exact unknown = 44.30% | codexway/outputs/metrics/inventory_audit.json | PASS |
-| Retail demand-supply gap = +5.89 pp | AssessmentSol1/outputs/eda/demand_inventory_sector_gap.csv | PASS; COMPLEMENTARIA |
-| Nearest Availability usaría futuro en 7,758 inquiries / 34.36% | AssessmentSol1/evidence/DATA_AUDIT.md | PASS; AUDITORÍA |
-| Codexway confirmatory clusters: 0/19 celdas BH-FDR 10% | codexway/outputs/CLUSTER_FINDINGS.md | PASS |
-| Fresh candidates <=7d = 19.16%; leads con alguno = 93.46% | codexway/outputs/tables/inventory_freshness_sensitivity.csv | PASS |
+| Afirmación | Resultado verificado | Estado |
+|---|---:|---|
+| Casos T1 maduros | **4,898** | APROBADO |
+| Casos positivos T1 | **1,001** | APROBADO |
+| Proporción de visitas agendadas | **20.44%** | APROBADO |
+| Inventario exacto con disponibilidad desconocida | **44.30%** | APROBADO |
+| Brecha relativa Retail entre demanda y catálogo | **+5.89 puntos porcentuales** | APROBADO; evidencia complementaria |
+| Una unión temporal ingenua habría usado información futura | **7,758 consultas / 34.36%** | APROBADO; auditoría complementaria |
+| Segmentos confirmados después de controlar múltiples pruebas | **0 de 19** | APROBADO |
+| Candidatos con estado de inventario de hasta 7 días | **19.16%** | APROBADO |
+| Leads con al menos un candidato reciente | **93.46%** | APROBADO |
 
-## 3. Control de autoridad
+## 3. Qué evidencia tiene prioridad
 
-### Codexway
+### Solución final
 
-Se mantiene como autoridad para:
+Codexway mantiene autoridad sobre:
 
-- scoring moment T1;
-- target principal;
-- política de features;
-- Availability backward as-of;
-- UNKNOWN como incertidumbre;
-- límites de listing state;
-- Market Context EDA_ONLY;
-- decisión confirmatoria de clustering.
+- el momento de evaluación T1;
+- la visita agendada como señal principal de éxito;
+- las variables permitidas;
+- el uso del último estado de disponibilidad conocido;
+- la regla de que **desconocido no significa no disponible**;
+- las limitaciones de los atributos históricos del inmueble;
+- la decisión de no convertir patrones de segmentación en reglas finales sin confirmación.
 
-**Resultado: PASS.**
+**Resultado: APROBADO.**
 
-### AssessmentSol1
+### Auditoría complementaria
 
-Se usa únicamente como:
+AssessmentSol1 se utilizó para cuestionar y reforzar:
 
-- auditoría relacional;
-- cuantificación DEVELOPMENT;
-- drift/coverage;
-- missingness;
-- candidate depth;
-- demand/supply;
-- stress metodológico.
+- integridad de las relaciones entre tablas;
+- cambios temporales;
+- significado de datos faltantes;
+- profundidad de alternativas;
+- relación demanda/oferta;
+- riesgos de utilizar información futura.
 
-No se promueve su target alternativo ni su asunción de inmutabilidad de atributos sobre la decisión final de Codexway.
+Sus decisiones alternativas no reemplazan silenciosamente la definición final.
 
-**Resultado: PASS.**
+**Resultado: APROBADO.**
 
-### experimentos
+### Investigación experimental
 
-Se usa únicamente como:
+Los experimentos se utilizaron para:
 
-- evidencia histórica;
-- challengers;
-- Dynamic Need;
-- pockets locales;
-- semantic QA;
-- resultados negativos;
-- tratamiento exploratorio de variables.
+- probar modelos y segmentaciones alternativas;
+- estudiar necesidad dinámica y patrones locales;
+- evaluar reglas semánticas;
+- documentar resultados negativos;
+- identificar qué ideas no justificaban ser promovidas.
 
-El pocket DN4×LOC1×BSV1 se identifica explícitamente como histórico y no se convierte en multiplicador.
+Un patrón prometedor encontrado durante exploración no se convierte automáticamente en regla productiva.
 
-**Resultado: PASS.**
+**Resultado: APROBADO.**
 
-## 4. Contradicciones resueltas explícitamente
+## 4. Contradicciones resueltas
 
-| Tema | Evidencia alternativa | Resolución final |
-|---|---|---|
-| Target T1 | AssessmentSol1 usa un proxy T1 diferente | Prevalecen definición y cifras Codexway |
-| Spot attributes históricos | AssessmentSol1 explora una asunción de inmutabilidad | Codexway mantiene el claim histórico completo como CONDITIONAL |
-| Dynamic Need | Experimentos muestran señal y transición útil | Codexway rechaza dynamic_need_profile en gate actual; queda el concepto, no el ID |
-| Pockets locales | Experimentos encuentran lifts locales | Codexway 0/19 BH-FDR; quedan como hipótesis |
-| Semantic flags | Experimentos encuentran QA material | Ablation no soporta uso en Lead Quality; queda Inventory QA |
+La revisión final detectó diferencias entre líneas de investigación en temas como variable objetivo, madurez, tratamiento temporal y segmentación. Se resolvieron siguiendo una regla sencilla:
 
-## 5. Reglas de interpretación verificadas
+> **La evidencia complementaria puede cuestionar, explicar o reforzar la solución final, pero no la redefine salvo que revele un error metodológico objetivo.**
 
-- No se presenta market_context como historical model feature.
-- No se presenta total_inquiries como feature T1.
-- No se presenta UNKNOWN como UNAVAILABLE.
-- No se presenta nearest Availability como método válido.
-- No se presenta una asociación univariada como causalidad.
-- No se presenta share de catálogo como serviceability.
-- No se presenta un resultado de clustering histórico como modelo final.
-- No se presentan métricas de AssessmentSol1 como si pertenecieran al modelo final de Codexway.
+No se encontró un error de ese tipo que justificara reabrir la arquitectura o cambiar el modelo ganador.
 
-## 6. Alcance
+## 5. Limitaciones que permanecen explícitas
 
-La validación corresponde **únicamente al Entregable 1 — EDA**. No modifica ni evalúa otros entregables.
+La validación también confirma que el EDA **no afirma más de lo que permiten los datos**:
+
+- una visita agendada es una señal temprana, no una venta;
+- algunos atributos del inmueble no tienen historial completo;
+- la cobertura de disponibilidad cambia de forma importante con el tiempo;
+- ausencia de información no prueba indisponibilidad;
+- los patrones locales exploratorios no se usan como reglas definitivas;
+- el impacto causal sólo puede demostrarse con nuevos datos y experimentación.
+
+## Dictamen
+
+El EDA final es consistente con la solución seleccionada, mantiene trazabilidad hacia la investigación y presenta de forma explícita las principales limitaciones.
+
+**Resultado global: APROBADO.**
