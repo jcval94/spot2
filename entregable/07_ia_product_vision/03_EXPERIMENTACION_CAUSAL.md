@@ -1,18 +1,12 @@
 # Diseño causal — medir impacto incremental
 
-> ### Guía de lectura
-> El detalle técnico se conserva para auditoría, pero la idea de negocio debe poder entenderse sin jerga. En este documento:
-> - **Lift@10** indica cuánto mejora el 10% mejor priorizado frente a una selección aleatoria equivalente.
-> - **Variable objetivo (target)** es el resultado que queremos anticipar.
-> - **Información disponible en ese momento (point-in-time / as-of)** significa que no se utiliza información futura.
-> - **Muestra de evaluación (holdout)** es un periodo reservado para medir el desempeño.
-> - **Ejecución en paralelo (shadow)** significa probar sin modificar todavía decisiones reales.
-> - **Estrategia de respaldo (fallback)** describe qué hacer cuando la opción original no es defendible.
+> ### Lectura en lenguaje claro
+> **En una frase:** el impacto real debe demostrarse con un experimento controlado, no con la evaluación histórica; se comparará la política nueva contra la actual y se medirán resultados comerciales y efectos operativos.
+>
+> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **target** es el resultado que se quiere anticipar; **point-in-time / as-of** significa usar sólo información que ya era conocida en ese momento; **holdout** es una muestra apartada para evaluación; **shadow** es una ejecución en paralelo que todavía no cambia decisiones reales; y **fallback** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
 >
 
-> La evidencia técnica original se conserva en `codexway/**`, `experimentos/**` y `AssessmentSol1/**` para auditoría. No es necesario navegarla para comprender este documento.
-
-## 1. Por qué hace falta un experimento en operación
+## 1. Por qué hace falta un experimento online
 
 El backtest responde:
 
@@ -46,11 +40,11 @@ Pregunta:
 
 > ¿Trabajar leads con el ranking propuesto mejora outcomes frente al ordering actual?
 
-### Experimento B — Contextual estrategia de respaldo
+### Experimento B — Contextual fallback
 
 Pregunta:
 
-> Cuando el Spot exacto no es servible, ¿mostrar el estrategia de respaldo gobernado mejora aceptación/visita frente al proceso actual?
+> Cuando el Spot exacto no es servible, ¿mostrar el fallback gobernado mejora aceptación/visita frente al proceso actual?
 
 Separarlos evita no saber si un efecto proviene del ranking o de la recomendación.
 
@@ -64,7 +58,7 @@ Leads elegibles en T1:
 
 - primera inquiry persistida;
 - schema válido;
-- Calidad del lead producido;
+- Lead Quality producido;
 - Inventory evaluable o explicitamente Uncertain;
 - no exclusión por policy.
 
@@ -145,7 +139,7 @@ Razón:
 
 ---
 
-## 9. Key secondary KPI alineado a Visión de producto
+## 9. Key secondary KPI alineado a Product Vision
 
 Con la nueva instrumentación:
 
@@ -189,7 +183,7 @@ La multiplicidad debe corregirse o declararse exploratoria.
 - snapshot age;
 - unavailable recommendation rate;
 - NO_RESULT;
-- estrategia de respaldo Coverage@K.
+- fallback Coverage@K.
 
 ### Customer
 
@@ -232,7 +226,7 @@ Análisis principal:
 Un lead asignado a treatment cuenta como treatment aunque:
 
 - el broker no vea la tarjeta;
-- no use el estrategia de respaldo;
+- no use el fallback;
 - ignore el ranking.
 
 Esto estima el efecto del producto real, incluida adopción imperfecta.
@@ -349,7 +343,7 @@ Opciones válidas:
 - fixed-horizon;
 - diseño secuencial formal preregistrado.
 
-La opción simple para este reto:
+La opción simple para este assessment:
 
 **fixed horizon + no optional stopping.**
 
@@ -376,7 +370,7 @@ No promover una nueva regla porque un subgrupo pequeño tenga p<0.05 sin correcc
 
 ---
 
-# Experimento B — estrategia de respaldo
+# Experimento B — Fallback
 
 ## 19. Población
 
@@ -384,7 +378,7 @@ Sólo leads donde el Spot exacto:
 
 - no es attendable;
 - es Uncertain y requiere alternativa;
-- o cumple el trigger de estrategia de respaldo predefinido.
+- o cumple el trigger de fallback predefinido.
 
 ---
 
@@ -398,7 +392,7 @@ Control:
 
 Tratamiento:
 
-- estrategia de respaldo rankeado point-in-time del Entregable 4.
+- fallback rankeado point-in-time del Entregable 4.
 
 ---
 
@@ -416,7 +410,7 @@ Con mejor instrumentación, idealmente separar:
 
 ---
 
-## 22. Guardrails del estrategia de respaldo
+## 22. Guardrails del fallback
 
 - recommendation latency;
 - NO_RESULT;
@@ -432,9 +426,9 @@ Hard guardrail:
 
 ---
 
-## 23. Gold de recomendación en operación
+## 23. Gold de recomendación online
 
-El RCT genera por fin el dato que falta en histórica:
+El RCT genera por fin el dato que falta en offline:
 
 - qué candidato se mostró;
 - en qué rank;
@@ -455,7 +449,7 @@ El historical chosen Spot deja de ser el pseudo-gold.
 
 ---
 
-# Experimentación del LLM / control de calidad del catálogo
+# Experimentación del LLM / Catalog QA
 
 ## 24. Diseño humano
 
@@ -480,7 +474,7 @@ No usar otro LLM como gold.
 
 ---
 
-# Quasi-experimental estrategia de respaldo si RCT no es viable
+# Quasi-experimental fallback si RCT no es viable
 
 ## 25. Alternativa principal — phased rollout + Difference-in-Differences
 
@@ -560,7 +554,7 @@ La decisión debe considerar:
 - CI;
 - primary KPI;
 - conversion guardrail;
-- capacidad de atención gain;
+- serviceability gain;
 - broker workload;
 - customer guardrails;
 - operational cost;
@@ -602,17 +596,17 @@ Es:
 
 > **¿usar esta política provoca más outcomes comerciales útiles por lead elegible, sin deteriorar experiencia, inventory quality ni workload?**
 
-Ésa es la prueba que el histórica no puede resolver.
+Ésa es la prueba que el offline no puede resolver.
 
 
 ---
 
 ## 31. Evidencia fuente
 
-- **Codexway — protocolo en operación**
+- **Codexway — protocolo online**
 - **Codexway — helper sticky/SRM**
 - **EV-010 — diseño A/B matching**
 - **Protocolos A/B históricos**
 - **Power analysis histórica**
-- [Entregable 5 — Puntaje de oportunidad](../05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md)
+- [Entregable 5 — Opportunity Score](../05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md)
 - [Entregable 6 — Producción](../05_opportunity_produccion/02_ARQUITECTURA_PRODUCCION.md)
