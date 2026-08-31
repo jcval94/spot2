@@ -69,6 +69,8 @@ La sensibilidad a madurez es muy baja:
 | 14 días | 4,836 | 164 | 20.43% |
 | 30 días | 4,680 | 320 | 20.41% |
 
+![Sensibilidad de madurez del target](figuras/08_madurez_target.svg)
+
 **Qué observamos →** el proxy T1 es estable ante cambios razonables de madurez.  
 **Por qué importa →** la narrativa no depende de un cutoff elegido para fabricar una tasa.  
 **Riesgo →** scheduled_visit sigue siendo un proxy, no el outcome comercial oculto.  
@@ -118,6 +120,8 @@ Si se elige el snapshot temporal “más cercano”:
 
 - **7,758 inquiries** usarían un snapshot futuro;
 - equivale a **34.36%** del total.
+
+![Leakage en joins de Availability](figuras/09_join_availability_leakage.svg)
 
 La única política defendible es:
 
@@ -187,6 +191,8 @@ La demanda también está diversificada por adquisición:
 - email: 9.92%;
 - event: 5.08%.
 
+![Composición de la demanda](figuras/07_composicion_demanda.svg)
+
 **Decisión:** sector, modalidad, user type, source y geografía son contexto de intake legítimo; sus asociaciones son descriptivas, no causales.
 
 Fuente final: [C06], [C07].
@@ -247,6 +253,8 @@ Sobre los 4,898 T1 maduros de Codexway:
 
 Industrial supera descriptivamente a Office en algo más de seis puntos porcentuales. En cambio, user type y source muestran separaciones mucho más modestas.
 
+![Target por segmento](figuras/10_target_por_segmento.svg)
+
 AssessmentSol1, con otra definición clean-room del target y sólo DEVELOPMENT, reproduce el mismo orden sectorial **Industrial > Land > Retail > Office**. Las tasas exactas no se mezclan con Codexway; la coincidencia sólo sirve como robustez cualitativa.
 
 ### asked_visit
@@ -304,6 +312,8 @@ Sólo puede usar:
 - trayectoria de requests estrictamente anteriores al score actual.
 
 Codexway bloquea response history sin timestamp confiable. Su sensibilidad T2 muestra señal top-decile modesta, pero T2 sigue siendo challenger/extensión, no contrato principal.
+
+![Contrato temporal T0 T1 T2](figuras/11_timeline_t0_t1_t2.svg)
 
 **Principio:** T0, T1 y T2 condicionan sobre poblaciones y conjuntos de información diferentes; no se promedian ni se interpretan como la misma probabilidad.
 
@@ -408,6 +418,8 @@ Un 0 en charging_ports es distinto de “no sabemos cuántos hay”.
 
 **Decisión:** tratamiento por campo y gating sectorial; no blanket imputation.
 
+![Missingness semántico](figuras/12_missingness_semantico.svg)
+
 Fuentes: [A01], [A02], [A09], [E03].
 
 ---
@@ -427,6 +439,8 @@ Si miramos todo el historial entregado después de T1:
 Es útil para entender exposición, pero en T1 todavía no sabemos cuántas interacciones tendrá el lead.
 
 Además, la media cae de aproximadamente **4.97** en 2025H1 a **3.92** en abril de 2026 conforme nos acercamos al borde de extracción. Es un reloj de maduración.
+
+![Exposure clock de inquiries futuras](figuras/13_future_inquiry_exposure.svg)
 
 **Decisión:** EDA_ONLY / FORBIDDEN como T1 feature.
 
@@ -487,6 +501,8 @@ Codexway formaliza esta incertidumbre con bounds de serviceability. En su audito
 - no potential alternative: **0%**.
 
 El 44.30% unknown ilustra por qué un modelo binario “available/no” sería excesivamente confiado.
+
+![UNKNOWN no es UNAVAILABLE](figuras/14_unknown_no_es_unavailable.svg)
 
 ## 10.3 Frescura
 
@@ -564,6 +580,8 @@ Por eso Codexway congela:
 
 > Availability es PIT-correct; el score histórico completo de compatibilidad/fallback permanece condicionado por campos de listing no versionados.
 
+![Frontera PIT del inventario](figuras/15_frontera_pit_listing.svg)
+
 AssessmentSol1 exploró una asunción explícita de inmutabilidad de spot_attributes para su clean-room. Esa asunción es útil para medir qué pasaría bajo un contrato explícito, pero **no reemplaza la decisión más estricta de Codexway**.
 
 ### Precios
@@ -637,6 +655,8 @@ AssessmentSol1 muestra en DEVELOPMENT:
 - lead-to-first-inquiry lag medio: ~10.75d en 2025H1 → ~30.43d en abr-2026;
 - future inquiry exposure: ~4.97 → ~3.92.
 
+![Clocks de no estacionariedad](figuras/16_no_estacionariedad_clocks.svg)
+
 Con apenas ~16–18 meses útiles y varios clocks moviéndose a la vez, sería metodológicamente débil afirmar una “temporada alta” recurrente.
 
 El propio assessment advierte que los datos son sintéticos. Hay patrones demasiado limpios —máximo fijo de interacciones, cobertura creciente, mix categórico muy estable— que pueden responder al generador o al proceso.
@@ -696,6 +716,8 @@ Un cluster llamado “Inquiry Intent” terminó correspondiendo casi exactament
 
 Éste es un ejemplo de por qué clustering sin outcome puede ser técnicamente estable y semánticamente inútil.
 
+![Conocimiento de clustering vs regla final](figuras/17_clustering_conocimiento_vs_regla.svg)
+
 **Decisión:** no promover clusters por silhouette/ARI solamente; exigir interpretación y utilidad de negocio.
 
 Fuentes: [E01], [E02], [C11].
@@ -728,6 +750,8 @@ Sería tentador multiplicar el score cuando aparezca una de estas combinaciones.
    - 19 celdas elegibles;
    - **0 pasan BH-FDR 10%**.
 
+![Pockets discovery vs confirmación](figuras/18_pockets_discovery_vs_confirmacion.svg)
+
 **Qué observamos →** hay heterogeneidad local potencial.  
 **Por qué importa →** puede inspirar routing o experimentos de producto.  
 **Riesgo →** overfit por discovery, multiplicidad y etiquetas inestables.  
@@ -749,6 +773,8 @@ Evidencia experimental sobre 3,000 spots:
 - Retail adaptive-use language: **109**;
 - cualquier ambigüedad semántica: **429**;
 - al menos una señal semántica: **890**.
+
+![QA semántica del inventario](figuras/19_qa_semantica_inventario.svg)
 
 Importante: estas cifras son **flags de QA**, no errores humanos confirmados.
 
@@ -776,6 +802,8 @@ Además, el raw audit encuentra semántica inconsistente:
 - **673 scheduled_visit sin response hours**;
 - no_response: 4,483 filas;
 - **3,786 no_response con response hours poblado**.
+
+![Inconsistencia de response clocks](figuras/20_broker_response_clocks.svg)
 
 Sin un response_event_at confiable, broker_response_hours no define un reloj histórico seguro.
 
@@ -834,6 +862,8 @@ El EDA no selecciona features por correlación. Selecciona transformaciones sól
 - broker_response_hours;
 - current mutable spot state.
 
+![Gobierno de features](figuras/21_feature_governance.svg)
+
 La razón no es que estas variables “no tengan señal”, sino que **responden a otra pregunta o tienen un reloj insuficiente**.
 
 ---
@@ -856,6 +886,8 @@ La UI y el sistema deben poder explicar:
 - **Quality alto + Inventory incierto:** priorizar revisión/fallback, no confundir incertidumbre con rechazo;
 - **Quality alto + Inventory bajo:** oportunidad comercial que necesita alternativa;
 - **Quality bajo + Inventory alto:** oferta disponible no compensa baja prioridad del lead.
+
+![Cuadrante Quality por Inventory](figuras/22_quality_inventory_quadrant.svg)
 
 ## 20.2 Validación temporal es obligatoria
 
@@ -971,6 +1003,22 @@ Versión CSV: [tablas/03_fuentes_integradas.csv](tablas/03_fuentes_integradas.cs
 - [04 — Refinamiento de área](figuras/04_refinamiento_area.svg)
 - [05 — Market Context por sector](figuras/05_market_context_sector.svg)
 - [06 — Frescura de inventario](figuras/06_frescura_inventario.svg)
+- [07 — Composición de la demanda](figuras/07_composicion_demanda.svg)
+- [08 — Sensibilidad de madurez del target](figuras/08_madurez_target.svg)
+- [09 — Leakage en joins de Availability](figuras/09_join_availability_leakage.svg)
+- [10 — Target por segmento](figuras/10_target_por_segmento.svg)
+- [11 — Contrato temporal T0 → T1 → T2](figuras/11_timeline_t0_t1_t2.svg)
+- [12 — Missingness semántico](figuras/12_missingness_semantico.svg)
+- [13 — Exposure clock de inquiries futuras](figuras/13_future_inquiry_exposure.svg)
+- [14 — UNKNOWN no es UNAVAILABLE](figuras/14_unknown_no_es_unavailable.svg)
+- [15 — Frontera PIT del inventario](figuras/15_frontera_pit_listing.svg)
+- [16 — Clocks de no estacionariedad](figuras/16_no_estacionariedad_clocks.svg)
+- [17 — Conocimiento de clustering vs regla final](figuras/17_clustering_conocimiento_vs_regla.svg)
+- [18 — Pockets: discovery vs confirmación](figuras/18_pockets_discovery_vs_confirmacion.svg)
+- [19 — QA semántica del inventario](figuras/19_qa_semantica_inventario.svg)
+- [20 — Inconsistencia de response clocks](figuras/20_broker_response_clocks.svg)
+- [21 — Gobierno de features](figuras/21_feature_governance.svg)
+- [22 — Cuadrante Quality × Inventory](figuras/22_quality_inventory_quadrant.svg)
 
 ### Tablas
 - [Resumen de fuentes](tablas/00_resumen_fuentes.csv)
