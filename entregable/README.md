@@ -23,7 +23,7 @@ La solución final seleccionada es **Codexway**. Las demás líneas de investiga
 | # | Documento | Para qué sirve | Abrir |
 |---:|---|---|---|
 | **1** | **Análisis exploratorio de datos** | Entender los datos, sus limitaciones y los principales hallazgos de negocio. | [Abrir EDA](01_eda/README.md) |
-| **2** | **Resumen ejecutivo de una página** | Entender la solución completa en pocos minutos. | [Abrir HTML](02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html) · [Abrir PDF](02_one_pager/ONE_PAGER_SPOT2.pdf) |
+| **2** | **Resumen ejecutivo de una página** | Entender la solución completa en pocos minutos. | [Abrir HTML](02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html) |
 | **3** | **Calidad del lead** | Entender cómo se priorizan los leads y qué tan útil es la señal. | [Abrir](03_lead_quality/README.md) |
 | **4** | **Inventario y alternativas** | Entender cómo se decide si una necesidad puede atenderse y qué hacer si el inmueble solicitado falla. | [Abrir](04_inventory_fallback/README.md) |
 | **5** | **Puntaje de oportunidad y producción** | Entender cómo se combinan las señales y cómo llevar la solución a operación. | [Abrir](05_opportunity_produccion/README.md) |
