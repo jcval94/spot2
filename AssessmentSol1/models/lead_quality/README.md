@@ -1,59 +1,17 @@
-# Lead Quality T1 — PROMPT 7 closed
+# Lead Quality T1 — historical Prompt 7 authority
 
-## Frozen champion
+> **SUPERSEDED FOR CURRENT T1 SCORING BY `../lead_quality_recovery/`.**
 
-**BASE_RATE + RAW**
+This directory preserves the original Prompt-7 Base-Rate decision, diagnostics, calibration artifacts and the June holdout incident chronology. Those artifacts remain useful evidence for why recovery was needed, but they are **not the current production/scoring authority**.
 
-Raw score = DEVELOPMENT prevalence: **0.2037546**.  
-Final score = **0.2037546** (RAW; learned calibration improvement was immaterial).
+Current Lead Quality authority:
+- `../lead_quality_recovery/RECOVERY_DECISION.md`
+- `../lead_quality_recovery/frozen_recovered_model_config.json`
+- `../lead_quality_recovery/predictions/development_oof.csv`
+- `../lead_quality_recovery/predictions/full_scoring_predictions.csv`
 
-This is an evidence-backed neutral prior, not a lead-ranking model.
+Current champion: `LQ_RECOVERY_R4_STATIC_MATCH_V1`, RAW calibration.
 
-## Why
+The original `BASE_RATE + RAW` configuration under this directory must not be reused for current Opportunity Score construction.
 
-No learned model demonstrated defensible superiority under the frozen temporal CV protocol. Logistic A had a modest AP point improvement but its paired IC95% crossed zero, Brier was reliably worse, and Lift@10% did not improve. CatBoost failed the pre-registered promotion rule.
-
-See:
-- `MODEL_SELECTION.md`
-- `MODEL_CARD.md`
-- `CALIBRATION.md`
-- `ERROR_ANALYSIS.md`
-- `FROZEN_MODEL_CONFIG.json`
-
-## Reproducibility
-
-`train.py`:
-- rebuilds DEVELOPMENT features;
-- runs Base Rate and the fixed business rule;
-- runs Logistic A/B/C/D/E only from the frozen ablation plan;
-- selects the core using Logistic;
-- trains CatBoost only on the selected core;
-- applies paired lead bootstrap;
-- applies the terminal baseline gate.
-
-`calibration.py`:
-- uses CALIBRATION only;
-- compares raw, Platt and eligible isotonic;
-- freezes the selected configuration.
-
-`interpretability.py`:
-- correctly reports that the frozen champion has no feature importance;
-- supports learned-model diagnostic interpretation when a model artifact is supplied.
-
-## Holdout integrity
-
-The June procedural holdout is **not pristine**. A temporary execution export encoded its target before freeze. The incident is recorded in `HOLDOUT_INCIDENT.md` and the holdout is considered consumed.
-
-The stored June predictions/metrics are therefore `DIAGNOSTIC_ONLY_NON_PRISTINE` and cannot change the champion.
-
-## Authoritative outputs
-
-- `metrics/development_fold_metrics.csv`
-- `metrics/development_macro_metrics.csv`
-- `metrics/bootstrap_comparisons.csv`
-- `metrics/calibration_metrics.csv`
-- `predictions/champion_development_oof.csv`
-- `predictions/calibration_predictions.csv`
-- `predictions/procedural_holdout_predictions.csv`
-
-True confirmatory performance requires new/hidden data.
+June remains `DIAGNOSTIC_ONLY_NON_PRISTINE` and cannot change post-recovery decisions.
