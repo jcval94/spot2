@@ -9,6 +9,8 @@
 - Fallback: `K=3`
 
 
+Opportunity Score is an operational prioritization score, **not a jointly calibrated probability**.
+
 ## Start here
 
 1. **Executive one-pager**
