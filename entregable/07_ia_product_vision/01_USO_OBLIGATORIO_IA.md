@@ -10,6 +10,8 @@
 > - **Estrategia de respaldo (fallback)** describe qué hacer cuando la opción original no es defendible.
 >
 
+> La evidencia técnica original se conserva en `codexway/**`, `experimentos/**` y `AssessmentSol1/**` para auditoría. No es necesario navegarla para comprender este documento.
+
 ## 1. Decisión final
 
 El requisito de IA se satisface con un caso real, auditable y económicamente razonable:
@@ -693,16 +695,16 @@ Es que:
 
 ## 22. Evidencia fuente
 
-- [Codexway — arquitectura principal](../../codexway/README.md)
-- [Codexway — prompt final](../../codexway/llm/prompt.md)
-- [Codexway — schema final](../../codexway/llm/audit_response.schema.json)
-- [Codexway — evaluación LLM](../../codexway/outputs/metrics/llm_audit_evaluation.json)
-- [E015 — LLM Inventory Semantic Audit](../../experimentos/Evidencias/EV-015_llm_inventory_semantic_audit.md)
-- [E015 — prompt histórico](../../experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/prompts/system_prompt.md)
-- [E017 — GPT-5 nano semantic variable pilot](../../experimentos/Evidencias/EV-017_llm_semantic_variable_pilot.md)
-- [E017 — runner V2 con prompt exacto](../../experimentos/llm_semantic_variable_pilot/run_pilot_v2.py)
-- [E017 — decisión de variables](../../experimentos/llm_semantic_variable_pilot/DECISION_LLM_variables.md)
-- [E018 — reglas semánticas Lift Ablation](../../experimentos/Evidencias/EV-018_semantic_rules_lift_ablation.md)
+- **Codexway — arquitectura principal**
+- **Codexway — prompt final**
+- **Codexway — schema final**
+- **Codexway — evaluación LLM**
+- **E015 — LLM Inventory Semantic Audit**
+- **E015 — prompt histórico**
+- **E017 — GPT-5 nano semantic variable pilot**
+- **E017 — runner V2 con prompt exacto**
+- **E017 — decisión de variables**
+- **E018 — reglas semánticas Lift Ablation**
 - [retoSol1 — LLM README](../../retoSol1/llm/README.md)
 - [retoSol1 — evaluación LLM](../../retoSol1/llm/LLM_EVALUATION.md)
 - [retoSol1 — decisión final](../../retoSol1/llm/LLM_DECISION.md)
