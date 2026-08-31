@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse, json, math, sys
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -122,6 +122,13 @@ def candidate_universe(repo: Path, scores: pl.DataFrame) -> pl.DataFrame:
                 sid = int(s["spot_id"])
                 if sid not in seen and norm(s["sector_name"]) != sec and s["spot_created_at"] <= q["score_time"]:
                     seen.add(sid); rows.append(_record(q,s,3,geo))
+    if not rows:
+        return pl.DataFrame(schema={
+            "score_id": pl.String, "lead_id": pl.Int64, "stage": pl.String,
+            "score_time": pl.Datetime, "candidate_spot_id": pl.Int64,
+            "spot_created_at": pl.Datetime, "relaxation_tier": pl.String,
+            "relaxation_tier_index": pl.Int64,
+        })
     out = pl.DataFrame(rows)
     if out.filter(pl.col("spot_created_at") > pl.col("score_time")).height: raise AssertionError("FORBIDDEN_FUTURE_SPOT")
     if out.group_by("score_id","candidate_spot_id").len().filter(pl.col("len")>1).height: raise AssertionError("duplicate candidate")
@@ -150,7 +157,11 @@ def attach_availability(repo: Path, x: pl.DataFrame, cfg: dict[str, Any]) -> pl.
 
 
 def build_inventory(repo: Path, *, max_score_time_exclusive: datetime | None = None, config: dict[str, Any] | None = None) -> pl.DataFrame:
-    cfg = config or load_config(); x = attach_availability(repo, candidate_universe(repo, build_score_frame(repo,max_score_time_exclusive)), cfg)
+    cfg = config or load_config()
+    x = candidate_universe(repo, build_score_frame(repo, max_score_time_exclusive))
+    if x.is_empty():
+        return x
+    x = attach_availability(repo, x, cfg)
     loc, sec, caps = cfg["location_fit"], cfg["sector_fit"], cfg["serviceability_score"]["tier_caps"]
     budget_missing = pl.all_horizontal([pl.col(c).is_null() for c in ["requested_budget_mxn_rent_monthly","requested_budget_mxn_sale_total","min_budget_mxn_rent_monthly","max_budget_mxn_rent_monthly","min_budget_mxn_sale_total","max_budget_mxn_sale_total"]])
     x = x.with_columns(
@@ -168,7 +179,7 @@ def build_inventory(repo: Path, *, max_score_time_exclusive: datetime | None = N
 
 def main() -> None:
     p=argparse.ArgumentParser(); p.add_argument("--development-only",action="store_true"); p.add_argument("--output",type=Path); a=p.parse_args()
-    repo=Path(__file__).resolve().parents[2]; cutoff=datetime(2026,5,1,tzinfo=timezone.utc) if a.development_only else None
+    repo=Path(__file__).resolve().parents[2]; cutoff=datetime(2026,5,1) if a.development_only else None
     x=build_inventory(repo,max_score_time_exclusive=cutoff); out=a.output or HERE/"outputs"/"inventory_candidates.parquet"; out.parent.mkdir(parents=True,exist_ok=True); x.write_parquet(out)
     print(json.dumps({"rows":x.height,"scores":x["score_id"].n_unique(),"output":str(out)},indent=2))
 
