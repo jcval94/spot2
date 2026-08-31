@@ -1,5 +1,14 @@
 # Final Artifact Index
 
+## Current frozen authority
+
+- Lead Quality: `LQ_RECOVERY_R4_STATIC_MATCH_V1`
+- Opportunity: `OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30`
+- Formula: `lead_quality_probability * inventory_actionability_gate`
+- Capacity: `P80 / top 20% within T1`
+- Fallback: `K=3`
+
+
 ## Start here
 
 1. **Executive one-pager**
