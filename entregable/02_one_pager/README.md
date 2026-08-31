@@ -3,6 +3,7 @@
 > **Audiencia:** Producto y C-Level.  
 > **Solución final:** Codexway.  
 > **Lectura:** 3–5 minutos.  
+> **Versión recomendada:** [ONE_PAGER_SPOT2_AESTHETIC.html](ONE_PAGER_SPOT2_AESTHETIC.html)  
 > **Versión PDF:** [ONE_PAGER_SPOT2.pdf](ONE_PAGER_SPOT2.pdf)
 
 ## Spot2 Lead Opportunity Score — priorizar demanda con capacidad real de servicio
