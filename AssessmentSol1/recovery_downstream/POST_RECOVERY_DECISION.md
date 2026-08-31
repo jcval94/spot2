@@ -77,4 +77,18 @@ No serviceability metric is renamed as conversion, and no joint proxy is present
 
 June remains `DIAGNOSTIC_ONLY_NON_PRISTINE` because of the previously documented incident. It was not used to choose the recovered model, V2 formula, capacity or K.
 
-Canonical artifacts may be updated only after this reevaluation is persisted. The final Prompt-11 red team is still required after those updates.
+## 9. Final freeze
+
+Canonical artifacts were rebuilt after the reevaluation was persisted.
+
+The post-recovery red team passes with **0 active BLOCKERS**:
+- 0 future selected-Spots;
+- 0 OOF role/partition/score-time/target mismatches;
+- 0 forbidden outcome columns in the product table;
+- 0 V2 formula mismatches across 5,000 rows;
+- 0 fallback lists above K=3;
+- procedural holdout absent from all post-recovery selection evidence.
+
+The authoritative final audit is `AssessmentSol1/audit/FINAL_LEAKAGE_AUDIT.md`.
+
+**POST-RECOVERY SYSTEM FROZEN — CONTINUE TO PROMPT 12**
