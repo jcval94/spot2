@@ -57,30 +57,26 @@
     "rationale": "Top 20% has the strongest macro Lead Quality Lift among passing 10/15/20 capacities while maximizing recall; top 5% remains below random."
   },
   "priority_bands": {
-    "role": "DISPLAY_THRESHOLDS_FROM_DEVELOPMENT_FULL_FIT_SCORE_DISTRIBUTION; capacity authority remains rank-based percentile",
+    "assignment": "RANK_BASED_PER_SCORING_BATCH",
     "reference_population": "DEVELOPMENT",
     "reference_n": 4368,
     "labels_used": false,
-    "PRIORITY": {
-      "reference_slice": "top_5pct",
-      "min_score_0_100": 22.298344072628932
-    },
-    "HIGH": {
-      "reference_slice": "5_to_10pct",
-      "min_score_0_100": 22.298344072628932
-    },
-    "MEDIUM": {
-      "reference_slice": "10_to_20pct",
-      "min_score_0_100": 21.307940332937303
-    },
-    "LOW": {
-      "reference_slice": "remaining",
-      "min_score_0_100": 0
+    "slices": {
+      "PRIORITY": "rank <= ceil(N*0.05)",
+      "HIGH": "ceil(N*0.05) < rank <= ceil(N*0.10)",
+      "MEDIUM": "ceil(N*0.10) < rank <= ceil(N*0.20)",
+      "LOW": "remaining"
     },
     "tie_break": [
       "opportunity_score_0_100 desc",
       "lead_id asc"
-    ]
+    ],
+    "reference_thresholds_descriptive": {
+      "top_5pct_score": 22.298344072628932,
+      "top_10pct_score": 22.298344072628932,
+      "top_20pct_score": 21.307940332937303,
+      "note": "Top-5 and top-10 thresholds tie in DEVELOPMENT; thresholds are descriptive only and never used to force band separation."
+    }
   },
   "development_oof_evidence": {
     "lead_quality_lift_5": 0.8593333701555245,
