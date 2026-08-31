@@ -209,7 +209,7 @@ def rank_fallbacks(candidates: pl.DataFrame, config: dict[str, Any] | None = Non
 
     if rec_df.height:
         if rec_df.filter(pl.col("rank") > int(config["fallback"]["max_recommendations"])).height:
-            raise AssertionError("More than five fallback recommendations emitted")
+            raise AssertionError("More fallback recommendations emitted than frozen max_recommendations")
         if rec_df.group_by("score_id", "rank").len().filter(pl.col("len") > 1).height:
             raise AssertionError("Recommendation rank must be unique within score_id")
     return rec_df.sort(["score_id", "rank"]), summary_df.sort("score_id")
