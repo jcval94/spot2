@@ -30,6 +30,9 @@ Opportunity Score is an operational prioritization score, **not a jointly calibr
 5. **Reproducibility**
    - `REPRODUCIBILITY.md`
 
+6. **Methodology defense**
+   - `FINAL_DEFENSE_QA.md`
+
 ## Frozen source snapshot
 
 `source_snapshot.json`
