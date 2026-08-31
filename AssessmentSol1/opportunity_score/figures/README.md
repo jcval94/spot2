@@ -1,6 +1,6 @@
-# Opportunity Score figures
+# Opportunity Score figures — post-recovery
 
-- `score_distribution.svg`: published score scale and frozen top-10% threshold.
-- `capacity_gains.svg`: DEVELOPMENT and post-freeze June diagnostic positive capture.
+- `capacity_gains.svg`: DEVELOPMENT temporal-OOF Lead Quality Lift at 5/10/15/20, including the rejected raw multiplicative diagnostic.
+- `score_distribution.svg`: V2 DEVELOPMENT score landmarks and the P80 capacity reference.
 
-Source tables live in `../outputs/`.
+No post-recovery figure uses the procedural holdout for selection. Source authority is `../../recovery_downstream/` plus the rebuilt V2 output tables.
