@@ -1,0 +1,89 @@
+{
+  "score_version": "OPPORTUNITY_MULTIPLICATIVE_V1_FROZEN_2026-08-30",
+  "status": "FROZEN_BEFORE_PROCEDURAL_HOLDOUT_EVALUATION",
+  "frozen_at": "2026-08-30",
+  "stage": "T1",
+  "formula": {
+    "internal_0_1": "lead_quality_probability * inventory_serviceability",
+    "published_0_100": "100 * lead_quality_probability * inventory_serviceability",
+    "alternative_blender": null,
+    "grid_search": false,
+    "exponent_search": false,
+    "stacking": false
+  },
+  "lead_quality": {
+    "version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1__BASE_RATE_RAW",
+    "frozen_config_path": "AssessmentSol1/models/lead_quality/FROZEN_MODEL_CONFIG.json",
+    "frozen_config_git_blob_sha1": "2dd65734dedf2548a3d30dbadfec6eb3f3512b03",
+    "model_family": "BASE_RATE",
+    "probability": 0.20375457875457875,
+    "feature_set": "BASE_RATE_NO_FEATURES",
+    "selected_spot_context": false,
+    "calibrator": "RAW",
+    "calibrator_path": "AssessmentSol1/models/lead_quality/artifacts/raw_calibrator.json",
+    "calibrator_git_blob_sha1": "599341a0118e933cefead8ad9c997009d9f6b437"
+  },
+  "double_counting_check": {
+    "status": "PASS",
+    "core_lead_quality_inventory_features": false,
+    "selected_spot_challenger_exists": true,
+    "selected_spot_challenger_id": "E",
+    "selected_spot_challenger_policy": "CHALLENGER_ONLY_NOT_PROMOTED",
+    "selected_spot_challenger_used_in_opportunity_score": false
+  },
+  "inventory": {
+    "version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+    "config_path": "AssessmentSol1/inventory/frozen_inventory_config.json",
+    "config_git_blob_sha1": "383a8a16e85d5ea651edca85903304a7038279fe",
+    "fallback_policy_path": "AssessmentSol1/inventory/FALLBACK_POLICY.md",
+    "confidence_multiplied_into_score": false
+  },
+  "capacity_policy": {
+    "default_capacity_pct": 10,
+    "status": "OPERATIONAL_ASSUMPTION_NOT_UNIVERSAL_OPTIMUM",
+    "reported_capacity_pct": [5, 10, 20]
+  },
+  "priority_bands": {
+    "reference_population": "DEVELOPMENT_PLUS_CALIBRATION",
+    "reference_n": 4680,
+    "labels_used": false,
+    "PRIORITY": {"reference_slice": "top_5pct", "min_score_0_100": 20.238639201707386},
+    "HIGH": {"reference_slice": "5_to_10pct", "min_score_0_100": 20.085657848051518},
+    "MEDIUM": {"reference_slice": "10_to_20pct", "min_score_0_100": 19.735627531406365},
+    "LOW": {"reference_slice": "remaining", "min_score_0_100": 0.0},
+    "tie_break": ["opportunity_score_0_100 desc", "inventory_confidence desc", "lead_id asc"],
+    "reference_counts": {"PRIORITY": 234, "HIGH": 234, "MEDIUM": 468, "LOW": 3744}
+  },
+  "development_capacity_evidence": {
+    "population_n": 4368,
+    "observed_positives": 890,
+    "selection_authority": "DESCRIPTIVE_ONLY_FORMULA_ALREADY_MANDATED",
+    "top_5pct": {"n": 219, "positives_captured": 39, "recall": 0.043820224719101124, "precision": 0.1780821917808219, "lift": 0.874003386178236},
+    "top_10pct": {"n": 437, "positives_captured": 87, "recall": 0.09775280898876404, "precision": 0.19908466819221968, "lift": 0.977080708610804},
+    "top_20pct": {"n": 874, "positives_captured": 179, "recall": 0.20112359550561798, "precision": 0.2048054919908467, "lift": 1.0051577404674363}
+  },
+  "ranking_identity": {
+    "inventory_only_equals_opportunity_ranking": true,
+    "reason": "Frozen Lead Quality probability is constant and positive."
+  },
+  "external_reference": {
+    "lead_score_internal": "NON_DEPLOYABLE_REFERENCE_ONLY",
+    "allowed_as_predictor": false,
+    "allowed_for_policy_selection": false
+  },
+  "data_fingerprints": {
+    "raw_source_manifest_path": "AssessmentSol1/config/raw_source_manifest.json",
+    "raw_source_manifest_git_blob_sha1": "f59b77ddcf991399bb35ec7be1e131db280f017d",
+    "leads_csv_git_blob_sha1": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
+    "inquiries_csv_git_blob_sha1": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
+    "spots_csv_git_blob_sha1": "3dd32ff87a466e45d5637715725718e4bed9d808",
+    "availability_snapshot_csv_git_blob_sha1": "82ef91a25ff5b2a330b4e1d01668c4934239c43f"
+  },
+  "holdout_policy": {
+    "procedural_holdout_start": "2026-06-01T00:00:00Z",
+    "procedural_holdout_end_exclusive": "2026-07-01T00:00:00Z",
+    "status": "DIAGNOSTIC_ONLY_NON_PRISTINE",
+    "opened_for_combined_score_evaluation_after_this_freeze": false,
+    "formula_or_threshold_change_after_holdout": "FORBIDDEN"
+  }
+}
