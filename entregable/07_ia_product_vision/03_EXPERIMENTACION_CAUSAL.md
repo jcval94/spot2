@@ -3,25 +3,25 @@
 > ### Lectura en lenguaje claro
 > **En una frase:** el impacto real debe demostrarse con un experimento controlado, no con la evaluación histórica; se comparará la política nueva contra la actual y se medirán resultados comerciales y efectos operativos.
 >
-> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **target** es el resultado que se quiere anticipar; **point-in-time / as-of** significa usar sólo información que ya era conocida en ese momento; **holdout** es una muestra apartada para evaluación; **shadow** es una ejecución en paralelo que todavía no cambia decisiones reales; y **fallback** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
+> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **variable objetivo** es el resultado que se quiere anticipar; **disponible en ese momento / as-of** significa usar sólo información que ya era conocida en ese momento; **muestra de evaluación** es una muestra apartada para evaluación; **shadow** es una ejecución en paralelo que todavía no cambia decisiones reales; y **respaldo** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
 >
 
 ## 1. Por qué hace falta un experimento online
 
 El backtest responde:
 
-> ¿el score ordena históricamente outcomes?
+> ¿el score ordena históricamente resultados?
 
 No responde:
 
-> ¿usar el score cambia el outcome?
+> ¿usar el score cambia el resultado?
 
 La priorización altera:
 
 - qué lead recibe atención;
 - cuándo;
 - qué Spot se muestra;
-- broker workload;
+- intermediario workload;
 - inventory competition.
 
 Eso requiere causalidad.
@@ -38,27 +38,27 @@ Dos experimentos permiten identificar valor incremental con mayor claridad.
 
 Pregunta:
 
-> ¿Trabajar leads con el ranking propuesto mejora outcomes frente al ordering actual?
+> ¿Trabajar leads con el ordenamiento propuesto mejora resultados frente al ordering actual?
 
-### Experimento B — Contextual fallback
+### Experimento B — Contextual respaldo
 
 Pregunta:
 
-> Cuando el Spot exacto no es servible, ¿mostrar el fallback gobernado mejora aceptación/visita frente al proceso actual?
+> Cuando el Spot exacto no es servible, ¿mostrar el respaldo gobernado mejora aceptación/visita frente al proceso actual?
 
-Separarlos evita no saber si un efecto proviene del ranking o de la recomendación.
+Separarlos evita no saber si un efecto proviene del ordenamiento o de la recomendación.
 
 ---
 
-# Experimento A — Ranking
+# Experimento A — ordenamiento
 
 ## 3. Población
 
 Leads elegibles en T1:
 
-- primera inquiry persistida;
+- primera consulta persistida;
 - schema válido;
-- Lead Quality producido;
+- Calidad del lead producido;
 - Inventory evaluable o explicitamente Uncertain;
 - no exclusión por policy.
 
@@ -94,7 +94,7 @@ Opcional, si volumen lo permite:
 
 - modality;
 - geography macro;
-- broker pool.
+- intermediario pool.
 
 No crear demasiados strata pequeños.
 
@@ -112,7 +112,7 @@ El control debe representar lo que realmente recibiría el lead sin el producto 
 
 ## 7. Tratamiento
 
-Usar la política de ranking previamente congelada.
+Usar la política de ordenamiento previamente congelada.
 
 La UI muestra:
 
@@ -139,7 +139,7 @@ Razón:
 
 ---
 
-## 9. Key secondary KPI alineado a Product Vision
+## 9. Key secondary KPI alineado a Visión de producto
 
 Con la nueva instrumentación:
 
@@ -154,7 +154,7 @@ Este KPI debe predefinirse antes de leer resultados.
 
 ---
 
-## 10. Secondary outcomes
+## 10. Secondary resultados
 
 - accepted_or_scheduled;
 - completed visit;
@@ -174,7 +174,7 @@ La multiplicidad debe corregirse o declararse exploratoria.
 
 - time to first contact;
 - contact attempts;
-- broker workload;
+- intermediario workload;
 - queue starvation.
 
 ### Inventory
@@ -183,7 +183,7 @@ La multiplicidad debe corregirse o declararse exploratoria.
 - snapshot age;
 - unavailable recommendation rate;
 - NO_RESULT;
-- fallback Coverage@K.
+- respaldo Coverage@K.
 
 ### Customer
 
@@ -225,9 +225,9 @@ Análisis principal:
 
 Un lead asignado a treatment cuenta como treatment aunque:
 
-- el broker no vea la tarjeta;
-- no use el fallback;
-- ignore el ranking.
+- el intermediario no vea la tarjeta;
+- no use el respaldo;
+- ignore el ordenamiento.
 
 Esto estima el efecto del producto real, incluida adopción imperfecta.
 
@@ -241,11 +241,11 @@ El supuesto SUTVA puede fallar.
 
 ### Posibles spillovers
 
-- brokers comparten capacidad;
+- intermediarios comparten capacidad;
 - treatment puede consumir más atención;
 - leads compiten por el mismo inventory;
 - un Spot mostrado a un tratamiento deja de estar disponible para control;
-- learning del broker puede cambiar su comportamiento con controles.
+- learning del intermediario puede cambiar su comportamiento con controles.
 
 ### Mitigación inicial
 
@@ -259,8 +259,8 @@ El supuesto SUTVA puede fallar.
 
 Cambiar la unidad de randomización a cluster:
 
-- broker × week;
-- broker team × week;
+- intermediario × week;
+- intermediario team × week;
 - market/municipality × week.
 
 La inferencia debe usar errores cluster-robust.
@@ -289,7 +289,7 @@ Objetivo:
 
 Revisar:
 
-- broker workload;
+- intermediario workload;
 - no-result;
 - customer guardrails.
 
@@ -311,12 +311,12 @@ Debe cumplir:
 
 1. tamaño de muestra requerido;
 2. mínimo cuatro semanas de exposición para capturar ciclos semanales;
-3. horizonte de outcome de 30 días;
+3. horizonte de resultado de 30 días;
 4. tiempo adicional para label finality/data QA.
 
 Codexway calcula de forma ilustrativa:
 
-- baseline first-inquiry proxy ≈21.22%;
+- baseline first-consulta proxy ≈21.22%;
 - relative MDE 10%;
 - alpha 0.05;
 - power 80%;
@@ -343,7 +343,7 @@ Opciones válidas:
 - fixed-horizon;
 - diseño secuencial formal preregistrado.
 
-La opción simple para este assessment:
+La opción simple para este reto:
 
 **fixed horizon + no optional stopping.**
 
@@ -370,7 +370,7 @@ No promover una nueva regla porque un subgrupo pequeño tenga p<0.05 sin correcc
 
 ---
 
-# Experimento B — Fallback
+# Experimento B — respaldo
 
 ## 19. Población
 
@@ -378,7 +378,7 @@ Sólo leads donde el Spot exacto:
 
 - no es attendable;
 - es Uncertain y requiere alternativa;
-- o cumple el trigger de fallback predefinido.
+- o cumple el trigger de respaldo predefinido.
 
 ---
 
@@ -392,7 +392,7 @@ Control:
 
 Tratamiento:
 
-- fallback rankeado point-in-time del Entregable 4.
+- respaldo rankeado disponible en ese momento del Entregable 4.
 
 ---
 
@@ -410,14 +410,14 @@ Con mejor instrumentación, idealmente separar:
 
 ---
 
-## 22. Guardrails del fallback
+## 22. Guardrails del respaldo
 
 - recommendation latency;
 - NO_RESULT;
 - distance/geographic relaxation;
 - known-unavailable recommendation rate;
 - complaint rate;
-- broker workload;
+- intermediario workload;
 - repeated suggestion rate.
 
 Hard guardrail:
@@ -443,7 +443,7 @@ Esto permite evaluar después:
 - MRR/NDCG si tiene sentido;
 - acceptance@K;
 - value@K;
-- contextual ranking.
+- contextual ordenamiento.
 
 El historical chosen Spot deja de ser el pseudo-gold.
 
@@ -474,7 +474,7 @@ No usar otro LLM como gold.
 
 ---
 
-# Quasi-experimental fallback si RCT no es viable
+# Quasi-experimental respaldo si RCT no es viable
 
 ## 25. Alternativa principal — phased rollout + Difference-in-Differences
 
@@ -511,7 +511,7 @@ Si existe un cutoff de capacidad rígido y no manipulable:
 Limitaciones:
 
 - sólo efecto local;
-- ties/ranking pueden complicar continuidad;
+- ties/ordenamiento pueden complicar continuidad;
 - inventory spillovers pueden violar supuestos.
 
 No es preferible al RCT.
@@ -520,12 +520,12 @@ No es preferible al RCT.
 
 ## 27. Switchback para interference fuerte
 
-Si el problema principal es capacidad compartida de broker/inventory:
+Si el problema principal es capacidad compartida de intermediario/inventory:
 
 Randomizar períodos:
 
 - team-day;
-- broker-day;
+- intermediario-day;
 - market-day/week.
 
 Alternar control/treatment.
@@ -554,8 +554,8 @@ La decisión debe considerar:
 - CI;
 - primary KPI;
 - conversion guardrail;
-- serviceability gain;
-- broker workload;
+- capacidad de atención gain;
+- intermediario workload;
 - customer guardrails;
 - operational cost;
 - stability por cohortes.
@@ -594,7 +594,7 @@ La pregunta final no es:
 
 Es:
 
-> **¿usar esta política provoca más outcomes comerciales útiles por lead elegible, sin deteriorar experiencia, inventory quality ni workload?**
+> **¿usar esta política provoca más resultados comerciales útiles por lead elegible, sin deteriorar experiencia, inventory quality ni workload?**
 
 Ésa es la prueba que el offline no puede resolver.
 
@@ -608,5 +608,5 @@ Es:
 - **EV-010 — diseño A/B matching**
 - **Protocolos A/B históricos**
 - **Power analysis histórica**
-- [Entregable 5 — Opportunity Score](../05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md)
+- [Entregable 5 — Puntaje de oportunidad](../05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md)
 - [Entregable 6 — Producción](../05_opportunity_produccion/02_ARQUITECTURA_PRODUCCION.md)
