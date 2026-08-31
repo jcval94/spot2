@@ -1,10 +1,14 @@
 # Revisión crítica final — perspectiva del evaluador
 
+> ### Cómo leer este anexo
+> Este anexo conserva el detalle necesario para comprobar la cobertura del reto, pero prioriza lenguaje de negocio. Algunos nombres de métricas y variables se mantienen sin traducir porque corresponden a artefactos reproducibles del repositorio. Cuando aparece **Lift@10**, se refiere a cuánto mejora el 10% mejor priorizado frente a elegir al azar el mismo número de casos; **T1** es el momento inmediatamente posterior a la primera consulta y anterior a la respuesta del intermediario.
+>
+
 ## Dictamen ejecutivo
 
-El paquete presenta una sola solución coherente con **Codexway como autoridad final**. La amplitud de `experimentos/**` aparece condensada como evidencia de decisiones y `AssessmentSol1/**` como auditoría metodológica; ninguno sustituye silenciosamente al champion.
+El paquete presenta una sola solución coherente con **Codexway como autoridad final**. La amplitud de `experimentos/**` aparece condensada como evidencia de decisiones y `retoSol1/**` como auditoría metodológica; ninguno sustituye silenciosamente al champion.
 
-La solución es defendible como assessment técnico y de producto. No es defendible todavía como un sistema listo para automatización plena, y el paquete lo reconoce explícitamente.
+La solución es defendible como reto técnico y de producto. No es defendible todavía como un sistema listo para automatización plena, y el paquete lo reconoce explícitamente.
 
 ---
 
@@ -37,11 +41,11 @@ Availability usa strict backward-as-of y reporta 0 future-snapshot violations.
 
 ### 3. Modelo final simple por una razón defendible
 
-La baja complejidad del `stable_segment_logistic` puede parecer poco ambiciosa, pero el paquete demuestra que fue seleccionado frente a challengers por estabilidad temporal y concentración top-decile.
+La baja complejidad del `stable_segment_logistic` puede parecer poco ambiciosa, pero el paquete demuestra que fue seleccionado frente a alternativas evaluadas por estabilidad temporal y concentración top-decile.
 
 El resultado principal es útil para capacidad:
 
-- Lead Quality Lift@10: **1.689x**;
+- Calidad del lead Lift@10: **1.689x**;
 - IC95%: **[1.381x, 1.982x]**.
 
 ### 4. Métricas alineadas al uso
@@ -58,16 +62,16 @@ Se usan:
 - temporal stability;
 - tie-aware capacity metrics.
 
-### 5. Inventory no se confunde con Lead Quality
+### 5. Inventory no se confunde con Calidad del lead
 
 El sistema conserva dos preguntas:
 
 - ¿este lead tiene propensión a avanzar?
 - ¿podemos atenderlo?
 
-Eso permite reconocer que Opportunity puede mejorar “serviceability” sin necesariamente mejorar el target puro de conversión.
+Eso permite reconocer que Opportunity puede mejorar “capacidad de atención” sin necesariamente mejorar el target puro de conversión.
 
-### 6. Fallback con abstención
+### 6. estrategia de respaldo con abstención
 
 La decisión **UNKNOWN ≠ UNAVAILABLE** y el uso de **NO_RESULT** son fortalezas de producto y governance.
 
@@ -82,7 +86,7 @@ Documenta decisiones negativas:
 - CatBoost no promovido bajo el contrato final;
 - semantic rules sin Lift incremental;
 - LLM-derived features no promovidas;
-- Inventory incremental gate NO-GO;
+- Inventory incremental gate NO AVANZAR;
 - pockets locales como hipótesis, no reglas.
 
 Esto transmite seniority metodológico.
@@ -101,7 +105,7 @@ El siguiente paso es shadow + RCT, no “deploy porque Lift > 1”.
 
 ## Debilidades
 
-### 1. Lead Quality tiene discriminación global modesta
+### 1. Calidad del lead tiene discriminación global modesta
 
 ROC-AUC **0.5478** es bajo.
 
@@ -112,9 +116,9 @@ La defensa correcta no es ocultarlo, sino explicar que:
 - Lift@10 es la métrica operacional principal;
 - el modelo tiene baja resolución y no debe sobreinterpretarse.
 
-### 2. El holdout no es completamente virgen
+### 2. El muestra de evaluación no es completamente virgen
 
-Codexway lo etiqueta como **procedural holdout** porque el histórico fue consumido globalmente durante la investigación.
+Codexway lo etiqueta como **procedural muestra de evaluación** porque el histórico fue consumido globalmente durante la investigación.
 
 Esto reduce fuerza confirmatoria.
 
@@ -134,7 +138,7 @@ El Opportunity conservador:
 - supera random;
 - pero queda por debajo de Quality-only 1.689x.
 
-El incremental Inventory gate es **NO-GO** para ese target.
+El incremental Inventory gate es **NO AVANZAR** para ese target.
 
 La justificación del sistema combinado depende de un objetivo distinto: oportunidades que además sean servibles.
 
@@ -146,17 +150,17 @@ Pero precio, área, geografía y otros atributos del listing no tienen un histor
 
 Por tanto el full matching histórico es condicional.
 
-### 6. Fallback carece de gold label limpio
+### 6. estrategia de respaldo carece de gold label limpio
 
 El Spot históricamente visitado no es un log de recomendaciones.
 
 No puede interpretarse como ground truth de relevance.
 
-### 7. Availability tiene coverage/freshness drift
+### 7. Availability tiene coverage/vigencia drift
 
 Parte de la mejora aparente en períodos tardíos puede venir de mejor instrumentación del inventario, no de cambios reales del mercado.
 
-### 8. LLM sin human gold completo
+### 8. LLM sin etiquetas humanas de referencia completo
 
 Se puede afirmar estabilidad técnica, costo y behavior sobre challenge.
 
@@ -170,17 +174,17 @@ No se puede afirmar precision/recall real sobre listings naturales.
 
 Porque el caso de uso es ranking bajo capacidad, no clasificación perfecta. El evidence gate relevante muestra Lift@10 1.689x con intervalo bootstrap por encima de 1. Aun así, la baja resolución es una limitación y exige validación forward.
 
-### “¿Por qué usar Opportunity si empeora Lead Quality?”
+### “¿Por qué usar Opportunity si empeora Calidad del lead?”
 
 Porque son objetivos distintos. Si el objetivo es sólo scheduled_visit, se usa Quality-only. Si el objetivo es concentrar oportunidades que además puedan atenderse, Inventory entra como segundo eje. El paquete no afirma que Inventory ya mejore el target T1.
 
 ### “¿No estás double-counting Inventory?”
 
-No en Codexway: el Lead Quality final no utiliza Availability ni selected-Spot serviceability. El Actionability Gate de AssessmentSol1 corresponde a otra arquitectura y aparece sólo como challenger.
+No en Codexway: el Calidad del lead final no utiliza Availability ni selected-Spot capacidad de atención. El Actionability Gate de retoSol1 corresponde a otra arquitectura y aparece sólo como alternativa evaluada.
 
 ### “¿Cuál es el K final: 3 o 5?”
 
-**Top-3 interno** para agregar el componente de serviceability; **hasta 5 visibles** en fallback. K=3 visible fue un challenger histórico y no reemplaza la configuración final de Codexway.
+**Top-3 interno** para agregar el componente de capacidad de atención; **hasta 5 visibles** en estrategia de respaldo. K=3 visible fue un alternativa evaluada histórico y no reemplaza la configuración final de Codexway.
 
 ### “¿La capacidad final es 10%, 15% o 20%?”
 
@@ -192,7 +196,7 @@ No. Es el percentil de validation asociado a la capacidad final del dataset. La 
 
 ### “¿Por qué usar un LLM si terminó fuera del modelo?”
 
-Porque el requisito de IA se investigó en el dominio donde sí existe texto no estructurado. El LLM fue útil como semantic discovery; cuando no agregó información predictiva incremental, se evitó convertirlo en dependencia artificial.
+Porque el requisito de IA se investigó en el dominio donde sí existe texto no estructurado. El LLM fue útil como descubrimiento semántico; cuando no agregó información predictiva incremental, se evitó convertirlo en dependencia artificial.
 
 ### “¿Puedes afirmar que todo el matching es point-in-time?”
 
@@ -200,7 +204,7 @@ No. Se puede afirmar estrictamente para Availability. El matching completo queda
 
 ### “¿Cuántos leads adicionales gana el sistema combinado?”
 
-Codexway no tiene un gold causal/alineado para responder esa pregunta de forma limpia. Existe Lift absoluto del Opportunity Score, pero el valor incremental de Inventory queda no demostrado. La pregunta correcta debe resolverse online con exposure logs y RCT.
+Codexway no tiene un gold causal/alineado para responder esa pregunta de forma limpia. Existe Lift absoluto del Puntaje de oportunidad, pero el valor incremental de Inventory queda no demostrado. La pregunta correcta debe resolverse online con exposure logs y RCT.
 
 ### “¿Por qué no usar el Spot que finalmente visitó el lead como gold?”
 
@@ -208,7 +212,7 @@ Porque no sabemos qué opciones fueron expuestas, recomendadas o disponibles baj
 
 ### “¿Por qué no desplegar ya?”
 
-Por holdout retrospectivo, target proxy, listing state no versionado y ausencia de causalidad. El estado correcto es **eligible for forward validation**, no automatic deployment.
+Por muestra de evaluación retrospectivo, target proxy, listing state no versionado y ausencia de causalidad. El estado correcto es **eligible for validación con datos futuros**, no automatic despliegue.
 
 ---
 
@@ -216,12 +220,12 @@ Por holdout retrospectivo, target proxy, listing state no versionado y ausencia 
 
 | Inconsistencia/riesgo editorial | Resolución |
 |---|---|
-| Product Vision detallada excedía el máximo de 2 párrafos del assessment | Se creó [Product Vision ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) como entry point oficial; el roadmap largo queda como anexo |
-| No existía un One-Pager final dentro de `entregable/**` | Se creó [Entregable 2](02_one_pager/README.md) y su PDF de una página |
+| Visión de producto detallada excedía el máximo de 2 párrafos del reto | Se creó [Visión de producto ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) como entry point oficial; el roadmap largo queda como anexo |
+| No existía un resumen ejecutivo final dentro de `entregable/**` | Se creó [Entregable 2](02_one_pager/README.md) y su PDF de una página |
 | `01_EDA.md` legado podía parecer la versión vigente | Se etiqueta como histórico y el índice maestro apunta exclusivamente a `01_eda/README.md` |
-| P85/top15 y P80/top20 aparecen en evidencia histórica | Se mantienen sólo como challengers explícitos; la decisión final es top10 con escenarios 5/10/20 |
-| K=3 vs K=5 | Reconciliado: top-3 interno de serviceability; máximo 5 recomendaciones visibles |
-| Quality × Inventory vs Actionability Gate | Reconciliado: producto lower/upper es final Codexway; Gate es challenger de AssessmentSol1 bajo otro Lead Quality |
+| P85/top15 y P80/top20 aparecen en evidencia histórica | Se mantienen sólo como alternativas evaluadas explícitos; la decisión final es top10 con escenarios 5/10/20 |
+| K=3 vs K=5 | Reconciliado: top-3 interno de capacidad de atención; máximo 5 recomendaciones visibles |
+| Quality × Inventory vs Actionability Gate | Reconciliado: producto lower/upper es final Codexway; Gate es alternativa evaluada de retoSol1 bajo otro Calidad del lead |
 | Métricas E020 podían confundirse con performance final | Se mantienen etiquetadas como robustness check y no se mezclan con métricas Codexway |
 
 ---
@@ -232,7 +236,7 @@ Por holdout retrospectivo, target proxy, listing state no versionado y ausencia 
 
 Existe `codexway/reports/slides.pdf`, pero este cierre no lo reconstruyó ni certificó editorialmente contra la narrativa final de `entregable/**`.
 
-**Recomendación:** antes de enviar el assessment, revisar/actualizar el deck de 5–8 slides para que use exactamente:
+**Recomendación:** antes de enviar el reto, revisar/actualizar el deck de 5–8 slides para que use exactamente:
 
 - T1;
 - maturity 7d;
@@ -240,17 +244,17 @@ Existe `codexway/reports/slides.pdf`, pero este cierre no lo reconstruyó ni cer
 - top10 default;
 - top-3 interno / hasta 5 visibles;
 - Opportunity lower de Codexway;
-- Inventory incremental NO-GO;
-- IA como Catalog QA discovery;
+- Inventory incremental NO AVANZAR;
+- IA como control de calidad del catálogo discovery;
 - forward shadow + RCT.
 
-### No son blockers para enviar el assessment, pero sí para claims de producción
+### No son blockers para enviar el reto, pero sí para claims de producción
 
 1. falta nueva validación forward independiente;
 2. full historical listing state no está versionado;
-3. fallback no tiene gold de exposure/acceptance;
+3. estrategia de respaldo no tiene gold de exposure/acceptance;
 4. no existe impacto causal online;
-5. no existe human gold completo de Semantic QA.
+5. no existe etiquetas humanas de referencia completo de Semantic QA.
 
 ---
 
@@ -262,9 +266,9 @@ La mayor fortaleza no es una métrica aislada; es la disciplina con la que se se
 
 - señal predictiva;
 - observabilidad temporal;
-- serviceability;
+- capacidad de atención;
 - incertidumbre;
-- evidencia challenger;
+- evidencia alternativa evaluada;
 - causalidad futura.
 
 La solución no pretende ser más precisa de lo que la evidencia permite.
