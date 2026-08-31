@@ -10,6 +10,8 @@
 > - **Estrategia de respaldo (fallback):** qué hacer cuando el inmueble original no puede recomendarse con suficiente confianza.
 >
 
+> La evidencia técnica original se conserva en `codexway/**`, `experimentos/**` y `AssessmentSol1/**` para auditoría. No es necesario navegarla para comprender este documento.
+
 ## Resumen ejecutivo
 
 El **modelo de Calidad del lead** responde una pregunta muy concreta:
@@ -87,9 +89,9 @@ Un lead puede ser comercialmente atractivo y no contar con inventario atendible.
 Por eso Codexway no inserta Availability ni atributos de servicio del inventario dentro del predictor final de Calidad del lead.
 
 Fuentes:
-- [Codexway README](../../codexway/README.md)
-- [Model Card](../../codexway/outputs/MODEL_CARD.md)
-- [Decisiones congeladas](../../codexway/evidence/DECISIONS.md)
+- **Codexway README**
+- **Model Card**
+- **Decisiones congeladas**
 
 ---
 
@@ -197,8 +199,8 @@ No se promedian T0, T1 y T2.
 retoSol1 llegó a la misma conclusión conceptual: T1 debe conservarse como contrato principal, aunque sus modelos concretos fueran distintos.
 
 Fuentes:
-- [Codexway README — Prediction timestamp](../../codexway/README.md)
-- [Codexway targets.py](../../codexway/src/spot2_codexway/targets.py)
+- **Codexway README — Prediction timestamp**
+- **Codexway targets.py**
 - [retoSol1 Stage Comparison](../../retoSol1/evidence/STAGE_COMPARISON.md)
 
 ---
@@ -261,8 +263,8 @@ Ese análisis complementario refuerza dos decisiones de Codexway:
 2. congelar target y maturity antes de optimizar modelos.
 
 Fuentes:
-- [Codexway README — Target](../../codexway/README.md)
-- [Codexway base config](../../codexway/config/base.yaml)
+- **Codexway README — Target**
+- **Codexway base config**
 - [retoSol1 Target Contract](../../retoSol1/target/TARGET_CONTRACT.md)
 
 ---
@@ -380,9 +382,9 @@ con backward as-of.
 Aun así, se mantiene fuera del predictor de Calidad del lead.
 
 Fuentes:
-- [variable policy](../../codexway/config/variable_policy.yaml)
-- [variables implementation](../../codexway/src/spot2_codexway/variables.py)
-- [fuga de información futura Matrix](../../codexway/evidence/fuga de información futura_MATRIX.md)
+- **variable policy**
+- **variables implementation**
+- **fuga de información futura Matrix**
 - [retoSol1 Temporal Semantics](../../retoSol1/evidence/TEMPORAL_SEMANTICS.md)
 
 ---
@@ -478,9 +480,9 @@ Por tanto:
 - la confirmación real requiere nueva cohorte forward.
 
 Fuentes:
-- [Codexway base config](../../codexway/config/base.yaml)
-- [Rolling model comparison](../../codexway/outputs/metrics/rolling_model_comparison.csv)
-- [Decisions](../../codexway/evidence/DECISIONS.md)
+- **Codexway base config**
+- **Rolling model comparison**
+- **Decisions**
 
 ---
 
@@ -590,8 +592,8 @@ La segunda banda queda subcalibrada en el muestra de evaluación: la tasa observ
 Eso refuerza que la calibración actual es útil pero no definitiva y debe revisarse con nueva evidencia forward.
 
 Fuentes:
-- [T1 model metrics](../../codexway/outputs/metrics/t1_model_metrics.json)
-- [Calibration table](../../codexway/outputs/tables/calibration.csv)
+- **T1 model metrics**
+- **Calibration table**
 
 ---
 
@@ -646,8 +648,8 @@ Esto hace Lift@K:
 - coherente con una política operativa justa de tie-breaking.
 
 Fuente:
-- [evaluation.py](../../codexway/src/spot2_codexway/evaluation.py)
-- [Gains](../../codexway/outputs/tables/gains.csv)
+- **evaluation.py**
+- **Gains**
 
 ---
 
@@ -705,8 +707,8 @@ La lectura es directa:
 Por tanto, la siguiente mejora real no consiste en afinar un threshold sobre los mismos dos scores. Requiere **nuevas señales PIT que separen mejor dentro y fuera del segmento**.
 
 Fuente:
-- [Error analysis](../../codexway/outputs/tables/error_analysis.csv)
-- [despliegue readiness](../../codexway/outputs/metrics/despliegue_readiness.json)
+- **Error analysis**
+- **despliegue readiness**
 
 ---
 
@@ -757,7 +759,7 @@ Estas métricas son diagnósticas.
 No significan que el modelo haya aprendido un efecto independiente de channel o modality: el predictor final sólo usa la interacción estable y los resultados segmentados reflejan cómo se distribuye esa banda de score dentro de cada subpoblación.
 
 Fuente:
-- [Segment metrics](../../codexway/outputs/tables/segment_metrics.csv)
+- **Segment metrics**
 
 ---
 
@@ -787,7 +789,7 @@ La estabilidad temporal debe monitorearse con:
 - volumen y composición por source/sector.
 
 Fuente:
-- [Monthly stability](../../codexway/outputs/tables/monthly_model_stability.csv)
+- **Monthly stability**
 
 ---
 
@@ -856,8 +858,8 @@ La hipótesis “más arquitectura = mejor” no se sostiene. Los tabulares simp
 Mantener como evidencia de investigación; no sustituir el campeón Codexway.
 
 Fuentes:
-- [EV-009](../../experimentos/Evidencias/EV-009_modelo_3_benchmark_specialists.md)
-- [EV-011](../../experimentos/Evidencias/EV-011_modelo_3_architecture_cv.md)
+- **EV-009**
+- **EV-011**
 
 ---
 
@@ -880,7 +882,7 @@ El resultado inicial fue útil como alternativa evaluada arquitectónico, no com
 Descartado como arquitectura canónica.
 
 Fuente:
-- [EV-003](../../experimentos/Evidencias/EV-003_modelo_3_multihead.md)
+- **EV-003**
 
 ---
 
@@ -913,7 +915,7 @@ Trajectory puede ser útil en T2, pero es arquitectura- y contrato-dependiente.
 No contaminar T1 con variables de historia futura. Mantener T2 como extensión.
 
 Fuentes:
-- [EV-012](../../experimentos/Evidencias/EV-012_modelo_3_trajectory_cv.md)
+- **EV-012**
 - [retoSol1 T2 Decision](../../retoSol1/evidence/T2_TRAJECTORY_DECISION.md)
 
 ---
@@ -947,7 +949,7 @@ No demuestra mejora global robusta suficiente para formar parte del scorer final
 Auxiliar/alternativa evaluada, no variable canónica del Calidad del lead final.
 
 Fuente:
-- [EV-013](../../experimentos/Evidencias/EV-013_matching_profiles_v4.md)
+- **EV-013**
 
 ---
 
@@ -988,8 +990,8 @@ No deben convertirse en multiplicadores de score post-hoc.
 No forman parte del modelo final.
 
 Fuentes:
-- [EV-006](../../experimentos/Evidencias/EV-006_profile_clustering_v2.md)
-- [Decision Segmentación](../../experimentos/matching_profiles_v4/DECISION_SEGMENTACION.md)
+- **EV-006**
+- **Decision Segmentación**
 
 ---
 
@@ -1018,7 +1020,7 @@ El LLM aportó discovery metodológico, no una familia de variables justificable
 No incluir `llm_*` en Calidad del lead.
 
 Fuente:
-- [EV-017](../../experimentos/Evidencias/EV-017_llm_semantic_variable_pilot.md)
+- **EV-017**
 
 ---
 
@@ -1049,7 +1051,7 @@ Mover una métrica suave no basta si el objetivo operativo es concentración top
 Semantic Rules quedan para Inventory/control de calidad del catálogo, no scoring.
 
 Fuente:
-- [EV-018](../../experimentos/Evidencias/EV-018_semantic_rules_lift_ablation.md)
+- **EV-018**
 
 ---
 
@@ -1108,7 +1110,7 @@ Una variable puede parecer útil descriptivamente y ser inválida operacionalmen
 `broker_response_hours` se excluye del scorer.
 
 Fuente:
-- [reto model component decisions](../../experimentos/reto_MODEL_COMPONENT_DECISIONS.md)
+- **reto model component decisions**
 
 ---
 
@@ -1226,8 +1228,8 @@ Guardrails:
 - opt-out rate.
 
 Fuente:
-- [despliegue readiness](../../codexway/outputs/metrics/despliegue_readiness.json)
-- [Online A/B protocol](../../codexway/outputs/tables/online_ab_protocol.json)
+- **despliegue readiness**
+- **Online A/B protocol**
 
 ---
 
@@ -1252,23 +1254,23 @@ Fuente:
 
 | Pregunta | Evidencia principal |
 |---|---|
-| Definición de Calidad del lead | [Codexway README](../../codexway/README.md) |
-| momento de evaluación | [targets.py](../../codexway/src/spot2_codexway/targets.py) |
-| Maturity y splits | [base.yaml](../../codexway/config/base.yaml) |
-| variable allowlist | [variable_policy.yaml](../../codexway/config/variable_policy.yaml) |
-| fuga de información futura | [fuga de información futura_MATRIX.md](../../codexway/evidence/fuga de información futura_MATRIX.md) |
-| Modelo final | [MODEL_CARD.md](../../codexway/outputs/MODEL_CARD.md) |
-| Métricas | [t1_model_metrics.json](../../codexway/outputs/metrics/t1_model_metrics.json) |
-| Incertidumbre | [t1_metric_intervals.csv](../../codexway/outputs/metrics/t1_metric_intervals.csv) |
-| Rolling CV | [rolling_model_comparison.csv](../../codexway/outputs/metrics/rolling_model_comparison.csv) |
-| Error analysis | [error_analysis.csv](../../codexway/outputs/tables/error_analysis.csv) |
-| Estabilidad | [monthly_model_stability.csv](../../codexway/outputs/tables/monthly_model_stability.csv) |
-| Segmentos | [segment_metrics.csv](../../codexway/outputs/tables/segment_metrics.csv) |
-| Política operativa | [despliegue_readiness.json](../../codexway/outputs/metrics/despliegue_readiness.json) |
-| Multi-head / especialistas | [EV-009](../../experimentos/Evidencias/EV-009_modelo_3_benchmark_specialists.md), [EV-011](../../experimentos/Evidencias/EV-011_modelo_3_architecture_cv.md) |
-| Trajectory | [EV-012](../../experimentos/Evidencias/EV-012_modelo_3_trajectory_cv.md) |
-| Dynamic Need / clusters | [EV-013](../../experimentos/Evidencias/EV-013_matching_profiles_v4.md) |
-| Semantic variables | [EV-017](../../experimentos/Evidencias/EV-017_llm_semantic_variable_pilot.md), [EV-018](../../experimentos/Evidencias/EV-018_semantic_rules_lift_ablation.md) |
+| Definición de Calidad del lead | **Codexway README** |
+| momento de evaluación | **targets.py** |
+| Maturity y splits | **base.yaml** |
+| variable allowlist | **variable_policy.yaml** |
+| fuga de información futura | **fuga de información futura_MATRIX.md** |
+| Modelo final | **MODEL_CARD.md** |
+| Métricas | **t1_model_metrics.json** |
+| Incertidumbre | **t1_metric_intervals.csv** |
+| Rolling CV | **rolling_model_comparison.csv** |
+| Error analysis | **error_analysis.csv** |
+| Estabilidad | **monthly_model_stability.csv** |
+| Segmentos | **segment_metrics.csv** |
+| Política operativa | **despliegue_readiness.json** |
+| Multi-head / especialistas | **EV-009**, **EV-011** |
+| Trajectory | **EV-012** |
+| Dynamic Need / clusters | **EV-013** |
+| Semantic variables | **EV-017**, **EV-018** |
 | Auditoría temporal independiente | [retoSol1 Temporal Semantics](../../retoSol1/evidence/TEMPORAL_SEMANTICS.md) |
 | Recovery selected-Spot | [retoSol1 Recovery](../../retoSol1/models/lead_quality_recovery/RECOVERY_DECISION.md) |
 
