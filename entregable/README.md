@@ -22,7 +22,7 @@ Cuando una rama histórica utiliza otro target, modelo, capacidad, K o fórmula,
 | # | Entregable | Qué responde | Entry point |
 |---:|---|---|---|
 | **1** | **EDA** | ¿Qué aprendimos del mercado, los leads y la calidad temporal de los datos? | [Abrir EDA](01_eda/README.md) |
-| **2** | **One-Pager** | ¿Cuál es la solución y por qué importa al negocio? | [Abrir One-Pager](02_one_pager/README.md) · [PDF](02_one_pager/ONE_PAGER_SPOT2.pdf) |
+| **2** | **One-Pager** | ¿Cuál es la solución y por qué importa al negocio? | [HTML ejecutivo](02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html) · [README](02_one_pager/README.md) · [PDF](02_one_pager/ONE_PAGER_SPOT2.pdf) |
 | **3** | **Lead Quality** | ¿Qué tan probable es que el lead avance en T1? | [Abrir Lead Quality](03_lead_quality/README.md) |
 | **4** | **Inventory** | ¿Podemos atender al lead con inventario conocido point-in-time? | [Abrir Inventory](04_inventory_fallback/README.md) |
 | **5** | **Opportunity + Fallback** | ¿Cómo combinamos propensión y serviceability y qué hacemos si el Spot falla? | [Abrir Opportunity](05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md) |
