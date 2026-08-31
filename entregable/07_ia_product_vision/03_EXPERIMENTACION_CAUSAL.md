@@ -10,6 +10,8 @@
 > - **Estrategia de respaldo (fallback)** describe qué hacer cuando la opción original no es defendible.
 >
 
+> La evidencia técnica original se conserva en `codexway/**`, `experimentos/**` y `AssessmentSol1/**` para auditoría. No es necesario navegarla para comprender este documento.
+
 ## 1. Por qué hace falta un experimento en operación
 
 El backtest responde:
@@ -607,10 +609,10 @@ Es:
 
 ## 31. Evidencia fuente
 
-- [Codexway — protocolo en operación](../../codexway/outputs/tables/en operación_ab_protocol.json)
-- [Codexway — helper sticky/SRM](../../codexway/src/spot2_codexway/en operación.py)
-- [EV-010 — diseño A/B matching](../../experimentos/Evidencias/EV-010_matching_ab_v3.md)
-- [Protocolos A/B históricos](../../experimentos/matching_ab_v3/results/en operación_ab_protocols.json)
-- [Power analysis histórica](../../experimentos/matching_ab_v3/results/power_analysis.csv)
+- **Codexway — protocolo en operación**
+- **Codexway — helper sticky/SRM**
+- **EV-010 — diseño A/B matching**
+- **Protocolos A/B históricos**
+- **Power analysis histórica**
 - [Entregable 5 — Puntaje de oportunidad](../05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md)
 - [Entregable 6 — Producción](../05_opportunity_produccion/02_ARQUITECTURA_PRODUCCION.md)
