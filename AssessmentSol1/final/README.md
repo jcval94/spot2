@@ -1,14 +1,19 @@
-# Final deliverables — packaging intentionally not started
+# Final deliverables — packaging pending after Prompt 12
 
-Prompt 11.6 prerequisites are now complete:
+Research/system prerequisites are complete:
 
 - recovered T1 Lead Quality frozen;
 - downstream dependencies rebuilt;
 - Opportunity Score V2 frozen;
 - P80/top-20 capacity frozen;
 - fallback K=3 frozen;
-- final post-recovery leakage/red-team audit passes with zero blockers.
+- final post-recovery leakage/red-team audit passes with zero blockers;
+- Prompt 12 AI/LLM requirement is closed and self-contained.
 
-**Prompt 12 has not been executed in this phase.**
+The LLM is retained only as sampled Semantic Inventory / Catalog QA discovery. It is not a runtime dependency of the main Lead Opportunity Score.
 
-The final assessment packaging still requires the later deliverable phase (not performed here), including the canonical narrative and requested presentation/report artifacts. Use `../recovery_downstream/POST_RECOVERY_FINAL_STATE.json` as the system-state authority when that phase begins.
+No new API spend was required in Prompt 12 because canonical E017 already provides real Structured-Output LLM evidence and PR #19 provides supplemental live evidence.
+
+The next phase is packaging the final assessment narrative/deliverables. Use:
+- `../recovery_downstream/POST_RECOVERY_FINAL_STATE.json` for scoring-system authority;
+- `../llm/results/prompt12_gate.json` for AI/LLM closure authority.
