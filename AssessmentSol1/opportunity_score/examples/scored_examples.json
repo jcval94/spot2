@@ -1,0 +1,121 @@
+{
+  "note": "Outcome-blind product-score examples after frozen thresholds.",
+  "examples": [
+    {
+      "lead_id": 739,
+      "score_time": "2026-03-02T17:22:24.000Z",
+      "lead_quality_probability": 0.20375457875457875,
+      "lead_quality_score_0_100": 20.375457875457876,
+      "inventory_serviceability": 1,
+      "inventory_confidence": 0.3,
+      "opportunity_score_0_100": 20.375457875457876,
+      "priority_band": "PRIORITY",
+      "exact_spot_serviceable": true,
+      "fallback_status": "KNOWN_AVAILABLE",
+      "fallback_spot_ids": [
+        117,
+        159,
+        345,
+        2140,
+        2447
+      ],
+      "fallback_relaxation_tier": "TIER_0",
+      "reason_codes": [
+        "EXACT_SERVICEABLE",
+        "SAME_SECTOR_FALLBACK_AVAILABLE",
+        "TIER3_EXPERIMENTAL_AVAILABLE",
+        "BUDGET_UNVERIFIED_PRICE_NOT_PIT"
+      ],
+      "model_version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1__BASE_RATE_RAW",
+      "inventory_version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+      "data_fingerprint": "f59b77ddcf991399bb35ec7be1e131db280f017d:ba40a7a33553a5ea462a34cf05250f53428c0ec9:f00ceb8e5452df692a7db13d186a9fdb3e02ba30:3dd32ff87a466e45d5637715725718e4bed9d808:82ef91a25ff5b2a330b4e1d01668c4934239c43f"
+    },
+    {
+      "lead_id": 1149,
+      "score_time": "2026-05-12T11:58:09.000Z",
+      "lead_quality_probability": 0.20375457875457875,
+      "lead_quality_score_0_100": 20.375457875457876,
+      "inventory_serviceability": 0.9932831965095585,
+      "inventory_confidence": 0.8,
+      "opportunity_score_0_100": 20.238599928880657,
+      "priority_band": "HIGH",
+      "exact_spot_serviceable": true,
+      "fallback_status": "KNOWN_AVAILABLE",
+      "fallback_spot_ids": [
+        2842,
+        1949,
+        838,
+        343,
+        2548
+      ],
+      "fallback_relaxation_tier": "TIER_0",
+      "reason_codes": [
+        "EXACT_SERVICEABLE",
+        "SAME_SECTOR_FALLBACK_AVAILABLE",
+        "TIER3_EXPERIMENTAL_AVAILABLE",
+        "BUDGET_UNVERIFIED_PRICE_NOT_PIT"
+      ],
+      "model_version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1__BASE_RATE_RAW",
+      "inventory_version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+      "data_fingerprint": "f59b77ddcf991399bb35ec7be1e131db280f017d:ba40a7a33553a5ea462a34cf05250f53428c0ec9:f00ceb8e5452df692a7db13d186a9fdb3e02ba30:3dd32ff87a466e45d5637715725718e4bed9d808:82ef91a25ff5b2a330b4e1d01668c4934239c43f"
+    },
+    {
+      "lead_id": 2499,
+      "score_time": "2026-01-29T14:32:12.000Z",
+      "lead_quality_probability": 0.20375457875457875,
+      "lead_quality_score_0_100": 20.375457875457876,
+      "inventory_serviceability": 0.9857547732696897,
+      "inventory_confidence": 0.8,
+      "opportunity_score_0_100": 20.085204858288094,
+      "priority_band": "MEDIUM",
+      "exact_spot_serviceable": true,
+      "fallback_status": "KNOWN_AVAILABLE",
+      "fallback_spot_ids": [
+        880,
+        1363,
+        944,
+        2996,
+        1965
+      ],
+      "fallback_relaxation_tier": "TIER_0",
+      "reason_codes": [
+        "EXACT_SERVICEABLE",
+        "NO_SAME_SECTOR_FALLBACK",
+        "TIER3_EXPERIMENTAL_AVAILABLE",
+        "BUDGET_UNVERIFIED_PRICE_NOT_PIT"
+      ],
+      "model_version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1__BASE_RATE_RAW",
+      "inventory_version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+      "data_fingerprint": "f59b77ddcf991399bb35ec7be1e131db280f017d:ba40a7a33553a5ea462a34cf05250f53428c0ec9:f00ceb8e5452df692a7db13d186a9fdb3e02ba30:3dd32ff87a466e45d5637715725718e4bed9d808:82ef91a25ff5b2a330b4e1d01668c4934239c43f"
+    },
+    {
+      "lead_id": 824,
+      "score_time": "2026-06-03T12:22:00.000Z",
+      "lead_quality_probability": 0.20375457875457875,
+      "lead_quality_score_0_100": 20.375457875457876,
+      "inventory_serviceability": 0.9685604851579955,
+      "inventory_confidence": 0.8,
+      "opportunity_score_0_100": 19.73486336516978,
+      "priority_band": "LOW",
+      "exact_spot_serviceable": true,
+      "fallback_status": "KNOWN_AVAILABLE",
+      "fallback_spot_ids": [
+        1836,
+        137,
+        2121,
+        1195,
+        534
+      ],
+      "fallback_relaxation_tier": "TIER_0",
+      "reason_codes": [
+        "EXACT_SERVICEABLE",
+        "NO_SAME_SECTOR_FALLBACK",
+        "TIER3_EXPERIMENTAL_AVAILABLE",
+        "BUDGET_UNVERIFIED_PRICE_NOT_PIT"
+      ],
+      "model_version": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1__BASE_RATE_RAW",
+      "inventory_version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+      "data_fingerprint": "f59b77ddcf991399bb35ec7be1e131db280f017d:ba40a7a33553a5ea462a34cf05250f53428c0ec9:f00ceb8e5452df692a7db13d186a9fdb3e02ba30:3dd32ff87a466e45d5637715725718e4bed9d808:82ef91a25ff5b2a330b4e1d01668c4934239c43f"
+    }
+  ]
+}
