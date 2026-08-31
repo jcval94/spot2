@@ -3,7 +3,6 @@
 Este es el documento recomendado para comprender la solución completa de Spot2 en **3 a 5 minutos**.
 
 - [Abrir versión visual en HTML](ONE_PAGER_SPOT2_AESTHETIC.html)
-- [Abrir versión PDF](ONE_PAGER_SPOT2.pdf)
 
 ## El problema
 
