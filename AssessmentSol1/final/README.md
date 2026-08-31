@@ -77,4 +77,10 @@ Machine-readable packaging snapshot:
 
 ## Status
 
-Prompt 13 deliverables have been built. See `PROMPT_13_STATE.json` for the machine-readable packaging gate and `PROMPT_14_FINAL_REVIEW.md` for final submission QA.
+Prompt 13 deliverables are built and Prompt 14 final review is complete.
+
+Submission authority:
+- `FINAL_REVIEW.md`
+- `SUBMISSION_STATE.json`
+
+**READY TO SUBMIT**
