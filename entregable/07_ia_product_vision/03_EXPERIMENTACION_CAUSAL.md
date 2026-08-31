@@ -591,3 +591,16 @@ Es:
 > **¿usar esta política provoca más outcomes comerciales útiles por lead elegible, sin deteriorar experiencia, inventory quality ni workload?**
 
 Ésa es la prueba que el offline no puede resolver.
+
+
+---
+
+## 31. Evidencia fuente
+
+- [Codexway — protocolo online](../../codexway/outputs/tables/online_ab_protocol.json)
+- [Codexway — helper sticky/SRM](../../codexway/src/spot2_codexway/online.py)
+- [EV-010 — diseño A/B matching](../../experimentos/Evidencias/EV-010_matching_ab_v3.md)
+- [Protocolos A/B históricos](../../experimentos/matching_ab_v3/results/online_ab_protocols.json)
+- [Power analysis histórica](../../experimentos/matching_ab_v3/results/power_analysis.csv)
+- [Entregable 5 — Opportunity Score](../05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md)
+- [Entregable 6 — Producción](../05_opportunity_produccion/02_ARQUITECTURA_PRODUCCION.md)
