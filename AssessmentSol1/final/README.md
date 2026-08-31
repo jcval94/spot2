@@ -1,16 +1,14 @@
-# Final deliverables — pending packaging
+# Final deliverables — packaging intentionally not started
 
-The original assessment requires:
-1. reproducible notebook or HTML;
-2. one-page executive PDF;
-3. 5–8 slide PDF;
-4. AI prompt/use disclosure.
+Prompt 11.6 prerequisites are now complete:
 
-These are not finalized yet.
+- recovered T1 Lead Quality frozen;
+- downstream dependencies rebuilt;
+- Opportunity Score V2 frozen;
+- P80/top-20 capacity frozen;
+- fallback K=3 frozen;
+- final post-recovery leakage/red-team audit passes with zero blockers.
 
-Before packaging:
-- obtain the Prompt-4 runtime PASS;
-- complete bounded P8 if still desired;
-- complete Inventory/Fallback and Opportunity Score;
-- preserve the holdout-integrity caveat;
-- use `llm/AI_USAGE.md` in the final notebook.
+**Prompt 12 has not been executed in this phase.**
+
+The final assessment packaging still requires the later deliverable phase (not performed here), including the canonical narrative and requested presentation/report artifacts. Use `../recovery_downstream/POST_RECOVERY_FINAL_STATE.json` as the system-state authority when that phase begins.
