@@ -11,33 +11,35 @@ OPP = ROOT / "opportunity_score"
 if str(OPP) not in sys.path:
     sys.path.insert(0, str(OPP))
 
-from build_score import OUTPUT_COLUMNS, _band_expr, load_score_config  # noqa: E402
+from build_score import OUTPUT_COLUMNS, _assign_priority_bands, load_score_config  # noqa: E402
 from evaluate_score import _evaluate_ranked  # noqa: E402
 
 
-def test_frozen_formula_and_double_counting_gate() -> None:
+def test_post_recovery_formula_and_double_counting_gate() -> None:
     cfg = load_score_config()
-    assert cfg["formula"]["internal_0_1"] == "lead_quality_probability * inventory_serviceability"
+    assert cfg["formula"]["internal_0_1"] == "lead_quality_probability * inventory_actionability_gate"
     assert cfg["formula"]["grid_search"] is False
     assert cfg["formula"]["exponent_search"] is False
     assert cfg["formula"]["stacking"] is False
-    assert cfg["double_counting_check"]["status"] == "PASS"
-    assert cfg["lead_quality"]["feature_set"] == "BASE_RATE_NO_FEATURES"
-    assert cfg["double_counting_check"]["selected_spot_challenger_used_in_opportunity_score"] is False
+    assert cfg["double_counting_check"]["status"] == "PASS_AFTER_DEDUPLICATION"
+    assert cfg["lead_quality"]["version"] == "LQ_RECOVERY_R4_STATIC_MATCH_V1"
+    assert cfg["lead_quality"]["availability_used"] is False
+    assert cfg["double_counting_check"]["continuous_inventory_serviceability_multiplied"] is False
 
 
-def test_priority_thresholds_are_frozen_and_ordered() -> None:
+def test_priority_bands_are_exact_rank_based_even_with_score_ties() -> None:
     cfg = load_score_config()
-    b = cfg["priority_bands"]
-    assert b["PRIORITY"]["min_score_0_100"] > b["HIGH"]["min_score_0_100"]
-    assert b["HIGH"]["min_score_0_100"] > b["MEDIUM"]["min_score_0_100"]
-    df = pl.DataFrame({"opportunity_score_0_100": [
-        b["PRIORITY"]["min_score_0_100"] + 0.01,
-        b["HIGH"]["min_score_0_100"] + 0.001,
-        b["MEDIUM"]["min_score_0_100"] + 0.001,
-        0.0,
-    ]}).with_columns(_band_expr(cfg))
-    assert df["priority_band"].to_list() == ["PRIORITY", "HIGH", "MEDIUM", "LOW"]
+    df = pl.DataFrame({
+        "lead_id": list(range(1, 21)),
+        "opportunity_score_0_100": [20.0] * 20,
+    })
+    out = _assign_priority_bands(df, cfg)
+    counts = dict(zip(*out.group_by("priority_band").len().select("priority_band", "len").to_dict(as_series=False).values()))
+    assert counts["PRIORITY"] == 1
+    assert counts["HIGH"] == 1
+    assert counts["MEDIUM"] == 2
+    assert counts["LOW"] == 16
+    assert out.sort(["opportunity_score_0_100", "lead_id"], descending=[True, False])["lead_id"].head(4).to_list() == [1, 2, 3, 4]
 
 
 def test_product_output_excludes_targets_and_outcomes() -> None:
@@ -45,40 +47,26 @@ def test_product_output_excludes_targets_and_outcomes() -> None:
     assert not forbidden.intersection(OUTPUT_COLUMNS)
 
 
-def test_constant_lead_quality_has_undefined_capacity_ranking() -> None:
+def test_recovered_capacity_has_four_required_slices() -> None:
     df = pl.DataFrame({
         "lead_id": list(range(1, 21)),
         "target_value": [1, 0] * 10,
-        "lead_quality_probability": [0.2] * 20,
-        "inventory_confidence": [1.0] * 20,
+        "lead_quality_probability": [float(21-i) for i in range(20)],
     })
-    rows = _evaluate_ranked(df, "lead_quality_probability", "LEAD_QUALITY_ONLY", "TEST")
-    assert len(rows) == 3
-    assert all(r["status"] == "UNDEFINED_CONSTANT_SCORE" for r in rows)
-    assert all(r["lift_at_x"] is None for r in rows)
+    rows = _evaluate_ranked(df, "lead_quality_probability", "LEAD_QUALITY_RECOVERED", "TEST")
+    assert [r["capacity_pct"] for r in rows] == [5, 10, 15, 20]
+    assert all(r["status"] == "DEFINED" for r in rows)
 
 
-def test_inventory_and_opportunity_rank_identity_for_constant_positive_lq() -> None:
-    p = 0.20375457875457875
-    df = pl.DataFrame({
-        "lead_id": [1, 2, 3, 4],
-        "inventory_serviceability": [0.3, 0.9, 0.1, 0.6],
-        "inventory_confidence": [1.0, 0.8, 1.0, 0.5],
-    }).with_columns((100 * p * pl.col("inventory_serviceability")).alias("opportunity_score_0_100"))
-    a = df.sort(["inventory_serviceability", "inventory_confidence", "lead_id"], descending=[True, True, False])["lead_id"].to_list()
-    b = df.sort(["opportunity_score_0_100", "inventory_confidence", "lead_id"], descending=[True, True, False])["lead_id"].to_list()
-    assert a == b
+def test_inventory_continuous_score_is_not_in_v2_formula() -> None:
+    cfg = load_score_config()
+    formula = cfg["formula"]["internal_0_1"]
+    assert "inventory_serviceability" not in formula
+    assert "inventory_actionability_gate" in formula
 
 
-def test_internal_reference_is_explicitly_non_deployable() -> None:
-    df = pl.DataFrame({
-        "lead_id": list(range(1, 21)),
-        "target_value": [1, 0] * 10,
-        "lead_score_internal": [float(i) for i in range(20)],
-        "inventory_confidence": [1.0] * 20,
-    })
-    rows = _evaluate_ranked(
-        df, "lead_score_internal",
-        "LEAD_SCORE_INTERNAL_NON_DEPLOYABLE_REFERENCE", "TEST"
-    )
-    assert all(r["status"] == "NON_DEPLOYABLE_REFERENCE" for r in rows)
+def test_internal_reference_is_prohibited_from_v2() -> None:
+    cfg = load_score_config()
+    assert cfg["external_reference"]["lead_score_internal"] == "PROHIBITED_FROM_V2"
+    assert cfg["external_reference"]["allowed_as_predictor"] is False
+    assert cfg["external_reference"]["allowed_for_policy_selection"] is False
