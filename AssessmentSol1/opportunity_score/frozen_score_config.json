@@ -1,6 +1,6 @@
 {
   "score_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30",
-  "status": "POST_RECOVERY_FROZEN_BEFORE_ANY_NEW_HOLDOUT_USE",
+  "status": "POST_RECOVERY_SYSTEM_FROZEN",
   "frozen_at": "2026-08-30",
   "stage": "T1",
   "formula": {
@@ -35,7 +35,7 @@
   "inventory": {
     "version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
     "config_path": "AssessmentSol1/inventory/frozen_inventory_config.json",
-    "config_git_blob_sha1": "771dca279fce251cb0fc617063b7cca8c5a064f4",
+    "config_git_blob_sha1": "478d54dee13ad701da627088994ea4437a17f7e5",
     "scalar_rebuilt": false,
     "scalar_role": "SEPARATE_SERVICEABILITY_OUTPUT",
     "fallback_policy_path": "AssessmentSol1/inventory/FALLBACK_POLICY.md",
@@ -111,5 +111,10 @@
     "E018": "NOT_SUPPORTED for scoring; excluded",
     "E019": "supporting prior only; no metrics copied",
     "E020": "supporting prior only; no metrics copied"
+  },
+  "final_red_team": {
+    "status": "PASS",
+    "audit_path": "AssessmentSol1/audit/POST_RECOVERY_RED_TEAM.md",
+    "active_blockers": 0
   }
 }
