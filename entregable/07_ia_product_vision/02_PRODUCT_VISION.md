@@ -627,3 +627,19 @@ Evidencia principal:
 - Entregable 4 Inventory;
 - Entregables 5/6 Opportunity + Producción;
 - AssessmentSol1 LLM closure.
+
+
+---
+
+## 15. Evidencia fuente
+
+- [Codexway](../../codexway/README.md)
+- [Entregable 3 — Lead Quality](../03_lead_quality/README.md)
+- [Entregable 4 — Inventory + Fallback](../04_inventory_fallback/README.md)
+- [Entregables 5/6 — Opportunity + Producción](../05_opportunity_produccion/README.md)
+- [EV-007 — Geographic Enrichment](../../experimentos/Evidencias/EV-007_geographic_enrichment.md)
+- [EV-010 — Matching A/B](../../experimentos/Evidencias/EV-010_matching_ab_v3.md)
+- [EV-012 — Trajectory](../../experimentos/Evidencias/EV-012_modelo_3_trajectory_cv.md)
+- [EV-013 — Dynamic Need / Broker Service / local compatibility](../../experimentos/Evidencias/EV-013_matching_profiles_v4.md)
+- [E019 — Calibrated Availability](../../experimentos/E019_operational_threshold_availability/results/REPORT.md)
+- [AssessmentSol1 — LLM](../../AssessmentSol1/llm/README.md)
