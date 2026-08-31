@@ -39,7 +39,11 @@ The executable notebook reads frozen `AssessmentSol1/**` artifacts and contains 
 
 `REPRODUCIBILITY.md`
 
-### 6. Artifact/source map
+### 6. Methodology defense
+
+`FINAL_DEFENSE_QA.md`
+
+### 7. Artifact/source map
 
 `ARTIFACT_INDEX.md`
 
