@@ -1,45 +1,79 @@
-# Entregables 5 y 6 — Lead Opportunity Score + Producción
+# Entregables 5 y 6 — Puntaje de oportunidad y puesta en producción
 
-Esta carpeta integra, sin rediseñarlos, los dos componentes canónicos ya construidos:
+Esta carpeta explica cómo se combinan **Calidad del lead** e **Inventario** y cómo llevar la solución a una operación real sin perder trazabilidad.
 
-- [Entregable 3 — Lead Quality](../03_lead_quality/README.md)
-- [Entregable 4 — Inventory Availability + Fallback](../04_inventory_fallback/README.md)
+## La idea principal
 
-La autoridad final continúa siendo **Codexway**. `experimentos/**` y `AssessmentSol1/**` se usan únicamente como evidencia complementaria, challengers, sensibilidad y auditoría metodológica.
+No conviene esconder todo dentro de un único número.
 
-## Documentos
+La solución mantiene visibles tres elementos:
 
-1. [Lead Opportunity Score](01_LEAD_OPPORTUNITY_SCORE.md)
-2. [Arquitectura de escalabilidad y puesta en producción](02_ARQUITECTURA_PRODUCCION.md)
-3. [Monitoreo, gobierno, retraining y runbook de fallos](03_MONITOREO_GOBIERNO_RUNBOOK.md)
+1. **Calidad del lead:** qué tan probable es que avance a una visita agendada.
+2. **Capacidad del inventario:** qué tan defendible es que podamos atender su necesidad.
+3. **Puntaje de oportunidad:** una combinación conservadora de las dos señales.
 
-## Decisión ejecutiva
+En términos técnicos, la versión conservadora se calcula como:
 
-La arquitectura final de Codexway mantiene **Lead Quality e Inventory Serviceability como ejes separados** y construye un Opportunity Score conservador:
+`probabilidad de calidad × capacidad de inventario conservadora`.
 
-```text
-Opportunity_lower = P(Lead Quality) × Inventory Serviceability_lower
-Opportunity_upper = P(Lead Quality) × Inventory Serviceability_upper
-```
+## Resultado observado
 
-El valor operativo no consiste en ocultar ambos componentes dentro de un único número. El producto debe mostrar simultáneamente:
+En la evaluación histórica:
 
-- Lead Quality;
-- Inventory Serviceability;
-- Inventory Confidence / incertidumbre;
-- Opportunity Score lower/upper;
-- fallback y reason codes;
-- acción recomendada.
+- **Calidad del lead — Lift@10: 1.689x**
+- **Puntaje de oportunidad conservador — Lift@10: 1.370x**
 
-En el holdout procedimental de Codexway, Quality-only obtiene Lift@10 **1.689x** y Opportunity conservador **1.370x**. El combinado supera claramente random en términos absolutos, pero **no mejora a Quality-only** para el target T1 de `scheduled_visit`. Por eso la evidencia final soporta forward validation y un piloto guardado, no sustitución automática del ranking comercial.
+Esto significa que ambos superan una selección aleatoria, pero **incorporar inventario no mejora la predicción de visita agendada frente a usar sólo Calidad del lead**.
 
-## Objetivos que no deben confundirse
+La interpretación correcta no es “el inventario no sirve”. La interpretación es que existen **dos objetivos de negocio diferentes**:
 
-1. **Maximizar progresión/conversión proxy:** priorizar por Lead Quality.
-2. **Maximizar oportunidades que además puedan ser atendidas:** usar la arquitectura Opportunity + Inventory, conservando los dos ejes visibles.
+- si queremos maximizar visitas agendadas con capacidad limitada, usamos Calidad del lead;
+- si queremos priorizar oportunidades que además puedan atenderse, usamos Calidad + Inventario y mantenemos ambas señales visibles.
 
-El trade-off entre ambos objetivos se documenta de forma explícita.
+## Qué debe ver la operación
 
-## Límite de alcance
+Para cada lead, la salida debería mostrar:
 
-Esta carpeta **no** contiene One-Pager ni Product Vision.
+- nivel de Calidad del lead;
+- capacidad conocida del inventario;
+- nivel de incertidumbre;
+- Puntaje de oportunidad;
+- motivo de la recomendación;
+- acción sugerida.
+
+Ejemplos de acciones:
+
+- **Priorizar:** lead atractivo y necesidad atendible.
+- **Verificar inventario:** lead atractivo, pero disponibilidad incierta.
+- **Ofrecer alternativa:** el inmueble original no sirve, pero existen opciones compatibles.
+- **Sin resultado:** no existe una recomendación defendible.
+
+## Cómo llevarlo a producción
+
+La arquitectura propuesta mantiene los componentes separados para que puedan monitorearse y actualizarse de forma independiente.
+
+La operación necesita, entre otros elementos:
+
+- servicio de cálculo al recibir la primera consulta;
+- estado actualizado del inventario;
+- registro de la versión del modelo y de la política usada;
+- monitoreo de calidad de datos y resultados;
+- posibilidad de volver a una versión anterior si aparece un problema;
+- registro de cada decisión para poder auditarla.
+
+## Estrategia de lanzamiento
+
+No se recomienda encender la automatización directamente.
+
+1. **Ejecución en paralelo:** calcular resultados sobre datos nuevos sin cambiar la operación.
+2. **Validación:** comprobar que la señal, la calibración y la salud del inventario se mantienen.
+3. **Experimento controlado:** comparar la política nueva contra el proceso actual.
+4. **Escalamiento gradual:** ampliar sólo si el beneficio es real y no empeora la experiencia ni la carga operativa.
+
+## Documentos de detalle
+
+- [Puntaje de oportunidad](01_LEAD_OPPORTUNITY_SCORE.md)
+- [Arquitectura de producción](02_ARQUITECTURA_PRODUCCION.md)
+- [Monitoreo, gobierno y manejo de fallos](03_MONITOREO_GOBIERNO_RUNBOOK.md)
+
+Estos documentos conservan fórmulas, métricas y controles para una revisión técnica más profunda.
