@@ -1,70 +1,41 @@
-# Decision and Capacity Policy
+# Decision and Capacity Policy — post-recovery
 
-## Operational assumption
+## Frozen capacity
 
-No real Growth handling capacity is supplied by the assessment. The declared default is therefore **top 10% of T1 leads**. This is an operational scenario, not a statistically optimal universal threshold.
+The post-recovery default is **top 20% / P80 within T1**.
 
-Capacity reporting is also produced for top 5% and top 20%.
+This was selected on the four frozen DEVELOPMENT temporal validation folds using recovered OOF predictions. The procedural holdout was not consulted.
 
-The central metric is cumulative gain / Recall@capacity:
+| Capacity | Macro Lead Quality Lift | Status |
+|---:|---:|---|
+| 5% | 0.859x | reject: weak top tail |
+| 10% | 1.075x | passes |
+| 15% | 1.084x | passes |
+| 20% | **1.124x** | **selected** |
 
-> If Growth can work only the top X% of leads, what fraction of observed positives is contained there?
+The historical E019 P85/top-15 result was a prior, not an automatic decision. The current clean-room evidence selects P80.
 
-For each capacity the evaluation reports N leads, positives captured, Recall@X, Precision@X, Lift@X and cumulative gains.
+## Guardrail against serviceability over-weighting
 
-## Priority bands
+The rejected raw product `P_quality × InventoryServiceability` raises exact-serviceability concentration but degrades the primary Lead Quality ranking. At top 15% its pure Lead Quality Lift is 0.977x while its joint-exact Lift is 1.244x.
 
-Bands were frozen from the **score distribution only** across DEVELOPMENT + CALIBRATION (N=4,680). No target label and no June result was used.
+This trade-off is explicit. V2 does not buy joint-exact performance by silently sacrificing Lead Quality.
 
-| Band | Reference capacity | Minimum published score |
-|---|---:|---:|
-| PRIORITY | top 5% | 20.2386392017 |
-| HIGH | 5–10% | 20.0856578481 |
-| MEDIUM | 10–20% | 19.7356275314 |
-| LOW | remaining | below 19.7356275314 |
+## Display bands
 
-Reference counts are exactly 234 PRIORITY, 234 HIGH, 468 MEDIUM and 3,744 LOW.
+Reference thresholds are derived from the DEVELOPMENT full-fit V2 score distribution without labels:
 
-`PRIORITY + HIGH` corresponds to the declared top-10% operating scenario.
+- PRIORITY: top 5%, score >= 22.298344072628932
+- HIGH: 5–10%, score >= 22.298344072628932
+- MEDIUM: 10–20%, score >= 21.307940332937303
+- LOW: remaining
 
-If future batches create a tie exactly on a boundary, the deterministic tie-break is:
+They are display thresholds. Exact operational capacity is rank-based percentile with score-desc / lead_id-asc tie-break.
 
-1. Opportunity Score descending;
-2. Inventory confidence descending;
-3. lead_id ascending.
+## Fallback
 
-The numeric threshold remains frozen; the tie-break is for deterministic capacity extracts, not a way to retune the score.
+Maximum recommendation list depth is **K=3**. `NO_RESULT` remains preferable to inventing or excessively relaxing a candidate. UNKNOWN Availability may surface as `VERIFY_AVAILABILITY`; known unavailable inventory is never recommended.
 
-## DEVELOPMENT comparison
+## Claims
 
-Only the required systems are compared:
-
-A. clean Lead Quality only;
-B. Inventory only;
-C. multiplicative Opportunity Score.
-
-No D alternative was pre-registered for score blending, so none is introduced.
-
-Lead Quality-only Top-X metrics are undefined because the frozen probability is constant. Inventory and Opportunity have identical rankings by construction.
-
-### DEVELOPMENT descriptive capacity
-
-| System | Capacity | N | Positives | Recall | Precision | Lift |
-|---|---:|---:|---:|---:|---:|---:|
-| Inventory / Opportunity | 5% | 219 | 39 | 4.38% | 17.81% | 0.87x |
-| Inventory / Opportunity | 10% | 437 | 87 | 9.78% | 19.91% | 0.98x |
-| Inventory / Opportunity | 20% | 874 | 179 | 20.11% | 20.48% | 1.01x |
-
-DEVELOPMENT has 890 observed positives among 4,368 labeled leads.
-
-This does **not** demonstrate positive-outcome enrichment. The combined system currently ranks serviceability; the frozen Lead Quality component contributes no discrimination.
-
-## External benchmark
-
-`lead_score_internal` is never a predictor or blender input. Its origin and historical availability are not guaranteed, so it may appear only as `NON_DEPLOYABLE_REFERENCE`.
-
-Its reference results cannot modify model, formula, thresholds or capacity policy.
-
-## Fallback decision
-
-A lead may be high priority while exact inventory is not serviceable. The output therefore keeps the Inventory fallback state and Spot recommendations next to the scalar score. A single score never overwrites explicit Tier / UNKNOWN / Tier-3 trade-offs.
+Lead Quality, serviceability and their joint operational proxy are separate objectives. None is commercial conversion.
