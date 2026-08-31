@@ -1,69 +1,54 @@
-# Lead Opportunity Score Contract
+# Lead Opportunity Score Contract — post-recovery V2
 
-**Version:** `OPPORTUNITY_MULTIPLICATIVE_V1_FROZEN_2026-08-30`
+**Version:** `OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30`
 
-## Primary formula
-
-The published product score is:
+## Canonical formula
 
 ```
-OpportunityScore = P(LeadQuality) × InventoryServiceability
-PublishedScore = 100 × OpportunityScore
+InventoryActionabilityGate =
+    1  if frozen fallback status is KNOWN_AVAILABLE,
+       TIER3_ONLY_EXPERIMENTAL, or VERIFY_AVAILABILITY
+    0  otherwise
+
+OpportunityScoreV2 = P(LeadQuality_recovered) × InventoryActionabilityGate
+PublishedScore = 100 × OpportunityScoreV2
 ```
 
-Both factors are frozen 0–1 quantities. No exponent, weight, learned blender, stacking model, post-hoc rescaling or holdout-tuned adjustment is allowed.
+The score is frozen only after the Prompt 11.6 dependency reevaluation. No exponent, weight search, learned blender, stacking model or holdout-tuned adjustment is allowed.
 
-## Frozen inputs
+## Why V1 was invalidated
 
-### Lead Quality
+V1 multiplied Lead Quality by continuous Inventory Serviceability. That was coherent only while Lead Quality was a featureless Base Rate.
 
-The frozen T1 champion is `BASE_RATE + RAW` with probability **0.20375457875457875**.
+The recovered champion `LQ_RECOVERY_R4_STATIC_MATCH_V1` now uses selected-Spot area closeness, geographic fit and attribute completeness. Continuous Inventory Serviceability also contains matching/serviceability strength. Multiplying both therefore double-counts part of the matching construct.
 
-It has no model features. Therefore the clean Lead Quality construct contains no selected-Spot, matching or Inventory context.
+The V1 product remains a diagnostic challenger only. It is not an allowed final product score.
 
-A pre-registered selected-Spot challenger existed as Ablation E. It was explicitly `CHALLENGER_ONLY`, was not promoted, and is excluded from this score. This prevents double counting of matching/serviceability information.
+## Lead Quality
 
-### Inventory
+- target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`;
+- model: `LQ_RECOVERY_R4_STATIC_MATCH_V1`;
+- calibration: RAW;
+- Availability is prohibited from Lead Quality;
+- Semantic Rules / E018 are not used.
 
-Inventory uses `INV_SERVICEABILITY_V1_FROZEN_2026-08-30`. Its score is deterministic, PIT, and separate from Lead Quality. Snapshot freshness remains an independent `inventory_confidence`; it is not multiplied into the Opportunity Score.
+## Inventory
 
-Because current Spot prices are unversioned, canonical Inventory remains `PARTIAL_PIT_NO_VERSIONED_PRICE`; Opportunity Score inherits that limitation rather than silently filling a budget component.
+The scalar `INV_SERVICEABILITY_V1_FROZEN_2026-08-30` remains independently frozen and is **reported separately**. It is not multiplied into V2.
 
-## Consequence of the frozen Lead Quality champion
+The actionability gate uses only the final frozen fallback state. `VERIFY_AVAILABILITY` stays actionable because UNKNOWN does not mean unavailable. A true `NO_RESULT` gates the scalar score to zero.
 
-Because `P(LeadQuality)` is constant for every T1 lead, the multiplicative score is a positive monotonic transformation of Inventory Serviceability:
+Fallback list depth is K=3 after an independent clean-room DEVELOPMENT list-completion audit. Candidate construction, PIT Availability, serviceability scalar and deterministic ranking are unchanged.
 
-```
-OpportunityScore = 0.20375457875457875 × InventoryServiceability
-```
+## Capacity
 
-Therefore **Inventory-only and Opportunity Score have exactly the same ranking**. The multiplication is retained because it is the requested conceptual architecture and preserves the two-factor decomposition; it must not be presented as adding ranking lift beyond Inventory in this frozen assessment.
+The canonical operating capacity is **P80 / top 20% within T1**. It was selected from DEVELOPMENT temporal OOF only after comparing 5/10/15/20. Numeric score cutoffs in `frozen_score_config.json` are display/reference thresholds; the capacity authority is percentile ranking with tie-break:
 
-Lead Quality alone has tied scores and therefore no valid Top-X ranking metrics.
+1. V2 score descending;
+2. lead_id ascending.
 
-## Published columns
+## Product outputs
 
-One row per T1 lead contains at least:
+The product row contains no target, broker-response or hidden outcome field. Inventory Serviceability, confidence, exact-serviceable state and fallback recommendations remain visible beside V2 so that the scalar score cannot conceal operational trade-offs.
 
-- `lead_id`
-- `score_time`
-- `lead_quality_probability`
-- `lead_quality_score_0_100`
-- `inventory_serviceability`
-- `inventory_confidence`
-- `opportunity_score_0_100`
-- `priority_band`
-- `exact_spot_serviceable`
-- `fallback_status`
-- `fallback_spot_ids`
-- `fallback_relaxation_tier`
-- `reason_codes`
-- `model_version`
-- `inventory_version`
-- `data_fingerprint`
-
-Target/outcome columns are never part of the product scoring table.
-
-## Evaluation boundary
-
-Formula and policy are frozen before the June procedural holdout diagnostic. June remains `DIAGNOSTIC_ONLY_NON_PRISTINE` because of the previously documented holdout incident. No June result may change this contract.
+June remains `DIAGNOSTIC_ONLY_NON_PRISTINE` and was not used to select V2, P80 or K=3.
