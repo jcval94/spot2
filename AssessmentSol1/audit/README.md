@@ -1,23 +1,17 @@
-# Audit
+# Audit — post-recovery authority
 
-The final methodological authority is now:
+Final methodological authority:
 
 - `FINAL_LEAKAGE_AUDIT.md`
+- `POST_RECOVERY_RED_TEAM.md`
+- `DOUBLE_COUNTING_AUDIT.md`
+- `final_audit.json`
 - `LEAKAGE_MATRIX.csv`
 - `TEMPORAL_INVARIANTS.csv`
-- `DOUBLE_COUNTING_AUDIT.md`
-- `STRESS_TEST_REPORT.md`
 - `CLAIMS_POLICY.md`
-- `final_audit.json`
 
-Prompt-11 stress tests live only under `stress/**`. They are deliberately unsafe/non-deployable and are rejected by `harness.py` in product mode.
+The post-recovery audit supersedes any prior conclusion that depended on featureless Base-Rate Lead Quality or the V1 continuous multiplicative Opportunity Score.
 
-Earlier audit evidence remains useful chronology:
+Current gate is READY only because `final_audit.json` has **0 active BLOCKERS**.
 
-- `SCORING_INSTANT_GATE.md`
-- `PRE_P8_GATE_STATUS.json`
-- `../evidence/DATA_AUDIT.md`
-- `../evidence/TEMPORAL_SEMANTICS.md`
-- `../evidence/RESEARCH_CONTAMINATION.md`
-
-The final gate may be READY only when `final_audit.json` has zero active BLOCKERS.
+Prompt-11 stress specs under `stress/**` remain deliberately unsafe/non-deployable and are still rejected by the product harness. June remains procedural/non-pristine diagnostic evidence only.
