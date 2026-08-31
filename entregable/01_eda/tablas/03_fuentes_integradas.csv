@@ -1,4 +1,4 @@
 fuente,elemento_aprovechado,rol_en_la_solucion_final
-codexway,"Contrato T1, target, EDA canónico, política de features, leakage matrix, backward as-of, inventario, market context, clustering confirmatorio","AUTORIDAD FINAL: define narrativa, cifras finales y decisiones"
-experimentos,"Demand/need consistency, Dynamic Need, clustering y pockets locales, disponibilidad histórica, semantic QA, resultados negativos","EVIDENCIA COMPLEMENTARIA: genera hipótesis, contexto, challengers y aprendizajes; nunca reemplaza Codexway"
-AssessmentSol1,"EDA development-only, drift, candidate depth, missingness, demand/supply, auditoría relacional, PIT/leakage, prohibiciones","AUDITORÍA METODOLÓGICA: confirma riesgos, cuantifica sesgos temporales y justifica tratamiento de variables"
+"Codexway","Contrato T1, EDA final, política de variables, controles contra información futura, inventario, contexto de mercado y segmentación confirmatoria","AUTORIDAD FINAL: define narrativa, cifras y decisiones"
+"experimentos","Consistencia de necesidad, segmentación, patrones locales, disponibilidad histórica, control semántico y resultados negativos","EVIDENCIA COMPLEMENTARIA: genera hipótesis y aprendizajes; no reemplaza la solución final"
+"AssessmentSol1","EDA de desarrollo, cambios temporales, profundidad de candidatos, datos faltantes, demanda/oferta y auditoría temporal","AUDITORÍA METODOLÓGICA: cuantifica riesgos y cuestiona la solución sin sustituirla"
