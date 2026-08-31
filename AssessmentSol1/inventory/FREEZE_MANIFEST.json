@@ -1,0 +1,43 @@
+{
+  "freeze_id": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+  "status": "FROZEN_BEFORE_OPPORTUNITY_SCORE",
+  "selection_scope": "T1 DEVELOPMENT only; score_time < 2026-05-01 UTC",
+  "procedural_holdout_used_for_selection": false,
+  "calibration_used_for_selection": false,
+  "outcomes_used_for_selection": false,
+  "lead_quality_modified": false,
+  "lead_quality_frozen_config_blob_sha": "2dd65734dedf2548a3d30dbadfec6eb3f3512b03",
+  "inventory_artifacts": {
+    "frozen_inventory_config.json": "383a8a16e85d5ea651edca85903304a7038279fe",
+    "build_inventory.py": "2fdb3c604f441738146747bdd80338e016a63bef",
+    "rank_fallbacks.py": "21b867dbb07e230474528abd0e18dd047b580d9a",
+    "SERVICEABILITY_CONTRACT.md": "1547b5721f8a2d965235f4fb63def70c2d3f5a8c",
+    "MATCHING_POLICY.md": "8e9a597325eaa06f55aab4dd475bdea07468b681",
+    "FALLBACK_POLICY.md": "8e1be1a20deb97c34d0edbfa62667ecf2066a59b",
+    "FRESHNESS_POLICY.md": "7649341aa4b418cef0cf41f0386f94b54a3aa6df",
+    "TEMPORAL_CORRECTION.md": "45a9897c42d4d86e97377b2e3b42fb852479f8b2",
+    "outputs/development_policy_evaluation.json": "026a3caa28d9da4356fbfa36dd3599cbfbe8f7cc",
+    "../tests/test_inventory.py": "272ed922c6e7736179667fc15ca62cb3f8718629"
+  },
+  "raw_selection_evidence_blobs": {
+    "leads.csv": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
+    "inquiries.csv": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
+    "spots.csv": "3dd32ff87a466e45d5637715725718e4bed9d808",
+    "availability_snapshot.csv": "82ef91a25ff5b2a330b4e1d01668c4934239c43f"
+  },
+  "gates": {
+    "future_spot_forbidden": true,
+    "future_snapshot_forbidden": true,
+    "hard_modality": true,
+    "rent_sale_unit_separation": true,
+    "max_five_recommendations": true,
+    "deterministic_ranking": true,
+    "missing_snapshot_is_unknown": true,
+    "stale_snapshot_remains_known": true,
+    "unique_rank": true,
+    "outcome_independent": true,
+    "current_unversioned_price_blocked": true,
+    "competing_inquiries_30d_blocked": true
+  },
+  "runtime_note": "Exact Polars runtime tests were not executed in the current tool environment because Polars is unavailable. The Python implementation was syntax-checked locally before commit and policy metrics were independently recomputed from raw repository blobs. Run pytest AssessmentSol1/tests/test_inventory.py in the project environment as the exact-runtime gate."
+}
