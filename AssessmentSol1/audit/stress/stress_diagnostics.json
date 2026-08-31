@@ -1,0 +1,11 @@
+{
+  "development_rows": 4368,
+  "positives": 890,
+  "s002_leads_with_future_inquiry": 3872,
+  "s002_share_with_future_inquiry": 0.8864468864468864,
+  "s002_leads_with_future_asked_visit": 2484,
+  "s002_share_with_future_asked_visit": 0.5686813186813187,
+  "s002_mean_future_inquiries": 3.5792124542124544,
+  "s003_nearest_future_snapshot_share": 0.5230660592495805,
+  "selection_use": "FORBIDDEN"
+}
