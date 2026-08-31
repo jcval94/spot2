@@ -1,72 +1,74 @@
-# Referencias y trazabilidad — Entregable 1 EDA
+# Referencias y trazabilidad — EDA
 
-> **Nota de trazabilidad:** los identificadores de evidencia se mantienen para auditoría, pero no es necesario abrir la evidencia histórica para entender la entrega final. La documentación presentada al evaluador es autocontenida y está en español.
+Este anexo explica **de dónde sale cada afirmación importante del EDA**. No es necesario abrir documentación histórica para entender la entrega final.
 
-Este archivo funciona como índice de evidencia. La jerarquía es deliberada:
+La jerarquía utilizada fue:
 
-1. **Codexway**: autoridad final.
-2. **AssessmentSol1**: auditoría metodológica y evidencia complementaria.
-3. **experimentos**: investigación histórica, challengers, resultados negativos e hipótesis.
+1. **Codexway:** define la solución final.
+2. **AssessmentSol1:** funciona como auditoría metodológica complementaria.
+3. **experimentos:** conserva pruebas alternativas, resultados negativos y aprendizajes.
 
-Cuando dos fuentes usan poblaciones, targets o contratos temporales diferentes, el documento principal lo indica y no combina sus métricas.
+Cuando dos líneas de investigación usan poblaciones, variables objetivo o reglas temporales distintas, **sus métricas no se mezclan**.
 
-## A. Autoridad final — Codexway
+## A. Evidencia que define la solución final
 
-| ID | Evidencia | Uso en el EDA |
+| ID | Evidencia | Para qué se utilizó |
 |---|---|---|
-| C01 | **README de Codexway** | Contrato de producto, T1, arquitectura Lead Quality + Inventory y limitaciones |
-| C02 | **Decisiones congeladas** | Reglas finales de temporalidad, clustering, Inventory y validación |
-| C03 | **Leakage Matrix** | Allow/block de familias de variables |
-| C04 | **Mapa fuente-evidencia** | Clasificación de evidencia heredada |
-| C05 | **Resumen EDA** | Conteos, madurez y prevalencia T1 |
-| C06 | **Lead mix** | Composición sector × modalidad |
-| C07 | **Tasa por segmento** | Asociaciones descriptivas del proxy |
-| C08 | **Market Context EDA** | Dinámica sectorial EDA_ONLY |
-| C09 | **Frescura de inventario** | Sensibilidad 7/30/90 días |
-| C10 | **Inventory audit** | UNKNOWN, bounds, confianza y limitación de listing state |
-| C11 | **Cluster findings** | Resultado confirmatorio de perfiles/celdas |
-| C12 | **Sensibilidad T0/T2** | Papel no principal de T0/T2 |
-| C13 | **Sensibilidad de madurez** | Robustez de prevalencia T1 a 7/14/30 días |
-| C14 | **Cronología** | Evolución de decisiones y correcciones |
+| C01 | Contrato de producto de Codexway | Momento T1, arquitectura general y limitaciones |
+| C02 | Decisiones finales | Reglas de temporalidad, inventario, segmentación y validación |
+| C03 | Matriz de fuga de información futura | Qué familias de variables están permitidas y cuáles se bloquean |
+| C04 | Mapa de fuentes | Clasificación de la evidencia heredada |
+| C05 | Resumen del EDA | Conteos, madurez y prevalencia de la visita agendada |
+| C06 | Composición de leads | Mezcla de sector y modalidad |
+| C07 | Tasa por segmento | Asociaciones descriptivas con la visita agendada |
+| C08 | Contexto de mercado | Dinámica sectorial utilizada sólo para análisis descriptivo |
+| C09 | Vigencia del inventario | Sensibilidad a ventanas de 7, 30 y 90 días |
+| C10 | Auditoría de inventario | Estados desconocidos, rangos de incertidumbre y limitaciones |
+| C11 | Hallazgos de segmentación | Confirmación o rechazo de patrones locales |
+| C12 | Sensibilidad T0/T2 | Papel secundario de momentos anteriores y posteriores a T1 |
+| C13 | Sensibilidad de madurez | Estabilidad de la variable de éxito con ventanas de 7/14/30 días |
+| C14 | Cronología de decisiones | Evolución de correcciones y decisiones finales |
 
-## B. Auditoría complementaria — AssessmentSol1
+## B. Auditoría metodológica complementaria
 
-| ID | Evidencia | Uso en el EDA |
+| ID | Evidencia | Para qué se utilizó |
 |---|---|---|
-| A01 | **Raw Data Audit** | Integridad relacional, missingness, outliers, joins temporales y Market Context |
-| A02 | **EDA Findings** | Demand/supply, asked_visit, área, urgency, candidate depth y cautela estacional |
-| A03 | **Drift Findings** | Separación population drift vs coverage/exposure/clock drift |
-| A04 | **Feature Engineering Decisions** | Consecuencias de missingness y refinamiento T0→T1 |
-| A05 | **Temporal Semantics** | Ontología de score times y observabilidad |
-| A06 | **Demand vs supply** | Brecha sectorial DEVELOPMENT |
-| A07 | **Resumen numérico** | Área, urgency, exposición, candidate depth y snapshot age |
-| A08 | **Serie mensual T1** | Coverage drift y candidate depth temporal |
-| A09 | **Inventory summary** | Missingness física y profundidad |
-| A10 | **Market highlights** | Ejemplos por corredor/municipio |
-| A11 | **T0 Exposure Drift** | Evidencia alternativa clean-room sobre exposure drift |
-| A12 | **T2 Trajectory Decision** | Evidencia alternativa sobre valor marginal inestable de trayectoria |
+| A01 | Auditoría de datos | Integridad de relaciones, datos faltantes, valores extremos y uniones temporales |
+| A02 | Hallazgos del EDA | Demanda/oferta, área solicitada, urgencia y profundidad de alternativas |
+| A03 | Cambios temporales | Separar cambios de población de cambios en cobertura o instrumentación |
+| A04 | Decisiones sobre variables | Significado de datos faltantes y refinamiento de la necesidad T0→T1 |
+| A05 | Semántica temporal | Qué información es observable en cada momento |
+| A06 | Demanda frente a oferta | Brecha sectorial en la muestra de desarrollo |
+| A07 | Resumen numérico | Área, urgencia, exposición y antigüedad del inventario |
+| A08 | Serie mensual T1 | Evolución de cobertura y cantidad de candidatos |
+| A09 | Resumen de inventario | Profundidad y ausencia de información |
+| A10 | Hallazgos de mercado | Ejemplos geográficos y sectoriales |
+| A11 | Cambio de exposición en T0 | Evidencia alternativa sobre cambios temporales |
+| A12 | Trayectoria T2 | Evidencia sobre el valor adicional, pero inestable, de interacciones posteriores |
 
-> Nota de integración: AssessmentSol1 congela algunas decisiones distintas de Codexway —por ejemplo, otra definición de target T1 y una asunción explícita de inmutabilidad de atributos—. En este entregable esas decisiones **no sustituyen** el contrato final de Codexway.
+> Algunas decisiones de esta auditoría usan contratos distintos de los de Codexway. Se utilizaron para **cuestionar y validar** la solución, no para sustituirla.
 
-## C. Investigación histórica — experimentos
+## C. Investigación experimental
 
-| ID | Evidencia | Uso en el EDA |
+| ID | Evidencia | Para qué se utilizó |
 |---|---|---|
-| E01 | **EV-006 Profile Clustering v2** | Separación Persona/Need/Physical/Location y resultados negativos |
-| E02 | **EV-013 Matching Profiles v4** | Dynamic Need, Broker Service y pockets locales |
-| E03 | **Variable Treatment Manifest** | Missingness estructural por modalidad y tratamiento de variables |
-| E04 | **Conocimiento agregado** | Síntesis de hallazgos experimentales |
-| E05 | **EV-017 LLM Semantic Feature Pilot** | Valor del LLM como discovery semántico, no como feature final |
-| E06 | **Semantic Rules Lift Ablation** | Resultado negativo: QA semántica no implica mejor ranking |
-| E07 | **Matching A/B v3** | Auditorías de relaciones, Availability y matching |
+| E01 | Segmentación de perfiles | Entender patrones de persona, necesidad, inmueble y ubicación |
+| E02 | Perfiles de compatibilidad | Explorar necesidad dinámica, servicio del intermediario y patrones locales |
+| E03 | Tratamiento de variables | Documentar cuándo un dato faltante tiene significado estructural |
+| E04 | Conocimiento agregado | Síntesis de descubrimientos experimentales |
+| E05 | Piloto semántico con IA | Evaluar si un LLM aportaba información nueva al modelo |
+| E06 | Prueba de reglas semánticas | Confirmar que mejorar el control de catálogo no implicaba mejorar el ranking |
+| E07 | Pruebas de compatibilidad y disponibilidad | Auditar relaciones, temporalidad del inventario y alternativas |
 
-## D. Requisito del assessment
-
-- [Assessment oficial](../../assessment.md): define que el EDA debe ser una narrativa de negocio, cubrir calidad de datos, temporalidad, dinámica de mercado y explicar hipótesis que influyen en el sistema.
-
-## E. Tablas finales de este entregable
+## D. Tablas finales utilizadas en el EDA
 
 - [Resumen de fuentes](tablas/00_resumen_fuentes.csv)
-- [Métricas EDA clave](tablas/01_metricas_eda_clave.csv)
-- [Hallazgos → decisiones](tablas/02_hallazgos_decisiones.csv)
+- [Métricas principales](tablas/01_metricas_eda_clave.csv)
+- [Hallazgos y decisiones](tablas/02_hallazgos_decisiones.csv)
 - [Fuentes integradas](tablas/03_fuentes_integradas.csv)
+
+## Regla de interpretación
+
+Una cifra histórica se utiliza sólo si es compatible con la población y el momento que se están describiendo. Si una fuente usa otra definición de éxito o una ventana temporal distinta, se presenta como evidencia complementaria y se etiqueta como tal.
+
+El objetivo de este anexo es que el evaluador pueda distinguir con claridad **qué define la solución final, qué la audita y qué simplemente documenta caminos explorados**.
