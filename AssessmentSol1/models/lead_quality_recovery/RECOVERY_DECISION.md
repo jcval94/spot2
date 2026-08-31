@@ -76,3 +76,20 @@ Target remains:
 `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`
 
 No target reopening or version change was needed.
+
+
+## Prompt 11.6 downstream resolution
+
+The downstream invalidation described above has now been resolved without reopening the recovery model.
+
+- Inventory scalar remains frozen and unchanged.
+- V1 `P_quality × InventoryServiceability` remains invalidated.
+- Canonical integration is `OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30`.
+- Capacity was recalculated on DEVELOPMENT OOF and frozen at P80/top 20%.
+- Fallback list depth was revised independently to K=3.
+- Final post-recovery red team: PASS, 0 blockers.
+- June was not used for any of these selections.
+
+Authority: `../../recovery_downstream/POST_RECOVERY_FINAL_STATE.json`.
+
+**POST-RECOVERY SYSTEM FROZEN — CONTINUE TO PROMPT 12**
