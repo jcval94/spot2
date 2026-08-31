@@ -63,7 +63,8 @@ def _evaluate_ranked(df: pl.DataFrame, score_col: str, system: str, population: 
             "population": population, "system": system, "capacity_pct": int(c * 100),
             "n_leads": n, "positives_captured": captured, "recall_at_x": recall,
             "precision_at_x": precision, "lift_at_x": (precision / base_rate) if base_rate else None,
-            "cumulative_gains": recall, "status": "DEFINED",
+            "cumulative_gains": recall,
+            "status": ("NON_DEPLOYABLE_REFERENCE" if system == "LEAD_SCORE_INTERNAL_NON_DEPLOYABLE_REFERENCE" else "DEFINED"),
         })
     return rows
 
