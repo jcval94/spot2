@@ -1,0 +1,14 @@
+{
+  "id": "S003",
+  "name": "nearest availability snapshot challenger",
+  "unsafe": true,
+  "deployable": false,
+  "tags": ["FUTURE_SNAPSHOT_LEAKAGE", "NON_DEPLOYABLE"],
+  "source": "availability_snapshot",
+  "evaluation_population": "T1 DEVELOPMENT",
+  "split": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+  "rule": "Replace backward-as-of availability with the nearest snapshot_date in absolute days; on an equal-distance tie prefer the later snapshot.",
+  "everything_else": "Use the frozen Inventory serviceability rules and constant Lead Quality factor.",
+  "selection_use": "FORBIDDEN",
+  "feature_engineering_use": "FORBIDDEN"
+}
