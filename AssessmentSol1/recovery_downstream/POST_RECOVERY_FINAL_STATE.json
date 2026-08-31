@@ -1,0 +1,37 @@
+{
+  "state_version": "POST_RECOVERY_FINAL_STATE_V1_2026-08-30",
+  "phase": "PRE_CANONICAL_UPDATE",
+  "recovered_lead_quality": {
+    "version": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+    "status": "FROZEN",
+    "target": "T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1",
+    "split": "SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30",
+    "calibration": "RAW"
+  },
+  "inventory": {
+    "version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+    "scalar_status": "UNCHANGED_FROZEN",
+    "fallback_max_k_selected": 3
+  },
+  "opportunity": {
+    "selected_version": "OPPORTUNITY_ACTIONABILITY_GATE_V2",
+    "formula": "lead_quality_probability * inventory_actionability_gate",
+    "old_v1_status": "INVALIDATED_REJECTED_DIAGNOSTIC_ONLY"
+  },
+  "capacity": {
+    "selected_pct": 20,
+    "representation": "P80 / top 20% within T1",
+    "selection_population": "DEVELOPMENT_OOF_ONLY"
+  },
+  "holdout": {
+    "used_for_selection": false,
+    "status": "DIAGNOSTIC_ONLY_NON_PRISTINE"
+  },
+  "red_team": {
+    "status": "PENDING_CANONICAL_UPDATE"
+  },
+  "blockers": [
+    "Canonical post-recovery files and final red-team audit not yet updated"
+  ],
+  "gate": "DO_NOT_CONTINUE_YET"
+}
