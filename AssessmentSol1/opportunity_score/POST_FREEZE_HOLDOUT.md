@@ -1,34 +1,18 @@
-# Post-freeze procedural holdout diagnostic
+# Procedural holdout governance after Lead Quality recovery
 
-The Opportunity Score policy was frozen in `frozen_score_config.json` before this evaluation. The freeze commit is `1d036f69891dd8ba42798596af3888ece68dd76d`.
+## Status: SUPERSEDED AS CURRENT SCORE EVIDENCE
 
-June remains **DIAGNOSTIC_ONLY_NON_PRISTINE** because the Lead Quality workflow had already documented a procedural-holdout consumption incident. Nothing in this diagnostic changes the formula, priority thresholds, capacity assumption, Lead Quality, Inventory or fallback policy.
+The old Prompt-10 June diagnostic belonged to the Base-Rate / multiplicative V1 architecture. Its numeric results are historical only and **must not be interpreted as post-recovery V2 performance**.
 
-## June labeled population
+Prompt 11.6 deliberately did **not** reopen or reuse June to select:
 
-- mature labeled T1 leads: **273**
-- observed positives: **53**
-- prevalence: **19.41%**
+- `LQ_RECOVERY_R4_STATIC_MATCH_V1`;
+- Opportunity Score V2;
+- P80 / top-20 capacity;
+- K=3 fallback.
 
-Lead Quality-only Top-X metrics remain undefined because its frozen probability is constant.
+June remains `DIAGNOSTIC_ONLY_NON_PRISTINE` because of the previously documented procedural-holdout incident. Re-consuming it while rebuilding downstream would create a second policy-selection path through a contaminated holdout.
 
-Inventory-only and multiplicative Opportunity Score remain ranking-identical.
+The authoritative post-recovery evidence is DEVELOPMENT temporal OOF under `AssessmentSol1/recovery_downstream/`.
 
-| Capacity | N | Positives captured | Recall | Precision | Lift |
-|---|---:|---:|---:|---:|---:|
-| 5% | 14 | 1 | 1.89% | 7.14% | 0.37x |
-| 10% | 28 | 3 | 5.66% | 10.71% | 0.55x |
-| 20% | 55 | 7 | 13.21% | 12.73% | 0.66x |
-
-At the declared top-10% operational scenario the system concentrates only **3 of 53 observed positives**.
-
-## Interpretation
-
-The diagnostic does not support positive-outcome enrichment. It strengthens the conservative interpretation already visible in DEVELOPMENT:
-
-- clean Lead Quality is a neutral prior;
-- the combined ranking is entirely driven by serviceability;
-- Inventory Serviceability is useful for answering whether demand can be served, not demonstrated as a conversion predictor;
-- the multiplicative score is a coherent product construct but not evidence of incremental ranking lift.
-
-True confirmation requires new/hidden post-freeze data.
+Any future post-recovery confirmation must use genuinely new/hidden data. No post-recovery formula, capacity or fallback change may be justified from the old June diagnostic.
