@@ -10,43 +10,86 @@ CSV/Parquet parity, PK/FK, missingness, temporal ontology and source-specific bl
 Primary target frozen as `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`, 14-day maturity.
 
 ## P3 / Prompt 4 — Point-in-time ABTs — COMPLETE FOR TEMPORAL VALIDITY
-Builders and leakage gates are implemented. An independent raw-equivalence runtime audit now passes and reproduces the frozen T0/T1/T2 and candidate grains.
+Builders and leakage gates are implemented. Independent raw-equivalence checks reproduce the frozen T0/T1/T2 and candidate grains.
 
-Exact Polars builder materialization remains a final reproducibility follow-up, not a downstream selection dependency.
+Exact Polars/pytest execution remains a final reproducibility check when the project runtime is available; it is not a downstream selection dependency.
 
 ## P4 — Split contract — COMPLETE
-Frozen timestamp-only T1 split plus four expanding folds; T2 boundary-crossing rule is active.
+Frozen timestamp-only T1 split plus four expanding temporal folds.
 
 ## P5–6 — EDA, drift and Feature Engineering — COMPLETE
-Development-only FE design, drift classification, 129-row feature registry, stage-aware trajectory implementation and Inventory separation.
+Development-only FE design, drift classification, feature registry, stage-aware feature policies and Inventory separation are frozen.
 
-## P7 — T1 Lead Quality — COMPLETE
-Champion: **BASE_RATE + RAW**, p≈0.2038. No ranking model is supported.
+## P7 — T1 Lead Quality initial model phase — SUPERSEDED BY RECOVERY
+The earlier Base-Rate/no-ranking conclusion is historical only and must not be presented as the current champion.
 
-Permanent caveat: procedural holdout consumed by the documented execution-export incident; June is diagnostic-only.
+Prompt 11.5 reopened **model signal recovery only**, without changing target or splits.
 
-## P8 — T0 sensitivity + T2 challenger — COMPLETE
+## P7R / Prompt 11.5 — Lead Quality recovery — COMPLETE
+Current champion:
 
-### T0
-**NEUTRAL_EVIDENCE_BACKED.**
-Strong exposure drift is reproduced. Intake Logistic fails the frozen promotion rule.
+`LQ_RECOVERY_R4_STATIC_MATCH_V1`
 
-### T2
-**FUTURE_EXTENSION.**
-Trajectory adds only +0.0032 AP macro, improves AP in 2/4 folds, and does not justify operational complexity.
+Model:
+- small regularized Logistic Regression;
+- RAW calibration.
 
-Boundary crossing is enforced by requiring both frozen T1 lead membership and current T2 score_time to satisfy each fold boundary; strict-history violations in the final P8 execution are 0.
+Features:
+- `selected_spot_area_closeness`;
+- `selected_spot_geographic_fit`;
+- `selected_spot_attribute_completeness`.
 
-## P9 — Inventory / Fallback / Opportunity Score — NEXT
-This is now the highest-value remaining assessment work.
+Availability is not used in Lead Quality.
 
-Required focus:
-1. define Inventory Serviceability under current temporal limits;
-2. distinguish UNKNOWN, stale, unavailable and available;
-3. implement fallback by sector/modality/geography/area;
-4. treat historical price compatibility conservatively because prices are unversioned;
-5. combine the frozen T1 prior with Inventory through a clearly justified Lead Opportunity Score;
-6. evaluate end-to-end prioritization without pretending T1 has individual ranking signal.
+Recovery gate passed on temporal DEVELOPMENT OOF.
 
-## P10 — Final reporting
-Produce the final HTML/notebook narrative, executive one-pager, presentation, AI-use disclosure, scalability/product vision and reproducibility index.
+## P8 — T0 sensitivity + T2 challenger — COMPLETE / NON-CANONICAL FOR FINAL SCORER
+T0/T2 work remains supporting/extension evidence. Final operational scoring authority is the frozen T1 post-recovery system.
+
+## P9 / Prompt 11.6 — Inventory / Fallback / Opportunity Score rebuild — COMPLETE
+Post-recovery dependencies were rebuilt.
+
+Frozen state:
+- Inventory scalar: `INV_SERVICEABILITY_V1_FROZEN_2026-08-30`;
+- fallback: `K=3`;
+- Opportunity Score: `OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30`;
+- formula: `lead_quality_probability * inventory_actionability_gate`;
+- rejected V1 continuous product: diagnostic-only;
+- capacity: `P80 / top 20% within T1`;
+- selection population: DEVELOPMENT temporal OOF only;
+- final red-team: PASS, 0 blockers.
+
+Authority:
+
+`recovery_downstream/POST_RECOVERY_FINAL_STATE.json`
+
+## P10 / Prompt 12 — LLM / AI requirement — COMPLETE
+Real LLM evidence is documented and the self-contained Rules-first implementation lives under `llm/**`.
+
+Final role:
+- sampled Semantic Inventory / Catalog QA discovery;
+- no runtime dependency in Lead Quality or Opportunity Score.
+
+Semantic Rules:
+- excluded from Lead Quality scoring;
+- retained for Inventory/Catalog QA.
+
+Prompt 12 new API spend: USD 0.
+
+## P11 / Prompt 13 — Final assessment packaging — NEXT
+Build the final notebook, HTML, one-pager, presentation, Assessment Report and reproducibility index using only frozen AssessmentSol1 source-of-truth artifacts.
+
+Authoritative patched prompt:
+
+`final/PROMPT_13_FINAL_ASSESSMENT.md`
+
+## P12 / Prompt 14 — Final submission review — AFTER PROMPT 13
+Run the final stale-metric, post-recovery consistency, reproducibility and deliverable red-team.
+
+Authoritative patched prompt:
+
+`final/PROMPT_14_FINAL_REVIEW.md`
+
+Final gate:
+- `READY TO SUBMIT`, or
+- `DO NOT SUBMIT — BLOCKERS REMAIN`.
