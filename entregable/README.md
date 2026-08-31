@@ -23,6 +23,7 @@ Entregables materializados actualmente en esta carpeta:
 1. **[Entregable 1 — Análisis Exploratorio de Datos (EDA) — versión final](01_eda/README.md)**
 2. [Entregable 3 — Modelo de Calidad del Lead](03_lead_quality/README.md)
 3. [Entregable 4 — Inventory Availability + Fallback](04_inventory_fallback/README.md)
+4. [Entregables 5 y 6 — Lead Opportunity Score + Escalabilidad y Producción](05_opportunity_produccion/README.md)
 
 El archivo [01_EDA.md](01_EDA.md) se conserva como versión histórica previa; el entry point vigente del Entregable 1 es **01_eda/README.md**.
 
