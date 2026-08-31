@@ -1,0 +1,180 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>Spot2 — Lead Opportunity Assessment</title>
+<style>
+:root{color-scheme:light dark;--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#d8deea;--accent:#205eb8;--gold:#b47c00}
+@media(prefers-color-scheme:dark){:root{--bg:#0c1117;--card:#151b23;--ink:#e6edf3;--muted:#9da7b3;--line:#30363d;--accent:#6ea8fe;--gold:#e3b341}}
+*{box-sizing:border-box}body{margin:0;background:#0a0d12;color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
+.deck{height:100vh;width:100vw;display:flex;align-items:center;justify-content:center}.slide{display:none;width:min(1180px,94vw);height:min(690px,91vh);background:var(--bg);border-radius:20px;padding:50px 58px;position:relative;overflow:hidden}.slide.active{display:block}
+.kicker{text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700;font-size:.76rem}h1{font-size:3.25rem;line-height:1.03;margin:.25em 0}h2{font-size:2.35rem;line-height:1.08;margin:.2em 0 .55em}h3{font-size:1.15rem;margin:.2em 0}.lead{font-size:1.35rem;color:var(--muted);max-width:880px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:17px}.metric{font-size:2rem;font-weight:800}.label{font-size:.86rem;color:var(--muted)}
+table{width:100%;border-collapse:collapse;background:var(--card);font-size:.94rem}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted)}code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}pre{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:1.05rem}
+.flow{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:24px 0}.flow span{padding:10px 13px;border:1px solid var(--line);background:var(--card);border-radius:10px}.arrow{border:0!important;background:transparent!important;color:var(--muted)}
+.note{border-left:4px solid var(--gold);background:var(--card);padding:12px 16px;margin:16px 0}.small{font-size:.87rem;color:var(--muted)}ul{padding-left:22px}li{margin:8px 0}.chart svg{width:100%;height:auto;max-height:280px}.footer{position:absolute;bottom:20px;left:58px;right:58px;display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem}
+.nav{position:fixed;right:24px;bottom:20px;display:flex;gap:8px;z-index:10}.nav button{border:1px solid #555;background:#15191f;color:#fff;border-radius:9px;padding:9px 13px;cursor:pointer}.nav button:hover{background:#242a33}
+.progress{position:fixed;left:0;bottom:0;height:4px;background:#6ea8fe;transition:width .2s}
+@media(max-width:850px){body{overflow:auto}.deck{height:auto;display:block}.slide{width:100%;height:auto;min-height:100vh;border-radius:0;padding:36px 24px}.cols,.grid{grid-template-columns:1fr}.footer{position:static;margin-top:30px}.nav,.progress{display:none}.slide{display:block!important;margin-bottom:4px}h1{font-size:2.4rem}h2{font-size:2rem}}
+</style></head><body>
+<div class="deck">
+
+<section class="slide active">
+<div class="kicker">Spot2 · Final clean-room assessment</div>
+<h1>Lead Opportunity<br>without pretending one score answers everything</h1>
+<p class="lead">A T1 system that separates progression propensity, point-in-time Inventory serviceability and operational priority.</p>
+<div class="grid">
+<div class="card"><div class="metric">T1</div><div class="label">first-inquiry scoring</div></div>
+<div class="card"><div class="metric">1.124x</div><div class="label">Lift @ top20</div></div>
+<div class="card"><div class="metric">K=3</div><div class="label">fallback max</div></div>
+<div class="card"><div class="metric">0</div><div class="label">post-recovery blockers</div></div>
+</div>
+<div class="footer"><span>Source: AssessmentSol1 frozen artifacts</span><span>1 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">Problem framing</div><h2>Three questions, three distinct objects</h2>
+<div class="cols">
+<div>
+<h3>Lead Quality</h3><p>Who shows greater propensity to reach the frozen first-inquiry scheduled-visit outcome?</p>
+<h3>Inventory Serviceability</h3><p>Can Spot2 serve the lead using information actually known at score time?</p>
+<h3>Lead Opportunity</h3><p>Where do progression propensity and operational actionability coincide?</p>
+</div>
+<div class="note"><strong>Product rule</strong><br><br>Maximize scheduled visits regardless of inventory → <strong>Lead Quality</strong>.<br><br>Prioritize progression + serviceability → <strong>Opportunity Score</strong>.</div>
+</div>
+<div class="footer"><span>No joint-probability claim</span><span>2 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">Target & temporal design</div><h2>Score at the first inquiry, not after the outcome starts leaking in</h2>
+<p class="lead"><code>T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1</code></p>
+<div class="cols"><div>
+<ul><li>Question: will this first inquiry eventually be recorded as <code>scheduled_visit</code>?</li><li>14-day maturity.</li><li>Coverage: <strong>4,953 / 5,000 = 99.06%</strong>.</li><li>Target frozen before model selection.</li></ul>
+</div><div>
+<table><tr><th>Partition</th><th>N</th></tr><tr><td>Development</td><td>4,368</td></tr><tr><td>Calibration</td><td>312</td></tr><tr><td>Procedural holdout</td><td>290</td></tr><tr><td>Post-holdout audit</td><td>30</td></tr></table>
+<p class="small">June holdout is non-pristine / diagnostic-only and was not used for post-recovery selection.</p>
+</div></div>
+<div class="footer"><span>4 expanding temporal development folds · OOF N=2,390</span><span>3 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">Lead Quality recovery</div><h2>Recovery changed the model — not the target, splits or information clock</h2>
+<div class="cols">
+<div><p><strong>Champion:</strong> <code>LQ_RECOVERY_R4_STATIC_MATCH_V1</code></p>
+<p>Small regularized Logistic Regression, RAW calibration.</p>
+<ul><li>selected-Spot area closeness</li><li>geographic fit</li><li>attribute completeness</li></ul>
+<p><strong>Availability is not a Lead Quality feature.</strong></p></div>
+<div class="grid" style="grid-template-columns:1fr 1fr">
+<div class="card"><div class="metric">1.075x</div><div class="label">Lift@10</div></div>
+<div class="card"><div class="metric">1.115x</div><div class="label">Lift@20</div></div>
+<div class="card"><div class="metric">4/4</div><div class="label">folds Lift@10 &gt; 1</div></div>
+<div class="card"><div class="metric">0.859x</div><div class="label">Lift@5 weakness</div></div>
+</div></div>
+<div class="note"><strong>Interpretation:</strong> modest ranking signal, not a high-separation classifier. Bootstrap uncertainty remains wide.</div>
+<div class="footer"><span>ROC AUC ≈0.513 · AP ≈0.219</span><span>4 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">Capacity</div><h2>P80 / top20 is the clean-room operational default</h2>
+<div class="cols"><div class="chart">
+<svg viewBox="0 0 650 300"><line x1="55" y1="245" x2="620" y2="245" stroke="currentColor" opacity=".35"/><line x1="55" y1="65" x2="620" y2="65" stroke="currentColor" opacity=".3" stroke-dasharray="6 6"/><text x="4" y="70" fill="currentColor" font-size="13">1.0</text>
+<rect x="90" y="116" width="82" height="129" fill="currentColor" opacity=".45" rx="6"/><text x="131" y="108" text-anchor="middle" fill="currentColor">0.859x</text>
+<rect x="220" y="84" width="82" height="161" fill="currentColor" opacity=".55" rx="6"/><text x="261" y="76" text-anchor="middle" fill="currentColor">1.075x</text>
+<rect x="350" y="82" width="82" height="163" fill="currentColor" opacity=".6" rx="6"/><text x="391" y="74" text-anchor="middle" fill="currentColor">1.084x</text>
+<rect x="480" y="76" width="82" height="169" fill="currentColor" opacity=".9" rx="6"/><text x="521" y="68" text-anchor="middle" fill="currentColor">1.124x</text>
+<text x="131" y="270" text-anchor="middle" fill="currentColor">5%</text><text x="261" y="270" text-anchor="middle" fill="currentColor">10%</text><text x="391" y="270" text-anchor="middle" fill="currentColor">15%</text><text x="521" y="270" text-anchor="middle" fill="currentColor">20%</text></svg>
+</div><div>
+<table><tr><th>Cap.</th><th>Recall</th><th>Precision</th></tr><tr><td>5%</td><td>4.4%</td><td>18.0%</td></tr><tr><td>10%</td><td>10.8%</td><td>22.4%</td></tr><tr><td>15%</td><td>16.4%</td><td>22.5%</td></tr><tr><td><strong>20%</strong></td><td><strong>22.6%</strong></td><td><strong>23.3%</strong></td></tr></table>
+<p>Top20 has the strongest passing Lift across 10/15/20 and retains the most positives.</p>
+</div></div>
+<div class="footer"><span>Selection: DEVELOPMENT temporal OOF only</span><span>5 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">Inventory & fallback</div><h2>Serviceability is point-in-time and fallback stops at K=3</h2>
+<div class="cols"><div>
+<pre>Availability:
+latest snapshot_date <= score_time</pre>
+<ul><li>No future days-until-available shortcut.</li><li>UNKNOWN / VERIFY_AVAILABILITY remain explicit.</li><li>Current Spot prices are unversioned → historical budget fit remains blocked/unknown.</li><li>NO_RESULT is preferred to indefinite relaxation.</li></ul>
+</div><div>
+<div class="grid" style="grid-template-columns:1fr 1fr">
+<div class="card"><div class="metric">92.74%</div><div class="label">≥3 governed recommendations</div></div>
+<div class="card"><div class="metric">84.62%</div><div class="label">≥5 recommendations</div></div>
+</div>
+<p>AssessmentSol1 independently revalidates <strong>K=3</strong>; E020 is supporting history, not the final source.</p>
+</div></div>
+<div class="footer"><span>DEVELOPMENT N=4,368</span><span>6 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">Opportunity Score</div><h2>The historical continuous product was rejected after recovery</h2>
+<div class="cols">
+<div class="chart"><svg viewBox="0 0 650 310"><line x1="50" y1="250" x2="620" y2="250" stroke="currentColor" opacity=".35"/>
+<rect x="70" y="97" width="130" height="153" rx="6" fill="currentColor" opacity=".55"/><text x="135" y="87" text-anchor="middle" fill="currentColor">1.084x</text><text x="135" y="275" text-anchor="middle" fill="currentColor" font-size="12">Quality→Quality</text>
+<rect x="260" y="112" width="130" height="138" rx="6" fill="currentColor" opacity=".45"/><text x="325" y="102" text-anchor="middle" fill="currentColor">0.977x</text><text x="325" y="275" text-anchor="middle" fill="currentColor" font-size="12">Raw product→Quality</text>
+<rect x="450" y="75" width="130" height="175" rx="6" fill="currentColor" opacity=".9"/><text x="515" y="65" text-anchor="middle" fill="currentColor">1.244x</text><text x="515" y="275" text-anchor="middle" fill="currentColor" font-size="12">Raw product→Joint exact</text></svg></div>
+<div>
+<p>At top15, continuous multiplication concentrated exact-serviceable joint positives but degraded pure Lead Quality below random.</p>
+<pre>V2 = P_quality
+   × inventory_actionability_gate</pre>
+<p>Continuous Inventory Serviceability remains a separate output.</p>
+<p><strong>Opportunity Score ≠ jointly calibrated probability.</strong></p>
+</div></div>
+<div class="footer"><span>Double-counting audit: PASS_AFTER_DEDUPLICATION</span><span>7 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">AI / LLM</div><h2>Use AI where language is genuinely unstructured — then remove unnecessary API dependency</h2>
+<div class="flow"><span>Rules-first</span><span class="arrow">→</span><span>semantic residual</span><span class="arrow">→</span><span>sampled GPT-5 nano</span><span class="arrow">→</span><span>human validation</span><span class="arrow">→</span><span>Rules vN</span></div>
+<div class="grid">
+<div class="card"><div class="metric">$0.002579</div><div class="label">canonical E017 cost</div></div>
+<div class="card"><div class="metric">100</div><div class="label">real records</div></div>
+<div class="card"><div class="metric">0/100</div><div class="label">new-rule candidates</div></div>
+<div class="card"><div class="metric">0/100</div><div class="label">residual actionable</div></div>
+</div>
+<p>Final role: <strong>sampled Inventory/Catalog QA discovery</strong>. Semantic Rules do not enter Lead Quality. Human precision/recall is unavailable.</p>
+<div class="footer"><span>Main score reproduces with no live OpenAI call</span><span>8 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">Final architecture</div><h2>Simple critical path, explicit sidecars</h2>
+<div class="flow" style="font-size:1.05rem"><span>Lead + first inquiry + selected Spot</span><span class="arrow">→</span><span>Lead Quality</span><span class="arrow">+</span><span>Inventory actionability</span><span class="arrow">→</span><span>Opportunity V2</span><span class="arrow">→</span><span>P80 / top20</span></div>
+<div class="cols"><div>
+<table><tr><th>Line</th><th>Role</th></tr><tr><td>Matching / clusters</td><td>AUXILIARY</td></tr><tr><td>Semantic Rules</td><td>INVENTORY / CATALOG QA</td></tr><tr><td>Response-time RF</td><td>DIAGNOSTIC ONLY</td></tr></table>
+</div><div class="note"><strong>Governance principle:</strong> components that did not demonstrate clean-room incremental scoring value stay outside the core scorer even when they are analytically useful.</div></div>
+<div class="footer"><span>No historical experiment is a runtime dependency</span><span>9 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">Limitations</div><h2>The recommendation is useful because the uncertainty is visible</h2>
+<div class="cols"><ul>
+<li>June holdout is non-pristine / diagnostic-only.</li>
+<li>Top-5 Lead Quality Lift remains below 1.</li>
+<li>Recovery bootstrap uncertainty is wide.</li>
+<li>Historical Spot prices are unversioned.</li>
+</ul><ul>
+<li>Real score ties require rank-based bands.</li>
+<li>No causal/commercial conversion claim.</li>
+<li>Opportunity Score is not a joint probability.</li>
+<li>No human LLM precision/recall.</li>
+</ul></div>
+<div class="note">True post-freeze confirmation requires a new prospective or external hidden cohort.</div>
+<div class="footer"><span>Limitations are accepted, not hidden</span><span>10 / 11</span></div>
+</section>
+
+<section class="slide">
+<div class="kicker">Recommendation</div><h2>Operate the post-recovery T1 system — and keep the two business objectives separate</h2>
+<div class="grid">
+<div class="card"><div class="metric">1</div><div class="label">Score at T1</div></div>
+<div class="card"><div class="metric">2</div><div class="label">Use recovered Logistic Lead Quality</div></div>
+<div class="card"><div class="metric">3</div><div class="label">Apply Inventory actionability + K=3</div></div>
+<div class="card"><div class="metric">4</div><div class="label">Prioritize top20 by V2</div></div>
+</div>
+<p class="lead">Use Lead Quality when inventory should not constrain progression. Use Opportunity Score when serviceability is part of the operating objective.</p>
+<p><strong>Post-recovery audit: READY · 0 blockers.</strong></p>
+<div class="footer"><span>AssessmentSol1 is the final source of truth</span><span>11 / 11</span></div>
+</section>
+
+</div>
+<div class="nav"><button id="prev" aria-label="Previous slide">←</button><button id="next" aria-label="Next slide">→</button></div><div class="progress" id="progress"></div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];let i=0;
+function show(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,j)=>s.classList.toggle('active',j===i));document.getElementById('progress').style.width=((i+1)/slides.length*100)+'%';}
+document.getElementById('prev').onclick=()=>show(i-1);document.getElementById('next').onclick=()=>show(i+1);
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key))show(i+1);if(['ArrowLeft','PageUp'].includes(e.key))show(i-1);});show(0);
+</script></body></html>
