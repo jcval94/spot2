@@ -1,14 +1,13 @@
-# Opportunity Score outputs
+# Opportunity Score outputs — post-recovery V2
 
-Canonical product outputs:
+Canonical committed product output:
 
-- `scored_population.csv` — 5,000 T1 product rows, no target/outcome columns.
-- `scored_population.parquet` — same 5,000-row product table, Parquet PLAIN/uncompressed materialization.
-- `priority_leads.csv` — rows assigned PRIORITY or HIGH under frozen thresholds.
-- `capacity_metrics.csv` — DEVELOPMENT and post-freeze June diagnostic Top 5/10/20 metrics for Lead Quality, Inventory, Opportunity and the non-deployable internal reference.
-- `gains_curve.csv` — cumulative gains data from 1–100% capacity for Inventory and Opportunity.
-- `score_distribution_summary.csv` and `score_distribution_bins.csv` — distribution evidence.
+- `scored_population.csv` — 5,000 T1 rows, recovered probabilities, V2 actionability gate, K=3 fallbacks, no outcomes.
+- `priority_leads.csv` — exact top 20% of the current 5,000-row scoring batch using score-desc / lead_id-asc.
+- `capacity_metrics.csv` — macro DEVELOPMENT temporal-OOF reevaluation for 5/10/15/20 and separated objectives.
+- `gains_curve.csv` — macro fold-relative gains for recovered Lead Quality, V2 and the rejected raw multiplicative diagnostic.
+- `score_distribution.csv`, `score_distribution_bins.csv`, `score_distribution_summary.csv` — rebuilt V2 distribution evidence.
 
-The product scoring tables never contain `broker_response`, target labels or hidden outcomes.
+The stale committed V1 Parquet materialization was removed deliberately. Running `build_score.py` in a project environment with Polars regenerates a V2 Parquet file from raw inputs; the committed CSV is the post-recovery product authority.
 
-The Parquet file is intentionally simple: one row group, PLAIN encoding, no compression. The canonical executable `build_score.py` also writes both CSV and Parquet when run in the project environment.
+No product scoring table contains `broker_response`, target labels, `lead_score_internal` or other outcome-only fields.
