@@ -29,6 +29,7 @@ Las métricas de poblaciones o targets incompatibles **no se combinan**.
 
 - [EDA_FINAL.md](EDA_FINAL.md) — narrativa final y conclusiones.
 - [REFERENCIAS.md](REFERENCIAS.md) — mapa de evidencia y trazabilidad.
+- [VALIDACION.md](VALIDACION.md) — QA final, reconciliación de cifras y control de autoridad.
 - [figuras/](figuras/) — seis visualizaciones autocontenidas en SVG.
 - [tablas/](tablas/) — resúmenes CSV auditables.
 
