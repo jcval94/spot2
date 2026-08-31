@@ -1,37 +1,31 @@
-# Entregable 8 — Visión de producto
+# Entregable 8 — Product Vision
 
-> ### Guía de lectura
-> El detalle técnico se conserva para auditoría, pero la idea de negocio debe poder entenderse sin jerga. En este documento:
-> - **Lift@10** indica cuánto mejora el 10% mejor priorizado frente a una selección aleatoria equivalente.
-> - **Variable objetivo (target)** es el resultado que queremos anticipar.
-> - **Información disponible en ese momento (point-in-time / as-of)** significa que no se utiliza información futura.
-> - **Muestra de evaluación (holdout)** es un periodo reservado para medir el desempeño.
-> - **Ejecución en paralelo (shadow)** significa probar sin modificar todavía decisiones reales.
-> - **Estrategia de respaldo (fallback)** describe qué hacer cuando la opción original no es defendible.
+> ### Lectura en lenguaje claro
+> **En una frase:** los siguientes tres meses deben priorizar mejores datos, mejores resultados observables y validación causal antes que agregar más modelos.
 >
-
-> La evidencia técnica original se conserva en `codexway/**`, `experimentos/**` y `AssessmentSol1/**` para auditoría. No es necesario navegarla para comprender este documento.
+> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **target** es el resultado que se quiere anticipar; **point-in-time / as-of** significa usar sólo información que ya era conocida en ese momento; **holdout** es una muestra apartada para evaluación; **shadow** es una ejecución en paralelo que todavía no cambia decisiones reales; y **fallback** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
+>
 
 ## 1. Principio
 
-La Visión de producto no parte de “agregar más modelos”.
+La Product Vision no parte de “agregar más modelos”.
 
 Parte de los gaps que quedaron demostrados por la investigación.
 
 La arquitectura actual ya resuelve de forma defendible:
 
-- Calidad del lead en T1;
-- Capacidad del inventario point-in-time;
-- estrategia de respaldo gobernado;
-- Puntaje de oportunidad lower/upper;
-- Semantic control de calidad del catálogo desacoplado del predictor.
+- Lead Quality en T1;
+- Inventory Serviceability point-in-time;
+- fallback gobernado;
+- Opportunity Score lower/upper;
+- Semantic Catalog QA desacoplado del predictor.
 
 Los siguientes tres meses deberían concentrarse en cuatro frentes:
 
 1. **instrumentación y versionado**;
 2. **outcomes más alineados al producto**;
-3. **alternativas evaluadas con evidencia previa real**;
-4. **validación causal en operación**.
+3. **challengers con evidencia previa real**;
+4. **validación causal online**.
 
 ---
 
@@ -47,9 +41,9 @@ La evolución natural de Spot2 sería pasar de un score estático a un sistema d
     primera inquiry
        |
        v
-    T1 — Calidad del lead + Capacidad del inventario
+    T1 — Lead Quality + Inventory Serviceability
        |
-       +--> estrategia de respaldo contextual
+       +--> fallback contextual
        |
     nuevas interacciones
        |
@@ -168,7 +162,7 @@ broker_response_hours actual no es suficiente como SLA limpio.
 
 ---
 
-## Mes 2 — alternativas evaluadas priorizados por evidencia
+## Mes 2 — Challengers priorizados por evidencia
 
 No todos los experimentos históricos merecen la misma prioridad.
 
@@ -190,14 +184,14 @@ Para Multi-Head:
 
 Conclusión:
 
-**trajectory es el alternativa evaluada dinámico con evidencia predictiva más concreta.**
+**trajectory es el challenger dinámico con evidencia predictiva más concreta.**
 
 Nueva prueba:
 
 - historia estrictamente previa;
 - eventos con timestamps efectivos;
 - response events sólo si realmente ocurrieron antes del score;
-- comparación T2 champion/alternativa evaluada;
+- comparación T2 champion/challenger;
 - no mezclar scores T1 y T2.
 
 ### Prioridad A — Calibrated Availability
@@ -212,11 +206,11 @@ Macro:
 
 No se promueve automáticamente sobre Codexway.
 
-Con mejor historial de Availability, debe re-evaluarse como alternativa evaluada de:
+Con mejor historial de Availability, debe re-evaluarse como challenger de:
 
-- capacidad de atención lower/upper;
+- serviceability lower/upper;
 - prioritización de verificación;
-- contextual estrategia de respaldo.
+- contextual fallback.
 
 ### Prioridad B — Dynamic Need
 
@@ -231,9 +225,9 @@ Uso futuro:
 - segmentación de intención;
 - explicación;
 - routing;
-- personalización del estrategia de respaldo.
+- personalización del fallback.
 
-No promover como variable de score sin nueva réplica.
+No promover como feature de score sin nueva réplica.
 
 ### Prioridad B — Localized Compatibility
 
@@ -266,7 +260,7 @@ Uso futuro:
 - carga de trabajo;
 - strata experimentales.
 
-No usar como multiplicador de Calidad del lead.
+No usar como multiplicador de Lead Quality.
 
 ### Prioridad B — Mejor geografía
 
@@ -282,13 +276,13 @@ La propuesta de enriquecimiento incluye fuentes y señales de:
 
 Toda fuente debe tener effective/publication time reproducible.
 
-### Prioridad A/B — Semantic control de calidad del catálogo
+### Prioridad A/B — Semantic Catalog QA
 
 Mantener:
 
 - Rules-first;
 - LLM residual;
-- etiquetas humanas de referencia;
+- human gold;
 - deterministic promotion.
 
 La prioridad no es aumentar uso de tokens.
@@ -308,20 +302,20 @@ Es crear un gold humano y medir:
 
 La interfaz debe mostrar por lead:
 
-- Calidad del lead;
-- Capacidad del inventario;
+- Lead Quality;
+- Inventory Serviceability;
 - Inventory Confidence;
 - Opportunity lower/upper;
-- estrategia de respaldo;
-- motivos de la decisión;
-- vigencia;
+- fallback;
+- reason codes;
+- freshness;
 - acción recomendada.
 
 No mostrar sólo un score opaco.
 
 ### B. Shadow scoring
 
-Durante el primer período en operación:
+Durante el primer período online:
 
 - no cambiar decisiones;
 - registrar score;
@@ -358,12 +352,12 @@ Una tarjeta de oportunidad podría mostrar:
 
 ### Estado de inventario
 
-- Serviceable / Potential estrategia de respaldo / Uncertain / Low;
-- vigencia;
+- Serviceable / Potential fallback / Uncertain / Low;
+- freshness;
 - exact Spot attendable;
 - candidate depth.
 
-### estrategia de respaldo
+### Fallback
 
 - hasta K final permitido;
 - availability state;
@@ -387,8 +381,8 @@ No generar explanation libre con LLM.
 
 Usar:
 
-- variable/model facts;
-- motivos de la decisión;
+- feature/model facts;
+- reason codes;
 - availability status;
 - constraint decisions.
 
@@ -434,9 +428,9 @@ La UI debe diferenciar:
 
 ---
 
-## 6. Contextual estrategia de respaldo
+## 6. Contextual fallback
 
-El estrategia de respaldo futuro puede usar contexto adicional sólo después de instrumentación.
+El fallback futuro puede usar contexto adicional sólo después de instrumentación.
 
 Posibles señales:
 
@@ -471,7 +465,7 @@ El modelo nunca debería aprender a violar:
 | Availability histórica completa | calibrated availability y drift |
 | Exposure de recomendaciones | gold de recommendation evaluation |
 | Rank/candidate set mostrado | propensity y causal analysis |
-| Acceptance/rejection de alternativa | estrategia de respaldo outcome |
+| Acceptance/rejection de alternativa | fallback outcome |
 | Visita agendada y completada | outcome intermedio limpio |
 | Cierre won/lost | outcome comercial |
 | Valor/revenue | optimización económica |
@@ -479,7 +473,7 @@ El modelo nunca debería aprender a violar:
 | Assignment de broker | routing/interference |
 | Broker workload/capacity | guardrail y routing |
 | Coordenadas/geocoding | distancia real y localized compatibility |
-| Human-gold control de calidad del catálogo | precision/recall natural del LLM/rules |
+| Human-gold Catalog QA | precision/recall natural del LLM/rules |
 | Copy versionado | semantic QA histórica reproducible |
 | Source/publication timestamps externos | geographic enrichment PIT |
 
@@ -489,7 +483,7 @@ El modelo nunca debería aprender a violar:
 
 No usar un único label para todo.
 
-### Calidad del lead
+### Lead Quality
 
 Puede seguir usando un outcome temprano si es operacionalmente útil.
 
@@ -528,13 +522,13 @@ No debe adoptarse sin validación con Negocio, pero es más alineada que AUC.
 
 #### Inventory
 
-- capacidad de atención;
+- serviceability;
 - fresh coverage;
 - candidate depth.
 
 #### Matching
 
-- estrategia de respaldo acceptance;
+- fallback acceptance;
 - recommendation coverage;
 - no-result.
 
@@ -557,14 +551,14 @@ No debe adoptarse sin validación con Negocio, pero es más alineada que AUC.
 Durante esos tres meses no recomendaría:
 
 - buscar una arquitectura neuronal más compleja por defecto;
-- incorporar LLM variables al predictor;
-- tuning adicional sobre el muestra de evaluación consumido;
+- incorporar LLM features al predictor;
+- tuning adicional sobre el holdout consumido;
 - promover pockets locales sin cohorte nueva;
 - usar current price como histórico;
-- evaluar estrategia de respaldo con historical chosen Spot como gold;
+- evaluar fallback con historical chosen Spot como gold;
 - mezclar T1 y T2 scores;
 - usar AUC como criterio único;
-- automatizar QA semántico sin etiquetas humanas de referencia.
+- automatizar QA semántico sin human gold.
 
 ---
 
@@ -573,15 +567,15 @@ Durante esos tres meses no recomendaría:
 | Candidato | Evidencia actual | Próximo gate |
 |---|---|---|
 | T0 | débil / exposure drift | nuevos pre-inquiry signals |
-| T1 | canónico | validación con datos futuros |
+| T1 | canónico | forward validation |
 | T2 trajectory | positiva en experimentos | réplica en nuevos datos/versiones |
 | Dynamic Need | direccional | confirmación temporal |
 | Localized compatibility | pockets | preregister + new cohort |
 | Broker Service | interpretable, predictive inconclusive | routing experiment |
-| Calibrated Availability | fuerte alternativa evaluada | nueva historia completa + comparison |
+| Calibrated Availability | fuerte challenger | nueva historia completa + comparison |
 | Better geography | propuesta preliminar | PIT enrichment |
-| Semantic control de calidad del catálogo | supported discovery | etiquetas humanas de referencia |
-| Contextual estrategia de respaldo | conceptualmente fuerte | exposure/outcome logs + RCT |
+| Semantic Catalog QA | supported discovery | human gold |
+| Contextual fallback | conceptualmente fuerte | exposure/outcome logs + RCT |
 
 ---
 
@@ -595,11 +589,11 @@ Esperaría:
 2. Spot e Inventory versionados;
 3. recommendation exposure logs;
 4. outcomes comerciales;
-5. un T2 alternativa evaluada limpio;
+5. un T2 challenger limpio;
 6. Availability calibrada evaluada contra Codexway;
-7. control de calidad del catálogo con etiquetas humanas de referencia;
+7. Catalog QA con human gold;
 8. uno o más RCTs registrados;
-9. evidencia causal sobre ranking/estrategia de respaldo;
+9. evidencia causal sobre ranking/fallback;
 10. una base real para decidir qué componentes merecen promoción.
 
 ---
@@ -608,7 +602,7 @@ Esperaría:
 
 ### 1. ¿Qué haríamos con tres meses adicionales?
 
-Primero instrumentación, después alternativas evaluadas con evidencia, y finalmente shadow/RCT.
+Primero instrumentación, después challengers con evidencia, y finalmente shadow/RCT.
 
 ### 2. ¿Cómo integraríamos la solución al producto?
 
@@ -629,16 +623,16 @@ Con RCT sticky por lead cuando la interferencia sea controlable; si shared broke
 Evidencia principal:
 
 - Codexway README;
-- Codexway en operación A/B protocol;
+- Codexway online A/B protocol;
 - EV-007 Geographic Enrichment;
 - EV-010 Matching A/B;
 - EV-012 Trajectory;
 - EV-013 Dynamic Need / Broker Service / local pockets;
 - E019 Calibrated Availability;
-- Entregable 3 Calidad del lead;
+- Entregable 3 Lead Quality;
 - Entregable 4 Inventory;
 - Entregables 5/6 Opportunity + Producción;
-- retoSol1 LLM closure.
+- AssessmentSol1 LLM closure.
 
 
 ---
@@ -646,12 +640,12 @@ Evidencia principal:
 ## 15. Evidencia fuente
 
 - **Codexway**
-- [Entregable 3 — Calidad del lead](../03_lead_quality/README.md)
-- [Entregable 4 — Inventory + estrategia de respaldo](../04_inventory_estrategia de respaldo/README.md)
+- [Entregable 3 — Lead Quality](../03_lead_quality/README.md)
+- [Entregable 4 — Inventory + Fallback](../04_inventory_fallback/README.md)
 - [Entregables 5/6 — Opportunity + Producción](../05_opportunity_produccion/README.md)
 - **EV-007 — Geographic Enrichment**
 - **EV-010 — Matching A/B**
 - **EV-012 — Trajectory**
 - **EV-013 — Dynamic Need / Broker Service / local compatibility**
 - **E019 — Calibrated Availability**
-- [retoSol1 — LLM](../../retoSol1/llm/README.md)
+- **AssessmentSol1 — LLM**
