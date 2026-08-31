@@ -160,7 +160,7 @@ Esta vista de dos ejes debe permanecer visible aun cuando se use Opportunity Sco
 
 ---
 
-## 7. Alternativas arquitectónicas evaluadas
+## Alternativas arquitectónicas evaluadas
 
 ### 7.1 Quality-only
 
@@ -286,6 +286,47 @@ No se copian sus métricas como performance de Codexway.
 Es evidencia metodológica de que una arquitectura debe revisarse cuando cambia el contenido del Lead Quality.
 
 No invalida Codexway; explica cuándo un producto continuo **sí** podría ser double counting.
+
+---
+
+## Sensitivity analysis y nomenclatura V1/V2
+
+Las etiquetas “V1” y “V2” no son globales al repositorio.
+
+### Línea histórica E020
+
+La arquitectura histórica fue un producto continuo entre Quality y una probabilidad de Inventory top-3. Es evidencia de integración, no la autoridad final de Codexway.
+
+### AssessmentSol1
+
+En esa rama:
+
+- Opportunity V1 = producto continuo Quality × Inventory Serviceability;
+- Opportunity V2 = Quality × InventoryActionabilityGate.
+
+V1 fue rechazado allí por double counting después de que su Lead Quality recuperado incorporara selected-Spot matching.
+
+### Codexway
+
+Codexway no hereda automáticamente esa invalidación porque su Lead Quality final no contiene Availability ni selected-Spot serviceability. Su arquitectura final sigue siendo:
+
+    p_quality × inventory_serviceability_lower
+
+con upper bound, confidence y política de dos ejes.
+
+### Sensibilidades relevantes
+
+| Sensibilidad | Lectura |
+|---|---|
+| Opportunity lower | vista conservadora y score principal |
+| Opportunity upper | potencial bajo incertidumbre de Inventory |
+| Quality-only | benchmark para maximizar target T1 |
+| Capacity 5/10/20% | sensibilidad operacional congelada en Codexway |
+| K interno top-3 | sensibilidad incorporada al componente de serviceability |
+| hasta K=5 visible | política final de fallback de Codexway |
+| Actionability Gate | challenger sólo si Lead Quality incorpora matching solapado |
+
+La regla de interpretación es: **no trasladar el nombre V1/V2 entre ramas sin trasladar también el modelo de Lead Quality, el contrato, la población y la política de Inventory que le dieron significado.**
 
 ---
 
