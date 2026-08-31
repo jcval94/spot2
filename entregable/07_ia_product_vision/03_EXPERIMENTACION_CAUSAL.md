@@ -1,6 +1,16 @@
 # Diseño causal — medir impacto incremental
 
-## 1. Por qué hace falta un experimento online
+> ### Guía de lectura
+> El detalle técnico se conserva para auditoría, pero la idea de negocio debe poder entenderse sin jerga. En este documento:
+> - **Lift@10** indica cuánto mejora el 10% mejor priorizado frente a una selección aleatoria equivalente.
+> - **Variable objetivo (target)** es el resultado que queremos anticipar.
+> - **Información disponible en ese momento (point-in-time / as-of)** significa que no se utiliza información futura.
+> - **Muestra de evaluación (holdout)** es un periodo reservado para medir el desempeño.
+> - **Ejecución en paralelo (shadow)** significa probar sin modificar todavía decisiones reales.
+> - **Estrategia de respaldo (fallback)** describe qué hacer cuando la opción original no es defendible.
+>
+
+## 1. Por qué hace falta un experimento en operación
 
 El backtest responde:
 
@@ -34,11 +44,11 @@ Pregunta:
 
 > ¿Trabajar leads con el ranking propuesto mejora outcomes frente al ordering actual?
 
-### Experimento B — Contextual fallback
+### Experimento B — Contextual estrategia de respaldo
 
 Pregunta:
 
-> Cuando el Spot exacto no es servible, ¿mostrar el fallback gobernado mejora aceptación/visita frente al proceso actual?
+> Cuando el Spot exacto no es servible, ¿mostrar el estrategia de respaldo gobernado mejora aceptación/visita frente al proceso actual?
 
 Separarlos evita no saber si un efecto proviene del ranking o de la recomendación.
 
@@ -52,7 +62,7 @@ Leads elegibles en T1:
 
 - primera inquiry persistida;
 - schema válido;
-- Lead Quality producido;
+- Calidad del lead producido;
 - Inventory evaluable o explicitamente Uncertain;
 - no exclusión por policy.
 
@@ -133,7 +143,7 @@ Razón:
 
 ---
 
-## 9. Key secondary KPI alineado a Product Vision
+## 9. Key secondary KPI alineado a Visión de producto
 
 Con la nueva instrumentación:
 
@@ -177,7 +187,7 @@ La multiplicidad debe corregirse o declararse exploratoria.
 - snapshot age;
 - unavailable recommendation rate;
 - NO_RESULT;
-- fallback Coverage@K.
+- estrategia de respaldo Coverage@K.
 
 ### Customer
 
@@ -220,7 +230,7 @@ Análisis principal:
 Un lead asignado a treatment cuenta como treatment aunque:
 
 - el broker no vea la tarjeta;
-- no use el fallback;
+- no use el estrategia de respaldo;
 - ignore el ranking.
 
 Esto estima el efecto del producto real, incluida adopción imperfecta.
@@ -337,7 +347,7 @@ Opciones válidas:
 - fixed-horizon;
 - diseño secuencial formal preregistrado.
 
-La opción simple para este assessment:
+La opción simple para este reto:
 
 **fixed horizon + no optional stopping.**
 
@@ -364,7 +374,7 @@ No promover una nueva regla porque un subgrupo pequeño tenga p<0.05 sin correcc
 
 ---
 
-# Experimento B — Fallback
+# Experimento B — estrategia de respaldo
 
 ## 19. Población
 
@@ -372,7 +382,7 @@ Sólo leads donde el Spot exacto:
 
 - no es attendable;
 - es Uncertain y requiere alternativa;
-- o cumple el trigger de fallback predefinido.
+- o cumple el trigger de estrategia de respaldo predefinido.
 
 ---
 
@@ -386,7 +396,7 @@ Control:
 
 Tratamiento:
 
-- fallback rankeado point-in-time del Entregable 4.
+- estrategia de respaldo rankeado point-in-time del Entregable 4.
 
 ---
 
@@ -404,7 +414,7 @@ Con mejor instrumentación, idealmente separar:
 
 ---
 
-## 22. Guardrails del fallback
+## 22. Guardrails del estrategia de respaldo
 
 - recommendation latency;
 - NO_RESULT;
@@ -420,9 +430,9 @@ Hard guardrail:
 
 ---
 
-## 23. Gold de recomendación online
+## 23. Gold de recomendación en operación
 
-El RCT genera por fin el dato que falta en offline:
+El RCT genera por fin el dato que falta en histórica:
 
 - qué candidato se mostró;
 - en qué rank;
@@ -443,7 +453,7 @@ El historical chosen Spot deja de ser el pseudo-gold.
 
 ---
 
-# Experimentación del LLM / Catalog QA
+# Experimentación del LLM / control de calidad del catálogo
 
 ## 24. Diseño humano
 
@@ -468,7 +478,7 @@ No usar otro LLM como gold.
 
 ---
 
-# Quasi-experimental fallback si RCT no es viable
+# Quasi-experimental estrategia de respaldo si RCT no es viable
 
 ## 25. Alternativa principal — phased rollout + Difference-in-Differences
 
@@ -548,7 +558,7 @@ La decisión debe considerar:
 - CI;
 - primary KPI;
 - conversion guardrail;
-- serviceability gain;
+- capacidad de atención gain;
 - broker workload;
 - customer guardrails;
 - operational cost;
@@ -590,17 +600,17 @@ Es:
 
 > **¿usar esta política provoca más outcomes comerciales útiles por lead elegible, sin deteriorar experiencia, inventory quality ni workload?**
 
-Ésa es la prueba que el offline no puede resolver.
+Ésa es la prueba que el histórica no puede resolver.
 
 
 ---
 
 ## 31. Evidencia fuente
 
-- [Codexway — protocolo online](../../codexway/outputs/tables/online_ab_protocol.json)
-- [Codexway — helper sticky/SRM](../../codexway/src/spot2_codexway/online.py)
+- [Codexway — protocolo en operación](../../codexway/outputs/tables/en operación_ab_protocol.json)
+- [Codexway — helper sticky/SRM](../../codexway/src/spot2_codexway/en operación.py)
 - [EV-010 — diseño A/B matching](../../experimentos/Evidencias/EV-010_matching_ab_v3.md)
-- [Protocolos A/B históricos](../../experimentos/matching_ab_v3/results/online_ab_protocols.json)
+- [Protocolos A/B históricos](../../experimentos/matching_ab_v3/results/en operación_ab_protocols.json)
 - [Power analysis histórica](../../experimentos/matching_ab_v3/results/power_analysis.csv)
-- [Entregable 5 — Opportunity Score](../05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md)
+- [Entregable 5 — Puntaje de oportunidad](../05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md)
 - [Entregable 6 — Producción](../05_opportunity_produccion/02_ARQUITECTURA_PRODUCCION.md)
