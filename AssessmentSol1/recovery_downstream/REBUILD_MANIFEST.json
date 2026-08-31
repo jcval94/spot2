@@ -1,0 +1,74 @@
+{
+  "manifest_version": "POST_RECOVERY_REBUILD_V1_2026-08-30",
+  "branch": "assessment/assessment-sol1-clean-room",
+  "scope": "AssessmentSol1/** only",
+  "target_changed": false,
+  "split_changed": false,
+  "abt_rebuild_required": false,
+  "inventory_scalar_rebuild_required": false,
+  "recovered_model": "LQ_RECOVERY_R4_STATIC_MATCH_V1",
+  "recovery_selection_population": "DEVELOPMENT_OOF_ONLY",
+  "procedural_holdout_used": false,
+  "calibration_method": "RAW",
+  "rebuilt": [
+    "Lead Quality DEVELOPMENT OOF predictions",
+    "Lead Quality full scoring predictions",
+    "capacity 5/10/15/20",
+    "raw multiplicative diagnostic",
+    "de-duplicated Opportunity Score V2 decision",
+    "fallback K list-length policy audit",
+    "end-to-end Lead Quality/serviceability/joint metrics",
+    "downstream dependency map"
+  ],
+  "pending_canonical_updates": [
+    "Opportunity Score config/code/docs/outputs",
+    "fallback max K=3 docs/config/output lists",
+    "score-dependent figures",
+    "final red-team/leakage audit"
+  ],
+  "capacity_selection": {
+    "authority": "DEVELOPMENT temporal OOF macro only",
+    "selected_capacity_pct": 20,
+    "representation": "P80 / stage-relative top 20%",
+    "lead_quality_lift_10": 1.0753559720916863,
+    "lead_quality_lift_15": 1.084132654444449,
+    "lead_quality_lift_20": 1.1243424011848062,
+    "procedural_holdout_used": false
+  },
+  "opportunity_decision": {
+    "rejected_formula": "P_quality * InventoryServiceability",
+    "rejected_reason": "continuous double counting of matching/serviceability; pure Lead Quality lift degrades",
+    "diagnostic_lift15_lead_quality": 0.9771767868804355,
+    "diagnostic_lift15_joint_exact": 1.2441236948516265,
+    "selected_formula": "P_quality * InventoryActionabilityGate",
+    "selected_capacity_pct": 20,
+    "lead_quality_lift_at_selected_capacity": 1.1243424011848062,
+    "joint_confirmed_lift_at_selected_capacity": 1.1263318305606937
+  },
+  "fallback_clean_room": {
+    "previous_max_k": 5,
+    "selected_max_k": 3,
+    "development_n": 4368,
+    "any_result": 4361,
+    "full_k3": 4051,
+    "full_k5": 3696,
+    "any_result_rate": 0.9983974358974359,
+    "full_k3_rate": 0.92742673992674,
+    "full_k5_rate": 0.8461538461538461,
+    "reason": "K=3 preserves any-result coverage while materially increasing full-list completion versus K=5; no outcome labels used."
+  },
+  "historical_evidence": {
+    "E018": "NOT_SUPPORTED for scoring; excluded",
+    "E019": "supporting prior only; no metrics copied",
+    "E020": "supporting prior only; no metrics copied"
+  },
+  "raw_blob_shas": {
+    "leads": "ba40a7a33553a5ea462a34cf05250f53428c0ec9",
+    "inquiries": "f00ceb8e5452df692a7db13d186a9fdb3e02ba30",
+    "spots": "3dd32ff87a466e45d5637715725718e4bed9d808",
+    "attrs": "9479789b881e408d0626ded8432396ba9fc749b6",
+    "splits": "d20bc4df7c5ff88fc7cbf2bdcf1168586bab5465",
+    "oldScored": "1e66520048ad2edfc118955d7aa7af4cf0b0e41d"
+  },
+  "status": "REEVALUATION_COMPLETE_CANONICAL_UPDATE_PENDING"
+}
