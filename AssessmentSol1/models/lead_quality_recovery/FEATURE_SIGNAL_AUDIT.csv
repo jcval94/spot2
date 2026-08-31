@@ -1,0 +1,21 @@
+scope,feature_or_family,method,macro_ap,ap_delta_vs_base,macro_roc_auc,lift_10,lift_20,lift10_folds_gt1,lift20_folds_gt1,status,notes
+INDIVIDUAL,asked_visit,train-direction univariate OOF,0.209328,0.000995,0.499711,1.002614,0.974750,1,1,WEAK_UNSTABLE,Score-time safe; not removed for leakage reasons
+INDIVIDUAL,urgency_days,train-direction univariate OOF,0.208147,-0.000186,0.481797,0.943786,0.895008,3,1,NO_STABLE_SIGNAL,Continuous urgency weak
+INDIVIDUAL,urgency_le_30,predefined bounded transform,0.202977,-0.005356,0.482301,1.055067,1.094916,3,3,RANKING_ONLY_SIGNAL,AP below benchmark; not sufficient alone
+INDIVIDUAL,log_message_length,train-direction univariate OOF,0.209764,0.001431,0.511297,0.914395,0.946083,1,2,WEAK_UNSTABLE,No recovery alone
+INDIVIDUAL,inquiry_completeness,train-direction univariate OOF,0.204600,-0.003733,0.487704,0.980796,1.044565,1,3,MIXED,Top20 only
+INDIVIDUAL,lead_specificity,train-direction univariate OOF,0.211866,0.003533,0.508080,1.238052,1.130190,4,4,SIGNAL_DIAGNOSTIC,Heavy ties; not promoted alone
+INDIVIDUAL,completeness_delta_t1_t0,train-direction univariate OOF,0.207150,-0.001183,0.488286,0.897492,0.943469,2,1,HURTS_RANKING,Refinement family weak
+INDIVIDUAL,request_to_target_area_closeness,bounded ratio OOF,0.220929,0.012596,0.523051,1.170562,1.068169,4,2,SIGNAL_BUT_TOP20_UNSTABLE,T0→T1 refinement diagnostic
+INDIVIDUAL,selected_spot_area_closeness,bounded relative gap OOF,0.215338,0.007005,0.516985,1.016142,0.991670,2,1,SIGNAL_COMPONENT,Used in recovered multivariate model
+INDIVIDUAL,selected_spot_modality_match,discrete OOF,0.208333,0.000000,0.500000,1.154390,1.027193,4,2,REDUNDANT_CONSTANT,All selected T1 Spots are modality-compatible; Lift is tie-order artifact
+INDIVIDUAL,selected_spot_sector_match,discrete OOF,0.209626,0.001293,0.503780,0.973113,0.963912,3,2,FEATURE_FAMILY_HURTING_GENERALIZATION,Removed by inverse ablation
+INDIVIDUAL,selected_spot_geographic_fit,deterministic tier score OOF,0.208422,0.000089,0.495954,1.059804,1.049652,3,3,SIGNAL_COMPONENT,Kept for stability/interpretability
+INDIVIDUAL,selected_spot_attribute_completeness,train-direction univariate OOF,0.210412,0.002079,0.502970,1.032011,0.994975,3,2,SIGNAL_COMPONENT,Static attributes under explicit immutability assumption
+INDIVIDUAL,lead_spot_compatibility,area×modality×sector OOF,0.215161,0.006828,0.517000,1.041140,1.060894,2,3,SIGNAL_BUT_UNSTABLE,Confirms real Lead×Spot signal
+FAMILY,Lead only / Logistic A,frozen P7 OOF,0.217206,0.008873,0.503917,0.993168,1.043200,,,MIXED,AP positive but top10 below 1
+FAMILY,Inquiry intent compact,fold-fit numeric Logistic,0.207433,-0.000900,0.499994,0.976087,0.952590,2,1,FAILED_GATE,asked_visit+urgency+message+completeness+specificity
+FAMILY,T0→T1 refinement compact,fold-fit numeric Logistic,0.203404,-0.004929,0.482007,0.900701,0.923270,1,1,FAILED_GATE,Degrades ranking
+FAMILY,Selected Spot static no Availability,fold-fit numeric Logistic,0.213816,0.005483,0.509586,1.016458,1.024320,2,2,SIGNAL_UNSTABLE,R3; no Availability or price
+FAMILY,R4 recovered 3-feature static match,fold-fit regularized Logistic,0.218606,0.010273,0.513371,1.075356,1.114625,4,3,PASS_RECOVERY_GATE,Selected champion
+FAMILY,Budget fit,not evaluated,,,,,,,,BLOCKED_NOT_PIT,Current Spot prices are unversioned; using them historically would violate PIT
