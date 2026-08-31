@@ -1,13 +1,9 @@
 # Entregable 1 — Análisis Exploratorio de Datos (EDA)
 
-> ### Guía de lectura
-> Este documento está escrito para poder leerse sin asumir experiencia en ciencia de datos. Se conservan algunos nombres técnicos cuando son necesarios para reproducir la solución, pero su significado es:
-> - **Lift@10:** cuánto mejora el 10% mejor priorizado frente a elegir al azar el mismo número de casos.
-> - **Variable objetivo (target):** resultado que queremos anticipar; aquí, principalmente una visita agendada.
-> - **Información disponible en ese momento (point-in-time / as-of):** sólo datos que ya podían conocerse cuando se tomó la decisión.
-> - **Muestra de evaluación (holdout):** periodo apartado para medir el modelo después del entrenamiento.
-> - **Ejecución en paralelo (shadow):** calcular recomendaciones sin cambiar todavía la operación real.
-> - **Estrategia de respaldo (fallback):** qué hacer cuando el inmueble original no puede recomendarse con suficiente confianza.
+> ### Lectura en lenguaje claro
+> **En una frase:** los datos muestran que la intención comercial del lead y la capacidad del inventario cambian de manera diferente; por eso deben analizarse y operarse como señales separadas.
+>
+> Algunos nombres técnicos se conservan porque corresponden a métricas o variables reproducibles. **Lift@10** compara el 10% mejor priorizado contra elegir al azar el mismo número de casos; **target** es el resultado que se quiere anticipar; **point-in-time / as-of** significa usar sólo información que ya era conocida en ese momento; **holdout** es una muestra apartada para evaluación; y **fallback** es la estrategia de respaldo cuando la opción original no puede recomendarse con suficiente confianza.
 >
 
 ## Resumen ejecutivo
@@ -18,16 +14,16 @@ La conclusión principal es:
 
 > **La calidad del lead es relativamente estable en composición; la observabilidad y profundidad del inventario no lo son.**
 
-Codexway —autoridad final de esta entrega— congela **T1, la primera consulta**, como el momento principal de scoring: la solicitud ya fue persistida y todavía no se conoce la respuesta del broker. El proxy principal es **scheduled_visit en esa primera consulta**, con 4,898 observaciones maduras y una prevalencia de **20.44%**. No es cierre, revenue ni el outcome oculto del reto; es un proxy observable de avance en el funnel.
+Codexway —autoridad final de esta entrega— congela **T1, la primera inquiry**, como el momento principal de scoring: la solicitud ya fue persistida y todavía no se conoce la respuesta del broker. El proxy principal es **scheduled_visit en esa primera inquiry**, con 4,898 observaciones maduras y una prevalencia de **20.44%**. No es cierre, revenue ni el outcome oculto del assessment; es un proxy observable de avance en el funnel.
 
-A partir de esta base, la revisión cruzada de Codexway, experimentos y retoSol1 deja ocho aprendizajes estructurales:
+A partir de esta base, la revisión cruzada de Codexway, experimentos y AssessmentSol1 deja ocho aprendizajes estructurales:
 
-1. **Retail concentra más demanda que peso relativo en el catálogo histórico**: en el clean-room DEVELOPMENT, 30.40% de demanda frente a 24.51% de catálogo, una brecha de +5.89 pp. Es presión relativa, no capacidad de atención.
-2. **La primera consulta agrega información material**: la mediana de área cambia de 395.05 m² en intake a 480.9 m² en T1; la distribución solicitada tiene una cola muy larga.
-3. **El ausencia de datos tiene semántica**: urgency no declarado, presupuesto no aplicable y presupuesto desconocido no significan lo mismo.
+1. **Retail concentra más demanda que peso relativo en el catálogo histórico**: en el clean-room DEVELOPMENT, 30.40% de demanda frente a 24.51% de catálogo, una brecha de +5.89 pp. Es presión relativa, no serviceability.
+2. **La primera inquiry agrega información material**: la mediana de área cambia de 395.05 m² en intake a 480.9 m² en T1; la distribución solicitada tiene una cola muy larga.
+3. **El missingness tiene semántica**: urgency no declarado, presupuesto no aplicable y presupuesto desconocido no significan lo mismo.
 4. **Availability es temporal y su cobertura cambia de régimen**: la cobertura backward-as-of pasa de niveles mínimos al inicio de 2025 a prácticamente 100% en 2026.
 5. **UNKNOWN no es UNAVAILABLE**: ausencia o antigüedad de snapshot significa incertidumbre, no evidencia de que el inmueble no pueda atenderse.
-6. **Candidate depth crece mucho con el tiempo**, aun cuando la prevalencia del proxy T1 permanece alrededor de 20%. Esto apoya separar Calidad del lead de Inventory.
+6. **Candidate depth crece mucho con el tiempo**, aun cuando la prevalencia del proxy T1 permanece alrededor de 20%. Esto apoya separar Lead Quality de Inventory.
 7. **Precio, geografía y otros campos del listing no están versionados históricamente**. Availability sí puede ser point-in-time; la compatibilidad histórica completa del listing queda condicionada.
 8. **Clustering y pockets locales produjeron conocimiento, no una regla final**. Hubo pockets históricos prometedores, pero en el rerun gobernado de Codexway ninguna de 19 celdas elegibles superó BH-FDR 10%; no se usan multiplicadores de clusters.
 
@@ -37,32 +33,32 @@ A partir de esta base, la revisión cruzada de Codexway, experimentos y retoSol1
 
 # 1. Pregunta de negocio y unidad de decisión
 
-El reto no pide simplemente estimar una probabilidad. Growth necesita decidir **qué leads trabajar primero**, sabiendo que un lead atractivo puede ser imposible de atender con el inventario observable en ese momento.
+El assessment no pide simplemente estimar una probabilidad. Growth necesita decidir **qué leads trabajar primero**, sabiendo que un lead atractivo puede ser imposible de atender con el inventario observable en ese momento.
 
 Esto obliga a separar dos preguntas:
 
-- **Calidad del lead:** ¿qué tan prometedor es el lead con la información disponible al score?
-- **Capacidad del inventario:** ¿qué tan atendible es su necesidad con inventario que podamos afirmar que existía y cuyo estado de disponibilidad podamos reconstruir?
+- **Lead Quality:** ¿qué tan prometedor es el lead con la información disponible al score?
+- **Inventory Serviceability:** ¿qué tan atendible es su necesidad con inventario que podamos afirmar que existía y cuyo estado de disponibilidad podamos reconstruir?
 
-La arquitectura posterior del Lead Puntaje de oportunidad nace ya en el EDA: no porque el análisis “quiera” dos modelos, sino porque los datos muestran que **la dinámica del lead y la dinámica del inventario son diferentes**.
+La arquitectura posterior del Lead Opportunity Score nace ya en el EDA: no porque el análisis “quiera” dos modelos, sino porque los datos muestran que **la dinámica del lead y la dinámica del inventario son diferentes**.
 
 ## 1.1 Momento principal: T1
 
 Codexway congela como contrato principal:
 
-**lead × primera consulta × score_time**
+**lead × primera inquiry × score_time**
 
 El score ocurre:
 
-1. después de persistir el payload de la primera consulta;
+1. después de persistir el payload de la primera inquiry;
 2. antes de cualquier respuesta del broker;
-3. sin usar consultas posteriores;
+3. sin usar inquiries posteriores;
 4. sin usar snapshots futuros;
 5. sin usar estado mutable actual como si fuera histórico.
 
 Target final de Codexway:
 
-**scheduled_visit en la primera consulta**
+**scheduled_visit en la primera inquiry**
 
 Con madurez de siete días:
 
@@ -97,7 +93,7 @@ Las seis tablas canónicas son:
 | Tabla | Filas | Qué representa |
 |---|---:|---|
 | leads | 5,000 | Intake, necesidad inicial, usuario, presupuesto, geografía, fuente |
-| consultas | 22,576 | Eventos lead–spot y payload de solicitud |
+| inquiries | 22,576 | Eventos lead–spot y payload de solicitud |
 | spots | 3,000 | Catálogo de listings |
 | spot_attributes | 3,000 | Atributos físicos 1:1 por spot |
 | availability_snapshot | 30,000 | Estado histórico de disponibilidad |
@@ -112,8 +108,8 @@ La auditoría independiente encontró:
 - 0 huérfanos Inquiry→Spot;
 - 0 huérfanos SpotAttributes→Spot;
 - 0 huérfanos Availability→Spot;
-- 0 consultas anteriores a lead.created_at;
-- 0 consultas anteriores a spot.created_at;
+- 0 inquiries anteriores a lead.created_at;
+- 0 inquiries anteriores a spot.created_at;
 - 0 snapshots anteriores a spot.created_at;
 - 0 duplicados spot_id × snapshot_date.
 
@@ -123,15 +119,15 @@ Esto es importante porque descarta una explicación fácil: **el reto no está e
 
 Availability tiene diez snapshots por spot en mediana. Si se une Inquiry→Availability sólo por spot_id:
 
-- 22,576 consultas se convierten en **226,151 filas**;
+- 22,576 inquiries se convierten en **226,151 filas**;
 - expansión: **10.017x**.
 
 Si se elige el snapshot temporal “más cercano”:
 
-- **7,758 consultas** usarían un snapshot futuro;
+- **7,758 inquiries** usarían un snapshot futuro;
 - equivale a **34.36%** del total.
 
-![fuga de información futura en joins de Availability](figuras/09_join_availability_fuga de información futura.svg)
+![Leakage en joins de Availability](figuras/09_join_availability_leakage.svg)
 
 La única política defendible es:
 
@@ -141,7 +137,7 @@ Codexway implementa y testea esta política con backward as-of; su auditoría fi
 
 **Qué observamos →** Availability es una relación 1:N temporal.  
 **Por qué importa →** un join aparentemente inocente puede cambiar el grano y revelar el futuro.  
-**Riesgo →** fuga de información futura masivo y métricas artificialmente optimistas.  
+**Riesgo →** leakage masivo y métricas artificialmente optimistas.  
 **Decisión →** backward as-of obligatorio; nearest y direct join se consideran condiciones leaky.
 
 Fuente: [A01], [C03], [C10].
@@ -211,7 +207,7 @@ Fuente final: [C06], [C07].
 
 # 4. Demanda vs. oferta: Retail es la presión relativa más clara
 
-retoSol1 reconstruyó, sólo dentro de DEVELOPMENT y restringiendo Spots a los que ya existían al corte, la composición relativa de demanda y catálogo.
+AssessmentSol1 reconstruyó, sólo dentro de DEVELOPMENT y restringiendo Spots a los que ya existían al corte, la composición relativa de demanda y catálogo.
 
 | Sector | Share demanda | Share catálogo | Gap |
 |---|---:|---:|---:|
@@ -265,7 +261,7 @@ Industrial supera descriptivamente a Office en algo más de seis puntos porcentu
 
 ![Target por segmento](figuras/10_target_por_segmento.svg)
 
-retoSol1, con otra definición clean-room del target y sólo DEVELOPMENT, reproduce el mismo orden sectorial **Industrial > Land > Retail > Office**. Las tasas exactas no se mezclan con Codexway; la coincidencia sólo sirve como robustez cualitativa.
+AssessmentSol1, con otra definición clean-room del target y sólo DEVELOPMENT, reproduce el mismo orden sectorial **Industrial > Land > Retail > Office**. Las tasas exactas no se mezclan con Codexway; la coincidencia sólo sirve como robustez cualitativa.
 
 ### asked_visit
 
@@ -278,8 +274,8 @@ En DEVELOPMENT del clean-room:
 Su nombre podría hacer pensar que es casi el target. Los datos no sostienen esa lectura.
 
 **Qué observamos →** asked_visit está asociado a avance, pero modestamente.  
-**Por qué importa →** es intención explícita conocida al persistir la consulta.  
-**Riesgo →** confundir una variable de intención contemporánea con outcome o atribuirle causalidad.  
+**Por qué importa →** es intención explícita conocida al persistir la inquiry.  
+**Riesgo →** confundir una feature de intención contemporánea con outcome o atribuirle causalidad.  
 **Decisión →** permitirla bajo el contrato T1 y mantener sensibilidad WITH/WITHOUT.
 
 Fuentes: [C07], [A02], [A08].
@@ -292,15 +288,15 @@ Los tres momentos no son versiones intercambiables del mismo score.
 
 ## T0 — creación del lead
 
-Conocemos únicamente intake. Todavía no existe la primera consulta.
+Conocemos únicamente intake. Todavía no existe la primera inquiry.
 
-Codexway conserva T0 como sensibilidad a 30 días. Su Lift@10 es aproximadamente **1.02x**, coherente con una señal de ranking débil. La investigación clean-room además detectó que el target T0 se mueve fuertemente con la oportunidad futura de generar consultas.
+Codexway conserva T0 como sensibilidad a 30 días. Su Lift@10 es aproximadamente **1.02x**, coherente con una señal de ranking débil. La investigación clean-room además detectó que el target T0 se mueve fuertemente con la oportunidad futura de generar inquiries.
 
 **Lectura:** T0 está expuesto a un problema de exposure. Más tiempo/oportunidad para interactuar cambia el outcome medido.
 
-**Decisión final:** no desplazar T1 como contrato principal ni importar al T0 información de consultas futuras.
+**Decisión final:** no desplazar T1 como contrato principal ni importar al T0 información de inquiries futuras.
 
-## T1 — primera consulta
+## T1 — primera inquiry
 
 Aparece información contemporánea útil:
 
@@ -313,7 +309,7 @@ Aparece información contemporánea útil:
 
 Aquí ocurre el mayor salto semántico: pasamos de una intención declarada en intake a una **necesidad expresada en una interacción concreta**.
 
-## T2 — consultas posteriores
+## T2 — inquiries posteriores
 
 Sólo puede usar:
 
@@ -321,7 +317,7 @@ Sólo puede usar:
 - payload actual;
 - trayectoria de requests estrictamente anteriores al score actual.
 
-Codexway bloquea response history sin timestamp confiable. Su sensibilidad T2 muestra señal top-decile modesta, pero T2 sigue siendo alternativa evaluada/extensión, no contrato principal.
+Codexway bloquea response history sin timestamp confiable. Su sensibilidad T2 muestra señal top-decile modesta, pero T2 sigue siendo challenger/extensión, no contrato principal.
 
 ![Contrato temporal T0 T1 T2](figuras/11_timeline_t0_t1_t2.svg)
 
@@ -331,30 +327,30 @@ Fuentes finales: [C01], [C02], [C12]. Evidencia metodológica alternativa: [A11]
 
 ---
 
-# 7. La primera consulta refina materialmente la necesidad
+# 7. La primera inquiry refina materialmente la necesidad
 
 ![Refinamiento de área](figuras/04_refinamiento_area.svg)
 
 En T1 DEVELOPMENT:
 
 - target_area_sqm de intake, mediana: **395.05 m²**;
-- requested_area_sqm de la primera consulta, mediana: **480.9 m²**;
+- requested_area_sqm de la primera inquiry, mediana: **480.9 m²**;
 - p90 requested_area: **2,561.1 m²**;
 - máximo: **40,920.9 m²**.
 
 La investigación experimental añade dos observaciones:
 
 - mediana requested_area / target_area ≈ **1.053x**;
-- sólo **62.16%** de las consultas cae entre 0.5x y 2.0x del target inicial.
+- sólo **62.16%** de las inquiries cae entre 0.5x y 2.0x del target inicial.
 
 En presupuesto:
 
 - ~81.53% de requested rent budgets cae dentro del intervalo inicial;
 - ~81.04% de requested sale budgets cae dentro del intervalo inicial.
 
-La historia no es “el lead cambió completamente de opinión”. Es más interesante: **la consulta conserva gran parte de la intención inicial, pero la concreta y en una fracción material la reajusta**.
+La historia no es “el lead cambió completamente de opinión”. Es más interesante: **la inquiry conserva gran parte de la intención inicial, pero la concreta y en una fracción material la reajusta**.
 
-### Implicación para variable Engineering
+### Implicación para Feature Engineering
 
 Tiene sentido construir, de manera determinística y PIT-safe:
 
@@ -375,18 +371,18 @@ Fuentes: [A02], [A07], [E03], [E04].
 
 ---
 
-# 8. ausencia de datos: ausencia de información ≠ ausencia real
+# 8. Missingness: ausencia de información ≠ ausencia real
 
 Éste es uno de los hallazgos más importantes del EDA.
 
-## 8.1 Presupuesto: ausencia de datos estructural por modalidad
+## 8.1 Presupuesto: missingness estructural por modalidad
 
 En el raw audit:
 
 - lead sale budgets: ~50–52% null global;
 - lead rent budgets: ~30–32% null global;
-- consulta sale budget: **49.90%** null;
-- consulta rent budget: **29.55%** null;
+- inquiry sale budget: **49.90%** null;
+- inquiry rent budget: **29.55%** null;
 - spot sale prices: **39.73%** null;
 - spot rent/maintenance: **25.37%** null.
 
@@ -413,7 +409,7 @@ En T1 DEVELOPMENT:
 
 Missing significa **“no declarado”**, no “cero días” ni “urgencia mediana”.
 
-**Decisión:** retain missing + flag urgency_not_stated; cualquier señal predictiva del ausencia de datos se estima dentro del desarrollo temporal.
+**Decisión:** retain missing + flag urgency_not_stated; cualquier señal predictiva del missingness se estima dentro del desarrollo temporal.
 
 ## 8.3 Atributos físicos
 
@@ -428,17 +424,17 @@ Un 0 en charging_ports es distinto de “no sabemos cuántos hay”.
 
 **Decisión:** tratamiento por campo y gating sectorial; no blanket imputation.
 
-![ausencia de datos semántico](figuras/12_ausencia de datos_semantico.svg)
+![Missingness semántico](figuras/12_missingness_semantico.svg)
 
 Fuentes: [A01], [A02], [A09], [E03].
 
 ---
 
-# 9. total_consultas: dos trampas con el mismo nombre conceptual
+# 9. total_inquiries: dos trampas con el mismo nombre conceptual
 
 Hay dos ideas distintas que deben bloquearse por razones diferentes.
 
-## 9.1 Total futuro de consultas por lead
+## 9.1 Total futuro de inquiries por lead
 
 Si miramos todo el historial entregado después de T1:
 
@@ -450,19 +446,19 @@ Es útil para entender exposición, pero en T1 todavía no sabemos cuántas inte
 
 Además, la media cae de aproximadamente **4.97** en 2025H1 a **3.92** en abril de 2026 conforme nos acercamos al borde de extracción. Es un reloj de maduración.
 
-![Exposure clock de consultas futuras](figuras/13_future_consulta_exposure.svg)
+![Exposure clock de inquiries futuras](figuras/13_future_inquiry_exposure.svg)
 
-**Decisión:** EDA_ONLY / FORBIDDEN como T1 variable.
+**Decisión:** EDA_ONLY / FORBIDDEN como T1 feature.
 
-## 9.2 spots.total_consultas
+## 9.2 spots.total_inquiries
 
-El raw audit demuestra que el contador actual de Spots coincide con el conteo reconstruible de la tabla consultas en sólo:
+El raw audit demuestra que el contador actual de Spots coincide con el conteo reconstruible de la tabla inquiries en sólo:
 
 **212 / 3,000 spots = 7.07%**
 
 No puede asumirse que tenga la misma semántica que un event count histórico.
 
-**Decisión:** bloquear el raw current-state total_consultas. Si se necesita historia de demanda de un spot, reconstruirla sólo con eventos que existían antes de score_time.
+**Decisión:** bloquear el raw current-state total_inquiries. Si se necesita historia de demanda de un spot, reconstruirla sólo con eventos que existían antes de score_time.
 
 Fuente: [A01], [A03], [E03].
 
@@ -472,7 +468,7 @@ Fuente: [A01], [A03], [E03].
 
 ## 10.1 Cobertura histórica
 
-En las 22,576 consultas:
+En las 22,576 inquiries:
 
 - backward coverage: **92.38%**;
 - lag mediano: **6.61 días**;
@@ -482,7 +478,7 @@ En las 22,576 consultas:
 
 La media agregada es engañosa porque la cobertura cambia radicalmente con el tiempo:
 
-- ene-2025: **6.46%** en auditoría all-consultas;
+- ene-2025: **6.46%** en auditoría all-inquiries;
 - jun-2025: **84.69%**;
 - sep-2025: **96.57%**;
 - desde ene-2026: **100%**.
@@ -503,7 +499,7 @@ Si no hay snapshot anterior al score:
 - no sabemos el estado;
 - no podemos afirmar que el inmueble estaba no disponible.
 
-Codexway formaliza esta incertidumbre con bounds de capacidad de atención. En su auditoría final:
+Codexway formaliza esta incertidumbre con bounds de serviceability. En su auditoría final:
 
 - exact attendable share: **45.64%**;
 - exact unknown share: **44.30%**;
@@ -520,7 +516,7 @@ Incluso cuando sí existe snapshot, su edad importa.
 
 Codexway:
 
-| vigencia | Candidatos frescos | Leads con ≥1 candidato fresco |
+| Freshness | Candidatos frescos | Leads con ≥1 candidato fresco |
 |---|---:|---:|
 | <=7d | **19.16%** | **93.46%** |
 | <=30d | **57.09%** | **98.34%** |
@@ -530,7 +526,7 @@ Codexway:
 
 Esto revela una distinción útil: el pool completo de un lead puede contener mucho estado viejo y, al mismo tiempo, tener al menos una opción con evidencia reciente.
 
-**Decisión:** reportar cobertura, vigencia y capacidad de atención por separado; snapshot age funciona como confianza/monitoring, no como señal de Calidad del lead.
+**Decisión:** reportar cobertura, freshness y serviceability por separado; snapshot age funciona como confianza/monitoring, no como señal de Lead Quality.
 
 Fuentes: [C09], [C10], [A01], [A02], [A08].
 
@@ -556,7 +552,7 @@ El target prevalence no exhibe una trayectoria comparable. Al mismo tiempo, el m
 
 **Qué observamos →** la profundidad de candidatos cambia fuertemente, el mix básico de leads mucho menos.  
 **Por qué importa →** una parte grande de la no-estacionariedad pertenece al sistema de oferta/exposición.  
-**Riesgo →** permitir candidate depth o coverage en Calidad del lead puede hacer que el modelo aprenda la era del dataset.  
+**Riesgo →** permitir candidate depth o coverage en Lead Quality puede hacer que el modelo aprenda la era del dataset.  
 **Decisión →** candidate depth pertenece a Inventory/Matching y a monitoreo.
 
 Fuentes: [A02], [A03], [A07], [A08].
@@ -588,11 +584,11 @@ No hay:
 
 Por eso Codexway congela:
 
-> Availability es PIT-correct; el score histórico completo de compatibilidad/estrategia de respaldo permanece condicionado por campos de listing no versionados.
+> Availability es PIT-correct; el score histórico completo de compatibilidad/fallback permanece condicionado por campos de listing no versionados.
 
 ![Frontera PIT del inventario](figuras/15_frontera_pit_listing.svg)
 
-retoSol1 exploró una asunción explícita de inmutabilidad de spot_attributes para su clean-room. Esa asunción es útil para medir qué pasaría bajo un contrato explícito, pero **no reemplaza la decisión más estricta de Codexway**.
+AssessmentSol1 exploró una asunción explícita de inmutabilidad de spot_attributes para su clean-room. Esa asunción es útil para medir qué pasaría bajo un contrato explícito, pero **no reemplaza la decisión más estricta de Codexway**.
 
 ### Precios
 
@@ -625,7 +621,7 @@ Market Context contiene información interpretable:
 
 La heterogeneidad es material:
 
-- Retail rota más rápido y muestra el mayor consulta volume mediano.
+- Retail rota más rápido y muestra el mayor inquiry volume mediano.
 - Office tiene el mayor precio/m² mediano.
 - Industrial combina ocupación alta con absorción bastante más lenta.
 - Land es una economía distinta: menor precio/m², menor ocupación y absorción más lenta.
@@ -643,11 +639,11 @@ El campo temporal es month. No existe publication_time ni effective_time.
 
 Además, el matching exacto geografía × sector × mes cubre sólo:
 
-**5,383 / 22,576 = 23.84%** de las consultas.
+**5,383 / 22,576 = 23.84%** de las inquiries.
 
 Incluso con 100% de coverage, seguiría faltando el reloj de publicación.
 
-**Decisión final:** **EDA_ONLY**. No usar same-month Market Context como historical variable.
+**Decisión final:** **EDA_ONLY**. No usar same-month Market Context como historical feature.
 
 Fuentes: [C08], [A01], [A10].
 
@@ -655,25 +651,25 @@ Fuentes: [C08], [A01], [A10].
 
 # 14. No estacionariedad no es lo mismo que estacionalidad
 
-Codexway observa que el volumen de leads nuevos se mantiene relativamente acotado mientras las consultas crecen de forma mucho más pronunciada durante el periodo observado.
+Codexway observa que el volumen de leads nuevos se mantiene relativamente acotado mientras las inquiries crecen de forma mucho más pronunciada durante el periodo observado.
 
-retoSol1 muestra en DEVELOPMENT:
+AssessmentSol1 muestra en DEVELOPMENT:
 
 - T1 mensuales: aproximadamente 166–325;
 - Availability coverage: 7.72% → 100%;
 - candidate depth: 16 → 49;
-- lead-to-first-consulta lag medio: ~10.75d en 2025H1 → ~30.43d en abr-2026;
-- future consulta exposure: ~4.97 → ~3.92.
+- lead-to-first-inquiry lag medio: ~10.75d en 2025H1 → ~30.43d en abr-2026;
+- future inquiry exposure: ~4.97 → ~3.92.
 
 ![Clocks de no estacionariedad](figuras/16_no_estacionariedad_clocks.svg)
 
 Con apenas ~16–18 meses útiles y varios clocks moviéndose a la vez, sería metodológicamente débil afirmar una “temporada alta” recurrente.
 
-El propio reto advierte que los datos son sintéticos. Hay patrones demasiado limpios —máximo fijo de interacciones, cobertura creciente, mix categórico muy estable— que pueden responder al generador o al proceso.
+El propio assessment advierte que los datos son sintéticos. Hay patrones demasiado limpios —máximo fijo de interacciones, cobertura creciente, mix categórico muy estable— que pueden responder al generador o al proceso.
 
 **Qué observamos →** existe no-estacionariedad.  
 **Por qué importa →** afecta validación temporal y monitoreo.  
-**Riesgo →** convertir un artefacto de cobertura/proceso en una variable de calendario o una historia de estacionalidad.  
+**Riesgo →** convertir un artefacto de cobertura/proceso en una feature de calendario o una historia de estacionalidad.  
 **Decisión →** hablar de drift de población, exposición, cobertura y clocks por separado; no vender una ley estacional.
 
 Fuente: [A03], [A08], [C14].
@@ -790,21 +786,21 @@ Importante: estas cifras son **flags de QA**, no errores humanos confirmados.
 
 El patrón Land × building-copy fue especialmente útil: lenguaje como “iluminación natural”, “recién remodelado” o “acabados” puede ser incoherente con un listing de terreno. Esto también justifica gatear atributos built-environment para Land.
 
-La investigación posterior encontró que convertir estas reglas en variables **no mejoró el Lift@10 de Calidad del lead**. Es un resultado negativo valioso:
+La investigación posterior encontró que convertir estas reglas en features **no mejoró el Lift@10 de Lead Quality**. Es un resultado negativo valioso:
 
 > una inconsistencia del catálogo puede ser operacionalmente real y, aun así, no ser señal de propensión del lead.
 
-**Decisión:** mantener semantic QA como sidecar de Inventory/Catalog Quality; no mezclarlo con Calidad del lead.
+**Decisión:** mantener semantic QA como sidecar de Inventory/Catalog Quality; no mezclarlo con Lead Quality.
 
-Otro hallazgo de calidad: el copy sintético está altamente templated; la auditoría experimental registra apenas 12 frases únicas componiendo las descripciones actuales. Esto reduce el valor de embeddings/LLM como variable histórica y aumenta el riesgo de aprender templates.
+Otro hallazgo de calidad: el copy sintético está altamente templated; la auditoría experimental registra apenas 12 frases únicas componiendo las descripciones actuales. Esto reduce el valor de embeddings/LLM como feature histórica y aumenta el riesgo de aprender templates.
 
 Fuentes: [E03], [E05], [E06], [E04].
 
 ---
 
-# 18. respuesta del intermediario y clocks: por qué no se usa response time como atajo
+# 18. Broker response y clocks: por qué no se usa response time como atajo
 
-broker_response y broker_response_hours son posteriores al score y no son variables T1.
+broker_response y broker_response_hours son posteriores al score y no son features T1.
 
 Además, el raw audit encuentra semántica inconsistente:
 
@@ -823,9 +819,9 @@ Fuente: [A01], [C03].
 
 ---
 
-# 19. Qué hallazgos pasan a variable Engineering
+# 19. Qué hallazgos pasan a Feature Engineering
 
-El EDA no selecciona variables por correlación. Selecciona transformaciones sólo cuando existe una historia temporal y de negocio defendible.
+El EDA no selecciona features por correlación. Selecciona transformaciones sólo cuando existe una historia temporal y de negocio defendible.
 
 ## Promover / construir
 
@@ -840,7 +836,7 @@ El EDA no selecciona variables por correlación. Selecciona transformaciones só
 - geografía preferida;
 - source.
 
-**Current consulta en T1**
+**Current inquiry en T1**
 - channel;
 - message_length;
 - requested_area;
@@ -857,7 +853,7 @@ El EDA no selecciona variables por correlación. Selecciona transformaciones só
 - completeness delta;
 - conteo de cambios de necesidad.
 
-## Mantener fuera del Calidad del lead core
+## Mantener fuera del Lead Quality core
 
 - Availability;
 - candidate depth;
@@ -866,13 +862,13 @@ El EDA no selecciona variables por correlación. Selecciona transformaciones só
 - selected-spot context;
 - market context;
 - clustering IDs como reglas;
-- raw total_consultas;
-- future consulta count;
+- raw total_inquiries;
+- future inquiry count;
 - broker_response;
 - broker_response_hours;
 - current mutable spot state.
 
-![Gobierno de variables](figuras/21_variable_governance.svg)
+![Gobierno de features](figuras/21_feature_governance.svg)
 
 La razón no es que estas variables “no tengan señal”, sino que **responden a otra pregunta o tienen un reloj insuficiente**.
 
@@ -880,20 +876,20 @@ La razón no es que estas variables “no tengan señal”, sino que **responden
 
 # 20. Qué hallazgos pasan a modelado y diseño del producto
 
-## 20.1 Calidad del lead e Inventory deben permanecer como ejes separados
+## 20.1 Lead Quality e Inventory deben permanecer como ejes separados
 
 El EDA muestra que:
 
 - target prevalence T1 es relativamente estable;
 - candidate depth cambia mucho;
 - Availability coverage cambia de régimen;
-- vigencia tiene otra escala;
+- freshness tiene otra escala;
 - Retail muestra presión relativa distinta.
 
 La UI y el sistema deben poder explicar:
 
 - **Quality alto + Inventory alto:** trabajar ahora;
-- **Quality alto + Inventory incierto:** priorizar revisión/estrategia de respaldo, no confundir incertidumbre con rechazo;
+- **Quality alto + Inventory incierto:** priorizar revisión/fallback, no confundir incertidumbre con rechazo;
 - **Quality alto + Inventory bajo:** oportunidad comercial que necesita alternativa;
 - **Quality bajo + Inventory alto:** oferta disponible no compensa baja prioridad del lead.
 
@@ -907,7 +903,7 @@ No basta split aleatorio porque:
 - depth cambia;
 - clocks cambian;
 - algunos campos son current-state;
-- el muestra de evaluación histórico ya fue consumido durante investigación.
+- el holdout histórico ya fue consumido durante investigación.
 
 La confirmación real de nuevas hipótesis requiere nueva cohorte forward.
 
@@ -921,8 +917,8 @@ Los datos que realmente reducirían incertidumbre son:
 - publication/effective time de Market Context;
 - timestamps fiables de response events;
 - outcome comercial real;
-- exposición a recomendaciones/estrategia de respaldo;
-- raw consulta text si se quiere semántica de intención;
+- exposición a recomendaciones/fallback;
+- raw inquiry text si se quiere semántica de intención;
 - inventory event history más denso y estable.
 
 ---
@@ -931,16 +927,16 @@ Los datos que realmente reducirían incertidumbre son:
 
 1. **Target proxy.** scheduled_visit no es cierre ni revenue.
 2. **Datos sintéticos.** Algunos patrones pueden ser artefactos del generador.
-3. **muestra de evaluación histórico consumido.** Las hipótesis descubiertas después no tienen confirmación independiente.
+3. **Holdout histórico consumido.** Las hipótesis descubiertas después no tienen confirmación independiente.
 4. **Availability coverage drift.** Cohortes tempranas tienen menor observabilidad.
 5. **Listing fields sin versión.** Price/area/geography no permiten una afirmación PIT completa.
 6. **Market Context sin publication time.** EDA_ONLY.
-7. **ausencia de datos estructural.** Un null puede significar no-aplica, desconocido o no-declarado.
+7. **Missingness estructural.** Un null puede significar no-aplica, desconocido o no-declarado.
 8. **Outliers plausibles.** Colas de área/precio no deben eliminarse automáticamente.
 9. **Clustering multiplicity.** Pockets locales son hipótesis.
 10. **Text templated.** La semántica disponible del listing puede reflejar templates más que contenido rico.
 11. **Causalidad.** Tasas por canal, source, sector o asked_visit son asociaciones.
-12. **Inventory outcome no alineado.** El target de Calidad del lead no observa éxito causal de un estrategia de respaldo.
+12. **Inventory outcome no alineado.** El target de Lead Quality no observa éxito causal de un fallback.
 
 ---
 
@@ -948,7 +944,7 @@ Los datos que realmente reducirían incertidumbre son:
 
 El EDA cambia la manera de formular el problema.
 
-No estamos frente a “un dataset de leads con unas cuantas variables inmobiliarias”. Estamos frente a un sistema temporal de marketplace donde:
+No estamos frente a “un dataset de leads con unas cuantas features inmobiliarias”. Estamos frente a un sistema temporal de marketplace donde:
 
 - la necesidad existe en T0 y se refina en T1;
 - la trayectoria posterior sólo puede usarse si ya ocurrió;
@@ -960,7 +956,7 @@ No estamos frente a “un dataset de leads con unas cuantas variables inmobiliar
 
 La decisión que produjo este conocimiento acumulado es coherente con Codexway:
 
-> **T1 es el contrato principal; Calidad del lead e Capacidad del inventario permanecen separados; Availability usa backward as-of; uncertainty es explícita; Market Context y listing state no versionado no entran como si fueran históricos; y los hallazgos de clusters se usan para aprender, no para sobreajustar.**
+> **T1 es el contrato principal; Lead Quality e Inventory Serviceability permanecen separados; Availability usa backward as-of; uncertainty es explícita; Market Context y listing state no versionado no entran como si fueran históricos; y los hallazgos de clusters se usan para aprender, no para sobreajustar.**
 
 ---
 
@@ -968,25 +964,25 @@ La decisión que produjo este conocimiento acumulado es coherente con Codexway:
 
 | Hallazgo | Evidencia | Implicación | Decisión |
 |---|---|---|---|
-| T1 es el momento principal | Codexway: primera consulta antes de respuesta del intermediario; 4,898 maduros; 20.44% | Es el primer punto donde existe intención accionable sin mirar outcome | Mantener T1 como contrato principal |
+| T1 es el momento principal | Codexway: primera inquiry antes de broker response; 4,898 maduros; 20.44% | Es el primer punto donde existe intención accionable sin mirar outcome | Mantener T1 como contrato principal |
 | Retail tiene presión relativa | 30.40% demanda vs 24.51% catálogo; +5.89 pp | La demanda Retail puede enfrentar menor cobertura relativa | Tratarlo como diagnóstico de Inventory, no como probabilidad |
-| La consulta refina el área | 395.05 m² → 480.9 m² mediana; p90 T1 2,561.1 | T1 agrega información material | variables determinísticas T0→T1 |
+| La inquiry refina el área | 395.05 m² → 480.9 m² mediana; p90 T1 2,561.1 | T1 agrega información material | Features determinísticas T0→T1 |
 | Presupuesto tiene missing estructural | Nulls globales altos por rent/sale; missing real menor cuando aplica | No-aplica ≠ desconocido | Estados de aplicabilidad; no imputación global |
 | urgency missing es semántico | 31.34% no declarado | Zero-fill inventaría una urgencia | Flag not_stated |
 | asked_visit es intención, no outcome | +1.26 pp en clean-room | Señal contemporánea modesta | Allow + sensibilidad WITH/WITHOUT |
-| total future consultas es un clock | Mediana 5; cae cerca del borde temporal | fuga de información futura/exposure si entra a T1 | Prohibir; sólo historia estrictamente previa |
-| spots.total_consultas no es event count | Sólo 7.07% coincide con reconstrucción | Campo current-state semánticamente distinto | Bloquear raw |
-| Availability requiere backward as-of | Nearest usaría futuro en 34.36% | Riesgo severo de fuga de información futura | Backward only |
+| total future inquiries es un clock | Mediana 5; cae cerca del borde temporal | Leakage/exposure si entra a T1 | Prohibir; sólo historia estrictamente previa |
+| spots.total_inquiries no es event count | Sólo 7.07% coincide con reconstrucción | Campo current-state semánticamente distinto | Bloquear raw |
+| Availability requiere backward as-of | Nearest usaría futuro en 34.36% | Riesgo severo de leakage | Backward only |
 | UNKNOWN != UNAVAILABLE | 44.30% exact unknown en audit final | La incertidumbre debe sobrevivir al score | Bounds/confidence explícitos |
 | Frescura ≠ cobertura | 19.16% candidatos <=7d vs 93.46% leads con alguno | Dos niveles distintos de confianza | Medir por candidato y lead |
-| Candidate depth deriva | Mediana 16 → 49 | Inventory/exposure cambia más que lead mix | Fuera de Calidad del lead |
+| Candidate depth deriva | Mediana 16 → 49 | Inventory/exposure cambia más que lead mix | Fuera de Lead Quality |
 | Listing fields no están versionados | No effective time de precio/área/geografía | Matching histórico completo no es estrictamente PIT | Mantener claim CONDITIONAL |
 | Market Context no tiene publication time | Exact coverage 23.84%, pero sólo month | Mismo mes no garantiza disponibilidad informacional | EDA_ONLY |
 | No hay evidencia sólida de estacionalidad | Horizonte corto + coverage/process drift | Riesgo de narrar artefactos | Hablar de no-estacionariedad |
 | Dynamic Need es concepto, no regla final | T0→T1 asimétrico; profile falla gate Codexway | Refinamiento real, cluster ID inestable | FE determinístico; no multiplicador DN |
 | Pocket local histórico no se confirma | DN4×LOC1×BSV1 1.510x histórico; 0/19 celdas final FDR | Discovery útil pero multiplicidad | Nueva cohorte/A-B, no regla |
 | Physical y Location deben separarse | Investigación + gates de Codexway | “Qué es” y “dónde está” son facetas distintas | Mantener familias separadas |
-| Semantic QA no es Calidad del lead | Flags reales de catálogo; ablation no mejora ranking | Calidad del dato y propensión son problemas distintos | Sidecar de Inventory QA |
+| Semantic QA no es Lead Quality | Flags reales de catálogo; ablation no mejora ranking | Calidad del dato y propensión son problemas distintos | Sidecar de Inventory QA |
 
 Versión CSV auditable: [tablas/02_hallazgos_decisiones.csv](tablas/02_hallazgos_decisiones.csv).
 
@@ -996,9 +992,9 @@ Versión CSV auditable: [tablas/02_hallazgos_decisiones.csv](tablas/02_hallazgos
 
 | Fuente | Elemento aprovechado | Rol en la solución final |
 |---|---|---|
-| **codexway** | Contrato T1, target, cifras canónicas, política de variables, backward as-of, Inventory bounds, Market Context EDA_ONLY, clustering confirmatorio | **Autoridad final.** Define narrativa y decisiones. Ninguna otra solución lo reemplaza. |
-| **experimentos** | Need refinement, Dynamic Need, Physical/Location, Broker Service, pockets locales, QA semántica, resultados negativos | **Evidencia experimental.** Convierte iteraciones en hipótesis y conocimiento; cualquier métrica histórica se etiqueta como alternativa evaluada/experimento. |
-| **retoSol1** | Integridad relacional, demand/supply, ausencia de datos, candidate depth, drift, fuga de información futura y PIT audit | **Auditoría metodológica.** Cuantifica riesgos y prueba decisiones desde un clean-room alternativo sin sustituir Codexway. |
+| **codexway** | Contrato T1, target, cifras canónicas, política de features, backward as-of, Inventory bounds, Market Context EDA_ONLY, clustering confirmatorio | **Autoridad final.** Define narrativa y decisiones. Ninguna otra solución lo reemplaza. |
+| **experimentos** | Need refinement, Dynamic Need, Physical/Location, Broker Service, pockets locales, QA semántica, resultados negativos | **Evidencia experimental.** Convierte iteraciones en hipótesis y conocimiento; cualquier métrica histórica se etiqueta como challenger/experimento. |
+| **AssessmentSol1** | Integridad relacional, demand/supply, missingness, candidate depth, drift, leakage y PIT audit | **Auditoría metodológica.** Cuantifica riesgos y prueba decisiones desde un clean-room alternativo sin sustituir Codexway. |
 
 Versión CSV: [tablas/03_fuentes_integradas.csv](tablas/03_fuentes_integradas.csv).
 
@@ -1015,11 +1011,11 @@ Versión CSV: [tablas/03_fuentes_integradas.csv](tablas/03_fuentes_integradas.cs
 - [06 — Frescura de inventario](figuras/06_frescura_inventario.svg)
 - [07 — Composición de la demanda](figuras/07_composicion_demanda.svg)
 - [08 — Sensibilidad de madurez del target](figuras/08_madurez_target.svg)
-- [09 — fuga de información futura en joins de Availability](figuras/09_join_availability_fuga de información futura.svg)
+- [09 — Leakage en joins de Availability](figuras/09_join_availability_leakage.svg)
 - [10 — Target por segmento](figuras/10_target_por_segmento.svg)
 - [11 — Contrato temporal T0 → T1 → T2](figuras/11_timeline_t0_t1_t2.svg)
-- [12 — ausencia de datos semántico](figuras/12_ausencia de datos_semantico.svg)
-- [13 — Exposure clock de consultas futuras](figuras/13_future_consulta_exposure.svg)
+- [12 — Missingness semántico](figuras/12_missingness_semantico.svg)
+- [13 — Exposure clock de inquiries futuras](figuras/13_future_inquiry_exposure.svg)
 - [14 — UNKNOWN no es UNAVAILABLE](figuras/14_unknown_no_es_unavailable.svg)
 - [15 — Frontera PIT del inventario](figuras/15_frontera_pit_listing.svg)
 - [16 — Clocks de no estacionariedad](figuras/16_no_estacionariedad_clocks.svg)
@@ -1027,7 +1023,7 @@ Versión CSV: [tablas/03_fuentes_integradas.csv](tablas/03_fuentes_integradas.cs
 - [18 — Pockets: discovery vs confirmación](figuras/18_pockets_discovery_vs_confirmacion.svg)
 - [19 — QA semántica del inventario](figuras/19_qa_semantica_inventario.svg)
 - [20 — Inconsistencia de response clocks](figuras/20_broker_response_clocks.svg)
-- [21 — Gobierno de variables](figuras/21_variable_governance.svg)
+- [21 — Gobierno de features](figuras/21_feature_governance.svg)
 - [22 — Cuadrante Quality × Inventory](figuras/22_quality_inventory_quadrant.svg)
 
 ### Tablas
@@ -1043,30 +1039,30 @@ Versión CSV: [tablas/03_fuentes_integradas.csv](tablas/03_fuentes_integradas.cs
 <!-- Definiciones de referencias: mantienen el documento legible y cada ID navegable. -->
 [C01]: ../../codexway/README.md
 [C02]: ../../codexway/evidence/DECISIONS.md
-[C03]: ../../codexway/evidence/fuga de información futura_MATRIX.md
+[C03]: ../../codexway/evidence/LEAKAGE_MATRIX.md
 [C05]: ../../codexway/outputs/metrics/eda_summary.json
 [C06]: ../../codexway/outputs/tables/lead_mix.csv
 [C07]: ../../codexway/outputs/tables/target_rate_by_segment.csv
 [C08]: ../../codexway/outputs/tables/market_context_eda.csv
-[C09]: ../../codexway/outputs/tables/inventory_vigencia_sensitivity.csv
+[C09]: ../../codexway/outputs/tables/inventory_freshness_sensitivity.csv
 [C10]: ../../codexway/outputs/metrics/inventory_audit.json
 [C11]: ../../codexway/outputs/CLUSTER_FINDINGS.md
 [C12]: ../../codexway/outputs/metrics/t0_t2_sensitivity_metrics.json
 [C13]: ../../codexway/outputs/tables/target_maturity_sensitivity.csv
 [C14]: ../../codexway/evidence/CHRONOLOGY.md
-[A01]: ../../retoSol1/evidence/DATA_AUDIT.md
-[A02]: ../../retoSol1/evidence/EDA_FINDINGS.md
-[A03]: ../../retoSol1/evidence/DRIFT_FINDINGS.md
-[A06]: ../../retoSol1/outputs/eda/demand_inventory_sector_gap.csv
-[A07]: ../../retoSol1/outputs/eda/numeric_summary.csv
-[A08]: ../../retoSol1/outputs/eda/monthly_t1_development.csv
-[A09]: ../../retoSol1/outputs/eda/inventory_summary.csv
-[A10]: ../../retoSol1/outputs/eda/market_context_highlights.csv
-[A11]: ../../retoSol1/evidence/T0_EXPOSURE_DRIFT.md
-[A12]: ../../retoSol1/evidence/T2_TRAJECTORY_DECISION.md
+[A01]: ../../AssessmentSol1/evidence/DATA_AUDIT.md
+[A02]: ../../AssessmentSol1/evidence/EDA_FINDINGS.md
+[A03]: ../../AssessmentSol1/evidence/DRIFT_FINDINGS.md
+[A06]: ../../AssessmentSol1/outputs/eda/demand_inventory_sector_gap.csv
+[A07]: ../../AssessmentSol1/outputs/eda/numeric_summary.csv
+[A08]: ../../AssessmentSol1/outputs/eda/monthly_t1_development.csv
+[A09]: ../../AssessmentSol1/outputs/eda/inventory_summary.csv
+[A10]: ../../AssessmentSol1/outputs/eda/market_context_highlights.csv
+[A11]: ../../AssessmentSol1/evidence/T0_EXPOSURE_DRIFT.md
+[A12]: ../../AssessmentSol1/evidence/T2_TRAJECTORY_DECISION.md
 [E01]: ../../experimentos/Evidencias/EV-006_profile_clustering_v2.md
 [E02]: ../../experimentos/Evidencias/EV-013_matching_profiles_v4.md
-[E03]: ../../experimentos/abt_variable_engineering/variable_treatment_manifest.csv
+[E03]: ../../experimentos/abt_feature_engineering/variable_treatment_manifest.csv
 [E04]: ../../experimentos/conocimiento_agregado/DESCUBRIMIENTOS.md
-[E05]: ../../experimentos/Evidencias/EV-017_llm_semantic_variable_pilot.md
+[E05]: ../../experimentos/Evidencias/EV-017_llm_semantic_feature_pilot.md
 [E06]: ../../experimentos/semantic_rules_lift_ablation/results/REPORT.md
