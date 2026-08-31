@@ -1,0 +1,193 @@
+{
+  "audit_version": "PROMPT_11_FINAL_LEAKAGE_AUDIT_V1_2026-08-30",
+  "status": "READY",
+  "status_interpretation": "Methodologically ready under explicit limitations; not a claim of predictive efficacy, causal impact, pristine holdout, or online business impact.",
+  "audited_scope": [
+    "RAW_DATA",
+    "TEMPORAL_SEMANTICS",
+    "TARGET",
+    "MATURITY",
+    "SPLITS",
+    "SCORE_SPINE",
+    "ABTS",
+    "FEATURE_ENGINEERING",
+    "MODEL",
+    "CALIBRATION",
+    "INVENTORY",
+    "FALLBACK",
+    "OPPORTUNITY_SCORE",
+    "METRICS",
+    "CLAIMS"
+  ],
+  "gate": {
+    "ready_requires_zero_blockers": true,
+    "active_blockers": [],
+    "blocker_count": 0,
+    "frozen_components_modified": false,
+    "lift_optimization_performed": false,
+    "stress_results_used_for_selection": false,
+    "procedural_holdout_reconsumed_by_correction": false
+  },
+  "severity_counts": {
+    "BLOCKER": 0,
+    "MATERIAL": 3,
+    "MINOR": 2,
+    "ACCEPTED_LIMITATION": 6
+  },
+  "material_findings": [
+    {
+      "id": "MAT-001",
+      "finding": "Procedural holdout was previously consumed by a documented method incident.",
+      "containment": "June remains DIAGNOSTIC_ONLY_NON_PRISTINE and cannot change frozen decisions.",
+      "impact": "No independent-confirmation claim is permitted."
+    },
+    {
+      "id": "MAT-002",
+      "finding": "Exact canonical Polars build/test path could not be executed in the active review runtime.",
+      "containment": "Independent raw reconstruction, static code review, persisted tests, and prior raw-equivalence authority exist.",
+      "impact": "Run the exact project pytest/build in an environment with Polars before external handoff."
+    },
+    {
+      "id": "MAT-003",
+      "finding": "T2 historical stage eligibility is only partially observable when prior scheduled-visit response timing is absent.",
+      "containment": "Untimed prior visits become ambiguous and T2 remains FUTURE_EXTENSION, not the deployed T1 product.",
+      "impact": "Do not claim T2 stage membership is fully observed."
+    }
+  ],
+  "minor_findings": [
+    {
+      "id": "MIN-001",
+      "finding": "Opportunity product data_fingerprint directly lists CSV leaf SHAs even though canonical readers prefer Parquet.",
+      "mitigation": "The included raw_source_manifest SHA pins both CSV and canonical Parquet bytes, so provenance remains reconstructable.",
+      "score_impact": "NONE"
+    },
+    {
+      "id": "MIN-002",
+      "finding": "Superseded P3 builders remain visible in the repository for chronology.",
+      "mitigation": "ABT AUTHORITY.json explicitly forbids them downstream and current product paths rebuild from raw/P4 contracts.",
+      "score_impact": "NONE"
+    }
+  ],
+  "accepted_limitations": [
+    "LABEL_MATURITY_ASSUMED: max raw inquiry_at is used as an observation-horizon proxy because extraction timestamp is absent.",
+    "Availability snapshot_date is a business-date assumption, not a proven intraday observation timestamp.",
+    "Spot structural fields rely on explicit invariance-from-creation assumptions.",
+    "spot_attributes rely on an explicit immutability assumption where raw attribute timestamps are absent.",
+    "Historical budget fit is incomplete because Spot prices are mutable/unversioned and therefore blocked.",
+    "Current Opportunity ranking has no demonstrated enrichment of the scheduled_visit proxy."
+  ],
+  "double_counting": {
+    "status": "PASS",
+    "clean_lead_quality_features": [],
+    "selected_spot_challenger_exists": true,
+    "selected_spot_challenger_used_in_final": false,
+    "inventory_constructs_in_clean_lead_quality": false,
+    "conclusion": "No conceptual duplication in final Opportunity Score."
+  },
+  "cv_leakage": {
+    "preprocessing": "TRAIN_ONLY_GUARDED",
+    "scaler": "TRAIN_ONLY",
+    "imputer": "TRAIN_ONLY",
+    "one_hot": "TRAIN_ONLY",
+    "clustering": "TRAIN_ONLY_IF_USED_NOT_IN_FROZEN_CORE",
+    "target_encoding": "NOT_USED",
+    "frequency_encoding": "NOT_USED",
+    "model_selection": "DEVELOPMENT_ONLY",
+    "calibration": "CALIBRATION_ONLY",
+    "holdout_tuning": false
+  },
+  "temporal_invariants": {
+    "future_inquiries_in_features": 0,
+    "future_spots_allowed": false,
+    "future_availability_allowed": false,
+    "nearest_snapshot_allowed": false,
+    "market_context_predictive_use": false,
+    "current_state_spot_fields_predictive_use": false,
+    "unversioned_price_historical_use": false
+  },
+  "stress_tests": {
+    "population": "T1 DEVELOPMENT",
+    "n": 4368,
+    "positives": 890,
+    "clean": {
+      "roc_auc": 0.49780918259880724,
+      "average_precision": 0.20230397238083825,
+      "lift_at_10pct": 0.977080708610804
+    },
+    "S001": {
+      "tags": [
+        "LEAKAGE_EXPECTED",
+        "UNKNOWN_PROVENANCE",
+        "NON_DEPLOYABLE"
+      ],
+      "roc_auc": 0.4987995167053259,
+      "average_precision": 0.20110910004521884,
+      "lift_at_10pct": 0.9209266448975394,
+      "conclusion": "Unsafe provenance does not become acceptable because it fails to improve metrics."
+    },
+    "S002": {
+      "tags": [
+        "FUTURE_LEAKAGE",
+        "NON_DEPLOYABLE"
+      ],
+      "rule": "future_inquiry_count + 2 * any_future_asked_visit",
+      "share_with_future_inquiry": 0.8864468864468864,
+      "roc_auc": 0.5160353037713784,
+      "average_precision": 0.21109871690037194,
+      "lift_at_10pct": 1.0107731468387628,
+      "conclusion": "Future information produces an invalid apparent improvement."
+    },
+    "S003": {
+      "tags": [
+        "FUTURE_SNAPSHOT_LEAKAGE",
+        "NON_DEPLOYABLE"
+      ],
+      "nearest_future_snapshot_share": 0.5230660592495805,
+      "roc_auc": 0.49988676819300776,
+      "average_precision": 0.20290191812610883,
+      "lift_at_10pct": 1.0107731468387628,
+      "conclusion": "Nearest joining materially selects future snapshots and can improve offline metrics invalidly."
+    },
+    "used_for_feature_engineering": false,
+    "used_for_model_selection": false,
+    "used_for_formula_tuning": false,
+    "independent_raw_recomputation_in_review": true
+  },
+  "claims_policy": {
+    "allowed_summary": "Predictive proxy/offline/serviceability claims with explicit assumptions.",
+    "forbidden_summary": "Causal, commercial-conversion, online-impact, pristine/unseen/independent-test, true-real-time-inventory, or universal-optimum claims."
+  },
+  "frozen_dependencies": {
+    "lead_quality_config_git_blob_sha1": "2dd65734dedf2548a3d30dbadfec6eb3f3512b03",
+    "inventory_config_git_blob_sha1": "383a8a16e85d5ea651edca85903304a7038279fe",
+    "opportunity_score_config_git_blob_sha1": "f27b1ce981005cdac15edbd5123844d9162cd49c",
+    "raw_source_manifest_git_blob_sha1": "f59b77ddcf991399bb35ec7be1e131db280f017d"
+  },
+  "audit_artifacts": {
+    "final_leakage_audit_git_blob_sha1": "fc33a7a857afe37faea18128702191409a761819",
+    "leakage_matrix_git_blob_sha1": "46f3f1f0b71137addde643dd121c3709862abb39",
+    "temporal_invariants_git_blob_sha1": "d503fb34671491d805405e20d3880cf3e6ff601d",
+    "double_counting_audit_git_blob_sha1": "e2dd6d654ecf1e528bc59e853d60683ce7f54594",
+    "stress_test_report_git_blob_sha1": "352d7162dd896d20fa057bf894d9308c8a7a1466",
+    "claims_policy_git_blob_sha1": "e37c1ec0aad8052535d8ef0d954ac3e9bc90105b",
+    "harness_git_blob_sha1": "e3f44d1048d52428c5f15ef9e84551678d0c60c5",
+    "stress_runner_git_blob_sha1": "91d5672b7d710e93de458b0911c3dc51d94811cc",
+    "stress_metrics_git_blob_sha1": "de4e83f4aa3836bef4f7b1f5ab00c6eb7f2db8ab",
+    "test_final_leakage_audit_git_blob_sha1": "5f832aa0af00e8573da22b62cd21f6ad6a30493e"
+  },
+  "corrections_this_review": [
+    {
+      "id": "DOC-001",
+      "severity": "MINOR",
+      "action": "Refreshed root AssessmentSol1 README from stale Prompt-8 status to Prompt-11 closure.",
+      "performance_effect": "NONE"
+    },
+    {
+      "id": "HARNESS-001",
+      "severity": "GOVERNANCE",
+      "action": "Added fail-closed unsafe-spec harness and isolated reproducible stress runner.",
+      "performance_effect": "NONE"
+    }
+  ],
+  "final_statement": "READY because active BLOCKER count is zero."
+}
