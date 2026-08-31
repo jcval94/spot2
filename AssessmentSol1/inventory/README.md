@@ -1,35 +1,38 @@
-# Inventory temporal contract
+# Inventory Serviceability — frozen Prompt 9
 
-Inventory remains conceptually separate from Lead Quality.
+Inventory is a separate, deterministic, point-in-time serviceability construct. It does not modify or consume the frozen Lead Quality model.
 
-At score time `t`:
+Canonical authority:
 
-1. a Spot must satisfy `spots.created_at <= t`;
-2. candidate structural fields are used under an explicit structural-invariance modeling assumption, not source-proven version history;
-3. raw mutable/current-state fields (`days_on_market`, `total_views`, `total_inquiries`, `is_active`) remain FORBIDDEN;
-4. Availability uses only the latest snapshot with `snapshot_date <= score_date`;
-5. no future/nearest snapshot may be selected;
-6. if no backward snapshot exists, Availability is `UNKNOWN`;
-7. a stale backward snapshot is still historically **known**; staleness is represented separately by `snapshot_age_days` / `freshness_bucket`;
-8. `competing_inquiries_30d` remains blocked until its window direction is proven;
-9. Market Context is EDA-only until publication/effective timing exists.
+- `frozen_inventory_config.json`
+- `SERVICEABILITY_CONTRACT.md`
+- `MATCHING_POLICY.md`
+- `FALLBACK_POLICY.md`
+- `FRESHNESS_POLICY.md`
+- `build_inventory.py`
+- `rank_fallbacks.py`
 
-## Intraday observation-time caveat
+Selection was restricted to T1 DEVELOPMENT (`score_time < 2026-05-01 UTC`). No target/outcome, CALIBRATION period or June procedural-holdout result was used to choose Inventory rules.
 
-`availability_snapshot.snapshot_date` is date-only. It does not prove what time of day a snapshot became observable.
+## Guardrails
 
-The current P4 rule therefore relies on a **business-date assumption** for same-day snapshots. A pre-P8 sensitivity audit compared it with a stricter rule that uses only `snapshot_date < score_date`.
+1. Spot must satisfy `spots.created_at <= score_time`.
+2. Modality compatibility is a hard constraint.
+3. Structural Spot fields use the declared AssessmentSol1 invariance assumption; mutable current-state fields remain blocked.
+4. Availability is strict backward-as-of only.
+5. Missing prior snapshot remains `UNKNOWN`; `UNKNOWN != UNAVAILABLE`.
+6. Stale backward snapshots remain historically known and reduce `inventory_confidence`.
+7. `competing_inquiries_30d` is blocked because its effective window semantics are unproven.
+8. Tier 3 is always `TIER_3_EXPERIMENTAL`.
+9. Current unversioned Spot prices are not used historically; canonical budget fit is explicitly unverified.
+10. Ranking and reason codes are deterministic; no LLM or outcome optimization is used.
 
-Observed candidate-level sensitivity:
+## Intraday caveat
 
-| Cohort | Current coverage | Strict previous-day coverage | Same-day share among covered | No-serviceable current | No-serviceable strict |
-|---|---:|---:|---:|---:|---:|
-| 2025H1 | 54.03% | 53.11% | 3.44% | 9.65% | 10.15% |
-| 2025H2 | 97.21% | 96.54% | 3.15% | 0.00% | 0.00% |
-| 2026Q1 | 99.98% | 99.52% | 3.66% | 0.00% | 0.00% |
-| 2026-Apr | 100.00% | 99.46% | 4.54% | 0.00% | 0.00% |
-| 2026-May CAL | 100.00% | 99.63% | 4.05% | 0.00% | 0.00% |
+`availability_snapshot.snapshot_date` is date-only. Same-day use therefore relies on the previously documented business-date assumption. The pre-P8 strict-previous-day sensitivity was mild, but production should require an ingestion/event timestamp or a documented publication SLA.
 
-This does **not** prove same-day observability. It shows the current dataset is only mildly sensitive to a conservative previous-day-only rule, while the underlying semantics remain conditional.
+## Evidence
 
-Before a production implementation, require an ingestion/event timestamp or a documented SLA defining when a business-date snapshot becomes usable.
+`outputs/` contains DEVELOPMENT policy evidence, `figures/` compact visual evidence, and `examples/` deterministic fallback cases. `TEMPORAL_CORRECTION.md` records the stale-vs-unknown inconsistency corrected in this phase.
+
+The exact Polars Inventory path was syntax-checked but could not be executed in the current tool runtime because Polars is unavailable. The policy audit was independently recomputed directly from raw repository blobs; `tests/test_inventory.py` is the committed exact-runtime gate.
