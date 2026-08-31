@@ -21,16 +21,16 @@ The rejected raw product `P_quality × InventoryServiceability` raises exact-ser
 
 This trade-off is explicit. V2 does not buy joint-exact performance by silently sacrificing Lead Quality.
 
-## Display bands
+## Priority bands
 
-Reference thresholds are derived from the DEVELOPMENT full-fit V2 score distribution without labels:
+Bands are **rank-based per scoring batch**, not threshold-forced:
 
-- PRIORITY: top 5%, score >= 22.298344072628932
-- HIGH: 5–10%, score >= 22.298344072628932
-- MEDIUM: 10–20%, score >= 21.307940332937303
-- LOW: remaining
+- PRIORITY: first 5%;
+- HIGH: 5–10%;
+- MEDIUM: 10–20%;
+- LOW: remaining.
 
-They are display thresholds. Exact operational capacity is rank-based percentile with score-desc / lead_id-asc tie-break.
+The DEVELOPMENT full-fit top-5 and top-10 numeric score thresholds are identical because of real score ties. That is retained as evidence rather than hidden with artificial epsilon changes. Exact assignment therefore uses score descending, then lead_id ascending.
 
 ## Fallback
 
