@@ -1,5 +1,7 @@
 # Matriz final de cobertura del reto
 
+> **Nota de trazabilidad:** los identificadores de evidencia se mantienen para auditoría, pero no es necesario abrir la evidencia histórica para entender la entrega final. La documentación presentada al evaluador es autocontenida y está en español.
+
 > ### Cómo leer este anexo
 > Este anexo conserva el detalle necesario para comprobar la cobertura del reto, pero prioriza lenguaje de negocio. Algunos nombres de métricas y variables se mantienen sin traducir porque corresponden a artefactos reproducibles del repositorio. Cuando aparece **Lift@10**, se refiere a cuánto mejora el 10% mejor priorizado frente a elegir al azar el mismo número de casos; **T1** es el momento inmediatamente posterior a la primera consulta y anterior a la respuesta del intermediario.
 >
@@ -47,9 +49,9 @@
 | Visión de producto — integración al producto | [Visión de producto ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) | Párrafo 1 | CRM/queue con Quality, Inventory, Opportunity y acción | COMPLETO |
 | Visión de producto — datos adicionales | [Visión de producto ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) | Párrafo 2 | Versionado, exposures, visitas, cierres, SLA, etiquetas humanas de referencia | COMPLETO |
 | Visión de producto — causalidad | [Diseño causal](07_ia_product_vision/03_EXPERIMENTACION_CAUSAL.md) | RCT / alternativas | 50/50 sticky, ITT, SRM, interference, ramp-up, DiD | COMPLETO |
-| Formato — notebook reproducible | [Notebook HTML](../codexway/notebooks/spot2_reto.html) / [IPYNB](../codexway/notebooks/spot2_reto.ipynb) | Notebook Codexway | Artefactos ejecutables/renderizados existentes | COMPLETO |
-| Formato — prompt de IA dentro del notebook | [Notebook IPYNB](../codexway/notebooks/spot2_reto.ipynb) | Sección LLM | El notebook contiene el prompt del Semantic Inventory Quality Auditor | COMPLETO |
-| Formato — slides PDF 5–8 slides | [Slides Codexway](../codexway/reports/slides.pdf) | Deck existente | PDF existe, pero no fue reconstruido/revalidado editorialmente contra este paquete ejecutivo final | PARCIAL |
+| Formato — notebook reproducible | **Notebook HTML** / **IPYNB** | Notebook Codexway | Artefactos ejecutables/renderizados existentes | COMPLETO |
+| Formato — prompt de IA dentro del notebook | **Notebook IPYNB** | Sección LLM | El notebook contiene el prompt del Semantic Inventory Quality Auditor | COMPLETO |
+| Formato — slides PDF 5–8 slides | **Slides Codexway** | Deck existente | PDF existe, pero no fue reconstruido/revalidado editorialmente contra este paquete ejecutivo final | PARCIAL |
 
 ## Lectura del estado
 
