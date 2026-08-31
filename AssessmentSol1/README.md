@@ -1,121 +1,154 @@
-# AssessmentSol1 — clean-room definitive assessment
+# AssessmentSol1 — Final Spot2 Lead Opportunity Assessment
 
-Status: **PROMPT 12 COMPLETE. Post-recovery scoring system remains frozen; LLM/AI requirement is closed with zero runtime dependency in the main score.**
+Status: **FINAL ASSESSMENT BUILT — Prompt 14 submission review in progress.**
 
-This directory is the only writable home for the definitive Spot2 assessment. Historical experiments may be read as prior evidence but are never runtime dependencies.
+This directory is the clean-room source of truth for the definitive Spot2 assessment. Historical experiments may be cited as upstream supporting evidence but are not runtime dependencies and do not override reproduced/frozen AssessmentSol1 results.
 
-## Frozen foundations
+## Start here
 
+Evaluator-facing deliverables:
+
+1. `final/EXECUTIVE_ONE_PAGER.html`
+2. `final/presentation/index.html`
+3. `final/ASSESSMENT_REPORT.md`
+4. `final/notebook/final_assessment.html`
+5. `final/notebook/final_assessment.ipynb`
+6. `final/REPRODUCIBILITY.md`
+7. `final/ARTIFACT_INDEX.md`
+
+Machine-readable packaging state:
+
+- `final/source_snapshot.json`
+- `final/PROMPT_13_STATE.json`
+
+## Frozen final system
+
+- scoring moment: **T1 / first inquiry**;
 - target: `T1_FIRST_INQUIRY_EVENTUAL_SCHEDULED_VISIT_V1`;
-- T1 maturity: 14 days;
-- split contract: `SPLIT_V1_T1_CALENDAR_FROZEN_2026-08-30`;
-- point-in-time ABT architecture: unchanged by recovery;
 - Lead Quality champion: **`LQ_RECOVERY_R4_STATIC_MATCH_V1`**;
-- Lead Quality calibration: **RAW**;
-- Inventory scalar: **`INV_SERVICEABILITY_V1_FROZEN_2026-08-30`**, unchanged;
-- fallback maximum: **K=3**;
+- model: regularized Logistic Regression;
+- calibration: RAW;
+- Inventory: **`INV_SERVICEABILITY_V1_FROZEN_2026-08-30`**;
+- fallback: **K=3**;
 - Opportunity Score: **`OPPORTUNITY_ACTIONABILITY_GATE_V2_FROZEN_2026-08-30`**;
-- capacity policy: **P80 / top 20% within T1**;
-- post-recovery red team: **PASS, 0 blockers**.
+- formula: **`lead_quality_probability * inventory_actionability_gate`**;
+- capacity: **P80 / top 20% within T1**;
+- post-recovery final audit: **READY / 0 blockers**.
 
-## Recovered T1 Lead Quality
+## Why recovery mattered
 
-The previous `BASE_RATE + RAW` model is historical evidence only. Prompt 11.5 recovered a small regularized Logistic ranker using:
+The previous Base-Rate/no-ranking state is historical only.
 
-1. selected-Spot area closeness;
-2. selected-Spot geographic fit;
-3. selected-Spot attribute completeness.
+Prompt 11.5 recovered modest temporal ranking signal without changing target/splits and without using Availability in Lead Quality.
 
-No Availability is used in Lead Quality.
+Recovered features:
 
-Frozen DEVELOPMENT temporal-OOF evidence:
+1. `selected_spot_area_closeness`;
+2. `selected_spot_geographic_fit`;
+3. `selected_spot_attribute_completeness`.
+
+Frozen development evidence:
+
 - Lift@5: 0.859x;
 - Lift@10: 1.075x;
-- Lift@20 recovery gate: 1.115x;
-- AP: 0.2186 versus base-rate AP 0.2083.
+- Lift@15: 1.084x;
+- Lift@20: 1.124x under the post-recovery capacity evaluation.
 
-Prompt 11.6 re-ranks capacities with an explicit deterministic tie policy and selects top 20%, with macro Lead Quality Lift 1.124x.
+Top-5 weakness and recovery uncertainty remain explicit limitations.
 
-The top-5 weakness remains explicit.
+## Quality vs Opportunity
 
-## Post-recovery Opportunity architecture
+Lead Quality answers:
 
-The old formula `P_quality × InventoryServiceability` is **invalidated** after recovery because Lead Quality now contains selected-Spot matching context.
+> Who shows greater propensity to reach the target outcome?
+
+Inventory answers:
+
+> Can the lead be served using point-in-time-known current/fallback inventory?
+
+Opportunity answers:
+
+> Where do progression propensity and serviceability coincide?
+
+The old continuous product `P_quality × InventoryServiceability` is rejected/diagnostic-only after recovery because it double-counts selected-Spot matching context.
 
 Canonical V2:
 
 ```
-OpportunityScoreV2 = P(LeadQuality_recovered) × InventoryActionabilityGate
+OpportunityScoreV2 = lead_quality_probability * inventory_actionability_gate
 ```
 
-Continuous Inventory Serviceability remains a separate output. The gate is binary and only prevents true `NO_RESULT` leads from being treated as operationally actionable.
+It is an operational prioritization score, **not a jointly calibrated probability**.
 
-This removes continuous double counting. The rejected raw multiplicative product remains diagnostic-only because it improves exact-serviceability concentration while harming pure Lead Quality capture.
+Use:
+- Lead Quality when inventory should not constrain progression prioritization;
+- Opportunity Score when progression + serviceability is the operational objective.
 
 ## Capacity and fallback
 
-Capacity was recalculated on DEVELOPMENT OOF only at 5/10/15/20. The clean-room result is **P80/top 20%**, not the historical E019 P85/top-15 prior.
+Capacity was recalculated on DEVELOPMENT temporal OOF only.
 
-Fallback list depth is independently re-supported at **K=3**:
-- any result: 4,361/4,368 DEVELOPMENT leads;
-- at least 3 recommendations: 4,051/4,368;
-- at least 5 recommendations: 3,696/4,368.
+Final:
 
-Inventory scalar/ranking itself was not rebuilt.
+**P80 / top20 within T1.**
 
-## Holdout governance
+Fallback was independently revalidated in AssessmentSol1:
 
-June remains `DIAGNOSTIC_ONLY_NON_PRISTINE` because of the documented earlier incident. It was not used to select:
-- recovered Lead Quality;
-- V2 formula;
-- P80 capacity;
-- K=3.
+**K=3.**
 
-Post-recovery confirmation requires genuinely new/hidden data.
+`NO_RESULT` is preferred over indefinite relaxation.
 
 ## Historical upstream evidence
 
-- E018 Semantic Rules: **NOT_SUPPORTED for scoring**; excluded.
-- E019: historical top-15/P85 and Availability-30d evidence only.
-- E020: historical K=3/combined-proxy evidence only.
-- No E019/E020 metric is copied as an AssessmentSol1 result.
+These are supporting only:
 
-## Current authority
+- E018 Semantic Rules → NOT_SUPPORTED for Lead Quality; final role is Inventory/Catalog QA.
+- E019 P85/top15 → historical prior only; final AssessmentSol1 capacity is P80/top20.
+- E020 combined score / K findings → historical supporting evidence only; final formula and K come from the clean-room post-recovery rebuild.
 
-Start here:
-- `recovery_downstream/POST_RECOVERY_DECISION.md`
-- `recovery_downstream/POST_RECOVERY_FINAL_STATE.json`
-- `models/lead_quality_recovery/RECOVERY_DECISION.md`
-- `opportunity_score/SCORE_CONTRACT.md`
-- `opportunity_score/frozen_score_config.json`
-- `inventory/frozen_inventory_config.json`
-- `audit/FINAL_LEAKAGE_AUDIT.md`
-- `audit/POST_RECOVERY_RED_TEAM.md`
+Closed architecture roles:
 
-## Prompt 12 — LLM / AI closure
+- Matching/clusters = **AUXILIARY**
+- Semantic Rules = **INVENTORY / CATALOG QA**
+- Response-time RF = **DIAGNOSTIC ONLY**
 
-The required AI use is now self-contained under `llm/**`.
+## LLM / AI
+
+The AI requirement is self-contained under `llm/**`.
 
 Final LLM role:
-- sampled Semantic Inventory / Catalog QA discovery;
-- Rules-first residual analysis;
-- human validation before deterministic rule promotion.
 
-Not part of:
-- Lead Quality;
-- Inventory score;
-- Opportunity Score;
-- fallback ranking;
-- capacity policy.
+**sampled Semantic Inventory / Catalog QA discovery**.
 
-Canonical E017 real-API evidence and E018 scoring ablation are documented with provenance. Open PR #19 is explicitly supplemental. AssessmentSol1 independently reproduces the deterministic semantic sidecar from raw data.
+The main Lead Opportunity Score requires:
+- no OpenAI API call;
+- no API key;
+- no LLM cache;
+- no LLM runtime dependency.
 
-Prompt 12 makes **no new paid API call**. The main Lead Opportunity Score remains reproducible with no OpenAI key, no network call and an empty LLM cache.
+Prompt 12 gate:
 
-Authority:
-- `llm/UPSTREAM_EVIDENCE.md`
-- `llm/LLM_EVALUATION.md`
-- `llm/LLM_DECISION.md`
+`llm/results/prompt12_gate.json`
+
+## Governance and limitations
+
+- June procedural holdout is non-pristine / diagnostic-only.
+- Top-5 Lead Quality Lift remains below 1.
+- Recovery uncertainty is wide.
+- Historical Spot prices are unversioned; precise budget fit is blocked/unknown.
+- Score ties require rank-based bands.
+- No causal/commercial conversion claim is supported.
+- Opportunity Score is not a joint calibrated probability.
+- LLM human precision/recall is unavailable.
+
+## Primary authorities
+
+- `models/lead_quality_recovery/RECOVERY_DECISION.md`
+- `recovery_downstream/POST_RECOVERY_FINAL_STATE.json`
+- `opportunity_score/frozen_score_config.json`
+- `inventory/frozen_inventory_config.json`
+- `audit/final_audit.json`
 - `llm/results/prompt12_gate.json`
+- `final/source_snapshot.json`
 
-**LLM REQUIREMENT CLOSED — MAIN SCORE REPRODUCES WITHOUT LIVE OPENAI**
+Final submission decision will be written by Prompt 14 under `final/**`.
