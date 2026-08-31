@@ -1,64 +1,60 @@
-# Entregable 1 — EDA final
+# Entregable 1 — Análisis exploratorio de datos
 
-Este directorio es el **entry point oficial** del Entregable 1 del assessment de Spot2.
+Este documento es la entrada recomendada al análisis de datos de Spot2.
 
-## Documento principal
+## Qué queríamos entender
 
-➡️ **[Leer EDA_FINAL.md](EDA_FINAL.md)**
+Antes de construir un modelo había que responder tres preguntas sencillas:
 
-El documento está diseñado para poder evaluarse sin recorrer toda la investigación. Convierte los análisis de Codexway, experimentos y AssessmentSol1 en una sola narrativa de negocio, temporalidad, calidad de datos y decisiones.
+1. **¿Qué tipo de leads llegan y qué necesitan?**
+2. **¿Qué tan confiable es la información disponible en cada momento?**
+3. **¿La dinámica de los leads y la del inventario se comportan igual?**
 
-## Jerarquía de evidencia
+La respuesta a la tercera pregunta fue especialmente importante: **no**. La intención comercial del lead es relativamente estable, mientras que la visibilidad y profundidad del inventario cambian mucho con el tiempo. Por eso la solución final mantiene ambas dimensiones separadas.
 
-- **Codexway = autoridad final.** Sus contratos, cifras y decisiones prevalecen.
-- **experimentos = evidencia experimental.** Se usa para challengers, resultados negativos, sensibilidad e hipótesis históricas.
-- **AssessmentSol1 = auditoría metodológica.** Se usa para PIT correctness, leakage, drift, missingness y cuantificación complementaria.
+## Principales hallazgos
 
-Las métricas de poblaciones o targets incompatibles **no se combinan**.
+- **Retail muestra la mayor presión relativa entre demanda e inventario histórico:** representa 30.40% de la demanda y 24.51% del catálogo en la muestra de desarrollo.
+- **La primera consulta aporta información nueva:** por ejemplo, la necesidad de área se refina respecto a lo declarado inicialmente.
+- **Los datos faltantes tienen significados distintos:** “no aplica”, “no se declaró” y “no sabemos” no deben tratarse como si fueran lo mismo.
+- **La información de disponibilidad cambia fuertemente con el tiempo:** la cobertura histórica es mucho menor al inicio y se vuelve casi completa en periodos recientes.
+- **No conocer la disponibilidad no equivale a saber que un inmueble no está disponible.**
+- **La profundidad de alternativas aumenta con el tiempo**, aun cuando la proporción de visitas agendadas se mantiene relativamente estable.
+- **No todos los atributos del inmueble tienen historial completo**, por lo que algunas comparaciones históricas deben interpretarse con cautela.
+- **La segmentación encontró patrones interesantes, pero no reglas suficientemente robustas para convertirlas en multiplicadores del puntaje final.**
 
-## La historia en seis puntos
+## Momento de evaluación
 
-1. **T1 es el scoring moment principal:** primera inquiry, después de persistir el request y antes de broker response.
-2. **La inquiry refina la necesidad:** área y presupuestos expresados en T1 agregan información respecto del intake.
-3. **Retail tiene la presión demanda/oferta más clara:** +5.89 pp de share de demanda sobre share de catálogo en el clean-room DEVELOPMENT.
-4. **El gran drift está en Inventory:** Availability coverage y candidate depth cambian mucho más que el mix marginal de leads.
-5. **UNKNOWN no es UNAVAILABLE:** cobertura, freshness y serviceability se mantienen como conceptos distintos.
-6. **La investigación de clusters produjo conocimiento, no reglas:** los pockets históricos permanecen como hipótesis; Codexway no confirma celdas tras multiplicidad.
+La solución principal evalúa al lead en **T1**, es decir:
 
-## Estructura
+- ya existe su primera consulta;
+- todavía no conocemos la respuesta del intermediario;
+- no utilizamos consultas posteriores;
+- no utilizamos estados futuros del inventario.
 
-- [EDA_FINAL.md](EDA_FINAL.md) — narrativa final y conclusiones.
-- [REFERENCIAS.md](REFERENCIAS.md) — mapa de evidencia y trazabilidad.
-- [VALIDACION.md](VALIDACION.md) — QA final, reconciliación de cifras y control de autoridad.
-- [figuras/](figuras/) — seis visualizaciones autocontenidas en SVG.
-- [tablas/](tablas/) — resúmenes CSV auditables.
+La señal de éxito es que esa primera consulta termine en **visita agendada** (`scheduled_visit`). Se usa como indicador temprano de progreso comercial, no como sinónimo de venta.
 
-### Figuras
+## Documento completo
 
-1. [Demanda vs oferta por sector](figuras/01_demanda_vs_oferta_sector.svg)
-2. [Target T1 vs coverage de Availability](figuras/02_target_vs_coverage_temporal.svg)
-3. [Candidate depth temporal](figuras/03_candidate_depth_temporal.svg)
-4. [Refinamiento de área T0→T1](figuras/04_refinamiento_area.svg)
-5. [Market Context por sector](figuras/05_market_context_sector.svg)
-6. [Frescura del inventario](figuras/06_frescura_inventario.svg)
+➡️ [Leer el EDA final](EDA_FINAL.md)
 
-### Tablas
+El documento completo conserva cifras, controles temporales, gráficos y trazabilidad para quien quiera profundizar.
 
-1. [Resumen de fuentes](tablas/00_resumen_fuentes.csv)
-2. [Métricas EDA clave](tablas/01_metricas_eda_clave.csv)
-3. [Hallazgos → decisiones](tablas/02_hallazgos_decisiones.csv)
-4. [Fuentes integradas](tablas/03_fuentes_integradas.csv)
+## Material de apoyo
 
-## Lectura rápida para evaluación
+- [Referencias y origen de la evidencia](REFERENCIAS.md)
+- [Validación de cifras y consistencia](VALIDACION.md)
+- [Figuras](figuras/)
+- [Tablas](tablas/)
 
-Si sólo hay cinco minutos:
+## Lectura de cinco minutos
 
-1. leer el [Resumen ejecutivo](EDA_FINAL.md#resumen-ejecutivo);
-2. revisar [Demanda vs oferta](EDA_FINAL.md#4-demanda-vs-oferta-retail-es-la-presion-relativa-mas-clara);
-3. revisar [Availability](EDA_FINAL.md#10-availability-cobertura-frescura-y-disponibilidad-son-tres-conceptos-distintos);
-4. revisar [Segmentación y pockets](EDA_FINAL.md#15-segmentacion-y-clustering-conocimiento-acumulado-no-etiquetas-magicas);
-5. terminar con [Hallazgo → Evidencia → Implicación → Decisión](EDA_FINAL.md#23-tabla-final--hallazgo--evidencia--implicacion--decision).
+Si el tiempo es limitado, recomendamos:
 
-## Alcance
+1. leer el resumen ejecutivo del EDA;
+2. revisar la comparación entre demanda e inventario;
+3. revisar cómo cambia la disponibilidad en el tiempo;
+4. revisar la diferencia entre “desconocido” y “no disponible”;
+5. terminar con la tabla que conecta **hallazgo → evidencia → implicación → decisión**.
 
-Este paquete corresponde **únicamente al Entregable 1 — EDA**. No crea ni modifica los entregables 2–8.
+La idea central es sencilla: **priorizar bien no depende sólo de saber quién parece un buen lead; también depende de saber qué inventario era realmente observable y utilizable en ese momento.**
