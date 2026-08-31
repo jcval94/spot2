@@ -1,0 +1,164 @@
+{
+  "config_version": "INV_SERVICEABILITY_V1_FROZEN_2026-08-30",
+  "frozen_at": "2026-08-30",
+  "status": "FROZEN_BEFORE_OPPORTUNITY_SCORE",
+  "lead_quality_untouched": true,
+  "selection_scope": {
+    "stage": "T1",
+    "development_rule": "score_time < 2026-05-01T00:00:00Z",
+    "development_leads": 4368,
+    "calibration_used_for_selection": false,
+    "procedural_holdout_used_for_selection": false,
+    "outcomes_used": false,
+    "lead_quality_outcomes_used": false
+  },
+  "candidate_universe": {
+    "existence_gate": "spots.created_at <= score_time",
+    "future_spot_status": "FORBIDDEN_FUTURE_SPOT",
+    "hard_constraint": "modality_compatibility",
+    "structural_invariance_assumption": [
+      "sector_name", "type_name", "state", "municipality", "settlement",
+      "corridor", "region", "lat", "lon", "area_sqm", "modality"
+    ],
+    "tiers": {
+      "TIER_0": "modality compatible + same sector + same preferred corridor",
+      "TIER_1": "modality compatible + same sector + same preferred municipality",
+      "TIER_2": "modality compatible + same sector + same preferred state",
+      "TIER_3_EXPERIMENTAL": "modality compatible + different sector + same corridor/municipality/state; explicitly experimental"
+    }
+  },
+  "availability": {
+    "join": "latest snapshot_date <= score_date; deterministic last snapshot_id on same spot/date",
+    "same_day_business_date_assumption": true,
+    "missing_prior_snapshot_state": "UNKNOWN",
+    "stale_prior_snapshot_remains_known": true,
+    "competing_inquiries_30d": "FORBIDDEN_WINDOW_SEMANTICS_UNPROVEN",
+    "states": ["AVAILABLE_NOW", "AVAILABLE_WITHIN_URGENCY", "UNAVAILABLE", "UNKNOWN"]
+  },
+  "area_fit": {
+    "canonical": "relative_gap",
+    "formula": "max(0, 1 - abs(candidate_area-requested_area)/requested_area)",
+    "challenger": "exp(-abs(log(candidate_area/requested_area)))",
+    "min_viable_fit": 0.5,
+    "development_evidence": {
+      "pairs": 567869,
+      "mean_abs_fit_difference": 0.08112266319212223,
+      "median_abs_fit_difference": 0.003420804287866841,
+      "top5_overlap": 0.9485347985348128
+    }
+  },
+  "budget_fit": {
+    "canonical_price_source_status": "BLOCKED_UNVERSIONED_SPOT_PRICE",
+    "canonical_budget_fit": null,
+    "canonical_budget_gap": null,
+    "unknown_price_status": "UNKNOWN_PRICE_NOT_PIT",
+    "missing_budget_status": "MISSING_BUDGET",
+    "rent_units": "lead MXN/month vs historical price_total_mxn_rent MXN/month",
+    "sale_units": "lead MXN total vs historical price_total_mxn_sale MXN total",
+    "requested_budget_role": "ceiling when stated at current inquiry",
+    "intake_budget_role": "interval fallback when requested budget is absent",
+    "missing_budget_imputation": false,
+    "development_current_price_diagnostic_only": {
+      "computable_pairs": 567869,
+      "mean_fit": 0.6025119489852185,
+      "pit_authorized_pairs": 0
+    }
+  },
+  "location_fit": {
+    "TIER_0": 1.0,
+    "TIER_1": 0.8,
+    "TIER_2": 0.6,
+    "TIER_3_EXPERIMENTAL": {
+      "CORRIDOR": 0.5,
+      "MUNICIPALITY": 0.4,
+      "STATE": 0.3
+    }
+  },
+  "sector_fit": {
+    "same_sector": 1.0,
+    "tier3_sector_relaxation": 0.4
+  },
+  "physical_fit": {
+    "policy": "NOT_APPLICABLE_UNLESS_LEAD_EXPRESSED_PREFERENCE",
+    "default": null
+  },
+  "availability_fit": {
+    "available_now": 1.0,
+    "available_within_urgency": 0.8,
+    "unknown": 0.4,
+    "unavailable": 0.0
+  },
+  "freshness": {
+    "sensitivity_days": [7, 30, 90],
+    "default_reporting_horizon_days": 30,
+    "default_is_not_an_unknownness_cutoff": true,
+    "confidence_by_age": {
+      "unknown": 0.0,
+      "le_7d": 1.0,
+      "le_30d": 0.8,
+      "le_90d": 0.55,
+      "gt_90d": 0.3
+    },
+    "development_sensitivity": {
+      "7": {"coverage": 0.19944212485626087, "exact_serviceability": 0.3715659340659341, "same_sector_fallback": 0.1417124542124542, "tier3_only": 0.3092948717948718, "no_fresh_observation": 0.010073260073260074},
+      "30": {"coverage": 0.5496760696569103, "exact_serviceability": 0.6142399267399268, "same_sector_fallback": 0.1330128205128205, "tier3_only": 0.20444139194139194, "no_fresh_observation": 0.00434981684981685},
+      "90": {"coverage": 0.8383746955723943, "exact_serviceability": 0.6918498168498168, "same_sector_fallback": 0.11927655677655678, "tier3_only": 0.15315934065934067, "no_fresh_observation": 0.00434981684981685}
+    }
+  },
+  "viability": {
+    "hard_modality": true,
+    "min_area_fit_relative": 0.5,
+    "min_budget_fit_if_known": 0.5,
+    "unknown_budget_does_not_disqualify": true,
+    "unknown_availability_does_not_equal_unavailable": true
+  },
+  "serviceability_score": {
+    "range": [0.0, 1.0],
+    "matching_quality_components": ["area_fit_relative", "availability_fit", "budget_fit_if_known"],
+    "missing_components": "mean over known components; output completeness remains explicit",
+    "tier_caps": {"TIER_0": 1.0, "TIER_1": 0.85, "TIER_2": 0.7, "TIER_3_EXPERIMENTAL": 0.45},
+    "inventory_confidence_kept_separate": true
+  },
+  "ranking": {
+    "champion": "TIERED_LEXICOGRAPHIC",
+    "order": ["relaxation_tier", "availability_state", "is_viable", "area_fit_relative_desc", "budget_fit_desc_if_known", "inventory_confidence_desc", "spot_id_asc"],
+    "challenger": "SIMPLE_CONTINUOUS_AUDIT_ONLY",
+    "continuous_weights": {"area": 0.25, "budget": 0.25, "geography": 0.2, "sector": 0.15, "availability": 0.15},
+    "weight_search_performed": false,
+    "development_comparison": {
+      "top5_overlap": 0.6010989010988996,
+      "continuous_top1_relaxes_despite_tier0_candidate": 0.11561355311355312,
+      "continuous_top1_tier3_despite_same_sector_candidate": 0.05723443223443223
+    }
+  },
+  "fallback": {
+    "max_recommendations": 5,
+    "known_available_first": true,
+    "unknown_only_when_no_known_available": true,
+    "unknown_status": "VERIFY_AVAILABILITY",
+    "unavailable_never_recommended": true,
+    "tier3_is_experimental": true,
+    "tier3_never_equivalent_to_same_sector": true
+  },
+  "development_canonical_view": {
+    "candidate_backward_snapshot_coverage": 0.9044533158175565,
+    "candidate_unknown_no_snapshot_share": 0.0955466841824435,
+    "lead_exact_serviceability_rate": 0.7046703296703297,
+    "lead_same_sector_fallback_rate": 0.11446886446886446,
+    "lead_tier3_only_serviceability_rate": 0.1453754578754579,
+    "lead_no_available_viable_rate": 0.035485347985347984,
+    "lead_unknown_verification_only_rate": 0.03388278388278388
+  },
+  "forbidden_sources": [
+    "broker_response", "broker_response_hours", "target_status", "target_value",
+    "lead_score_internal", "competing_inquiries_30d", "market_context",
+    "days_on_market", "total_inquiries", "total_views", "is_active",
+    "current_unversioned_spot_prices"
+  ],
+  "reproducibility": {
+    "ranking_tie_break": "spot_id ascending",
+    "availability_same_day_tie_break": "highest snapshot_id after sort",
+    "no_llm": true,
+    "randomness": false
+  }
+}
