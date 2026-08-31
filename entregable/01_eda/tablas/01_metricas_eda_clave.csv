@@ -1,0 +1,37 @@
+tema,metrica,valor,universo,clasificacion,fuente
+Contrato T1,Leads maduros,4898,"Codexway T1; data-as-of 2026-07-01; madurez 7d",FINAL,codexway/outputs/metrics/eda_summary.json
+Contrato T1,Prevalencia scheduled_visit,20.44%,"Codexway T1 maduro",FINAL,codexway/outputs/metrics/eda_summary.json
+Demanda,Retail share,30.56%,"5000 leads",FINAL,codexway lead mix
+Demanda,Office share,29.00%,"5000 leads",FINAL,codexway lead mix
+Demanda,Industrial share,24.98%,"5000 leads",FINAL,codexway lead mix
+Demanda,Land share,15.46%,"5000 leads",FINAL,codexway lead mix
+Modalidad,Rent share,50.06%,"5000 leads",FINAL,codexway lead mix
+Demand-supply,Retail demand share,30.40%,"4368 T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-01
+Demand-supply,Retail catalog share,24.51%,"2754 spots existentes antes de 2026-05-01",COMPLEMENTARIA,AssessmentSol1 EDA-01
+Demand-supply,Retail gap,+5.89 pp,"DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-01
+Intent,asked_visit true proxy rate,21.33%,"1069 T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-03
+Intent,asked_visit false proxy rate,20.07%,"3299 T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-03
+Refinamiento,Target area mediana,395.05 m2,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-04
+Refinamiento,Requested area mediana,480.90 m2,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-04
+Refinamiento,Requested area p90,2561.10 m2,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-04
+Missingness,Urgency days missing,31.34%,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-05
+Exposición,Future inquiries por lead mediana,5,"T1 DEVELOPMENT; EDA únicamente",PROHIBIDA_COMO_FEATURE,AssessmentSol1 EDA-06
+Inventory,Candidate depth mediana,29,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-08
+Inventory,Candidate depth Jan-2025,16,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 monthly_t1_development.csv
+Inventory,Candidate depth Apr-2026,49,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 monthly_t1_development.csv
+Availability,Backward coverage global inquiries,92.38%,"Todas las inquiries; evidencia histórica reutilizada",COMPLEMENTARIA,experimentos + codexway policy
+Availability,Candidate backward coverage DEVELOPMENT,83.93%,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 EDA-07
+Availability,Coverage Jan-2025,7.72%,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 monthly_t1_development.csv
+Availability,Coverage Mar-Apr-2026,100%,"T1 DEVELOPMENT",COMPLEMENTARIA,AssessmentSol1 monthly_t1_development.csv
+Freshness,Fresh candidates <=7d,19.16%,"195084 candidate rows",FINAL,codexway inventory_freshness_sensitivity.csv
+Freshness,Leads con >=1 candidato fresh <=7d,93.46%,"5000 leads candidate universe",FINAL,codexway inventory_freshness_sensitivity.csv
+Freshness,Fresh candidates <=30d,57.09%,"195084 candidate rows",FINAL,codexway inventory_freshness_sensitivity.csv
+Freshness,Leads con >=1 candidato fresh <=30d,98.34%,"5000 leads candidate universe",FINAL,codexway inventory_freshness_sensitivity.csv
+Inventory,Exact attendable share,45.64%,"Codexway inventory audit",FINAL,codexway/outputs/metrics/inventory_audit.json
+Inventory,Exact unknown share,44.30%,"Codexway inventory audit",FINAL,codexway/outputs/metrics/inventory_audit.json
+Inventory,No known alternative share,2.38%,"Codexway inventory audit",FINAL,codexway/outputs/metrics/inventory_audit.json
+Market,Retail median absorption,92.3 d,"Market Context; EDA_ONLY",FINAL_EDA_ONLY,codexway market_context_eda.csv
+Market,Land median absorption,236.9 d,"Market Context; EDA_ONLY",FINAL_EDA_ONLY,codexway market_context_eda.csv
+Physical,charging_ports missing,20.20%,"3000 spot_attributes",COMPLEMENTARIA,AssessmentSol1 EDA-09
+Physical,vertical_height_m missing,15.23%,"3000 spot_attributes",COMPLEMENTARIA,AssessmentSol1 EDA-09
+Physical,floor_material missing,7.87%,"3000 spot_attributes",COMPLEMENTARIA,AssessmentSol1 EDA-09
