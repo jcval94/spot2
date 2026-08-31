@@ -1,4 +1,4 @@
-# Entregable 1 — Análisis exploratorio de datos (EDA)
+> **ARCHIVO HISTÓRICO / NO USAR COMO ENTRY POINT.** La versión vigente del Entregable 1 es [entregable/01_eda/README.md](01_eda/README.md). Este archivo se conserva únicamente por trazabilidad y no redefine decisiones canónicas.\n\n# Entregable 1 — Análisis exploratorio de datos (EDA)
 
 ## Resumen ejecutivo
 
