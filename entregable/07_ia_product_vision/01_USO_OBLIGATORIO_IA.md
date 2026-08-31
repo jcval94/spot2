@@ -677,3 +677,24 @@ Es que:
 - se dejó el LLM donde sí tiene una ventaja plausible: **semantic discovery**.
 
 Ésa es una decisión de AI governance, no una exclusión cosmética.
+
+
+---
+
+## 22. Evidencia fuente
+
+- [Codexway — arquitectura principal](../../codexway/README.md)
+- [Codexway — prompt final](../../codexway/llm/prompt.md)
+- [Codexway — schema final](../../codexway/llm/audit_response.schema.json)
+- [Codexway — evaluación LLM](../../codexway/outputs/metrics/llm_audit_evaluation.json)
+- [E015 — LLM Inventory Semantic Audit](../../experimentos/Evidencias/EV-015_llm_inventory_semantic_audit.md)
+- [E015 — prompt histórico](../../experimentos/llm_inventory_quality/E015_llm_inventory_semantic_audit/prompts/system_prompt.md)
+- [E017 — GPT-5 nano semantic feature pilot](../../experimentos/Evidencias/EV-017_llm_semantic_feature_pilot.md)
+- [E017 — runner V2 con prompt exacto](../../experimentos/llm_semantic_feature_pilot/run_pilot_v2.py)
+- [E017 — decisión de features](../../experimentos/llm_semantic_feature_pilot/DECISION_LLM_FEATURES.md)
+- [E018 — Semantic Rules Lift Ablation](../../experimentos/Evidencias/EV-018_semantic_rules_lift_ablation.md)
+- [AssessmentSol1 — LLM README](../../AssessmentSol1/llm/README.md)
+- [AssessmentSol1 — evaluación LLM](../../AssessmentSol1/llm/LLM_EVALUATION.md)
+- [AssessmentSol1 — decisión final](../../AssessmentSol1/llm/LLM_DECISION.md)
+- [AssessmentSol1 — uso de IA](../../AssessmentSol1/llm/AI_USAGE.md)
+- [AssessmentSol1 — costos históricos](../../AssessmentSol1/llm/usage_summary.csv)
