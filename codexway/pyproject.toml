@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spot2-codexway"
+version = "0.1.0"
+description = "Point-in-time correct Spot2 Lead Opportunity Score assessment"
+requires-python = ">=3.11"
+dependencies = [
+  "catboost==1.2.8",
+  "joblib==1.5.2",
+  "jsonschema==4.25.0",
+  "matplotlib==3.10.6",
+  "nbclient==0.10.2",
+  "nbformat==5.10.4",
+  "numpy==2.3.5",
+  "openai==2.36.0",
+  "pandas==2.3.3",
+  "pyarrow==21.0.0",
+  "pypdf==6.15.0",
+  "PyYAML==6.0.3",
+  "scikit-learn==1.7.2",
+  "scipy==1.16.3",
+  "seaborn==0.13.2",
+  "statsmodels==0.14.5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.2", "jupyter==1.1.1"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "harness/tests"]
+addopts = "-q"

@@ -1,0 +1,1 @@
+{"experiment_id":"E108","parent_id":"E103","contract":"T1","change":"Exact requested-spot inventory serviceability","feature_names":["p_lead_quality","exact_inventory_component"],"join_direction":"backward","deployable":true}

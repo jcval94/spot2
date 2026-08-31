@@ -1,0 +1,1 @@
+{"experiment_id":"E106","parent_id":"E105","contract":"T2","change":"Add strictly shifted inquiry trajectory without responses","feature_names":["prior_inquiry_count","prior_mean_requested_area","prior_distinct_spots","days_since_prior_inquiry"],"join_direction":"backward","deployable":true}

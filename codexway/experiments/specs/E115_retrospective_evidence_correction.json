@@ -1,0 +1,21 @@
+{
+  "experiment_id": "E115",
+  "parent_id": "E113",
+  "contract": "T1",
+  "question": "What evidentiary claim is justified after recognizing that the historical holdout was globally consumed?",
+  "hypothesis": "Lift remains reproducible, but the conclusion must be limited to retrospective support pending forward validation.",
+  "primary_change": "Correct the evidence claim; metrics, features, target and split are unchanged.",
+  "secondary_changes": [],
+  "scoring": {"stage": "T1", "timestamp": "first inquiry_at before broker response"},
+  "target": {"event": "scheduled_visit on first inquiry", "maturity_days": 7},
+  "population": "Same E113 population",
+  "data_sources": ["E113 outputs"],
+  "feature_names": ["industrial_small_or_paid_interaction"],
+  "validation": {"strategy": "retrospective reproduction plus mandatory future shadow cohort", "time_column": "first inquiry_at"},
+  "metrics": ["roc_auc", "average_precision", "brier", "log_loss", "lift_top_10pct", "recall_top_20pct"],
+  "leakage_review": {"result": "PASS", "evidence_independence": "HOLDOUT_GLOBALLY_CONSUMED"},
+  "change": "Correct E113 conclusion scope without changing the experiment result",
+  "join_direction": "backward",
+  "deployable": true,
+  "uses_future_information": false
+}

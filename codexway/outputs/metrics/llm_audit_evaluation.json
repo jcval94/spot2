@@ -1,0 +1,64 @@
+{
+  "n_rows": 340,
+  "n_gold": 0,
+  "status": "CONTROLLED_SYNTHETIC_EVALUATED__NATURAL_OPT_IN_AND_GOLD_PENDING",
+  "positive_flags": {
+    "rule_actionable": 23,
+    "llm_actionable": 0,
+    "rules_plus_llm": 23,
+    "rules_intersection_llm": 0
+  },
+  "evaluation_status": "INCOMPLETE_NO_HUMAN_GOLD",
+  "run_metadata": {
+    "status": "NOT_SENT__EXTERNAL_INVENTORY_PRIVACY_OPT_IN_REQUIRED",
+    "rows": 0,
+    "errors": 0,
+    "schema_valid_rate": null
+  },
+  "controlled_injection_benchmark": {
+    "status": "CONTROLLED_SYNTHETIC_EVALUATION",
+    "warning": "Fully fabricated cases validate task behavior and incremental detection, not accuracy on natural Spot2 listings.",
+    "n_rows": 40,
+    "n_llm_valid": 40,
+    "rule_actionable": {
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666
+    },
+    "llm_actionable": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "rules_plus_llm": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "incremental_recall_points": 50.0,
+    "run_metadata": {
+      "model": "gpt-5.6-luna",
+      "rows": 40,
+      "cached_rows": 40,
+      "errors": 0,
+      "schema_valid_rate": 1.0,
+      "mean_latency_seconds_uncached": 0.0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "response_models": [],
+      "estimated_cost_usd_uncached_calls": 0.0,
+      "pricing": {
+        "input_usd": 0.2,
+        "output_usd": 1.2,
+        "as_of": "2026-08-30",
+        "source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna"
+      },
+      "cost_status": "ESTIMATED_FROM_PINNED_PUBLIC_TOKEN_RATES",
+      "prompt_sha256": "25e977051c11947af91e1464d8ca976540c763598c51c4d5921a8b38a055888b",
+      "schema_sha256": "4117862d8cd4b62a56df0e396efddd5e03872b6e3214f5203e4dc2c564230178"
+    }
+  }
+}

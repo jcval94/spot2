@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_retail_1_0",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property_use",
+      "evidence_text": "Nave logística",
+      "structured_field": "type_name",
+      "structured_value": "Retail",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.99,
+      "severity": "high",
+      "reason": "La descripción identifica el inmueble como una nave logística, mientras que el tipo estructurado es Retail; representan usos inmobiliarios materialmente distintos."
+    }
+  ],
+  "abstentions": [],
+  "summary": "Se detectó un desajuste material de uso entre la descripción y el tipo estructurado."
+}

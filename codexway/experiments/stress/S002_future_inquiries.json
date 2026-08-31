@@ -1,0 +1,1 @@
+{"experiment_id":"S002","parent_id":"E103","contract":"T1","change":"Deliberately leaky future inquiry aggregates","feature_names":["future_inquiry_count"],"join_direction":"backward","deployable":false,"uses_future_information":true,"label":"NON_DEPLOYABLE"}

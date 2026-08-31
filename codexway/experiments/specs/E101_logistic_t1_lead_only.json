@@ -1,0 +1,1 @@
+{"experiment_id":"E101","parent_id":null,"contract":"T1","change":"Logistic lead-only baseline","feature_names":["user_type","company_size","industry","search_sector","search_modality","target_area_sqm","max_budget_mxn_rent_monthly","max_budget_mxn_sale_total","preferred_state","preferred_municipality","preferred_corridor","source"],"join_direction":"backward","deployable":true}

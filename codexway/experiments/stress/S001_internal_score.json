@@ -1,0 +1,1 @@
+{"experiment_id":"S001","parent_id":"E103","contract":"T1","change":"Deliberately leaky internal score benchmark","feature_names":["lead_score_internal"],"join_direction":"backward","deployable":false,"uses_future_information":false,"label":"NON_DEPLOYABLE"}

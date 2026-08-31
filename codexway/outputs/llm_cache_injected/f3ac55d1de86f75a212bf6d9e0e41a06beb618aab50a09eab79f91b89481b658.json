@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_warehouse_1_4",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property_use",
+      "evidence_text": "Local comercial dentro de plaza",
+      "structured_field": "sector_name/type_name",
+      "structured_value": "Warehouse",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.98,
+      "severity": "high",
+      "reason": "The copy describes a retail/commercial unit in a shopping plaza, while the structured record classifies the property as a warehouse."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The listing copy materially conflicts with the warehouse classification by describing a retail-facing commercial premises."
+}

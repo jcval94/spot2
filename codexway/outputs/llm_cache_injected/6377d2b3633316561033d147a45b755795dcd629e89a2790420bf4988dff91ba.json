@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_office_1_3",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property_use_and_configuration",
+      "evidence_text": "Terreno baldío sin construcción",
+      "structured_field": "type_name",
+      "structured_value": "Office",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.99,
+      "severity": "high",
+      "reason": "The copy describes undeveloped vacant land with no construction, while the structured property type is Office; this is a material mismatch in property use and physical configuration."
+    }
+  ],
+  "abstentions": [],
+  "summary": "High-confidence material mismatch between the description of undeveloped land and the structured Office property type."
+}

@@ -1,0 +1,13 @@
+{
+  "experiment_id": "L102",
+  "parent_id": "L101",
+  "contract": "SEMANTIC_QA",
+  "question": "Does a schema-constrained LLM detect controlled semantic contradictions missed by lexical rules?",
+  "hypothesis": "Rules plus LLM improve recall on fully fabricated cross-field mismatches.",
+  "change": "Add live structured-output LLM on a fully fabricated labeled benchmark; no repository listing is exported.",
+  "feature_names": ["synthetic_title", "synthetic_description", "synthetic_structured_inventory_fields"],
+  "primary_metric": "rules_plus_llm_recall",
+  "population": "40 fully fabricated controls and contradictions",
+  "deployable": true,
+  "uses_future_information": false
+}

@@ -1,0 +1,15 @@
+{
+  "experiment_id": "E110",
+  "parent_id": "E109",
+  "contract": "T1",
+  "question": "Does multiplying Lead Quality by conservative inventory serviceability improve ranking on the same temporal holdout?",
+  "hypothesis": "The combined score improves PR-AUC and Lift@10 over Lead Quality alone.",
+  "feature_names": ["p_lead_quality", "inventory_serviceability_lower"],
+  "change": "Add paired system-level evaluation and bootstrap uncertainty; no model refit.",
+  "primary_metric": "delta_average_precision",
+  "secondary_metrics": ["delta_roc_auc", "delta_lift_top_10pct", "delta_brier"],
+  "population": "T1 procedural holdout with mature first-inquiry target",
+  "join_direction": "backward",
+  "deployable": true,
+  "uses_future_information": false
+}

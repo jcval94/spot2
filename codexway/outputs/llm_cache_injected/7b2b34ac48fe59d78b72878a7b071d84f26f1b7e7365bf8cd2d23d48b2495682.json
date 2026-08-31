@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_land_0_4",
+  "quality_status": "review",
+  "issues": [
+    {
+      "claim_type": "construction_status",
+      "evidence_text": "sin construcción",
+      "structured_field": "building_status",
+      "structured_value": "unknown",
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.98,
+      "severity": "low",
+      "reason": "The description asserts that the land has no construction, but the structured building status is unknown and does not verify this claim."
+    }
+  ],
+  "abstentions": [],
+  "summary": "No contradiction or material cross-field mismatch found. The description includes an unverified construction-status claim."
+}

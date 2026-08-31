@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_land_1_0",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property_use_and_configuration",
+      "evidence_text": "Espacio corporativo terminado con salas de juntas y recepción ejecutiva",
+      "structured_field": "type_name",
+      "structured_value": "Land",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.99,
+      "severity": "high",
+      "reason": "The description presents a finished corporate office space with interior rooms and reception, which is materially inconsistent with the structured property type Land."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The human-facing description materially conflicts with the structured property type."
+}

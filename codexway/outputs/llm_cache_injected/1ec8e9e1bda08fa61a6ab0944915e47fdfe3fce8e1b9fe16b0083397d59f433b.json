@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_land_1_4",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property_use",
+      "evidence_text": "Espacio corporativo terminado con salas de juntas y recepción ejecutiva",
+      "structured_field": "type_name",
+      "structured_value": "Land",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.99,
+      "severity": "high",
+      "reason": "La descripción presenta un espacio corporativo terminado con configuración de oficinas, mientras que el registro estructurado identifica el inmueble como terreno."
+    }
+  ],
+  "abstentions": [],
+  "summary": "Se detecta un desajuste material y de alta confianza entre el uso/configuración descritos y el tipo estructurado del inmueble."
+}

@@ -1,0 +1,48 @@
+{
+  "status": "COMPLETE",
+  "lead_rows": 5000,
+  "inquiry_rows": 22576,
+  "mature_t1_rows": 4898,
+  "t1_positive_rate": 0.20436913025724784,
+  "largest_lead_mix": [
+    {
+      "search_sector": "Retail",
+      "search_modality": "rent",
+      "leads": 758,
+      "share": 0.1516
+    },
+    {
+      "search_sector": "Office",
+      "search_modality": "rent",
+      "leads": 738,
+      "share": 0.1476
+    },
+    {
+      "search_sector": "Industrial",
+      "search_modality": "rent",
+      "leads": 611,
+      "share": 0.1222
+    },
+    {
+      "search_sector": "Retail",
+      "search_modality": "sale",
+      "leads": 469,
+      "share": 0.0938
+    },
+    {
+      "search_sector": "Office",
+      "search_modality": "sale",
+      "leads": 430,
+      "share": 0.086
+    }
+  ],
+  "market_context_status": "EDA_ONLY__NOT_A_MODEL_FEATURE",
+  "market_rows": 500,
+  "market_strata": 72,
+  "figures": [
+    "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\figures\\eda_lead_mix.png",
+    "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\figures\\eda_monthly_volume.png",
+    "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\figures\\eda_target_segments.png",
+    "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\figures\\eda_market_context.png"
+  ]
+}

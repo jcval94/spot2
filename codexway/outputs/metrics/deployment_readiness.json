@@ -1,0 +1,10 @@
+{
+  "decision": "GO",
+  "gate": "PR-AUC > prevalence and Lift@10% > 1 on procedural holdout",
+  "average_precision": 0.2391286807814938,
+  "positive_rate": 0.21215663354763295,
+  "lift_top_10pct": 1.6887936241363564,
+  "validation_priority_threshold": 0.2530980692158785,
+  "recommendation": "Proceed only with guarded monitoring and randomized evaluation.",
+  "shap_status": "NOT_NEEDED_LOGISTIC_SELECTED"
+}

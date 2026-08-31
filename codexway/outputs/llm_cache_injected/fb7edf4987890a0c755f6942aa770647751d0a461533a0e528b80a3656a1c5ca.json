@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_retail_0_3",
+  "quality_status": "review",
+  "issues": [
+    {
+      "claim_type": "property_features",
+      "evidence_text": "aparadores y área de atención al público",
+      "structured_field": "amenities",
+      "structured_value": "[]",
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.97,
+      "severity": "low",
+      "reason": "The description states specific physical or functional features, but the supplied structured fields do not verify them. This is not a confirmed contradiction."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The retail use and stated area are consistent with the structured record. The described display windows and public-service area are unsupported by the supplied fields, but no actionable data error is established."
+}

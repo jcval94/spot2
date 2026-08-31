@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_warehouse_1_2",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property_use",
+      "evidence_text": "Local comercial dentro de plaza con aparadores y atención al público",
+      "structured_field": "type_name",
+      "structured_value": "Warehouse",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.99,
+      "severity": "high",
+      "reason": "La descripción presenta el inmueble como un local comercial orientado a atención al público dentro de una plaza, lo que describe un uso y configuración materialmente distintos de una bodega/warehouse."
+    }
+  ],
+  "abstentions": [],
+  "summary": "La descripción contradice semánticamente la clasificación del inmueble como Warehouse."
+}

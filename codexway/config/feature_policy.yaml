@@ -1,0 +1,44 @@
+clean_t1:
+  allow:
+    - user_type
+    - company_size
+    - industry
+    - search_sector
+    - search_modality
+    - target_area_sqm
+    - min_budget_mxn_rent_monthly
+    - max_budget_mxn_rent_monthly
+    - min_budget_mxn_sale_total
+    - max_budget_mxn_sale_total
+    - preferred_state
+    - preferred_municipality
+    - preferred_corridor
+    - source
+    - channel
+    - message_length
+    - requested_area_sqm
+    - requested_budget_mxn_rent_monthly
+    - requested_budget_mxn_sale_total
+    - urgency_days
+    - asked_visit
+    - days_from_lead_creation
+    - area_request_to_target_ratio
+    - rent_request_to_lead_budget_ratio
+    - sale_request_to_lead_budget_ratio
+    - industrial_small_or_paid_interaction
+  conditional_excluded:
+    - prior_searches
+    - prior_inquiries
+    - has_converted_before
+  forbidden:
+    - lead_score_internal
+    - broker_response
+    - broker_response_hours
+    - days_on_market
+    - total_inquiries
+    - total_views
+    - is_active
+    - competing_inquiries_30d
+    - market_context
+    - future_inquiry_count
+    - future_scheduled_visit

@@ -1,0 +1,40 @@
+{
+  "experiment_id": "E110",
+  "spec_sha256": "150a92ea2f25d7a11a96b663433a0272500816124c357df19fa20e3d42c0149e",
+  "status": "FINALIZED",
+  "created_at_utc": "2026-08-30T16:09:13.078220+00:00",
+  "git_commit": "643dd0a607de8f22b0c50f689f63c142e0de8d27",
+  "data_fingerprint": "99297d5249a2457942497fdc791d78fdef7cdb2933a83d3f3cfccc057caa76fd",
+  "code_fingerprint": "91022c023f14571265940fdd861c5ea2527c4de47ee4545dcc6de31adf4ad48d",
+  "metrics": {
+    "evaluation_population": "T1 procedural holdout; same leads and first-inquiry proxy for every score",
+    "target_alignment": "PARTIAL_ONLY__T1_FIRST_INQUIRY_OUTCOME_DOES_NOT_OBSERVE_FALLBACK_SUCCESS",
+    "interpretation": "Inventory and Opportunity comparisons are diagnostic ranking checks, not calibrated outcome probabilities.",
+    "lead_quality_gate": "NO_GO",
+    "inventory_incremental_gate": "NO_GO",
+    "system_deployment_gate": "NO_GO",
+    "decision": "DO_NOT_AUTOMATE__USE_TWO_AXIS_DIAGNOSTIC_ONLY",
+    "quality_average_precision": 0.21564961073533037,
+    "quality_lift_top_10pct": 0.8495259145364854,
+    "opportunity_average_precision": 0.19875329403914244,
+    "opportunity_lift_top_10pct": 0.7947177910180024,
+    "opportunity_minus_quality_auc_ci": [
+      -0.068835650695249,
+      0.020735225418044755
+    ],
+    "two_axis_policy": {
+      "high_quality__serviceable": "manual_priority_only_if_quality_gate_passes",
+      "high_quality__uncertain_inventory": "verify_inventory_before_contact",
+      "high_quality__low_serviceability": "source_or_offer_fallback",
+      "standard_quality": "standard_workflow"
+    }
+  },
+  "artifacts": {
+    "metrics": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\metrics\\t1_model_metrics.json",
+    "scores": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\predictions\\lead_opportunity_scores.parquet"
+  },
+  "environment": {
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

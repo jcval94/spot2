@@ -1,0 +1,68 @@
+{
+  "experiment_id": "E104",
+  "spec_sha256": "1d00c1aa00dc54e6d4c6bb5ab2373303029309efb413f35da56b043ba4d8c0fe",
+  "status": "FINALIZED",
+  "created_at_utc": "2026-08-30T07:33:25.667333+00:00",
+  "git_commit": "643dd0a607de8f22b0c50f689f63c142e0de8d27",
+  "data_fingerprint": "99297d5249a2457942497fdc791d78fdef7cdb2933a83d3f3cfccc057caa76fd",
+  "code_fingerprint": "84ce52256f704961d47ec778c11f986394502bbe5ab205d3d1754d3240e9ee0a",
+  "metrics": {
+    "profiles": [
+      {
+        "family": "need_profile",
+        "silhouette": 0.8002483812250507,
+        "stability_ari": 1.0,
+        "min_cluster_share": 0.005020538566864446,
+        "max_cluster_share": 0.9260611592879964,
+        "normalized_entropy": 0.2567422558122476,
+        "balance_ok": false
+      },
+      {
+        "family": "dynamic_need_profile",
+        "silhouette": 0.6605027741354144,
+        "stability_ari": 0.9403908213078391,
+        "min_cluster_share": 0.003651300775901415,
+        "max_cluster_share": 0.8457325422181652,
+        "normalized_entropy": 0.35430338342337475,
+        "balance_ok": false
+      },
+      {
+        "family": "physical_profile",
+        "silhouette": 0.09341900416722969,
+        "stability_ari": 1.0,
+        "min_cluster_share": 0.17334064728469556,
+        "max_cluster_share": 0.337904552934723,
+        "normalized_entropy": 0.9776248176314238,
+        "balance_ok": true
+      },
+      {
+        "family": "location_profile",
+        "silhouette": 0.5035361029066632,
+        "stability_ari": 1.0,
+        "min_cluster_share": 0.05924300603400987,
+        "max_cluster_share": 0.3340647284695557,
+        "normalized_entropy": 0.9047096843885847,
+        "balance_ok": true
+      },
+      {
+        "family": "broker_service_profile",
+        "silhouette": 0.14443823786774393,
+        "stability_ari": 0.9303796072044769,
+        "min_cluster_share": 0.17391304347826086,
+        "max_cluster_share": 0.4180602006688963,
+        "normalized_entropy": 0.9417114951279144,
+        "balance_ok": true
+      }
+    ],
+    "eligible_cells": 19,
+    "fdr_significant": 0
+  },
+  "artifacts": {
+    "metrics": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\metrics\\t1_model_metrics.json",
+    "scores": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\predictions\\lead_opportunity_scores.parquet"
+  },
+  "environment": {
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

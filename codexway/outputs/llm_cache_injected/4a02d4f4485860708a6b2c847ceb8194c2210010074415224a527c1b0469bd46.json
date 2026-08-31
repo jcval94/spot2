@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_office_0_1",
+  "quality_status": "review",
+  "issues": [
+    {
+      "claim_type": "amenities and configuration",
+      "evidence_text": "salas de juntas y recepción",
+      "structured_field": "amenities",
+      "structured_value": "[]",
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.96,
+      "severity": "low",
+      "reason": "The description claims meeting rooms and a reception area, but the supplied structured fields do not verify these features. The empty amenities field alone is insufficient to establish a contradiction."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The office use is consistent with the structured type. The described meeting rooms and reception are not verifiable from the supplied fields, but this is not a confirmed data contradiction."
+}

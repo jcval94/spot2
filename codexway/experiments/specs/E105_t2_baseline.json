@@ -1,0 +1,1 @@
+{"experiment_id":"E105","parent_id":"E102","contract":"T2","change":"Clean later-inquiry baseline grouped by lead","feature_names":["current_inquiry_payload"],"join_direction":"backward","deployable":true}

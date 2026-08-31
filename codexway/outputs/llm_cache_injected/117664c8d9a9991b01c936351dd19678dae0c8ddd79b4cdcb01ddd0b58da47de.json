@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_retail_1_1",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property use",
+      "evidence_text": "Nave logística",
+      "structured_field": "type_name",
+      "structured_value": "Retail",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.99,
+      "severity": "high",
+      "reason": "The copy identifies the property as a logistics warehouse, which is materially different from the structured Retail property type."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The listing copy describes a logistics warehouse while the structured record classifies it as Retail."
+}

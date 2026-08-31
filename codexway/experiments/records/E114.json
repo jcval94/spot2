@@ -1,0 +1,51 @@
+{
+  "experiment_id": "E114",
+  "spec_sha256": "8a71abaccef01db39fd071233dd03c52c89da21cf1d3d533c5f632aa17e50bb2",
+  "status": "FINALIZED",
+  "created_at_utc": "2026-08-30T16:40:36.055049+00:00",
+  "git_commit": "643dd0a607de8f22b0c50f689f63c142e0de8d27",
+  "data_fingerprint": "99297d5249a2457942497fdc791d78fdef7cdb2933a83d3f3cfccc057caa76fd",
+  "code_fingerprint": "30659a87c9c2463b429eba4d9306f28c5f9c771a82a12195634845b2dea48154",
+  "metrics": {
+    "conclusion": "SUPPORTED",
+    "evaluation_population": "T1 procedural holdout; same leads and first-inquiry proxy for every score",
+    "target_alignment": "PARTIAL_ONLY__T1_FIRST_INQUIRY_OUTCOME_DOES_NOT_OBSERVE_FALLBACK_SUCCESS",
+    "interpretation": "Inventory and Opportunity comparisons are diagnostic ranking checks, not calibrated outcome probabilities.",
+    "lead_quality_gate": "GO",
+    "inventory_incremental_gate": "NO_GO",
+    "opportunity_absolute_lift_gate": "GO",
+    "system_deployment_gate": "GO",
+    "decision": "ELIGIBLE_FOR_NEW_FORWARD_VALIDATION_AND_GUARDED_RANDOMIZED_PILOT",
+    "quality_average_precision": 0.2391286807814938,
+    "quality_lift_top_10pct": 1.6716477673137295,
+    "quality_lift_top_10pct_ci": [
+      1.3807831402599273,
+      1.9837066163725556
+    ],
+    "opportunity_average_precision": 0.2477033603476502,
+    "opportunity_lift_top_10pct": 1.3702030879620732,
+    "opportunity_lift_top_10pct_ci": [
+      1.0776264515708411,
+      1.6898289365769013
+    ],
+    "opportunity_minus_quality_auc_ci": [
+      -0.06959089971317867,
+      -0.0010533346810798771
+    ],
+    "two_axis_policy": {
+      "high_quality__serviceable": "manual_priority_only_if_quality_gate_passes",
+      "high_quality__uncertain_inventory": "verify_inventory_before_contact",
+      "high_quality__low_serviceability": "source_or_offer_fallback",
+      "standard_quality": "standard_workflow"
+    },
+    "caveat": "The combined score clears the absolute lift gate but does not improve on Lead Quality alone; inventory incremental value remains unproven on the T1 proxy."
+  },
+  "artifacts": {
+    "metrics": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\metrics\\t1_model_metrics.json",
+    "scores": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\predictions\\lead_opportunity_scores.parquet"
+  },
+  "environment": {
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

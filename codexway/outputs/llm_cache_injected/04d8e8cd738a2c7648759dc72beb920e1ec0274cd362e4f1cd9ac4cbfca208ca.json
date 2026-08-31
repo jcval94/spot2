@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_retail_0_4",
+  "quality_status": "review",
+  "issues": [
+    {
+      "claim_type": "display fixtures and customer-service area",
+      "evidence_text": "aparadores y área de atención al público",
+      "structured_field": "amenities",
+      "structured_value": "[]",
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.95,
+      "severity": "low",
+      "reason": "The description asserts specific physical features and layout, but the supplied structured fields do not verify them. This is not a confirmed contradiction."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The commercial use is consistent with the Retail classification. Specific features in the description are not verifiable from the supplied structured data."
+}

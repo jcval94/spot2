@@ -1,0 +1,5 @@
+sector,rows,months,median_available_spots,median_price_sqm_mxn,median_occupancy,median_absorption_days,median_inquiry_volume,model_use
+Industrial,126,30,15.0,140.56,0.877,169.8,238.0,EDA_ONLY__PUBLICATION_TIME_UNKNOWN
+Land,121,30,16.0,45.0,0.597,236.9,256.0,EDA_ONLY__PUBLICATION_TIME_UNKNOWN
+Office,128,30,17.0,357.96000000000004,0.83,118.85,264.0,EDA_ONLY__PUBLICATION_TIME_UNKNOWN
+Retail,125,30,15.0,288.49,0.773,92.3,278.0,EDA_ONLY__PUBLICATION_TIME_UNKNOWN

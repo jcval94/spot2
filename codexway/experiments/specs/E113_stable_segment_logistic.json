@@ -1,0 +1,31 @@
+{
+  "experiment_id": "E113",
+  "parent_id": "E102",
+  "contract": "T1",
+  "question": "Can a temporally stable, low-cardinality interaction improve top-decile prioritization without leakage?",
+  "hypothesis": "A Logistic model using Industrial AND (small company OR paid acquisition) achieves mean rolling Lift@10 above 1, at least three positive folds, and validation Lift@10 above 1.",
+  "primary_change": "Replace the broad noisy feature set with one preregistered T0-safe interaction.",
+  "secondary_changes": ["Optimize promotion for ranking capacity while retaining probability metrics."],
+  "scoring": {"stage": "T1", "timestamp": "first inquiry_at before broker response"},
+  "target": {"event": "scheduled_visit on first inquiry", "maturity_days": 7, "censoring": "target NA if immature"},
+  "population": "Same mature T1 train/validation/procedural holdout",
+  "data_sources": ["leads.parquet", "inquiries.parquet"],
+  "feature_names": ["industrial_small_or_paid_interaction"],
+  "features": {
+    "inherited": [],
+    "added": ["Industrial AND (company_size=small OR source=paid)"],
+    "removed": ["high-cardinality geography", "broad numeric/categorical feature set"]
+  },
+  "validation": {"strategy": "four expanding temporal folds plus frozen validation", "time_column": "first inquiry_at"},
+  "metrics": ["roc_auc", "average_precision", "brier", "log_loss", "lift_top_10pct", "recall_top_20pct"],
+  "leakage_review": {
+    "search_sector": "ALLOW at lead creation",
+    "company_size": "ALLOW at lead creation",
+    "source": "ALLOW at lead creation",
+    "result": "PASS"
+  },
+  "change": "Add stability-constrained segment interaction Logistic",
+  "join_direction": "backward",
+  "deployable": true,
+  "uses_future_information": false
+}

@@ -1,0 +1,1 @@
+{"experiment_id":"E109","parent_id":"E108","contract":"T1","change":"Add hierarchical fallback inventory candidates","feature_names":["p_lead_quality","inventory_serviceability","fallback_depth"],"join_direction":"backward","deployable":true}

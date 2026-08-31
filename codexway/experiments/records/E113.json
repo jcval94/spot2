@@ -1,0 +1,61 @@
+{
+  "experiment_id": "E113",
+  "spec_sha256": "242b77add1f8035cecf6822fded5d975210fd235023890238de121de6b35b779",
+  "status": "FINALIZED",
+  "created_at_utc": "2026-08-30T16:40:35.964768+00:00",
+  "git_commit": "643dd0a607de8f22b0c50f689f63c142e0de8d27",
+  "data_fingerprint": "99297d5249a2457942497fdc791d78fdef7cdb2933a83d3f3cfccc057caa76fd",
+  "code_fingerprint": "30659a87c9c2463b429eba4d9306f28c5f9c771a82a12195634845b2dea48154",
+  "metrics": {
+    "conclusion": "SUPPORTED",
+    "selection": {
+      "base_model_winner": "logistic",
+      "stable_segment_promoted": true,
+      "rolling_mean_lift_top_10pct": 1.1863074636564939,
+      "rolling_folds_above_random": 3,
+      "rolling_fold_count": 4,
+      "validation_metrics": {
+        "n": 847,
+        "positive_rate": 0.19480519480519481,
+        "roc_auc": 0.5288367546432062,
+        "average_precision": 0.2078496920172099,
+        "brier": 0.15611060003219587,
+        "log_loss": 0.4909443543947473,
+        "precision_top_5pct": 0.3023255813953488,
+        "recall_top_5pct": 0.07878787878787878,
+        "lift_top_5pct": 1.5519379844961239,
+        "precision_top_10pct": 0.2823529411764706,
+        "recall_top_10pct": 0.14545454545454545,
+        "lift_top_10pct": 1.4494117647058822,
+        "precision_top_20pct": 0.2411764705882353,
+        "recall_top_20pct": 0.24848484848484848,
+        "lift_top_20pct": 1.2380392156862745
+      },
+      "validation_constant_brier": 0.15691067775765122,
+      "selection_did_not_use_procedural_holdout": true
+    },
+    "n": 1711,
+    "positive_rate": 0.21215663354763295,
+    "roc_auc": 0.5477761156207339,
+    "average_precision": 0.2391286807814938,
+    "brier": 0.16550078342809005,
+    "log_loss": 0.5121464908578074,
+    "precision_top_5pct": 0.37209302325581395,
+    "recall_top_5pct": 0.0881542699724518,
+    "lift_top_5pct": 1.7538599525914538,
+    "precision_top_10pct": 0.3546511627906977,
+    "recall_top_10pct": 0.16804407713498623,
+    "lift_top_10pct": 1.6716477673137295,
+    "precision_top_20pct": 0.30029154518950435,
+    "recall_top_20pct": 0.2837465564738292,
+    "lift_top_20pct": 1.415423784626011
+  },
+  "artifacts": {
+    "metrics": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\metrics\\t1_model_metrics.json",
+    "scores": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\predictions\\lead_opportunity_scores.parquet"
+  },
+  "environment": {
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

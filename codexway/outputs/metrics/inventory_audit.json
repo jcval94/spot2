@@ -1,0 +1,14 @@
+{
+  "availability_join": "STRICT_BACKWARD_ASOF",
+  "future_snapshot_violations": 0,
+  "listing_state_status": "CONDITIONAL__UNVERSIONED_FIELDS_ASSUMED_STATIC_SINCE_SPOT_CREATION",
+  "mean_serviceability_lower": 0.6935693220059245,
+  "mean_serviceability_upper": 0.8212508633255169,
+  "mean_uncertainty_width": 0.12768154131959253,
+  "mean_inventory_confidence": 0.5216938475028433,
+  "exact_attendable_share": 0.4564,
+  "exact_unknown_share": 0.443,
+  "no_known_alternative_share": 0.0238,
+  "no_potential_alternative_share": 0.0,
+  "strict_claim": "Availability is PIT-correct; the full historical fallback score is not strictly proven PIT because listing attributes are unversioned."
+}

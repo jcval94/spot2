@@ -1,0 +1,37 @@
+{
+  "T0_logistic_30d": {
+    "n": 1371,
+    "positive_rate": 0.5382932166301969,
+    "roc_auc": 0.4665056919131592,
+    "average_precision": 0.5227933718540695,
+    "brier": 0.2962581015841197,
+    "log_loss": 0.7949460322587545,
+    "precision_top_5pct": 0.5217391304347826,
+    "recall_top_5pct": 0.04878048780487805,
+    "lift_top_5pct": 0.9692470837751856,
+    "precision_top_10pct": 0.5507246376811594,
+    "recall_top_10pct": 0.10298102981029811,
+    "lift_top_10pct": 1.0230941439849182,
+    "precision_top_20pct": 0.49818181818181817,
+    "recall_top_20pct": 0.1856368563685637,
+    "lift_top_20pct": 0.9254841093865485
+  },
+  "T2_logistic_trajectory": {
+    "n": 5249,
+    "positive_rate": 0.1992760525814441,
+    "roc_auc": 0.5057211251728143,
+    "average_precision": 0.20686217092886788,
+    "brier": 0.16049334477325972,
+    "log_loss": 0.5025338379378351,
+    "precision_top_5pct": 0.25475285171102663,
+    "recall_top_5pct": 0.06405353728489484,
+    "lift_top_5pct": 1.2783917004122167,
+    "precision_top_10pct": 0.22666666666666666,
+    "recall_top_10pct": 0.11376673040152964,
+    "lift_top_10pct": 1.1374506054811981,
+    "precision_top_20pct": 0.19904761904761906,
+    "recall_top_20pct": 0.19980879541108987,
+    "lift_top_20pct": 0.9988536829645817
+  },
+  "T2_entity_overlap_train_test": 0
+}

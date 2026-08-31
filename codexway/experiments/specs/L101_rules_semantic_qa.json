@@ -1,0 +1,1 @@
+{"experiment_id":"L101","parent_id":null,"contract":"SEMANTIC_QA","change":"Rules-only semantic inventory QA","feature_names":["title","description","structured_inventory_fields"],"deployable":true}

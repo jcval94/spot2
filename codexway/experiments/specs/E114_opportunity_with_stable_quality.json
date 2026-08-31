@@ -1,0 +1,21 @@
+{
+  "experiment_id": "E114",
+  "parent_id": "E110",
+  "contract": "T1",
+  "question": "Does the Lead Opportunity Score exceed random top-decile prioritization after replacing Lead Quality with E113?",
+  "hypothesis": "The conservative Opportunity score achieves Lift@10 above 1 on the procedural holdout.",
+  "primary_change": "Replace the E102 Lead Quality component with E113; inventory logic is unchanged.",
+  "secondary_changes": [],
+  "scoring": {"stage": "T1", "timestamp": "first inquiry_at before broker response"},
+  "target": {"event": "scheduled_visit on first inquiry", "maturity_days": 7},
+  "population": "Same T1 procedural holdout",
+  "data_sources": ["E113 quality predictions", "backward-as-of availability", "listing state conditional on creation"],
+  "feature_names": ["p_lead_quality", "inventory_serviceability_lower"],
+  "validation": {"strategy": "same frozen temporal split and paired bootstrap", "time_column": "first inquiry_at"},
+  "metrics": ["roc_auc", "average_precision", "brier", "log_loss", "lift_top_10pct", "recall_top_20pct"],
+  "leakage_review": {"availability": "ALLOW via backward as-of", "listing_fields": "CONDITIONAL unversioned", "result": "PASS_WITH_CONDITIONAL_LISTING_CLAIM"},
+  "change": "Recompute Opportunity with E113 Lead Quality",
+  "join_direction": "backward",
+  "deployable": true,
+  "uses_future_information": false
+}

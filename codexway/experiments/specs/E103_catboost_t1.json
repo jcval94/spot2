@@ -1,0 +1,1 @@
+{"experiment_id":"E103","parent_id":"E102","contract":"T1","change":"Replace Logistic with CatBoost under fixed promotion rule","feature_names":["clean_t1_allowlist"],"join_direction":"backward","deployable":true}

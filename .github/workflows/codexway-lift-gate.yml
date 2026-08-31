@@ -1,0 +1,66 @@
+name: codexway lift and leakage gate
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "codexway/**"
+      - ".github/workflows/codexway-lift-gate.yml"
+  pull_request:
+    paths:
+      - "codexway/**"
+      - ".github/workflows/codexway-lift-gate.yml"
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: codexway/requirements.lock
+
+      - name: Install locked environment
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r codexway/requirements.lock
+          python -m pip install -e codexway --no-deps
+
+      - name: Rebuild assessment without external LLM calls
+        shell: pwsh
+        run: python codexway/scripts/run_all.py --skip-live-llm
+
+      - name: Run leakage, temporal and system tests
+        shell: pwsh
+        run: python -m pytest codexway/tests -q
+
+      - name: Enforce absolute Lift at 10 percent
+        shell: pwsh
+        run: |
+          @'
+          import json
+          from pathlib import Path
+          result = json.loads(Path("codexway/outputs/metrics/system_evaluation.json").read_text())
+          assert result["quality_lift_top_10pct"] > 1
+          assert result["quality_lift_top_10pct_ci"][0] > 1
+          assert result["opportunity_lift_top_10pct"] > 1
+          assert result["opportunity_lift_top_10pct_ci"][0] > 1
+          assert result["system_deployment_gate"] == "GO"
+          print(result)
+          '@ | python -
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: codexway-assessment-${{ github.sha }}
+          path: |
+            codexway/outputs/metrics/
+            codexway/outputs/tables/
+            codexway/reports/
+            codexway/notebooks/
+          retention-days: 14

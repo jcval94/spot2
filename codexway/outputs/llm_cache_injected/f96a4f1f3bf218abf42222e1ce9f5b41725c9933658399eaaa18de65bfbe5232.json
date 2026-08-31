@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_office_0_3",
+  "quality_status": "review",
+  "issues": [
+    {
+      "claim_type": "amenities",
+      "evidence_text": "salas de juntas y recepción",
+      "structured_field": "amenities",
+      "structured_value": "[]",
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.97,
+      "severity": "low",
+      "reason": "La descripción afirma la existencia de salas de juntas y recepción, pero el campo de amenidades está vacío y no permite verificar esas características. La ausencia en el campo no demuestra una contradicción."
+    }
+  ],
+  "abstentions": [],
+  "summary": "La clasificación de oficina y el uso para renta son consistentes. Se detecta únicamente una afirmación de características no verificable mediante los campos suministrados."
+}

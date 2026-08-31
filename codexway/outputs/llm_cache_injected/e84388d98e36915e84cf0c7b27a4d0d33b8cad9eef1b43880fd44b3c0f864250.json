@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_warehouse_1_3",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property_use",
+      "evidence_text": "Local comercial dentro de plaza",
+      "structured_field": "type_name",
+      "structured_value": "Warehouse",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.99,
+      "severity": "high",
+      "reason": "La descripción identifica el inmueble como un local comercial en una plaza, mientras que el tipo estructurado es Warehouse; esto describe usos inmobiliarios materialmente distintos."
+    }
+  ],
+  "abstentions": [],
+  "summary": "La descripción presenta un desajuste material de uso frente al tipo estructurado de almacén."
+}

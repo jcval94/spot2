@@ -1,0 +1,30 @@
+{
+  "spot_id": "synthetic_retail_1_2",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property_use_and_configuration",
+      "evidence_text": "Nave logística con andenes de carga y altura libre para racks industriales",
+      "structured_field": "sector_name / type_name",
+      "structured_value": "Retail",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.99,
+      "severity": "high",
+      "reason": "The description presents a logistics warehouse configuration, while the structured sector and type identify the property as Retail."
+    },
+    {
+      "claim_type": "loading_docks_and_clear_height",
+      "evidence_text": "andenes de carga y altura libre para racks industriales",
+      "structured_field": "vertical_height_m / other supplied fields",
+      "structured_value": null,
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.97,
+      "severity": "medium",
+      "reason": "The supplied payload does not verify loading docks or clear height suitable for industrial racks."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The listing has a high-confidence semantic mismatch: logistics-warehouse copy versus Retail structured classification."
+}

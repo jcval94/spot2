@@ -1,0 +1,30 @@
+{
+  "spot_id": "synthetic_warehouse_0_0",
+  "quality_status": "review",
+  "issues": [
+    {
+      "claim_type": "loading docks",
+      "evidence_text": "andenes de carga",
+      "structured_field": "amenities",
+      "structured_value": "[]",
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.98,
+      "severity": "medium",
+      "reason": "The description claims loading docks, but the supplied amenities field does not verify this feature."
+    },
+    {
+      "claim_type": "rack height",
+      "evidence_text": "altura para racks",
+      "structured_field": "vertical_height_m",
+      "structured_value": null,
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.98,
+      "severity": "medium",
+      "reason": "The description claims suitable height for racks, while the structured vertical height is unspecified."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The property type and warehouse use are consistent, but the description includes specific features that are not verifiable from the supplied structured fields."
+}

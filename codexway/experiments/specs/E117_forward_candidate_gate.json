@@ -1,0 +1,21 @@
+{
+  "experiment_id": "E117",
+  "parent_id": "E116",
+  "contract": "T1",
+  "question": "Is the parsimonious clean segment strong enough to enter forward validation despite temporal fold variance?",
+  "hypothesis": "Mean and median rolling Lift above one plus validation Lift above one justify a forward shadow candidate, not deployment.",
+  "primary_change": "Use an aggregate forward-candidate gate: rolling mean and median Lift above one, at least half of folds above one, validation Lift above one and bounded Brier loss.",
+  "secondary_changes": [],
+  "scoring": {"stage": "T1", "timestamp": "first inquiry_at before broker response"},
+  "target": {"event": "scheduled_visit on first inquiry", "maturity_days": 7},
+  "population": "Same E116 population",
+  "data_sources": ["T1 train and validation outputs"],
+  "feature_names": ["industrial_small_or_paid_interaction"],
+  "validation": {"strategy": "four rolling train folds plus fixed validation; procedural holdout is retrospective reporting only", "time_column": "first inquiry_at"},
+  "metrics": ["average_precision", "brier", "lift_top_10pct", "recall_top_10pct"],
+  "leakage_review": {"result": "PASS", "evidence_independence": "HOLDOUT_GLOBALLY_CONSUMED"},
+  "change": "Relax fold-count unanimity while adding a median-Lift guard; eligibility is limited to new forward validation",
+  "join_direction": "backward",
+  "deployable": true,
+  "uses_future_information": false
+}

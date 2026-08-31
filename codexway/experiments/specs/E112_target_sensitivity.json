@@ -1,0 +1,14 @@
+{
+  "experiment_id": "E112",
+  "parent_id": "E102",
+  "contract": "T1",
+  "question": "Are conclusions stable to target semantics and maturity buffers?",
+  "hypothesis": "The first-inquiry proxy is more temporally stable than any visit in 30 days.",
+  "feature_names": ["clean_t1_allowlist"],
+  "change": "Evaluate accepted-or-scheduled, any scheduled visit in 30 days, and 7/14/30-day maturity without altering the main contract.",
+  "primary_metric": "monthly_target_rate_stability",
+  "population": "Target-specific mature T1 rows",
+  "join_direction": "backward",
+  "deployable": true,
+  "uses_future_information": false
+}

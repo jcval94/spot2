@@ -1,0 +1,14 @@
+{
+  "experiment_id": "E111",
+  "parent_id": "E109",
+  "contract": "T1",
+  "question": "How much inventory serviceability is unidentified when availability history is missing or stale?",
+  "hypothesis": "Explicit lower and upper bounds materially change confidence without using a future snapshot.",
+  "feature_names": ["inventory_serviceability_lower", "inventory_serviceability_upper", "inventory_confidence"],
+  "change": "Treat missing or stale availability as unknown bounds instead of unavailable.",
+  "primary_metric": "mean_inventory_uncertainty_width",
+  "population": "All T1 scores and candidate spots existing at scoring time",
+  "join_direction": "backward",
+  "deployable": true,
+  "uses_future_information": false
+}

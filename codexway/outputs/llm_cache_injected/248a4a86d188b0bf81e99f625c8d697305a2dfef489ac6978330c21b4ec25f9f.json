@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_retail_0_2",
+  "quality_status": "review",
+  "issues": [
+    {
+      "claim_type": "property_features",
+      "evidence_text": "aparadores y área de atención al público",
+      "structured_field": "amenities",
+      "structured_value": "[]",
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.93,
+      "severity": "low",
+      "reason": "The description states specific physical features and a customer-service area, but the supplied structured fields do not verify these details. An empty amenities field does not establish that the features are absent."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The listing is consistent with the Retail type and rent modality. The described features are not verifiable from the supplied structured data, but no actionable contradiction or material configuration mismatch is established."
+}

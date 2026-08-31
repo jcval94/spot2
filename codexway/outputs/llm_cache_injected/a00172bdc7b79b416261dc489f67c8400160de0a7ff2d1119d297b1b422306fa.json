@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_office_1_2",
+  "quality_status": "critical",
+  "issues": [
+    {
+      "claim_type": "property use and physical configuration",
+      "evidence_text": "Terreno baldío sin construcción",
+      "structured_field": "type_name",
+      "structured_value": "Office",
+      "classification": "semantic_cross_field_mismatch",
+      "actionable": true,
+      "confidence": 0.99,
+      "severity": "high",
+      "reason": "The copy describes undeveloped vacant land with no construction, while the structured record classifies the property as an office."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The listing copy materially conflicts with the structured office property classification."
+}

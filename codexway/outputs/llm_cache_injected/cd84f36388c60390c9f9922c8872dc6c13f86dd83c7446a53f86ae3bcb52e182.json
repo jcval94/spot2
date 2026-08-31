@@ -1,0 +1,19 @@
+{
+  "spot_id": "synthetic_land_0_1",
+  "quality_status": "review",
+  "issues": [
+    {
+      "claim_type": "vacant land status",
+      "evidence_text": "sin construcción",
+      "structured_field": "building_status",
+      "structured_value": "unknown",
+      "classification": "unsupported_claim",
+      "actionable": false,
+      "confidence": 0.96,
+      "severity": "low",
+      "reason": "The description specifically claims there is no construction, but the structured building_status field is unknown and does not verify that claim."
+    }
+  ],
+  "abstentions": [],
+  "summary": "The listing is semantically consistent with a land asset, but the stated absence of construction is not supported by the supplied structured fields."
+}

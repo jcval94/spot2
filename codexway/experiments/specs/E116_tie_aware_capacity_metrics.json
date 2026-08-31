@@ -1,0 +1,21 @@
+{
+  "experiment_id": "E116",
+  "parent_id": "E115",
+  "contract": "T1",
+  "question": "Does Lift remain above one when the capacity boundary cuts through tied scores without using row order as a hidden tie-breaker?",
+  "hypothesis": "The high-score segment retains Lift above one under fractional expected capture at the top-10-percent boundary.",
+  "primary_change": "Replace row-order tie breaking in capacity metrics with fractional expected capture at the boundary.",
+  "secondary_changes": [],
+  "scoring": {"stage": "T1", "timestamp": "first inquiry_at before broker response"},
+  "target": {"event": "scheduled_visit on first inquiry", "maturity_days": 7},
+  "population": "Same E115 population",
+  "data_sources": ["E115 outputs"],
+  "feature_names": ["industrial_small_or_paid_interaction"],
+  "validation": {"strategy": "row-order-invariant rolling, validation and retrospective holdout evaluation", "time_column": "first inquiry_at"},
+  "metrics": ["average_precision", "brier", "lift_top_10pct", "recall_top_10pct"],
+  "leakage_review": {"result": "PASS", "evidence_independence": "HOLDOUT_GLOBALLY_CONSUMED"},
+  "change": "Correct capacity metric tie handling without changing model, features, target or split",
+  "join_direction": "backward",
+  "deployable": true,
+  "uses_future_information": false
+}

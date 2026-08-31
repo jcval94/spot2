@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spot_id", "quality_status", "issues", "abstentions", "summary"],
+  "properties": {
+    "spot_id": {"type": "string"},
+    "quality_status": {"type": "string", "enum": ["good", "review", "critical"]},
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "claim_type", "evidence_text", "structured_field", "structured_value",
+          "classification", "actionable", "confidence", "severity", "reason"
+        ],
+        "properties": {
+          "claim_type": {"type": "string"},
+          "evidence_text": {"type": "string"},
+          "structured_field": {"type": "string"},
+          "structured_value": {"type": ["string", "number", "boolean", "null"]},
+          "classification": {
+            "type": "string",
+            "enum": [
+              "contradiction", "semantic_cross_field_mismatch", "unsupported_claim",
+              "not_verifiable", "ambiguous"
+            ]
+          },
+          "actionable": {"type": "boolean"},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "severity": {"type": "string", "enum": ["low", "medium", "high"]},
+          "reason": {"type": "string"}
+        }
+      }
+    },
+    "abstentions": {"type": "array", "items": {"type": "string"}},
+    "summary": {"type": "string"}
+  }
+}
+

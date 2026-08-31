@@ -1,0 +1,1 @@
+{"experiment_id":"S003","parent_id":"E109","contract":"T1","change":"Deliberately leaky nearest availability snapshots","feature_names":["is_available"],"join_direction":"nearest","deployable":false,"uses_future_information":true,"label":"NON_DEPLOYABLE"}

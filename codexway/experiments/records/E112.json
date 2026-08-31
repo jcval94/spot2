@@ -1,0 +1,118 @@
+{
+  "experiment_id": "E112",
+  "spec_sha256": "45fded53417601f3364221775cd2c127513f4e52da75b46202f041e22ac0be3d",
+  "status": "FINALIZED",
+  "created_at_utc": "2026-08-30T16:09:13.247321+00:00",
+  "git_commit": "643dd0a607de8f22b0c50f689f63c142e0de8d27",
+  "data_fingerprint": "99297d5249a2457942497fdc791d78fdef7cdb2933a83d3f3cfccc057caa76fd",
+  "code_fingerprint": "91022c023f14571265940fdd861c5ea2527c4de47ee4545dcc6de31adf4ad48d",
+  "metrics": {
+    "status": "SENSITIVITY_ONLY__MAIN_CONTRACT_UNCHANGED",
+    "model_metrics": [
+      {
+        "target": "target_t1",
+        "train_n": 2191,
+        "test_n": 1711,
+        "train_positive_rate": 0.20219078046554084,
+        "test_positive_rate": 0.21215663354763295,
+        "monthly_rate_min": 0.16336633663366337,
+        "monthly_rate_max": 0.23734177215189872,
+        "monthly_linear_slope": 0.0013462079822576002,
+        "n": 1711,
+        "positive_rate": 0.21215663354763295,
+        "roc_auc": 0.4880508620055424,
+        "average_precision": 0.21564961073533037,
+        "brier": 0.17444066362528068,
+        "log_loss": 0.5415068973689395,
+        "precision_top_5pct": 0.23255813953488372,
+        "recall_top_5pct": 0.05509641873278237,
+        "lift_top_5pct": 1.0961624703696586,
+        "precision_top_10pct": 0.18023255813953487,
+        "recall_top_10pct": 0.08539944903581267,
+        "lift_top_10pct": 0.8495259145364854,
+        "precision_top_20pct": 0.19533527696793002,
+        "recall_top_20pct": 0.18457300275482094,
+        "lift_top_20pct": 0.9207125589314828
+      },
+      {
+        "target": "accepted_or_scheduled",
+        "train_n": 2191,
+        "test_n": 1711,
+        "train_positive_rate": 0.65814696485623,
+        "test_positive_rate": 0.6563413208649912,
+        "monthly_rate_min": 0.6099290780141844,
+        "monthly_rate_max": 0.697841726618705,
+        "monthly_linear_slope": 0.0004688983031997942,
+        "n": 1711,
+        "positive_rate": 0.6563413208649912,
+        "roc_auc": 0.5003513426742023,
+        "average_precision": 0.6571149395924598,
+        "brier": 0.23338083245604374,
+        "log_loss": 0.661766433687073,
+        "precision_top_5pct": 0.6395348837209303,
+        "recall_top_5pct": 0.048975957257346395,
+        "lift_top_5pct": 0.9743937542711592,
+        "precision_top_10pct": 0.6162790697674418,
+        "recall_top_10pct": 0.0943900267141585,
+        "lift_top_10pct": 0.9389612541158442,
+        "precision_top_20pct": 0.6676384839650146,
+        "recall_top_20pct": 0.20391807658058772,
+        "lift_top_20pct": 1.0172123295317363
+      },
+      {
+        "target": "any_scheduled_inquiry_30d",
+        "train_n": 2191,
+        "test_n": 1493,
+        "train_positive_rate": 0.3943404837973528,
+        "test_positive_rate": 0.5170797052913597,
+        "monthly_rate_min": 0.29518072289156627,
+        "monthly_rate_max": 0.5576923076923077,
+        "monthly_linear_slope": 0.012986319605404773,
+        "n": 1493,
+        "positive_rate": 0.5170797052913597,
+        "roc_auc": 0.5525339015328452,
+        "average_precision": 0.5622770142405321,
+        "brier": 0.2663099551695617,
+        "log_loss": 0.735380323859337,
+        "precision_top_5pct": 0.5866666666666667,
+        "recall_top_5pct": 0.05699481865284974,
+        "lift_top_5pct": 1.1345768566493954,
+        "precision_top_10pct": 0.58,
+        "recall_top_10pct": 0.11269430051813471,
+        "lift_top_10pct": 1.1216839378238341,
+        "precision_top_20pct": 0.5484949832775919,
+        "recall_top_20pct": 0.21243523316062177,
+        "lift_top_20pct": 1.0607551943438402
+      }
+    ],
+    "maturity": [
+      {
+        "maturity_days": 7,
+        "eligible_n": 4898,
+        "excluded_right_censored_n": 102,
+        "positive_rate": 0.20436913025724784
+      },
+      {
+        "maturity_days": 14,
+        "eligible_n": 4836,
+        "excluded_right_censored_n": 164,
+        "positive_rate": 0.20430107526881722
+      },
+      {
+        "maturity_days": 30,
+        "eligible_n": 4680,
+        "excluded_right_censored_n": 320,
+        "positive_rate": 0.20405982905982906
+      }
+    ],
+    "warning": "The 30-day any-visit proxy changes exposure and is not equivalent to first-contact success."
+  },
+  "artifacts": {
+    "metrics": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\metrics\\t1_model_metrics.json",
+    "scores": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\predictions\\lead_opportunity_scores.parquet"
+  },
+  "environment": {
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

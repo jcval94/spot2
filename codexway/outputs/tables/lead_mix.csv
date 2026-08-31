@@ -1,0 +1,13 @@
+search_sector,search_modality,leads,share
+Industrial,both,260,0.052
+Industrial,rent,611,0.1222
+Industrial,sale,378,0.0756
+Land,both,164,0.0328
+Land,rent,396,0.0792
+Land,sale,213,0.0426
+Office,both,282,0.0564
+Office,rent,738,0.1476
+Office,sale,430,0.086
+Retail,both,301,0.0602
+Retail,rent,758,0.1516
+Retail,sale,469,0.0938

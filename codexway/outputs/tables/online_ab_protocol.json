@@ -1,0 +1,51 @@
+{
+  "activation_status": "ELIGIBLE_AFTER_NEW_FORWARD_SHADOW_VALIDATION",
+  "power_estimate_status": "ILLUSTRATIVE_RECALCULATE_WITH_MATURE_30D_PILOT_RATE",
+  "assumptions": {
+    "offline_first_inquiry_proxy_rate": 0.21215663354763295,
+    "relative_mde": 0.1,
+    "alpha": 0.05,
+    "power": 0.8,
+    "illustrative_n_per_arm": 6038
+  },
+  "opportunity_ranking_test": {
+    "unit": "lead_id",
+    "allocation": "50/50 sticky",
+    "analysis": "intention_to_treat",
+    "treatment": "work leads by Opportunity Score top-down",
+    "control": "current operational ordering",
+    "primary_metric": "scheduled_visit within 30 days",
+    "guardrails": [
+      "time_to_first_contact",
+      "contact_attempts",
+      "broker workload",
+      "opt_out_rate"
+    ],
+    "strata": [
+      "search_sector",
+      "source",
+      "calendar_week"
+    ],
+    "horizon_days": 30
+  },
+  "fallback_routing_test": {
+    "unit": "lead_id",
+    "allocation": "50/50 sticky",
+    "analysis": "intention_to_treat",
+    "treatment": "ranked backward-as-of fallback recommendations",
+    "control": "current fallback process",
+    "primary_metric": "accepted alternative or scheduled visit within 30 days",
+    "guardrails": [
+      "recommendation_latency",
+      "no_result_rate",
+      "distance_relaxation",
+      "complaint_rate"
+    ]
+  },
+  "validity_checks": [
+    "sample_ratio_mismatch",
+    "sticky_assignment",
+    "pre-treatment eligibility",
+    "censoring maturity"
+  ]
+}

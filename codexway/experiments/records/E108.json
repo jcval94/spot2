@@ -1,0 +1,20 @@
+{
+  "experiment_id": "E108",
+  "spec_sha256": "b63efa489807867970220a19efe03f243c6492cce34e5177b7ac34a47321bb65",
+  "status": "FINALIZED",
+  "created_at_utc": "2026-08-30T07:33:25.877302+00:00",
+  "git_commit": "643dd0a607de8f22b0c50f689f63c142e0de8d27",
+  "data_fingerprint": "99297d5249a2457942497fdc791d78fdef7cdb2933a83d3f3cfccc057caa76fd",
+  "code_fingerprint": "84ce52256f704961d47ec778c11f986394502bbe5ab205d3d1754d3240e9ee0a",
+  "metrics": {
+    "exact_attendable_rate": 0.4564
+  },
+  "artifacts": {
+    "metrics": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\metrics\\t1_model_metrics.json",
+    "scores": "C:\\Users\\ASUS\\Documents\\GitHub\\spot2\\codexway\\outputs\\predictions\\lead_opportunity_scores.parquet"
+  },
+  "environment": {
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}
