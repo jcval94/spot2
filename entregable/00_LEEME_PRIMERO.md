@@ -11,7 +11,7 @@ Repositorio: <https://github.com/jcval94/spot2>
 3. `03_NOTEBOOK_SPOT2.html` — recorrido end-to-end ejecutado: lecturas, auditoría, EDA, ABT/feature engineering, modelos, Inventory/fallback, Opportunity, IA y producción, con código plegable.
 4. `04_NOTEBOOK_SPOT2.ipynb` — fuente reproducible del mismo recorrido analítico.
 
-El notebook consolidado contiene actualmente **92 celdas totales y 35 celdas de código ejecutadas**. El ZIP se reconstruye y valida automáticamente contra los archivos canónicos del notebook para evitar distribuir una versión desactualizada.
+El notebook consolidado contiene actualmente **99 celdas totales y 35 celdas de código ejecutadas**. El ZIP se reconstruye y valida automáticamente contra los archivos canónicos del notebook para evitar distribuir una versión desactualizada.
 
 ## Conclusión
 
