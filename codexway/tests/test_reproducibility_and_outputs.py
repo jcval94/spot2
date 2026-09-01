@@ -51,9 +51,9 @@ def test_executive_notebook_contract_if_present(settings):
         for line in cell.source.splitlines()
         if line.startswith("## ") and not line.startswith("### ")
     ]
-    assert len(headings) == 7
+    assert len(headings) == 9
     assert headings[0].startswith("## 1. tl;dr")
-    assert headings[-1].startswith("## 7. Conclusiones")
+    assert headings[-1].startswith("## 9. Conclusiones")
 
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
     assert code_cells and all(cell.execution_count is not None for cell in code_cells)
