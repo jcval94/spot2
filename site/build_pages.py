@@ -1,6 +1,7 @@
 from pathlib import Path
 from shutil import copy2, copytree, rmtree
 import html
+import zipfile
 import markdown
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +34,14 @@ copies = [
 missing = [str(src.relative_to(ROOT)) for src, _ in copies if not src.exists()]
 if missing:
     raise SystemExit("Missing required site assets: " + ", ".join(missing))
+
+# validate that the packaged notebook is synchronized with the canonical executed notebook.
+final_zip = ROOT / "entregable/SPOT2_ASSESSMENT_FINAL.zip"
+with zipfile.ZipFile(final_zip, "r") as zf:
+    if zf.read("04_NOTEBOOK_SPOT2.ipynb") != (ROOT / "codexway/notebooks/spot2_assessment.ipynb").read_bytes():
+        raise SystemExit("Final ZIP is stale: packaged IPYNB differs from canonical executed notebook")
+    if zf.read("03_NOTEBOOK_SPOT2.html") != (ROOT / "codexway/notebooks/spot2_assessment.html").read_bytes():
+        raise SystemExit("Final ZIP is stale: packaged notebook HTML differs from canonical HTML")
 
 for src, dst in copies:
     copy2(src, dst)
