@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="370" viewBox="0 0 960 370">
+<rect width="960" height="370" fill="#fff"/>
+<text x="55" y="46" font-family="Arial" font-size="28" font-weight="700" fill="#18222c">Fallback: recomendar sólo cuando la evidencia lo permite</text>
+<g font-family="Arial">
+<rect x="55" y="110" width="170" height="100" rx="12" fill="#eef5f8" stroke="#bfd4df"/><text x="77" y="145" font-size="16" font-weight="700" fill="#1a5f8a">Necesidad T1</text><text x="77" y="174" font-size="13" fill="#334554">sector · modalidad</text><text x="77" y="194" font-size="13" fill="#334554">área · precio · geografía</text>
+<rect x="275" y="110" width="170" height="100" rx="12" fill="#eef5f8" stroke="#bfd4df"/><text x="297" y="145" font-size="16" font-weight="700" fill="#1a5f8a">Availability PIT</text><text x="297" y="174" font-size="13" fill="#334554">último snapshot ≤ T1</text><text x="297" y="194" font-size="13" fill="#334554">UNKNOWN ≠ unavailable</text>
+<rect x="495" y="110" width="170" height="100" rx="12" fill="#eef5f8" stroke="#bfd4df"/><text x="517" y="145" font-size="16" font-weight="700" fill="#1a5f8a">Ranking</text><text x="517" y="174" font-size="13" fill="#334554">lower + upper bounds</text><text x="517" y="194" font-size="13" fill="#334554">top-3 para serviceability</text>
+<rect x="715" y="80" width="190" height="80" rx="12" fill="#edf7f2" stroke="#bedbcf"/><text x="738" y="115" font-size="16" font-weight="700" fill="#24704f">Hasta 5 alternativas</text><text x="738" y="139" font-size="13" fill="#334554">+ reason codes</text>
+<rect x="715" y="200" width="190" height="80" rx="12" fill="#fff2f0" stroke="#e4c3bc"/><text x="738" y="235" font-size="16" font-weight="700" fill="#a14234">NO_RESULT</text><text x="738" y="259" font-size="13" fill="#334554">antes que violar restricciones</text>
+<g stroke="#72899a" stroke-width="2" fill="none"><path d="M225 160 H275"/><path d="M445 160 H495"/><path d="M665 160 H700 V120 H715"/><path d="M665 160 H700 V240 H715"/></g>
+<g fill="#72899a"><path d="M270 155 l10 5 -10 5z"/><path d="M490 155 l10 5 -10 5z"/><path d="M710 115 l10 5 -10 5z"/><path d="M710 235 l10 5 -10 5z"/></g>
+</g>
+<text x="55" y="330" font-family="Arial" font-size="15" fill="#657585">La abstención es una salida válida del producto: incertidumbre no se convierte en certeza artificial.</text>
+</svg>
