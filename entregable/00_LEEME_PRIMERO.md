@@ -8,8 +8,8 @@ Repositorio: <https://github.com/jcval94/spot2>
 
 1. `01_DECK_EJECUTIVO_SPOT2.pdf` — historia completa, evidencia y decisión.
 2. `02_ONE_PAGER_SPOT2.pdf` — resumen ejecutivo en una página.
-3. `03_NOTEBOOK_SPOT2.html` — notebook ejecutado, con resultados y código plegable.
-4. `04_NOTEBOOK_SPOT2.ipynb` — fuente reproducible del análisis.
+3. `03_NOTEBOOK_SPOT2.html` — recorrido end-to-end ejecutado: lecturas, auditoría, EDA, ABT/feature engineering, modelos, Inventory/fallback, Opportunity, IA y producción, con código plegable.
+4. `04_NOTEBOOK_SPOT2.ipynb` — fuente reproducible del mismo recorrido analítico.
 
 ## Conclusión
 
