@@ -20,12 +20,13 @@ A partir de esta base, la revisión cruzada de Codexway, experimentos y Assessme
 
 1. **Retail concentra más demanda que peso relativo en el catálogo histórico**: en el clean-room DEVELOPMENT, 30.40% de demanda frente a 24.51% de catálogo, una brecha de +5.89 pp. Es presión relativa, no capacidad de atención.
 2. **La primera consulta agrega información material**: la mediana de área cambia de 395.05 m² en intake a 480.9 m² en T1; la distribución solicitada tiene una cola muy larga.
-3. **El ausencia de datos tiene semántica**: urgency no declarado, presupuesto no aplicable y presupuesto desconocido no significan lo mismo.
+3. **La ausencia de datos tiene semántica**: urgency no declarado, presupuesto no aplicable y presupuesto desconocido no significan lo mismo.
 4. **Availability es temporal y su cobertura cambia de régimen**: la cobertura backward-as-of pasa de niveles mínimos al inicio de 2025 a prácticamente 100% en 2026.
 5. **UNKNOWN no es UNAVAILABLE**: ausencia o antigüedad de snapshot significa incertidumbre, no evidencia de que el inmueble no pueda atenderse.
 6. **Candidate depth crece mucho con el tiempo**, aun cuando la prevalencia del proxy T1 permanece alrededor de 20%. Esto apoya separar Calidad del lead de Inventory.
 7. **Precio, geografía y otros campos del listing no están versionados históricamente**. Availability sí puede ser disponible en ese momento; la compatibilidad histórica completa del listing queda condicionada.
-8. **Clustering y pockets locales produjeron conocimiento, no una regla final**. Hubo pockets históricos prometedores, pero en el rerun gobernado de Codexway ninguna de 19 celdas elegibles superó BH-FDR 10%; no se usan multiplicadores de clusters.
+8. **El clustering sí descubrió estructura interpretable**: Search Need separa renta/venta/flexible; Dynamic Need captura cómo se refina la necesidad en T1; Spot se entiende mejor separando Physical y Location; y Broker Service produce una capa de servicio estable. También hubo resultados negativos útiles: Inquiry Intent aprendía casi sólo weekday y Broker Supply no sostuvo clusters balanceados.
+9. **Las interacciones entre entidades revelaron pockets locales potentes, pero exploratorios**. La combinación DN4 × LOC1 × BSV1 alcanzó N=60, 36.67% de visitas, 31.37% suavizado y 1.510x de lift histórico. Sin embargo, el rerun gobernado de Codexway dejó 0 de 19 celdas confirmadas tras BH-FDR 10%; estos pockets generan hipótesis de routing, no multiplicadores del score.
 
 ![Demanda vs oferta](figuras/01_demanda_vs_oferta_sector.svg)
 
@@ -676,94 +677,263 @@ Fuente: [A03], [A08], [C14].
 
 ---
 
-# 15. Segmentación y clustering: conocimiento acumulado, no etiquetas mágicas
+# 15. Segmentación y clustering: qué estructura existe realmente entre entidades
 
-La línea experimental probó múltiples representaciones. Su mayor valor fue descubrir **qué conceptos merecen separarse**.
+La línea experimental de clustering no se trató como un concurso de algoritmos. Su objetivo fue responder una pregunta de EDA: **¿qué facetas del marketplace aparecen de forma consistente cuando dejamos que los datos se agrupen sin usar el outcome?**
 
-## 15.1 Lo que sí aprendimos
+La versión `profile_clustering_v2` comparó K-Means, Bisecting K-Means, BIRCH y Gaussian Mixture entre K=3 y K=7. Los perfiles se aprendieron en una ventana temprana de calibración, se congelaron antes del entrenamiento predictivo y se evaluaron después en un future test separado. La selección combinó separación, balance y estabilidad; no utilizó `scheduled_visit` para construir los clusters.
+
+## 15.1 Clustering por entidad: qué encontró cada familia
+
+| Entidad / faceta | Método seleccionado | K | Silhouette | ARI estabilidad | Share mín–máx | Lectura principal |
+|---|---|---:|---:|---:|---:|---|
+| Lead | K-Means | 6 | 0.098 | 0.659 | 7.5%–43.7% | Geografía preferida y madurez de búsqueda |
+| Lead Persona | Bisecting | 7 | 0.115 | 1.000 | 8.4%–22.8% | Canal de adquisición + historia |
+| Search Need | K-Means | 3 | 0.062 | 1.000 | 23.7%–46.3% | Renta, venta y flexible/both |
+| Spot | Bisecting | 7 | 0.088 | 0.410 | 9.5%–27.3% | Mezcla de geografía y atributos físicos |
+| Broker | Bisecting | 7 | 0.023 | 0.443 | 7.0%–22.0% | Especialización regional/modalidad y patrón histórico |
+| Inquiry Intent | K-Means | 7 | 0.155 | 0.998 | 13.1%–15.8% | Casi exclusivamente día de la semana |
+
+Todos estos clusterers pasaron el gate de balance de esa versión: ningún cluster por debajo de 5% ni por encima de 70%. Sin embargo, **balance y estabilidad no bastan**. Algunas silhouettes son modestas y, sobre todo, una partición puede ser estable sin aportar significado de negocio.
+
+### Lead
+
+Los seis perfiles de Lead separaron principalmente **geografía preferida** y **actividad histórica**:
+
+- L3: Jalisco/Zapopan, con fuerte concentración en Andares–Puerta Hierro;
+- L5: Puebla/Angelópolis;
+- L6: Yucatán/Mérida/Paseo Montejo;
+- L4: historial alto de búsquedas;
+- L1/L2: grupos más amplios con mezclas CDMX, Estado de México y otros corredores.
+
+La lectura útil no es “L3 es mejor que L2”. Es que la población de leads contiene **regímenes geográficos y de madurez distintos** que conviene representar explícitamente.
+
+### Lead Persona
+
+Los perfiles P1–P7 de v2 separaron fuertemente el **origen del lead** y su historia:
+
+- organic;
+- paid;
+- referral;
+- email;
+- social;
+- alta actividad previa;
+- conversión previa / alta madurez.
+
+Esto ayudó a distinguir una faceta de **quién es el lead** de otra faceta diferente: **qué está buscando**.
 
 ### Search Need
 
-Una representación experimental resultado-free produjo perfiles semánticamente claros:
+Aquí apareció uno de los hallazgos más claros:
 
-- renta;
-- venta;
-- both + mayor área.
+- **N1:** necesidad dominada por renta;
+- **N2:** necesidad dominada por venta;
+- **N3:** modalidad both/flexible y área objetivo mayor.
 
-La utilidad está en reconocer que “qué busca” es una faceta distinta de “quién es”.
+Search Need confirmó que la modalidad y el requerimiento comercial merecen una representación separada de Persona.
 
-### Physical vs Location
+### Spot
 
-Los primeros Spot clusters mezclaban atributos físicos y geografía. La investigación mostró que deben separarse:
+Los primeros clusters de Spot mezclaban dos preguntas distintas:
 
 - **Physical:** qué es el espacio;
 - **Location:** dónde está.
 
-Codexway confirma esta separación como familias que superan sus gates de representación.
+Había perfiles muy geográficos —CDMX/Cuauhtémoc, Querétaro, Nuevo León/San Pedro, Estado de México/Naucalpan, Jalisco/Zapopan— y otros más físicos, como pisos altos y mayor número de elevadores.
 
-### intermediario Service
+Este resultado motivó el refinamiento posterior: **no usar un único “tipo de Spot” cuando ubicación y atributos físicos responden a mecanismos distintos**.
 
-Una faceta de servicio fue más defendible que intentar clusterizar “supply” del intermediario. Codexway conserva intermediario Service como auxiliar; no lo transforma en causalidad.
+### Broker
 
-### Dynamic Need
+El clustering inicial capturó mezclas de región, modalidad y comportamiento histórico. La separación fue más débil que en otras entidades, lo que ya sugería que “Broker” no debía reducirse a un solo arquetipo comercial.
 
-El experimento v4 encontró una transición T0→T1 muy asimétrica:
+La investigación posterior separó dos conceptos:
 
-- un perfil de necesidad de renta permanecía en el mismo Dynamic Need en **99.82%**;
-- venta y both se redistribuían entre varios estados T1.
+- Supply / especialización de inventario;
+- Service / patrón de atención.
 
-Esto apoya la idea de que **la necesidad se refina de forma distinta por modalidad**.
+Como se verá abajo, sólo Service sostuvo una segmentación defendible.
 
-Pero el rerun final de Codexway rechaza dynamic_need_profile por su gate de balance. El concepto sobrevive; el ID de cluster no.
+### Inquiry Intent: un resultado negativo que vale mucho
 
-## 15.2 Resultado negativo importante: consulta Intent aprendía weekday
+Inquiry Intent produjo siete clusters muy balanceados y con ARI≈0.998. A primera vista parecía excelente.
 
-Un cluster llamado “consulta Intent” terminó correspondiendo casi exactamente a días de la semana.
+Pero la interpretación mostró que I1–I7 correspondían casi exactamente a **Saturday, Friday, Monday, Tuesday, Sunday, Thursday y Wednesday**.
 
-Éste es un ejemplo de por qué clustering sin resultado puede ser técnicamente estable y semánticamente inútil.
+Es decir: el algoritmo había encontrado una partición técnicamente estable, pero semánticamente pobre. Este resultado se **descartó** y se convirtió en una regla metodológica del proyecto:
+
+> **no promover clusters por silhouette, ARI o balance si no representan un mecanismo útil de negocio.**
+
+## 15.2 Refinamiento v4: de clusters genéricos a facetas operables
+
+`matching_profiles_v4` tomó esos aprendizajes y descompuso mejor las entidades.
+
+### Behavioral Persona — BP1 a BP3
+
+Al excluir `source`, la nueva Persona fue más limpia semánticamente:
+
+| Perfil | Share | Interpretación |
+|---|---:|---|
+| BP1 | 59.0% | Lead temprano / baja historia |
+| BP2 | 26.3% | Lead industrial/manufactura con baja madurez |
+| BP3 | 14.8% | Lead maduro / experimentado; alta conversión previa |
+
+La solución fue estable (GMM K=3, ARI=1.000), pero **empeoró AP/lift al sustituir la Persona usada por el benchmark**. Se conserva para interpretación y diagnóstico; no como reemplazo automático del scoring.
+
+### Dynamic Need T1 — DN1 a DN5
+
+Ésta fue la representación nueva más informativa de la inquiry. Se construyó sólo con información disponible en T1 y excluyó weekday.
+
+| Perfil | Share | Lectura de negocio |
+|---|---:|---|
+| DN1 | 65.0% | Renta mainstream / necesidad estable |
+| DN2 | 12.9% | Venta / presupuesto alto |
+| DN3 | 11.5% | Venta value / expansión moderada de área |
+| **DN4** | **5.4%** | **Stretch-space: pide mucho más espacio con presupuesto bajo** |
+| DN5 | 5.3% | Premium-budget / reducción de área |
+
+La solución K-Means K=5 tuvo silhouette **0.620** y ARI **1.000** en la línea experimental. DN4 fue especialmente importante porque reapareció en varias combinaciones locales de alto lift.
+
+### La transición T0 → T1 no es simétrica
+
+| Search Need T0 | DN1 | DN2 | DN3 | DN4 | DN5 |
+|---|---:|---:|---:|---:|---:|
+| **N1 renta** | **99.82%** | 0.00% | 0.00% | 0.00% | 0.18% |
+| **N2 venta** | 33.25% | 26.54% | 23.79% | 9.22% | 7.20% |
+| **N3 both/flexible** | 36.16% | 23.26% | 20.74% | 11.72% | 8.12% |
+
+**Insight:** la renta es casi invariante entre intake y primera inquiry; venta y flexible se fragmentan en regímenes muy distintos de presupuesto y cambio de área. La información incremental de T1 está concentrada sobre todo en N2/N3.
+
+### Broker Service — BSV1 a BSV3
+
+La versión balanceada sí pasó el gate: Bisecting K=3, ARI **0.948**, share mínimo 18.7% y máximo 57.7%.
+
+| Perfil | Share | Interpretación |
+|---|---:|---|
+| BSV1 | 57.7% | Servicio diversificado / mayor actividad |
+| BSV2 | 23.7% | Acceptance-heavy / servicio concentrado |
+| BSV3 | 18.7% | Mayor urgencia / orientado a calendarizar visita |
+
+Su valor apareció más en **interacciones y routing experimental** que como mejora marginal global del modelo.
+
+### Broker Supply — experimento rechazado
+
+Dos representaciones intentaron agrupar la especialización de supply:
+
+- primera versión: **98.3%** de brokers en un solo cluster;
+- versión compacta/winsorizada: **70.3% / 26.0% / 3.7%**.
+
+Aunque la segunda fue estable (ARI≈0.949), violó el gate 5%–65%. La decisión fue explícita: **no seguir cambiando K para fabricar grupos**. Si Supply se necesita, usar descriptores directos o recolectar mejores atributos.
+
+### Physical Space + Location
+
+La separación Physical PH1–PH4 y Location LOC1–LOC7 sobrevivió como la descomposición más interpretable de Spot. Es un aprendizaje de arquitectura de features: compatibilidad física y compatibilidad geográfica no deben esconderse en un único cluster.
+
+## 15.3 Qué sobrevive del clustering al entregable final
+
+El resultado del trabajo no es una colección de IDs L3, DN4 o BSV1 para memorizar. Lo que sobrevive es la **estructura conceptual**:
+
+1. separar **Persona** de **Need**;
+2. permitir que **Need se actualice en T1**;
+3. separar **Physical** de **Location**;
+4. distinguir **Broker Service** de Broker Supply;
+5. no clusterizar Availability: es un **estado temporal directo**;
+6. no usar Market Context como régimen histórico hasta tener publication/effective time;
+7. descartar clusters estables pero semánticamente triviales;
+8. exigir evidencia nueva antes de convertir una celda de compatibilidad en una regla.
+
+El rerun final de Codexway aplica gates adicionales y no promueve `dynamic_need_profile` como multiplicador productivo. **El concepto sobrevive; el ID del cluster no.**
 
 ![Conocimiento de clustering vs regla final](figuras/17_clustering_conocimiento_vs_regla.svg)
 
-**Decisión:** no promover clusters por silhouette/ARI solamente; exigir interpretación y utilidad de negocio.
+**Qué observamos →** existen facetas coherentes por entidad y algunos experimentos negativos son tan informativos como los positivos.  
+**Por qué importa →** evita mezclar quién es el lead, qué necesita, dónde está el inmueble y cómo atiende el intermediario.  
+**Riesgo →** confundir estabilidad matemática con utilidad comercial.  
+**Decisión →** conservar las facetas como conocimiento/feature engineering; no usar IDs de clusters como reglas autónomas.
 
 Fuentes: [E01], [E02], [C11].
 
 ---
 
-# 16. Pockets Lead × Spot × intermediario: señal local histórica, no regla final
+# 16. Pockets de compatibilidad entre entidades: señal local fuerte, hipótesis todavía no causal
 
-La exploración encontró celdas locales interesantes. El ejemplo más fuerte del v4 fue:
+Una vez creados perfiles interpretables, la siguiente pregunta fue más interesante que “¿qué cluster es mejor?”:
 
-**DN4 × LOC1 × BSV1**
+> **¿existen combinaciones de necesidad × inmueble × intermediario donde el avance comercial sea materialmente distinto de lo esperado por cada entidad por separado?**
 
+La respuesta exploratoria fue sí.
+
+El baseline del future test usado por esta línea era aproximadamente **20.77%** de `scheduled_visit`.
+
+## 16.1 Combinaciones más fuertes encontradas en matching_profiles_v4
+
+| Rank | Combinación | N | Visit raw | Tasa suavizada | Lift histórico | Wilson lower / baseline |
+|---:|---|---:|---:|---:|---:|---:|
+| 1 | **DN4 × LOC1 × BSV1** | **60** | **36.67%** | **31.37%** | **1.510x** | **1.234x** |
+| 2 | **N3→DN4 × BSV1** | 83 | 31.33% | 28.52% | **1.373x** | **1.077x** |
+| 3 | N2→DN2 × BSV3 | 57 | 31.58% | 27.85% | 1.341x | 1.011x |
+| 4 | **DN4 × LOC1** | 90 | 30.00% | 27.69% | **1.333x** | **1.036x** |
+| 5 | DN2 × PH1 × BSV3 | 59 | 30.51% | 27.23% | 1.311x | 0.975x |
+| 6 | **PH3 × BSV2** | 159 | 28.30% | 27.11% | **1.305x** | **1.053x** |
+| 7 | **DN4 × BSV1** | 153 | 28.10% | 26.90% | **1.295x** | **1.039x** |
+| 8 | DN2 × BSV3 | 90 | 28.89% | 26.86% | 1.293x | 0.989x |
+
+La celda **DN4 × LOC1 × BSV1** es el hallazgo local más fuerte de toda la línea:
+
+- **DN4:** necesidad *stretch-space* — solicita mucho más espacio con presupuesto relativamente bajo;
+- **LOC1:** centro metropolitano CDMX–Naucalpan;
+- **BSV1:** Broker Service diversificado / mayor actividad;
 - N=60;
-- scheduled_visit raw: **36.67%**;
-- tasa suavizada: **31.37%**;
-- lift histórico: **1.510x**;
-- Wilson lower rate / baseline: **1.234x**.
+- visita observada: 36.7%;
+- tasa suavizada: 31.4%;
+- lift suavizado: **1.51x**;
+- incluso el límite inferior Wilson dividido por el baseline queda en **1.23x**.
 
-Otras celdas históricas también mostraron lift >1.
+La interpretación no es que “DN4 sea un lead excelente”. Más bien, la tensión presupuesto–espacio **parece interactuar con ubicación y estilo de servicio**. Esto es precisamente el tipo de fenómeno que un score puramente marginal puede no representar bien.
 
-Sería tentador multiplicar el score cuando aparezca una de estas combinaciones. No se hace.
+## 16.2 El patrón no apareció de la nada: v2 ya mostraba interacciones
 
-### Por qué no se promueve
+Antes del refinamiento v4, `profile_clustering_v2` ya había encontrado pockets Lead × Spot × Broker. Entre los más notorios:
 
-1. Las celdas fueron inspeccionadas en el mismo future test usado para discovery.
-2. Hubo múltiples comparaciones.
-3. Los labels numéricos de clusters no son identidades semánticas estables entre refits.
-4. Dynamic Need no pasó el gate actual de Codexway.
-5. En la tabla confirmatoria actual de Codexway:
-   - 19 celdas elegibles;
-   - **0 pasan BH-FDR 10%**.
+| Combinación | N | Visit raw | Tasa suavizada | Lift vs global | Sinergia residual |
+|---|---:|---:|---:|---:|---:|
+| L1 × S1 × B5 | 93 | 30.11% | 27.30% | **1.314x** | +0.066 |
+| L1 × S5 × B2 | 35 | 34.29% | 27.08% | **1.304x** | +0.086 |
+| L6 × S1 × B1 | 40 | 30.00% | 25.39% | **1.222x** | +0.085 |
+| L1 × S2 × B4 | 55 | 27.27% | 24.53% | **1.181x** | +0.057 |
+
+La repetición de pockets en dos generaciones de representación reforzó una hipótesis: **la compatibilidad puede contener señal de interacción real**, no sólo diferencias marginales de Lead, Spot o Broker.
+
+## 16.3 Por qué 1.51x no se convierte en un multiplicador del Opportunity Score
+
+Sería fácil sobreajustar aquí. No se hace por cinco razones:
+
+1. las celdas fueron descubiertas inspeccionando el mismo future test;
+2. hubo muchas combinaciones evaluadas;
+3. un intervalo Wilson controla incertidumbre binomial, pero **no corrige multiple testing**;
+4. los labels numéricos de clusters no son identidades semánticas garantizadas entre refits;
+5. en la tabla confirmatoria gobernada de Codexway hubo **19 celdas elegibles y 0 pasaron BH-FDR 10%**.
+
+Por tanto, el hallazgo **no es evidencia causal** y tampoco prueba que un routing basado en DN4 × LOC1 × BSV1 mejore negocio.
+
+Lo que sí hace es convertir una intuición difusa en una hipótesis operacional muy concreta:
+
+> **En una nueva cohorte temporal o A/B sticky por lead_id, probar si necesidades stretch-space en LOC1 reciben mayor valor cuando se enrutan hacia brokers con perfil de servicio BSV1.**
+
+No se debe:
+
+- multiplicar el score por 1.51;
+- hacer hard routing;
+- reoptimizar esa misma celda contra el future test ya inspeccionado.
 
 ![Pockets discovery vs confirmación](figuras/18_pockets_discovery_vs_confirmacion.svg)
 
-**Qué observamos →** hay heterogeneidad local potencial.  
-**Por qué importa →** puede inspirar routing o experimentos de producto.  
-**Riesgo →** overfit por discovery, multiplicidad y etiquetas inestables.  
-**Decisión →** conservar los pockets como hipótesis para nueva cohorte o A/B; nunca como multiplicador final.
+**Qué observamos →** hay pockets históricos con lift local de hasta 1.51x y señales precursoras en versiones anteriores.  
+**Por qué importa →** sugiere que el matching entre entidades podría capturar valor adicional al ranking marginal.  
+**Riesgo →** discovery bias, multiplicidad, soporte pequeño e inestabilidad de labels.  
+**Decisión →** conservar estas combinaciones como hipótesis priorizadas para nueva cohorte/A-B; nunca como multiplicadores del score final.
 
-Fuentes: [E02], [C11].
+Fuentes: [E01], [E02], [C11].
 
 ---
 
