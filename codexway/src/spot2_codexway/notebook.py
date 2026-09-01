@@ -692,12 +692,94 @@ La siguiente mejora no es mover el threshold. Requiere **nuevas señales PIT** q
 El valor de esta investigación no es “tener muchos modelos”, sino **reducir el espacio de decisiones** hasta una solución defendible. El champion final es pequeño porque varias alternativas más sofisticadas no justificaron su promoción bajo el mismo estándar temporal.
 """),
         md(
+        md("""### 6.0 Qué problema resuelve Inventory
+
+Lead Quality y Inventory se separan porque responden preguntas distintas:
+
+| Componente | Pregunta | Reloj dominante | Error que evita |
+|---|---|---|---|
+| Lead Quality | ¿qué tan probable es que el lead avance? | información comercial observable en T1 | gastar capacidad en leads sin señal |
+| Inventory | ¿podemos atender razonablemente lo que pide? | catálogo + Availability observables al score | prometer oferta inexistente o castigar por falta de datos |
+| Opportunity | ¿qué tan atractiva y atendible es la oportunidad? | combinación de ambas señales | esconder dos objetivos diferentes en un único número |
+
+Esta separación es deliberada. El modelo de Quality final **no usa Availability ni selected-Spot matching**; por tanto Inventory puede actuar como segundo eje sin volver a contar la misma señal dentro del champion.
+
+La afirmación estricta de point-in-time aplica a Availability. Para atributos del listing como precio y algunos campos físicos, el histórico completo no está versionado; por eso el matching histórico total se etiqueta como **condicional**, no como reconstrucción PIT perfecta.
+"""),
             "## 6. Inventory, Opportunity y fallback\n\n"
             "### 6.1 Disponibilidad point-in-time\n\n"
             "Availability se une con un **backward as-of** estricto. Historia ausente o vieja significa "
             "**UNKNOWN, no UNAVAILABLE**, y se expresa como bounds lower/upper; jamás se rellena desde el futuro."
         ),
         code(
+        md("""### 6.1.1 Candidate generation: del request a un conjunto defendible
+
+Para cada lead T1, el sistema construye candidatos antes de calcular cualquier score de Inventory:
+
+1. parte de Spots del mismo **sector + estado**;
+2. vuelve a incluir el Spot exacto solicitado;
+3. exige que el Spot ya existiera: created_at <= prediction_timestamp;
+4. exige compatibilidad de modalidad: rent/sale/both;
+5. usa la ubicación de la inquiry cuando existe; si no, cae a la preferencia del lead;
+6. calcula compatibilidad de área, precio y geografía;
+7. añade Availability con el último snapshot conocido hacia atrás.
+
+La geografía se relaja de forma explícita:
+- mismo corredor: fit = **1.00**;
+- mismo municipio: **0.85**;
+- mismo estado: **0.65**.
+
+Área y precio usan una penalización simétrica basada en la razón candidato/deseado. El candidate match usa media geométrica, de modo que una incompatibilidad fuerte no quede escondida por otras señales altas.
+
+El número de candidatos se conserva dentro de Inventory; no entra a Lead Quality porque su cobertura cambia materialmente con el tiempo.
+"""),
+        md("""### 6.1.2 Availability: backward-as-of, frescura e incertidumbre
+
+Para cada Spot candidato se toma **el último snapshot con snapshot_date <= prediction_timestamp**. El control final reporta **0 violaciones de snapshots futuros**.
+
+Sensibilidad de frescura:
+
+| Ventana | Snapshot fresco | Unknown / stale | Leads con algún candidato fresco |
+|---:|---:|---:|---:|
+| 7 días | 19.16% | 80.84% | 93.46% |
+| **30 días** | **57.09%** | **42.91%** | **98.34%** |
+| 90 días | 86.03% | 13.97% | 98.52% |
+
+Treinta días es una política operativa, no una verdad física.
+
+Si el snapshot falta o está stale:
+- availability lower = **0**;
+- availability upper = **1**;
+- estado = unknown_missing_or_stale.
+
+Así, **UNKNOWN no se convierte en UNAVAILABLE**. La falta de observación permanece como incertidumbre explícita.
+"""),
+        md("""### 6.1.3 De candidatos a serviceability lower/upper
+
+Cada candidato conserva una vista conservadora y una potencial:
+
+- candidate_match_lower acredita sólo Availability defendible;
+- candidate_match_upper conserva potencial cuando Availability es desconocida o stale.
+
+El Spot exacto se evalúa por separado de las alternativas. Para fallback se usan las **3 mejores alternativas** en la agregación interna y se aplica una penalización cuando existen pocas opciones.
+
+Inventory Serviceability es el máximo entre el componente exacto y el componente fallback, conservando lower, upper, uncertainty width y confidence.
+
+Auditoría agregada:
+
+| Métrica | Resultado |
+|---|---:|
+| Serviceability lower promedio | **0.6936** |
+| Serviceability upper promedio | **0.8213** |
+| Ancho de incertidumbre promedio | **0.1277** |
+| Inventory confidence promedio | **0.5217** |
+| Spot exacto atendible | **45.64%** |
+| Spot exacto con Availability desconocida | **44.30%** |
+| Sin alternativa conocida | **2.38%** |
+| Sin alternativa potencial | **0.00%** |
+
+La brecha lower→upper muestra cuánto depende la decisión de información todavía no confirmada.
+"""),
             "display(Image(filename=str(ROOT/'outputs/figures/availability_coverage.png')))\n"
             "display(pd.read_csv(ROOT/'outputs/tables/inventory_freshness_sensitivity.csv').round(4))\n"
             "display(read_json(Path('outputs/metrics/inventory_audit.json')))"
@@ -718,12 +800,57 @@ El valor de esta investigación no es “tener muchos modelos”, sino **reducir
             "incremental a Quality sobre el proxy T1. Su gate permanece <strong>NO-GO</strong>.</div>"
         ),
         md(
+        md("""### 6.2.1 Opportunity: valor absoluto sí, valor incremental de Inventory no
+
+Sobre el mismo holdout T1:
+
+| Señal | ROC-AUC | PR-AUC | Brier | Lift@5 | Lift@10 | Recall@10 |
+|---|---:|---:|---:|---:|---:|---:|
+| Lead Quality | 0.5478 | 0.2391 | **0.1658** | **1.689×** | **1.689×** | **16.98%** |
+| Opportunity lower | 0.5119 | **0.2477** | 0.1707 | 1.589× | 1.370× | 13.77% |
+| Opportunity upper | 0.5235 | 0.2613 | 0.1695 | **1.809×** | 1.507× | 15.15% |
+
+Opportunity lower sí supera random:
+- Lift@10 = **1.370×**;
+- IC95% = **[1.078×, 1.690×]**.
+
+Pero frente a Quality-only:
+- ΔROC-AUC = **−0.0359**, IC95% [−0.0696, −0.0011];
+- ΔLift@10 = **−0.3186×**, IC95% [−0.6252, −0.0125];
+- ΔRecall@10 = **−3.20 pp**, IC95% [−6.28, −0.13 pp];
+- ΔBrier = **+0.00494**, peor para T1;
+- ΔPR-AUC = +0.0086, con intervalo que cruza cero.
+
+Por eso **Opportunity absolute lift = GO**, mientras **Inventory incremental gate = NO-GO**.
+
+No es una contradicción: T1 mide progreso comercial; Inventory introduce además serviceability.
+"""),
             "### 6.3 Política de dos ejes y alternativas\n\n"
             "Quality y Serviceability permanecen separados: verificar inventario incierto, buscar "
             "alternativas para demanda de calidad sin servicio y mantener el flujo estándar en el resto. "
             "El ranking conserva top-3 interno y muestra hasta cinco alternativas compatibles."
         ),
         code(
+        md("""### 6.3.1 Reglas operativas de la política de dos ejes
+
+Inventory se clasifica así:
+
+- **Uncertain** si confidence < 0.50 o uncertainty width > 0.20;
+- **Serviceable** si lower >= 0.75;
+- **Potential fallback** si upper >= 0.50;
+- **Low serviceability** en el resto.
+
+La acción se deriva junto con Quality:
+
+| Quality | Inventory | Acción |
+|---|---|---|
+| High / Priority | Serviceable | work_if_model_gate_passes |
+| High / Priority | Uncertain | verify_inventory_first |
+| High / Priority | Potential fallback / Low | source_or_offer_fallback |
+| Standard | cualquiera | standard_workflow |
+
+Un lead de Quality alta con Inventory incierto **no es un mal lead**: es un caso que requiere verificar capacidad de atención antes de prometer una opción.
+"""),
             "policy = scores[['quality_band','serviceability_band','diagnostic_action','deployment_status']].value_counts().reset_index(name='leads')\n"
             "display(policy.head(20))\n"
             "show = ['lead_id','lead_quality_score_0_100','inventory_serviceability_lower','inventory_serviceability_upper','inventory_confidence','fallback_spot_ids','fallback_reason_codes']\n"
@@ -772,6 +899,25 @@ El valor de esta investigación no es “tener muchos modelos”, sino **reducir
             "display(fallback_counts.value_counts().sort_index().rename_axis('visible_fallbacks').to_frame('leads'))"
         ),
         md(
+        md("""### 6.5.1 Qué demuestra fallback y qué todavía no puede demostrar
+
+El sistema entrega hasta **5 alternativas visibles**, priorizando candidatos con lower positivo y completando con candidatos de potencial upper cuando hace falta. Cada alternativa conserva reason codes de geografía y Availability.
+
+Si no existe una alternativa defendible, la política acepta **NO_RESULT / lista vacía** antes que violar hard constraints.
+
+El Spot históricamente visitado **no es un gold label limpio de recomendación**: el histórico no registra qué candidatos fueron mostrados, rechazados o siquiera visibles bajo la misma política.
+
+Por eso Coverage@K contra el Spot visitado es diagnóstico, no prueba causal de relevance.
+
+Para validar fallback de verdad se necesitan exposure logs:
+- alternativas mostradas y posición;
+- alternativa aceptada;
+- visita posterior;
+- cierre o valor comercial;
+- estado de Inventory al momento de exposición.
+
+Hasta contar con esos datos, Inventory/Fallback es una política operativa defendible y auditable, **no un uplift causal demostrado**.
+"""),
             "## 7. Robustez, IA y producto\n\n"
             "### 7.1 Clusters y combinaciones\n\n"
             "Los perfiles se ajustan dentro de train y se condicionan a balance y estabilidad ARI. Las "
