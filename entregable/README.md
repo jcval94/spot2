@@ -14,7 +14,7 @@ Este paquete presenta una propuesta para ayudar a Spot2 a concentrar su esfuerzo
    La conclusión ejecutiva en una lectura de 60–90 segundos.
 3. [Notebook ejecutado — HTML](../codexway/notebooks/spot2_assessment.html)
 
-   Resultados reproducibles, código plegable y el prompt utilizado para la prueba de IA.
+   Recorrido reproducible end-to-end: lectura y auditoría de datos, EDA, ABT/feature engineering, selección y validación del modelo, Inventory/fallback, Opportunity, IA, gobierno y producción, con código plegable.
 
 También está disponible el [paquete mínimo para envío](SPOT2_ASSESSMENT_FINAL.zip), que reúne únicamente el deck, el One Pager y el notebook en sus formatos finales.
 
