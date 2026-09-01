@@ -52,6 +52,35 @@ for marker in [
     if marker not in html:
         raise SystemExit(f"HTML del notebook desincronizado: falta {marker}")
 
+# Todos los encabezados narrativos del IPYNB deben existir en el HTML.
+# Esto hace que una futura ampliación del notebook falle si se intenta empaquetar
+# con una versión HTML anterior.
+headings = []
+for cell in nb["cells"]:
+    if cell.get("cell_type") != "markdown":
+        continue
+    for line in "".join(cell.get("source", [])).splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("#"):
+            continue
+        title = stripped.lstrip("#").strip()
+        title = title.replace(chr(96), "").replace("**", "").replace("*", "")
+        if title:
+            headings.append(title)
+
+missing_headings = [title for title in headings if title not in html]
+if missing_headings:
+    raise SystemExit(
+        "HTML del notebook desincronizado; faltan encabezados: "
+        + " | ".join(missing_headings[:20])
+    )
+
+cell_banner = f"{len(nb['cells'])} celdas"
+if cell_banner not in html:
+    raise SystemExit(
+        f"HTML del notebook desincronizado: no contiene el contador {cell_banner!r}"
+    )
+
 with zipfile.ZipFile(ZIP_PATH, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
     for src, arcname in FILES:
         zf.write(src, arcname)
