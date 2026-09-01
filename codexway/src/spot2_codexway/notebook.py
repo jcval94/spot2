@@ -434,6 +434,21 @@ Este registro explica por qué varias ideas interesantes terminan **fuera** del 
             "display(pd.Series(summary, name='ABT T1'))\n"
             "display(pd.DataFrame({'allow': pd.Series(policy['allow']), 'forbidden': pd.Series(policy['forbidden'])}))"
         ),
+        md("""### 4.0.1 Grano final de la ABT y separación de responsabilidades
+
+La ABT T1 tiene **una fila por lead en su primera inquiry**. La función de construcción ordena por lead, timestamp e inquiry_id y valida unicidad de lead_id antes de modelar.
+
+El registro conserva:
+
+- lead_id e inquiry_id de la primera consulta;
+- prediction_timestamp;
+- variables de intake ya observables;
+- payload de la inquiry actual;
+- transformaciones determinísticas;
+- target únicamente para evaluación.
+
+Una decisión estructural importante es que **Spot state y Availability no forman parte de Lead Quality**. Se reservan para Inventory y Opportunity. Esto evita que el mismo matching se use primero para inflar Quality y después vuelva a multiplicarse dentro de Inventory.
+"""),
         md(
             "### 4.1 Features derivadas y consistencia T0→T1\n\n"
             "Las transformaciones priorizan semántica y reproducibilidad: ratios de área/presupuesto, "
@@ -447,6 +462,29 @@ Este registro explica por qué varias ideas interesantes terminan **fuera** del 
             "available = [c for c in derived if c in abt_t1.columns]\n"
             "display(abt_t1[['lead_id','inquiry_id','target'] + available].head(12))"
         ),
+        md("""### 4.1.1 Contrato de features: qué entra y qué queda fuera
+
+La feature policy no se deduce automáticamente de todas las columnas disponibles. Se gobierna con allowlist/forbidden list.
+
+**Puede entrar**
+- contexto de intake ya conocido;
+- payload contemporáneo de la primera inquiry;
+- días desde creación del lead;
+- ratios de área y presupuesto;
+- estados de missingness con significado;
+- interacciones de baja cardinalidad si sobreviven la validación temporal.
+
+**No puede entrar**
+- respuesta del broker o tiempos posteriores;
+- inquiries futuras o acumulados construidos con ellas;
+- scores internos del proceso;
+- Availability nearest/future;
+- estado mutable actual del listing tratado como historia;
+- Market Context sin publication time fiable;
+- variables de T2 dentro del scorer T1.
+
+La regla de ingeniería es más estricta que “no usar el target”: **cada feature debe demostrar observabilidad al score_time**.
+"""),
         md("### 4.2 T0 y T2 como sensibilidades, no como mezcla de scores"),
         code("display(read_json(Path('outputs/metrics/t0_t2_sensitivity_metrics.json')))"),
         md(
@@ -459,6 +497,76 @@ Este registro explica por qué varias ideas interesantes terminan **fuera** del 
             "display(pd.DataFrame(model['metrics']).T.round(4))\n"
             "display(pd.read_csv(ROOT/'outputs/metrics/rolling_model_comparison.csv').round(4))"
         ),
+        md("""### 5.1.1 Benchmark canónico y amplitud experimental
+
+La solución final es sencilla, pero no nació de una búsqueda pequeña. Dentro de Codexway se compararon baselines, reglas, regresiones y CatBoost bajo el mismo contrato T1:
+
+| Modelo | ROC-AUC | PR-AUC | Brier | Lift@10 |
+|---|---:|---:|---:|---:|
+| Positive rate | 0.5000 | 0.2122 | 0.1672 | 1.000× |
+| Business rule | 0.5157 | 0.2165 | 0.2501 | 0.986× |
+| Logistic lead-only | 0.4823 | 0.2098 | 0.1733 | 0.932× |
+| Logistic clean amplio | 0.4881 | 0.2156 | 0.1744 | 0.850× |
+| Logistic sin asked_visit | 0.4852 | 0.2152 | 0.1743 | 0.987× |
+| CatBoost | 0.4922 | 0.2086 | 0.2423 | 0.826× |
+| **Stable segment logistic** | **0.5478** | **0.2391** | **0.1655 raw** | **1.689×** |
+| **Selected calibrated** | **0.5478** | **0.2391** | **0.1658** | **1.689×** |
+
+Además se investigaron, en ramas experimentales con contratos distintos, especialistas CatBoost/RF, multi-head, trajectory T2, Dynamic Need, clusters, matching profiles y semantic rules. Esos resultados se usan como **evidencia de investigación**, no como leaderboard mezclado.
+
+La conclusión del benchmark final es incómoda pero valiosa: **más variables y más flexibilidad no produjeron un ranking mejor bajo el contrato limpio T1**.
+"""),
+        md("""### 5.1.2 Rolling temporal CV y gate de promoción
+
+La selección no depende de un único split. El stable segment logistic se evalúa en cuatro folds temporales expansivos:
+
+| Fold | Lift@10 |
+|---|---:|
+| 1 | 0.784× |
+| 2 | 1.443× |
+| 3 | 1.753× |
+| 4 | 0.875× |
+
+Resumen:
+- media: **1.214×**;
+- mediana: **1.159×**;
+- folds > 1: **2/4**.
+
+El gate exige media y mediana >1, al menos 2/4 folds >1, Lift@10 de validation >1 y Brier de validation no materialmente peor que el baseline constante.
+
+En validation:
+- Lift@10 = **1.442×**;
+- Brier = **0.15611**;
+- Brier baseline constante = **0.15691**.
+
+**Pasa el gate**, pero no todos los folds ganan. Por eso la evidencia correcta es “señal temporal suficiente para promoción a validación”, no “modelo estable en cualquier periodo”.
+
+El holdout 2026 es además **procedural, no pristine**: no participó en el gate de esta ejecución, pero el dataset había sido inspeccionado durante la investigación. La confirmación real requiere una nueva cohorte forward.
+"""),
+        md("""### 5.1.3 Champion final: simple, deliberadamente de baja resolución
+
+El modelo final es una **Regresión Logística regularizada** cuyo predictor promovido es:
+
+industrial_small_or_paid_interaction
+
+Definición: search_sector = Industrial AND (company_size = small OR source = paid).
+
+Coeficiente estandarizado: **+0.1204**.
+
+Se eligió porque combina:
+- baja cardinalidad;
+- disponibilidad desde T0/T1;
+- ausencia de mutable history;
+- menor superficie de leakage;
+- concentración operativa;
+- facilidad de explicar y monitorear.
+
+Después de Platt, el holdout contiene esencialmente dos niveles de score:
+- **0.187899**;
+- **0.253098**.
+
+Eso es una fortaleza de gobernanza y una limitación predictiva. El notebook no debe fingir una granularidad que el modelo no posee.
+"""),
         md(
             "### 5.2 Ranking bajo capacidad limitada\n\n"
             "Recall@X responde la pregunta operativa: ¿qué proporción de resultados positivos aparece "
@@ -469,6 +577,22 @@ Este registro explica por qué varias ideas interesantes terminan **fuera** del 
             "gains = pd.read_csv(ROOT/'outputs/tables/gains.csv')\n"
             "display(gains.query('population_fraction in [0.05, 0.1, 0.2]').round(4))"
         ),
+        md("""### 5.2.1 Política capacity-first y empates
+
+El sistema no usa 0.5 como cutoff por convención. La operación se define por capacidad:
+
+| Capacidad trabajada | Precision | Recall | Lift |
+|---:|---:|---:|---:|
+| 5% | 35.83% | 8.49% | **1.689×** |
+| 10% | 35.83% | **16.98%** | **1.689×** |
+| 20% | 28.37% | 26.80% | **1.337×** |
+
+La política final congela **top 10%** como default y escenarios 5/10/20%.
+
+El threshold de validation asociado al P90 es aproximadamente **0.253098**. No es una frontera universal de “lead bueno”; es una consecuencia de la capacidad disponible en esta muestra.
+
+Como existen muchos empates, Lift@K se calcula de forma **tie-aware**: si el corte atraviesa un bloque de scores iguales, se usa captura esperada fraccional en vez de depender del orden físico de las filas.
+"""),
         md(
             "### 5.3 Calibración e incertidumbre\n\n"
             "La calibración Platt se ajusta en validación y se conserva sólo si mejora. Los intervalos "
@@ -478,12 +602,50 @@ Este registro explica por qué varias ideas interesantes terminan **fuera** del 
             "display(Image(filename=str(ROOT/'outputs/figures/calibration_plot.png')))\n"
             "display(pd.read_csv(ROOT/'outputs/metrics/t1_metric_intervals.csv').round(4))"
         ),
+        md("""### 5.3.1 Calibración: se retiene, pero no se sobrevende
+
+Platt scaling se ajusta únicamente sobre validation.
+
+Antes:
+- Brier = 0.1561106;
+- Log Loss = 0.4909444.
+
+Después:
+- Brier = **0.1560762**;
+- Log Loss = **0.4908026**.
+
+La mejora es marginal, pero cumple la regla de retención. En el holdout:
+- Brier seleccionado = **0.16577**;
+- baseline de prevalencia = **0.16725**;
+- Brier skill score ≈ **0.0088**.
+
+La tabla de calibración muestra que la banda alta está **subcalibrada**: predicción media 0.2531 frente a tasa observada 0.3583.
+
+Por eso el score sirve para **ranking y priorización**, pero sus probabilidades no deben presentarse como probabilidades económicas definitivas.
+"""),
         md("### 5.4 Interpretabilidad y estabilidad temporal"),
         code(
             "display(pd.read_csv(ROOT/'outputs/tables/feature_importance.csv').head(20))\n"
             "display(pd.read_csv(ROOT/'outputs/tables/monthly_model_stability.csv').round(4))\n"
             "display(pd.read_csv(ROOT/'outputs/tables/feature_drift.csv').sort_values('value', ascending=False).head(20))"
         ),
+        md("""### 5.4.1 Estabilidad temporal: señal útil, heterogeneidad real
+
+Lift@10 mensual en el holdout 2026:
+
+| Mes | Lift@10 |
+|---|---:|
+| Enero | 1.207× |
+| Febrero | 1.281× |
+| Marzo | 2.554× |
+| Abril | 1.432× |
+| Mayo | 1.650× |
+| Junio | 1.823× |
+
+Todos los meses quedan por encima de 1, pero marzo es claramente atípico. Junto con los folds rolling débiles, esto obliga a monitorear prevalence, Lift/Recall@K, Brier, distribución del segmento Industrial-small/paid y drift de la feature final.
+
+La estabilidad no se resume como “pasó/no pasó”; se conserva la heterogeneidad temporal porque es parte del riesgo de despliegue.
+"""),
         md(
             "### 5.5 Error analysis y desempeño por segmento\n\n"
             "El notebook no termina en una métrica agregada. Se inspeccionan errores, segmentos y estabilidad "
@@ -494,6 +656,41 @@ Este registro explica por qué varias ideas interesantes terminan **fuera** del 
             "display(pd.read_csv(ROOT/'outputs/tables/error_analysis.csv').head(30))\n"
             "display(pd.read_csv(ROOT/'outputs/tables/segment_metrics.csv').round(4).head(40))"
         ),
+        md("""### 5.5.1 Error analysis: dónde falla realmente
+
+Con el cutoff operacional 0.253098, el holdout contiene:
+- **120 false positives** de prioridad;
+- **296 false negatives**.
+
+Todos los false positives están en la banda alta y todos los false negatives en la banda baja. El problema no es una frontera mal afinada entre probabilidades cercanas: el problema es que la hipótesis de segmentación es **demasiado gruesa**.
+
+Por sector:
+
+| Sector | N | AUC | AP | Lift@10 |
+|---|---:|---:|---:|---:|
+| Industrial | 434 | **0.616** | **0.318** | **1.401×** |
+| Land | 281 | 0.500 | 0.192 | 1.000× |
+| Office | 478 | 0.500 | 0.205 | 1.000× |
+| Retail | 518 | 0.500 | 0.193 | 1.000× |
+
+Esto es consistente con la arquitectura: fuera de Industrial, el modelo es prácticamente un prior.
+
+La siguiente mejora no es mover el threshold. Requiere **nuevas señales PIT** que separen mejor positivos y negativos dentro y fuera del segmento.
+"""),
+        md("""### 5.6 Qué se intentó y por qué no reemplaza al champion
+
+| Hipótesis / familia | Resultado útil | Decisión |
+|---|---|---|
+| CatBoost generalista | en Codexway: PR-AUC 0.2086, Lift@10 0.826×, Brier 0.2423 | **No promover** |
+| Specialist CatBoost / RF | competitivos en rolling histórico bajo otro stack | evidencia auxiliar; contrato no equivalente |
+| Shared backbone / Multi-Head | mejoró un pooled neural inicial | después superado por tabulares; no canónico |
+| Trajectory / progression | señal puntual en T2 | mantener como extensión T2, no contaminar T1 |
+| Dynamic Need | segmentación interpretable, mejora puntual con IC cruzando cero | auxiliar / routing hypothesis |
+| Clusters / matching pockets | pockets locales de alto lift | no convertir en reglas sin confirmación independiente |
+| Semantic rules / LLM features | sin lift incremental robusto | fuera del predictor |
+
+El valor de esta investigación no es “tener muchos modelos”, sino **reducir el espacio de decisiones** hasta una solución defendible. El champion final es pequeño porque varias alternativas más sofisticadas no justificaron su promoción bajo el mismo estándar temporal.
+"""),
         md(
             "## 6. Inventory, Opportunity y fallback\n\n"
             "### 6.1 Disponibilidad point-in-time\n\n"
