@@ -11,6 +11,8 @@ Repositorio: <https://github.com/jcval94/spot2>
 3. `03_NOTEBOOK_SPOT2.html` — recorrido end-to-end ejecutado: lecturas, auditoría, EDA, ABT/feature engineering, modelos, Inventory/fallback, Opportunity, IA y producción, con código plegable.
 4. `04_NOTEBOOK_SPOT2.ipynb` — fuente reproducible del mismo recorrido analítico.
 
+El notebook consolidado contiene actualmente **92 celdas totales y 35 celdas de código ejecutadas**. El ZIP se reconstruye y valida automáticamente contra los archivos canónicos del notebook para evitar distribuir una versión desactualizada.
+
 ## Conclusión
 
 La señal comercial permite concentrar **69% más visitas** en el 10% priorizado frente a una selección al azar. Inventory se conserva como un segundo eje operativo: no se presenta como mejora incremental de conversión, sino como la señal que permite decidir si una oportunidad debe priorizarse, verificarse, recibir una alternativa o quedar sin recomendación cuando no existe evidencia suficiente.
