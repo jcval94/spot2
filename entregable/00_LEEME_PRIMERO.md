@@ -13,6 +13,10 @@ Repositorio: <https://github.com/jcval94/spot2>
 
 ## Conclusión
 
-La señal comercial permite concentrar 69% más visitas en el 10% priorizado frente a una selección al azar. Incorporar inventario también supera al azar, aunque su mejora adicional todavía no está demostrada. Por ello, la recomendación es observar la propuesta con datos nuevos sin cambiar la operación y después validarla mediante un experimento controlado con asignación fija por lead.
+La señal comercial permite concentrar **69% más visitas** en el 10% priorizado frente a una selección al azar. Inventory se conserva como un segundo eje operativo: no se presenta como mejora incremental de conversión, sino como la señal que permite decidir si una oportunidad debe priorizarse, verificarse, recibir una alternativa o quedar sin recomendación cuando no existe evidencia suficiente.
+
+La lectura ejecutiva es: **Oportunidad = posibilidad de avanzar × posibilidad de atenderla.**
+
+La recomendación es observar la propuesta con datos nuevos sin automatizar y, si la señal se mantiene, validarla mediante un experimento controlado con asignación fija por lead.
 
 El prompt exacto utilizado para la prueba de IA está incluido dentro del notebook, en el capítulo dedicado a IA. La IA se propone únicamente para control de calidad del catálogo; el puntaje principal no depende de ella.
