@@ -153,9 +153,9 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
     cells = [
         md(
             "# Spot2 · Lead Opportunity Score\n\n"
-            "**Assessment ejecutivo reproducible.** Conecta la decisión de negocio con la evidencia, "
-            "el contrato point-in-time y el código que produce cada resultado. Los Markdown extensos "
-            "siguen siendo anexos; este notebook es la ruta analítica de lectura."
+            "**Assessment end-to-end reproducible.** Recorre fuentes canónicas, auditoría, EDA, contrato temporal, "
+            "feature engineering, modelado, Inventory, fallback, Opportunity, IA, robustez y producción. "
+            "Los anexos conservan el detalle exhaustivo; este notebook muestra la evidencia ejecutada que conecta todo el trabajo."
         ),
         md(
             "## 1. tl;dr — decisión ejecutiva\n\n"
@@ -164,8 +164,9 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
         ),
         code(
             "from pathlib import Path\n"
-            "import json, pandas as pd\n"
-            "from IPython.display import display, Markdown, HTML, Image\n"
+            "import json, pandas as pd, numpy as np, yaml\n"
+            "import matplotlib.pyplot as plt\n"
+            "from IPython.display import display, Markdown, HTML, Image, SVG\n"
             "ROOT = Path.cwd()\n"
             "def read_json(path): return json.loads((ROOT/path).read_text(encoding='utf-8'))\n"
             "model = read_json(Path('outputs/metrics/t1_model_metrics.json'))\n"
@@ -214,7 +215,39 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(pd.DataFrame(audit['tables']).T if isinstance(audit.get('tables'), dict) else audit)"
         ),
         md(
-            "### 2.3 Target, madurez y censura\n\n"
+            "### 2.3 Lectura directa de las seis fuentes canónicas\n\n"
+            "El notebook no parte únicamente de métricas precalculadas: vuelve a leer las seis tablas "
+            "Parquet canónicas y deja visible su grano, tamaño y una muestra acotada. Los CSV se usan "
+            "sólo como control de equivalencia; nunca se concatenan con Parquet."
+        ),
+        code(
+            "DATA = ROOT.parent/'data'/'candidate'/'parquet'\n"
+            "CSV_DATA = ROOT.parent/'data'/'candidate'/'csv'\n"
+            "raw_names = ['leads','inquiries','spots','spot_attributes','availability_snapshot','market_context']\n"
+            "raw = {name: pd.read_parquet(DATA/f'{name}.parquet') for name in raw_names}\n"
+            "inventory = pd.DataFrame({name: {'rows': len(df), 'columns': df.shape[1]} for name, df in raw.items()}).T\n"
+            "display(inventory)\n"
+            "display(raw['leads'].head(3)); display(raw['inquiries'].head(3)); display(raw['spots'].head(3))"
+        ),
+        md(
+            "### 2.4 Equivalencia CSV ↔ Parquet, llaves y missingness\n\n"
+            "La duplicidad de formatos es una trampa potencial del assessment. Se valida que CSV y Parquet "
+            "representen las mismas tablas y se inspeccionan llaves, rangos temporales y ausencia de datos "
+            "antes de construir cualquier target o feature."
+        ),
+        code(
+            "equiv = []\n"
+            "for name in raw_names:\n"
+            "    csv_df = pd.read_csv(CSV_DATA/f'{name}.csv')\n"
+            "    pq_df = raw[name]\n"
+            "    equiv.append({'table': name, 'rows_parquet': len(pq_df), 'rows_csv': len(csv_df), "
+            "'same_rows': len(pq_df)==len(csv_df), 'same_columns': set(pq_df.columns)==set(csv_df.columns)})\n"
+            "display(pd.DataFrame(equiv))\n"
+            "missing = pd.read_csv(ROOT/'outputs/tables/data_quality_missingness.csv')\n"
+            "display(missing.head(35))"
+        ),
+        md(
+            "### 2.5 Target, madurez y censura\n\n"
             "El proxy primario es `scheduled_visit` en la primera solicitud. Siete días es el buffer "
             "de madurez por defecto. Filas sin seguimiento suficiente conservan `target = NA`; nunca se "
             "convierten silenciosamente en negativas."
@@ -226,7 +259,7 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(maturity); display(target_metrics.round(4)); display(Image(filename=str(ROOT/'outputs/figures/target_drift.png')))"
         ),
         md(
-            "### 2.4 Política de leakage\n\n"
+            "### 2.6 Política de leakage\n\n"
             "La allowlist excluye respuesta del broker, horas de respuesta, score interno, solicitudes "
             "futuras, contadores mutables, contexto de mercado ambiguo y snapshots más cercanos o futuros. "
             "Una señal entra sólo si era demostrablemente observable al momento del score."
@@ -254,8 +287,78 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(pd.read_csv(ROOT/'outputs/tables/market_context_eda.csv'))"
         ),
         md(
-            "## 4. Lead Quality — selección, ranking y calibración\n\n"
-            "### 4.1 Baselines antes de complejidad\n\n"
+            "### 3.3 EDA integrado: hallazgos que cambiaron la solución\n\n"
+            "El EDA final consolidó Codexway, experimentos y AssessmentSol1 sin alterar la solución ganadora. "
+            "Aquí se recuperan los hallazgos que sí cambiaron decisiones: presión Retail, refinamiento T0→T1, "
+            "missingness semántico, deriva de candidate depth, cobertura/vigencia y el riesgo de joins futuros."
+        ),
+        code(
+            "eda_metrics = pd.read_csv(ROOT.parent/'entregable/01_eda/tablas/01_metricas_eda_clave.csv')\n"
+            "focus_topics = ['Contrato T1','Demanda vs oferta','Refinamiento','Datos faltantes','Exposición','Inventario','Disponibilidad','Vigencia','Compatibilidad']\n"
+            "display(eda_metrics[eda_metrics['tema'].isin(focus_topics)].reset_index(drop=True))"
+        ),
+        md("### 3.4 Evidencia visual del EDA final"),
+        code(
+            "eda_fig_dir = ROOT.parent/'entregable/01_eda/figuras'\n"
+            "eda_gallery = [\n"
+            " ('01_demanda_vs_oferta_sector.svg','Demanda vs oferta por sector'),\n"
+            " ('02_target_vs_coverage_temporal.svg','Target y cobertura cambian con el tiempo'),\n"
+            " ('03_candidate_depth_temporal.svg','La profundidad de candidatos deriva'),\n"
+            " ('04_refinamiento_area.svg','La primera consulta refina la necesidad'),\n"
+            " ('09_join_availability_leakage.svg','Nearest availability puede mirar al futuro'),\n"
+            " ('14_unknown_no_es_unavailable.svg','UNKNOWN no es UNAVAILABLE'),\n"
+            " ('16_no_estacionariedad_clocks.svg','No estacionariedad de múltiples clocks'),\n"
+            " ('22_quality_inventory_quadrant.svg','Quality e Inventory son dos ejes distintos'),\n"
+            "]\n"
+            "for filename, caption in eda_gallery:\n"
+            "    path = eda_fig_dir/filename\n"
+            "    assert path.exists(), path\n"
+            "    display(Markdown(f'**{caption}**'))\n"
+            "    display(SVG(filename=str(path)))"
+        ),
+        md(
+            "### 3.5 De EDA a decisiones de ingeniería\n\n"
+            "- T1 gana a T0 porque la consulta aporta información nueva.\n"
+            "- UNKNOWN no es UNAVAILABLE: incertidumbre y vigencia sobreviven al scoring.\n"
+            "- market_context permanece EDA_ONLY por ausencia de publication time.\n"
+            "- Conteos de consultas futuras y estado mutable del listing quedan fuera del modelo limpio.\n"
+            "- Los pockets de clusters quedan como hipótesis: 0/19 celdas pasan BH-FDR 10% en confirmación."
+        ),
+        md(
+            "## 4. ABT y feature engineering point-in-time\n\n"
+            "El modelado empieza sólo después de congelar el reloj. La ABT T1 mantiene un registro por lead "
+            "en su primera inquiry y separa señales de intake, payload contemporáneo y transformaciones "
+            "determinísticas T0→T1."
+        ),
+        code(
+            "abt_t1 = pd.read_parquet(ROOT/'outputs/abt/abt_t1_first_inquiry.parquet')\n"
+            "policy = yaml.safe_load((ROOT/'config/feature_policy.yaml').read_text(encoding='utf-8'))['clean_t1']\n"
+            "summary = {\n"
+            " 'rows': len(abt_t1), 'columns': abt_t1.shape[1],\n"
+            " 'target_observed': int(abt_t1['target'].notna().sum()),\n"
+            " 'target_positive': int((abt_t1['target']==1).sum()),\n"
+            " 'allow_features': len(policy['allow']), 'forbidden_features': len(policy['forbidden'])}\n"
+            "display(pd.Series(summary, name='ABT T1'))\n"
+            "display(pd.DataFrame({'allow': pd.Series(policy['allow']), 'forbidden': pd.Series(policy['forbidden'])}))"
+        ),
+        md(
+            "### 9.1 Features derivadas y consistencia T0→T1\n\n"
+            "Las transformaciones priorizan semántica y reproducibilidad: ratios de área/presupuesto, "
+            "días desde creación, estados de missingness y una interacción estable de baja cardinalidad. "
+            "No se promueven features por correlación aislada."
+        ),
+        code(
+            "derived = ['days_from_lead_creation','area_request_to_target_ratio',"
+            "'rent_request_to_lead_budget_ratio','sale_request_to_lead_budget_ratio',"
+            "'industrial_small_or_paid_interaction']\n"
+            "available = [c for c in derived if c in abt_t1.columns]\n"
+            "display(abt_t1[['lead_id','inquiry_id','target'] + available].head(12))"
+        ),
+        md("### 9.2 T0 y T2 como sensibilidades, no como mezcla de scores"),
+        code("display(read_json(Path('outputs/metrics/t0_t2_sensitivity_metrics.json')))"),
+        md(
+            "## 5. Lead Quality — selección, ranking y calibración\n\n"
+            "### 9.1 Baselines antes de complejidad\n\n"
             "Tasa positiva, una regla interpretable y Regresión Logística preceden a CatBoost. La promoción "
             "usa folds temporales expansivos; el holdout no participa en la selección."
         ),
@@ -264,7 +367,7 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(pd.read_csv(ROOT/'outputs/metrics/rolling_model_comparison.csv').round(4))"
         ),
         md(
-            "### 4.2 Ranking bajo capacidad limitada\n\n"
+            "### 9.2 Ranking bajo capacidad limitada\n\n"
             "Recall@X responde la pregunta operativa: ¿qué proporción de resultados positivos aparece "
             "al trabajar sólo el X% superior de leads?"
         ),
@@ -274,7 +377,7 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(gains.query('population_fraction in [0.05, 0.1, 0.2]').round(4))"
         ),
         md(
-            "### 4.3 Calibración e incertidumbre\n\n"
+            "### 9.3 Calibración e incertidumbre\n\n"
             "La calibración Platt se ajusta en validación y se conserva sólo si mejora. Los intervalos "
             "bootstrap separan una señal plausible de una falsa precisión puntual."
         ),
@@ -282,15 +385,25 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(Image(filename=str(ROOT/'outputs/figures/calibration_plot.png')))\n"
             "display(pd.read_csv(ROOT/'outputs/metrics/t1_metric_intervals.csv').round(4))"
         ),
-        md("### 4.4 Interpretabilidad y estabilidad temporal"),
+        md("### 7.4 Interpretabilidad y estabilidad temporal"),
         code(
             "display(pd.read_csv(ROOT/'outputs/tables/feature_importance.csv').head(20))\n"
             "display(pd.read_csv(ROOT/'outputs/tables/monthly_model_stability.csv').round(4))\n"
             "display(pd.read_csv(ROOT/'outputs/tables/feature_drift.csv').sort_values('value', ascending=False).head(20))"
         ),
         md(
-            "## 5. Inventory, Opportunity y fallback\n\n"
-            "### 5.1 Disponibilidad point-in-time\n\n"
+            "### 5.5 Error analysis y desempeño por segmento\n\n"
+            "El notebook no termina en una métrica agregada. Se inspeccionan errores, segmentos y estabilidad "
+            "mensual para detectar dónde el ranking falla, dónde hay soporte pequeño y dónde una mejora aparente "
+            "podría ser artefacto temporal."
+        ),
+        code(
+            "display(pd.read_csv(ROOT/'outputs/tables/error_analysis.csv').head(30))\n"
+            "display(pd.read_csv(ROOT/'outputs/tables/segment_metrics.csv').round(4).head(40))"
+        ),
+        md(
+            "## 6. Inventory, Opportunity y fallback\n\n"
+            "### 9.1 Disponibilidad point-in-time\n\n"
             "Availability se une con un **backward as-of** estricto. Historia ausente o vieja significa "
             "**UNKNOWN, no UNAVAILABLE**, y se expresa como bounds lower/upper; jamás se rellena desde el futuro."
         ),
@@ -300,7 +413,7 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(read_json(Path('outputs/metrics/inventory_audit.json')))"
         ),
         md(
-            "### 5.2 Trade-off central\n\n"
+            "### 9.2 Trade-off central\n\n"
             "Los componentes se comparan sobre el mismo holdout. Como T1 no observa éxito de fallback, "
             "la comparación combinada es diagnóstico de ranking, no probabilidad calibrada de inventario."
         ),
@@ -315,7 +428,7 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "incremental a Quality sobre el proxy T1. Su gate permanece <strong>NO-GO</strong>.</div>"
         ),
         md(
-            "### 5.3 Política de dos ejes y alternativas\n\n"
+            "### 9.3 Política de dos ejes y alternativas\n\n"
             "Quality y Serviceability permanecen separados: verificar inventario incierto, buscar "
             "alternativas para demanda de calidad sin servicio y mantener el flujo estándar en el resto. "
             "El ranking conserva top-3 interno y muestra hasta cinco alternativas compatibles."
@@ -326,7 +439,7 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "show = ['lead_id','lead_quality_score_0_100','inventory_serviceability_lower','inventory_serviceability_upper','inventory_confidence','fallback_spot_ids','fallback_reason_codes']\n"
             "display(scores[show].head(10))"
         ),
-        md("### 5.4 Caso real anotado: lead 6 de validación"),
+        md("### 7.4 Caso real anotado: lead 6 de validación"),
         code(
             "case = scores.query(\"lead_id == 6 and split == 'validation'\").iloc[0]\n"
             "fallback_ids = json.loads(case['fallback_spot_ids']) if isinstance(case['fallback_spot_ids'], str) else list(case['fallback_spot_ids'])\n"
@@ -356,8 +469,21 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "         'action': action, 'visible_fallbacks': visible_fallbacks})"
         ),
         md(
-            "## 6. Robustez, IA y producto\n\n"
-            "### 6.1 Clusters y combinaciones\n\n"
+            "### 6.5 Profundidad de candidatos y cobertura de fallback\n\n"
+            "La capacidad de atención no es estática: el número de candidatos por lead cambia materialmente "
+            "con el tiempo. Por eso candidate depth no entra a Lead Quality y el fallback permite NO_RESULT "
+            "antes que violar hard constraints."
+        ),
+        code(
+            "inv_candidates = pd.read_parquet(ROOT/'outputs/abt/abt_inventory_candidates.parquet')\n"
+            "depth = inv_candidates.groupby('lead_id').size().rename('candidate_depth')\n"
+            "display(depth.describe(percentiles=[.1,.25,.5,.75,.9,.95]).to_frame())\n"
+            "fallback_counts = scores['fallback_spot_ids'].apply(lambda x: len(json.loads(x)) if isinstance(x,str) and x.startswith('[') else 0)\n"
+            "display(fallback_counts.value_counts().sort_index().rename_axis('visible_fallbacks').to_frame('leads'))"
+        ),
+        md(
+            "## 7. Robustez, IA y producto\n\n"
+            "### 9.1 Clusters y combinaciones\n\n"
             "Los perfiles se ajustan dentro de train y se condicionan a balance y estabilidad ARI. Las "
             "combinaciones exigen N≥50, shrinkage, intervalos Wilson y BH-FDR. Ningún cluster descubierto "
             "multiplica el score de producción."
@@ -367,13 +493,13 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(pd.read_csv(ROOT/'outputs/tables/cluster_combinations.csv').head(15))"
         ),
         md(
-            "### 6.2 Stress test de leakage\n\n"
+            "### 9.2 Stress test de leakage\n\n"
             "Variantes deliberadamente inválidas muestran por qué una métrica aparente alta no equivale "
             "a un sistema desplegable. La ruta limpia no puede importar esas señales."
         ),
         code("display(read_json(Path('outputs/metrics/leakage_stress_test.json')))"),
         md(
-            "### 6.3 IA con alcance acotado: Catalog QA\n\n"
+            "### 9.3 IA con alcance acotado: Catalog QA\n\n"
             "El LLM audita contradicciones entre texto de listing y atributos estructurados. Es QA "
             "cross-sectional, no feature histórica. La precisión natural aún requiere gold humano ciego; "
             "el benchmark inyectado y controlado sólo mide sensibilidad."
@@ -381,28 +507,62 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
         code("llm = read_json(Path('outputs/metrics/llm_audit_evaluation.json')); display(llm)"),
         md("#### Prompt LLM versionado\n\n" + prompt),
         md(
-            "### 6.4 Roadmap de medición\n\n"
+            "### 7.4 Roadmap de medición\n\n"
             "Versionar precio, geografía, copy y lifecycle; registrar exposición a cada recomendación; "
             "capturar visita y conversión a horizontes fijos; crear un holdout temporal realmente intacto; "
             "y sólo entonces lanzar un RCT *sticky* por `lead_id`."
         ),
         code("display(read_json(Path('outputs/tables/online_ab_protocol.json')))"),
         md(
-            "## 7. Conclusiones y reproducción\n\n"
-            "### 7.1 Lo que queda decidido\n\n"
+            "## 8. Producción, gobierno y trazabilidad\n\n"
+            "El trabajo no se cierra en un modelo offline. La entrega deja contrato de scoring, readiness, "
+            "protocolo A/B, evidencia de decisiones y una ruta reproducible para volver a generar ABTs, "
+            "predicciones, métricas, notebook y HTML."
+        ),
+        code(
+            "display(read_json(Path('outputs/metrics/deployment_readiness.json')))\n"
+            "display(read_json(Path('outputs/tables/online_ab_protocol.json')))"
+        ),
+        md(
+            "### 8.1 Evidencia y artefactos canónicos\n\n"
+            "- evidence/LEAKAGE_MATRIX.md: qué puede y qué no puede entrar.\n"
+            "- evidence/DECISIONS.md: decisiones metodológicas.\n"
+            "- evidence/TRACEABILITY.md: trazabilidad de claims.\n"
+            "- outputs/metrics/: métricas versionadas.\n"
+            "- outputs/predictions/lead_opportunity_scores.parquet: salida operacional.\n"
+            "- entregable/: narrativa final en español."
+        ),
+        code(
+            "artifacts = [\n"
+            " ROOT/'outputs/predictions/lead_opportunity_scores.parquet',\n"
+            " ROOT/'outputs/metrics/t1_model_metrics.json',\n"
+            " ROOT/'outputs/metrics/system_evaluation.json',\n"
+            " ROOT/'outputs/tables/error_analysis.csv',\n"
+            " ROOT/'evidence/LEAKAGE_MATRIX.md',\n"
+            " ROOT.parent/'entregable/01_eda/EDA_FINAL.md',\n"
+            " ROOT.parent/'entregable/03_lead_quality/MODELO_CALIDAD_LEAD.md',\n"
+            " ROOT.parent/'entregable/05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md',\n"
+            "]\n"
+            "artifact_check = pd.DataFrame({'artifact':[str(p.relative_to(ROOT.parent)) for p in artifacts], 'exists':[p.exists() for p in artifacts]})\n"
+            "assert artifact_check['exists'].all()\n"
+            "display(artifact_check)"
+        ),
+        md(
+            "## 9. Conclusiones y reproducción\n\n"
+            "### 9.1 Lo que queda decidido\n\n"
             "`stable_segment_logistic` calibrado ofrece una señal útil de priorización absoluta. El score "
             "conservador de Opportunity también supera random, pero no supera a Quality; Inventory mantiene "
             "gate incremental NO-GO. La secuencia correcta es **shadow → validación → RCT con guardas**, "
             "mientras IA se limita a Catalog QA."
         ),
         md(
-            "### 7.2 Limitaciones\n\n"
+            "### 9.2 Limitaciones\n\n"
             "El target es un proxy de primer contacto; el dataset global fue inspeccionado previamente; "
             "campos del listing no están versionados por completo; el timing de mercado es incierto; falta "
             "gold natural para LLM; las métricas offline son observacionales; y no se probó uplift causal."
         ),
         md(
-            "### 7.3 Cómo reproducir\n\n"
+            "### 9.3 Cómo reproducir\n\n"
             "Desde la raíz del repositorio: `python codexway/scripts/run_all.py --skip-live-llm`. El runner "
             "audita datos, construye ABTs, entrena, evalúa, ejecuta pruebas y vuelve a generar este `.ipynb` "
             "y su HTML. Una segunda ejecución verifica fingerprints de predicción."
