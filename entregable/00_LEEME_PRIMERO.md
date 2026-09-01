@@ -13,6 +13,8 @@ Repositorio: <https://github.com/jcval94/spot2>
 
 El notebook consolidado contiene actualmente **99 celdas totales y 35 celdas de código ejecutadas**. El ZIP se reconstruye y valida automáticamente contra los archivos canónicos del notebook para evitar distribuir una versión desactualizada.
 
+La versión final desarrolla de forma explícita el **mapa de experimentos y decisiones, resultados negativos, leakage stress tests, IA/Catalog QA, arquitectura de producción, versionamiento, monitoreo, diseño experimental, limitaciones y reproducción**. Las Partes 1–3 se preservan; el cierre ampliado está en los capítulos 7–9.
+
 ## Conclusión
 
 La señal comercial permite concentrar **69% más visitas** en el 10% priorizado frente a una selección al azar. Inventory se conserva como un segundo eje operativo: no se presenta como mejora incremental de conversión, sino como la señal que permite decidir si una oportunidad debe priorizarse, verificarse, recibir una alternativa o quedar sin recomendación cuando no existe evidencia suficiente.
