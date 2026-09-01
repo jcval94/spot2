@@ -21,7 +21,10 @@ La respuesta a la tercera pregunta fue especialmente importante: **no**. La inte
 - **No conocer la disponibilidad no equivale a saber que un inmueble no está disponible.**
 - **La profundidad de alternativas aumenta con el tiempo**, aun cuando la proporción de visitas agendadas se mantiene relativamente estable.
 - **No todos los atributos del inmueble tienen historial completo**, por lo que algunas comparaciones históricas deben interpretarse con cautela.
-- **La segmentación encontró patrones interesantes, pero no reglas suficientemente robustas para convertirlas en multiplicadores del puntaje final.**
+- **El clustering por entidad sí produjo conocimiento útil:** Search Need separa renta/venta/flexible; Dynamic Need muestra cómo se refina la necesidad en T1; Spot se entiende mejor separando Physical y Location; y Broker Service produce perfiles estables.
+- **Los resultados negativos también cambiaron la solución:** Inquiry Intent aprendía casi sólo el día de la semana y Broker Supply no sostuvo clusters balanceados, por lo que ambos fueron descartados como reglas.
+- **La combinación DN4 × LOC1 × BSV1 fue el pocket histórico más fuerte:** N=60, 36.67% de visitas, 31.37% suavizado y 1.510x de lift. Se conserva como hipótesis de routing para nueva cohorte/A-B, no como multiplicador del puntaje.
+- **La confirmación gobernada evitó sobreajuste:** 0 de 19 celdas elegibles superaron BH-FDR 10%, por lo que el entregable final separa claramente discovery de evidencia confirmatoria.
 
 ## Momento de evaluación
 
@@ -55,6 +58,7 @@ Si el tiempo es limitado, recomendamos:
 2. revisar la comparación entre demanda e inventario;
 3. revisar cómo cambia la disponibilidad en el tiempo;
 4. revisar la diferencia entre “desconocido” y “no disponible”;
-5. terminar con la tabla que conecta **hallazgo → evidencia → implicación → decisión**.
+5. leer las secciones **15 y 16** para entender los perfiles por entidad y las combinaciones de compatibilidad;
+6. terminar con la tabla que conecta **hallazgo → evidencia → implicación → decisión**.
 
 La idea central es sencilla: **priorizar bien no depende sólo de saber quién parece un buen lead; también depende de saber qué inventario era realmente observable y utilizable en ese momento.**
