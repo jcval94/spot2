@@ -1,0 +1,111 @@
+name: Refresh executive One Pager
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "entregable/02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html"
+      - "entregable/00_LEEME_PRIMERO.md"
+      - ".github/workflows/refresh-executive-one-pager.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install renderer
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright pypdf
+          python -m playwright install --with-deps chromium
+
+      - name: Render One Pager PDF
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          from pypdf import PdfReader
+
+          src = Path("entregable/02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html")
+          out = Path("entregable/02_one_pager/ONE_PAGER_SPOT2.pdf")
+          html = src.read_text(encoding="utf-8")
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              page = browser.new_page(viewport={"width": 816, "height": 1056})
+              page.set_content(html, wait_until="load")
+              page.emulate_media(media="print")
+              page.pdf(
+                  path=str(out),
+                  format="Letter",
+                  print_background=True,
+                  display_header_footer=False,
+                  prefer_css_page_size=True,
+                  margin={"top":"0","right":"0","bottom":"0","left":"0"},
+              )
+              browser.close()
+
+          reader = PdfReader(str(out))
+          if len(reader.pages) != 1:
+              raise SystemExit(f"One Pager must have exactly 1 page; got {len(reader.pages)}")
+          if out.stat().st_size < 50_000:
+              raise SystemExit("Rendered PDF is unexpectedly small")
+          print(f"Rendered {out} ({out.stat().st_size} bytes, 1 page)")
+          PY
+
+      - name: Rebuild final delivery ZIP
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+
+          root = Path(".")
+          out = root / "entregable" / "SPOT2_ASSESSMENT_FINAL.zip"
+          items = [
+              (root / "entregable" / "00_LEEME_PRIMERO.md", "00_LEEME_PRIMERO.md"),
+              (root / "entregable" / "06_deck_ejecutivo" / "DECK_EJECUTIVO_SPOT2.pdf", "01_DECK_EJECUTIVO_SPOT2.pdf"),
+              (root / "entregable" / "02_one_pager" / "ONE_PAGER_SPOT2.pdf", "02_ONE_PAGER_SPOT2.pdf"),
+              (root / "codexway" / "notebooks" / "spot2_assessment.html", "03_NOTEBOOK_SPOT2.html"),
+              (root / "codexway" / "notebooks" / "spot2_assessment.ipynb", "04_NOTEBOOK_SPOT2.ipynb"),
+          ]
+
+          missing = [str(p) for p, _ in items if not p.exists()]
+          if missing:
+              raise SystemExit("Missing package files: " + ", ".join(missing))
+
+          with ZipFile(out, "w", compression=ZIP_DEFLATED, compresslevel=9) as z:
+              for path, arcname in items:
+                  z.write(path, arcname)
+
+          with ZipFile(out) as z:
+              names = z.namelist()
+          expected = [arc for _, arc in items]
+          if names != expected:
+              raise SystemExit(f"Unexpected ZIP contents: {names}")
+          print(f"Built {out} ({out.stat().st_size} bytes) with {len(names)} files")
+          PY
+
+      - name: Commit regenerated artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add entregable/02_one_pager/ONE_PAGER_SPOT2.pdf entregable/SPOT2_ASSESSMENT_FINAL.zip
+          if git diff --cached --quiet; then
+            echo "No binary artifacts changed."
+          else
+            git commit -m "Regenera One Pager y paquete final"
+            git push
+          fi
