@@ -4,7 +4,13 @@
 - [Abrir PDF final](ONE_PAGER_SPOT2.pdf)
 - [Consultar QA visual](design-qa.md)
 
-El One Pager resume la decisión para Producto y C-Level en 60–90 segundos: existe una señal útil para priorizar oportunidades, el inventario ayuda a decidir qué acción tomar, pero su mejora adicional todavía debe comprobarse. La recomendación es observar primero sin cambiar la operación y después medir impacto con un experimento controlado.
+El One Pager resume la decisión para Producto y C-Level en 60–90 segundos: la señal comercial permite concentrar el esfuerzo en el 10% de oportunidades con mayor señal; Inventory no se presenta como un uplift incremental de conversión, sino como el segundo eje que convierte la prioridad en una acción operativa: priorizar, verificar, ofrecer una alternativa o abstenerse.
+
+La historia ejecutiva queda expresada como:
+
+**Oportunidad = posibilidad de avanzar × posibilidad de atenderla.**
+
+El impacto esperado se formula sin inventar revenue ni cierres: con la misma capacidad comercial, trabajar primero el grupo con mayor señal y usar el inventario para decidir cómo atenderlo. La recomendación es observar primero con datos nuevos, sin automatizar, y después medir impacto con un experimento controlado.
 
 El HTML es la única fuente editorial; el PDF se deriva directamente de él. La metodología, las métricas completas y los riesgos permanecen en los anexos técnicos del repositorio.
 
