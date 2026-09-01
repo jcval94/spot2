@@ -11,6 +11,13 @@ on:
       - "codexway/**"
       - ".github/workflows/codexway-lift-gate.yml"
 
+concurrency:
+  group: codexway-lift-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
 jobs:
   validate:
     runs-on: windows-latest
@@ -53,6 +60,25 @@ jobs:
           assert result["system_deployment_gate"] == "GO"
           print(result)
           '@ | python -
+
+      - name: Rebuild synchronized final ZIP from executed notebook
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: python entregable/build_final_package.py
+
+      - name: Persist executed notebook and synchronized ZIP
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add codexway/notebooks/spot2_assessment.ipynb codexway/notebooks/spot2_assessment.html entregable/SPOT2_ASSESSMENT_FINAL.zip
+          if (git diff --cached --quiet) {
+            Write-Host "Executed notebook and ZIP already synchronized."
+          } else {
+            git commit -m "Persist final executed notebook and synchronized ZIP"
+            git push
+          }
 
       - uses: actions/upload-artifact@v4
         if: always()
