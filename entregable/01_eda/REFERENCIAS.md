@@ -52,13 +52,23 @@ Cuando dos líneas de investigación usan poblaciones, variables objetivo o regl
 
 | ID | Evidencia | Para qué se utilizó |
 |---|---|---|
-| E01 | Segmentación de perfiles | Entender patrones de persona, necesidad, inmueble y ubicación |
-| E02 | Perfiles de compatibilidad | Explorar necesidad dinámica, servicio del intermediario y patrones locales |
+| E01 | [profile_clustering_v2](../../experimentos/profile_clustering_v2/README.md) + resultados de clusterers/perfiles/combinaciones | Clustering resultado-free por Lead, Persona, Search Need, Spot, Broker e Inquiry Intent; balance, estabilidad, interpretación y primeras interacciones Lead × Spot × Broker |
+| E02 | [matching_profiles_v4](../../experimentos/matching_profiles_v4/INTERPRETABILIDAD.md) + [decisión final](../../experimentos/matching_profiles_v4/DECISION_SEGMENTACION.md) | Behavioral Persona, Dynamic Need, Physical/Location, Broker Service/Supply, transición T0→T1 y pockets locales como DN4 × LOC1 × BSV1 |
 | E03 | Tratamiento de variables | Documentar cuándo un dato faltante tiene significado estructural |
 | E04 | Conocimiento agregado | Síntesis de descubrimientos experimentales |
 | E05 | Piloto semántico con IA | Evaluar si un LLM aportaba información nueva al modelo |
 | E06 | Prueba de reglas semánticas | Confirmar que mejorar el control de catálogo no implicaba mejorar el ranking |
 | E07 | Pruebas de compatibilidad y disponibilidad | Auditar relaciones, temporalidad del inventario y alternativas |
+
+### Archivos experimentales usados directamente para la sincronización de clustering
+
+- [Clusterers seleccionados v2](../../experimentos/profile_clustering_v2/results/selected_clusterers.csv)
+- [Interpretabilidad de perfiles v2](../../experimentos/profile_clustering_v2/results/profile_interpretability.csv)
+- [Combinaciones Lead × Spot × Broker v2](../../experimentos/profile_clustering_v2/results/top_3entity_combinations.csv)
+- [Clusterers seleccionados v4](../../experimentos/matching_profiles_v4/results/selected_clusterers.csv)
+- [Interpretabilidad de perfiles v4](../../experimentos/matching_profiles_v4/results/profile_interpretability.csv)
+- [Transición Need T0→T1](../../experimentos/matching_profiles_v4/results/need_t0_t1_transition_matrix.csv)
+- [Pockets con Broker Service](../../experimentos/matching_profiles_v4/results/top_service_compatibility_cells.csv)
 
 ## D. Tablas finales utilizadas en el EDA
 
