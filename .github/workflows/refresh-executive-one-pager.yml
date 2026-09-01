@@ -6,6 +6,8 @@ on:
     paths:
       - "entregable/02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html"
       - "entregable/00_LEEME_PRIMERO.md"
+      - "codexway/notebooks/spot2_assessment.ipynb"
+      - "entregable/01_eda/**"
       - ".github/workflows/refresh-executive-one-pager.yml"
   workflow_dispatch:
 
@@ -29,8 +31,36 @@ jobs:
       - name: Install renderer
         run: |
           python -m pip install --upgrade pip
-          pip install playwright pypdf
+          pip install playwright pypdf nbconvert nbformat
           python -m playwright install --with-deps chromium
+
+      - name: Refresh notebook HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import nbformat
+          from nbconvert import HTMLExporter
+
+          ipynb = Path("codexway/notebooks/spot2_assessment.ipynb")
+          html = Path("codexway/notebooks/spot2_assessment.html")
+
+          nb = nbformat.read(ipynb, as_version=4)
+          body, _ = HTMLExporter().from_notebook_node(nb)
+          html.write_text(body, encoding="utf-8")
+
+          rendered = html.read_text(encoding="utf-8")
+          required = [
+              "Clustering por entidad",
+              "DN4 × LOC1 × BSV1",
+              "Combinaciones poderosas",
+          ]
+          missing = [x for x in required if x not in rendered]
+          if missing:
+              raise SystemExit("Notebook HTML missing synchronized EDA content: " + ", ".join(missing))
+          if html.stat().st_size < 100_000:
+              raise SystemExit("Rendered notebook HTML is unexpectedly small")
+          print(f"Rendered {html} ({html.stat().st_size} bytes)")
+          PY
 
       - name: Render One Pager PDF
         run: |
@@ -102,7 +132,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add entregable/02_one_pager/ONE_PAGER_SPOT2.pdf entregable/SPOT2_ASSESSMENT_FINAL.zip
+          git add codexway/notebooks/spot2_assessment.html entregable/02_one_pager/ONE_PAGER_SPOT2.pdf entregable/SPOT2_ASSESSMENT_FINAL.zip
           if git diff --cached --quiet; then
             echo "No binary artifacts changed."
           else
