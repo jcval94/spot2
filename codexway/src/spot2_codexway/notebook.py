@@ -153,7 +153,7 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
     cells = [
         md(
             "# Spot2 · Lead Opportunity Score\n\n"
-            "**Assessment end-to-end reproducible.** Recorre fuentes canónicas, auditoría, EDA, contrato temporal, "
+            "**Assessment end-to-end reproducible y auditable.** Este notebook no es un resumen decorativo: recorre fuentes canónicas, auditoría, EDA, contrato temporal, "
             "feature engineering, modelado, Inventory, fallback, Opportunity, IA, robustez y producción. "
             "Los anexos conservan el detalle exhaustivo; este notebook muestra la evidencia ejecutada que conecta todo el trabajo."
         ),
@@ -194,6 +194,25 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "<strong>Qué no demuestra.</strong> Inventory no agrega valor incremental probado sobre "
             "Quality y el target T1 no observa el éxito del fallback.</div>"
         ),
+        md("""### 1.1 Mapa del trabajo ejecutado
+
+Este artefacto funciona como **hilo conductor técnico de toda la solución**, no como sustituto de los anexos. El recorrido reproducible es:
+
+1. **Lectura de fuentes:** seis tablas canónicas Parquet, con CSV como control de equivalencia.
+2. **Auditoría:** llaves, grano, timestamps, missingness, duplicados y relaciones.
+3. **EDA:** composición de demanda, target por segmento, temporalidad, mercado, disponibilidad, candidate depth y perfiles.
+4. **Contrato temporal:** T0/T1/T2, madurez del target, censura y matriz explícita de leakage.
+5. **ABT point-in-time:** una fila por lead en T1, allowlist/denylist y transformaciones determinísticas.
+6. **Lead Quality:** baselines, challengers, rolling temporal CV, calibración, ranking por capacidad, estabilidad y error analysis.
+7. **Inventory:** candidate generation, Availability backward-as-of, frescura, incertidumbre y bounds lower/upper.
+8. **Fallback:** top-3 interno para serviceability, hasta cinco alternativas visibles, reason codes y NO_RESULT.
+9. **Opportunity:** combinación conservadora de Quality × Inventory, comparación contra Quality-only y gates.
+10. **Robustez e IA:** stress tests, clustering gobernado, resultados negativos y Catalog QA con LLM.
+11. **Producción:** scoring contract, monitoreo, rollback, shadow validation y protocolo RCT.
+12. **Trazabilidad:** cada claim principal apunta a outputs, tablas, evidencia o entregables finales.
+
+**Regla de lectura:** una conclusión sólo aparece aquí si está respaldada por una celda ejecutada o por un artefacto canónico generado por el pipeline.
+"""),
         md(
             "## 2. Contexto y contrato analítico\n\n"
             "### 2.1 Problema de negocio y momentos de scoring\n\n"
@@ -214,6 +233,21 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "audit = read_json(Path('outputs/tables/data_audit.json'))\n"
             "display(pd.DataFrame(audit['tables']).T if isinstance(audit.get('tables'), dict) else audit)"
         ),
+        md("""### 2.2.1 Inventario de datos antes de modelar
+
+La lectura parte del grano real de cada fuente. No se mezclan tablas por comodidad: primero se define qué representa cada registro y qué reloj gobierna su uso.
+
+| Fuente | Filas | Grano / rol |
+|---|---:|---|
+| leads | 5,000 | una necesidad inicial por lead; intake observable desde T0 |
+| inquiries | 22,576 | eventos lead–spot; en T1 sólo se usa la primera inquiry y su payload contemporáneo |
+| spots | 3,000 | catálogo de listings; varios campos son estado mutable actual, no historia versionada |
+| spot_attributes | 3,000 | atributos físicos 1:1 del spot |
+| availability_snapshot | 30,000 | historia temporal 1:N por spot; exige join backward-as-of |
+| market_context | 500 | agregado geografía × sector × mes; útil para EDA, no para el modelo limpio sin publication time |
+
+La limpieza relacional es alta: 0 duplicados de PK en las tablas canónicas y 0 huérfanos en las relaciones críticas auditadas. El riesgo principal no está en “arreglar datos rotos”, sino en **usar datos correctos en el momento equivocado**.
+"""),
         md(
             "### 2.3 Lectura directa de las seis fuentes canónicas\n\n"
             "El notebook no parte únicamente de métricas precalculadas: vuelve a leer las seis tablas "
@@ -246,6 +280,16 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "missing = pd.read_csv(ROOT/'outputs/tables/data_quality_missingness.csv')\n"
             "display(missing.head(35))"
         ),
+        md("""### 2.4.1 Calidad de datos que sí cambió la arquitectura
+
+Tres hallazgos de calidad de datos alteraron directamente el diseño:
+
+- **Join explosion:** unir inquiries con Availability sólo por spot_id expande 22,576 inquiries a 226,151 filas, aproximadamente **10.017×**. El grano deja de ser lead/inquiry.
+- **Fuga temporal:** escoger el snapshot “más cercano” haría que **7,758 inquiries (34.36%)** recibieran información de un snapshot futuro.
+- **Missingness semántico:** ausencia de presupuesto, urgencia o cobertura de Availability no siempre significa cero/no; se distinguen estados como desconocido, no aplicable y stale.
+
+Por eso el pipeline separa auditoría, feature policy e Inventory. La ausencia de observación se conserva como información y no se rellena con el futuro.
+"""),
         md(
             "### 2.5 Target, madurez y censura\n\n"
             "El proxy primario es `scheduled_visit` en la primera solicitud. Siete días es el buffer "
@@ -258,6 +302,19 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "assert 7 in maturity.select_dtypes('number').astype(float).values\n"
             "display(maturity); display(target_metrics.round(4)); display(Image(filename=str(ROOT/'outputs/figures/target_drift.png')))"
         ),
+        md("""### 2.5.1 Target: qué predice realmente el sistema
+
+El target final de Codexway es **scheduled_visit en la primera inquiry**, no cierre, revenue ni aceptación de fallback. Es un proxy temprano de progreso comercial elegido porque es observable con un contrato temporal defendible.
+
+Con madurez de siete días:
+
+- **4,898** T1 maduros;
+- **1,001** positivos;
+- prevalencia **20.44%**;
+- **102** leads recientes quedan censurados y no se fuerzan a negativo.
+
+La sensibilidad de madurez es estable: la prevalencia permanece alrededor de 20.4% al mover el buffer de 7 a 14 o 30 días. Esto reduce el riesgo de que el resultado dependa de un cutoff conveniente, pero no elimina la limitación conceptual: optimizamos progreso temprano, no valor económico final.
+"""),
         md(
             "### 2.6 Política de leakage\n\n"
             "La allowlist excluye respuesta del broker, horas de respuesta, score interno, solicitudes "
@@ -277,6 +334,19 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(Image(filename=str(ROOT/'outputs/figures/eda_target_segments.png')))\n"
             "display(pd.read_csv(ROOT/'outputs/tables/target_rate_by_segment.csv').sort_values(['segment','n'], ascending=[True,False]).head(20))"
         ),
+        md("""### 3.1.1 Qué mostró el EDA de demanda
+
+La demanda es amplia y no existe una sola “persona Spot2”:
+
+- **Sector:** Retail 30.56%, Office 29.00%, Industrial 24.98%, Land 15.46%.
+- **Modalidad:** rent 50.06%, sale 29.80%, both 20.14%.
+- **Tipo de usuario:** tenant_direct 39.12%, intermediario 36.08%, investor 19.94%, developer 4.86%.
+- **Adquisición:** organic 29.26%, paid 24.92%, referral 20.34%, con el resto distribuido entre social, email y event.
+
+En DEVELOPMENT, Retail también aparece con mayor presión relativa frente al catálogo histórico: **30.40% de demanda vs 24.51% de catálogo (+5.89 pp; índice ≈1.24×)**. Esto es una señal de tensión relativa, no una prueba de serviceability: todavía faltan disponibilidad, área, precio, geografía y vigencia.
+
+La primera inquiry además **refina la necesidad**: por ejemplo, la mediana de área solicitada cambia frente al intake. Ese hallazgo es una de las razones por las que T1 es el momento principal de scoring.
+"""),
         md(
             "### 3.2 Contexto de mercado: narrativa, no feature\n\n"
             "`market_context.month` no tiene timestamp fiable de publicación o vigencia. Sirve para "
@@ -330,6 +400,23 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "- Conteos de consultas futuras y estado mutable del listing quedan fuera del modelo limpio.\n"
             "- Los pockets de clusters quedan como hipótesis: 0/19 celdas pasan BH-FDR 10% en confirmación."
         ),
+        md("""### 3.9 Registro de hipótesis del EDA
+
+El EDA no se cerró con una colección de gráficas; cada hallazgo se convirtió en una decisión o en una hipótesis gobernada.
+
+| Hipótesis | Evidencia | Estado / consecuencia |
+|---|---|---|
+| T1 aporta información adicional frente a T0 | refinamiento del request y sensibilidades T0/T1/T2 | **Soportada** → T1 canónico |
+| Availability puede tratarse como estado actual | coverage/freshness drift y 34.36% de riesgo con nearest snapshot | **Rechazada** → backward-as-of |
+| UNKNOWN equivale a UNAVAILABLE | missing/stale Availability | **Rechazada** → bounds + confidence |
+| Market Context puede entrar directo al modelo | no existe publication time fiable | **Rechazada** → EDA_ONLY |
+| Candidate depth es una señal estable de lead | cambia materialmente con el tiempo | **Rechazada** para Quality → pertenece a Inventory |
+| Pockets de clusters pueden convertirse en reglas | lifts locales altos, pero múltiples comparaciones | **Inconclusa** → hipótesis para nueva cohorte |
+| La compatibilidad entre entidades contiene estructura | perfiles y combinaciones interpretables | **Soportada descriptivamente**, no como multiplicador |
+| Un modelo más complejo debe ganar por defecto | challengers complejos no dominaron estabilidad + top-decile | **Rechazada** → champion simple y estable |
+
+Este registro explica por qué varias ideas interesantes terminan **fuera** del score final: investigar algo y no promoverlo es parte del trabajo, no trabajo perdido.
+"""),
         md(
             "## 4. ABT y feature engineering point-in-time\n\n"
             "El modelado empieza sólo después de congelar el reloj. La ABT T1 mantiene un registro por lead "
@@ -362,6 +449,29 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
         ),
         md("### 4.2 T0 y T2 como sensibilidades, no como mezcla de scores"),
         code("display(read_json(Path('outputs/metrics/t0_t2_sensitivity_metrics.json')))"),
+        md("""### 4.3 Del EDA a la ABT final
+
+La ABT T1 traduce los hallazgos exploratorios a un contrato de features explícito:
+
+**Permitido**
+- atributos de intake ya conocidos;
+- payload de la primera inquiry persistida;
+- transformaciones determinísticas T0→T1;
+- estados de missingness con significado;
+- ratios de área/presupuesto;
+- interacción estable de baja cardinalidad seleccionada con evidencia temporal.
+
+**Prohibido**
+- respuesta del broker y tiempos posteriores;
+- inquiries futuras o agregados que las incluyan;
+- scores internos derivados del proceso;
+- nearest/future Availability;
+- estado mutable actual del listing presentado como histórico;
+- Market Context sin tiempo de publicación;
+- cualquier señal que no pueda reconstruirse al score_time.
+
+La regla central es sencilla: **si no podemos demostrar que una variable existía al momento de decidir, no entra al modelo limpio**, aunque mejore una métrica retrospectiva.
+"""),
         md(
             "## 5. Lead Quality — selección, ranking y calibración\n\n"
             "### 5.1 Baselines antes de complejidad\n\n"
@@ -372,6 +482,23 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(pd.DataFrame(model['metrics']).T.round(4))\n"
             "display(pd.read_csv(ROOT/'outputs/metrics/rolling_model_comparison.csv').round(4))"
         ),
+        md("""### 5.1.1 Embudo de experimentación y selección del champion
+
+Antes de congelar stable_segment_logistic se recorrieron varias familias y arquitecturas. El objetivo no fue “ganar AUC”, sino encontrar señal que sobreviviera al reloj y fuera útil bajo capacidad limitada.
+
+| Línea evaluada | Para qué sirvió | Decisión final |
+|---|---|---|
+| prevalencia / reglas simples | baseline mínimo y sanity check | referencia |
+| Regresión Logística | baseline interpretable y estable | base del champion |
+| CatBoost / modelos no lineales | buscar interacciones y señal incremental | no promovido bajo contrato final |
+| especialistas / segmentación | revisar heterogeneidad por perfiles | evidencia auxiliar; no reemplaza champion |
+| rolling CV + trajectory features | medir estabilidad temporal | usado para selección/gobierno |
+| shared backbone / multi-head | probar arquitectura multi-stage | challenger, no producción |
+| clusters y matching profiles | descubrir estructura latente | EDA/routing hypotheses |
+| semantic rules / LLM-derived features | probar señal semántica incremental | no promovidas al predictor |
+
+El champion gana por **utilidad temporal, concentración top-decile, calibración y simplicidad operacional**. La historia completa incluye los experimentos negativos porque evita que el evaluador confunda “modelo sencillo” con “poca exploración”.
+"""),
         md(
             "### 5.2 Ranking bajo capacidad limitada\n\n"
             "Recall@X responde la pregunta operativa: ¿qué proporción de resultados positivos aparece "
@@ -407,6 +534,21 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "display(pd.read_csv(ROOT/'outputs/tables/error_analysis.csv').head(30))\n"
             "display(pd.read_csv(ROOT/'outputs/tables/segment_metrics.csv').round(4).head(40))"
         ),
+        md("""### 5.6 Cómo leer el desempeño sin esconder sus límites
+
+El champion no es un clasificador de alta separación global. En el holdout procedural:
+
+- ROC-AUC: **0.5478**;
+- PR-AUC: **0.2391**;
+- Brier: **0.1658**;
+- Log Loss: **0.5129**;
+- Lift@10: **1.689×**;
+- IC95% Lift@10: **[1.381×, 1.982×]**.
+
+La lectura correcta es operacional: si el equipo sólo puede trabajar el 10% superior, el ranking concentra más positivos que una selección aleatoria del mismo tamaño. La lectura incorrecta sería vender un AUC de 0.55 como “gran modelo predictivo” o presentar el cutoff histórico como frontera universal de negocio.
+
+Por eso el notebook reporta simultáneamente discriminación, proper scoring, calibración, Lift/Recall@K, intervalos, estabilidad mensual y error por segmento. La señal es **útil pero de baja resolución**, y requiere nueva validación forward antes de automatizar decisiones.
+"""),
         md(
             "## 6. Inventory, Opportunity y fallback\n\n"
             "### 6.1 Disponibilidad point-in-time\n\n"
@@ -487,6 +629,23 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "fallback_counts = scores['fallback_spot_ids'].apply(lambda x: len(json.loads(x)) if isinstance(x,str) and x.startswith('[') else 0)\n"
             "display(fallback_counts.value_counts().sort_index().rename_axis('visible_fallbacks').to_frame('leads'))"
         ),
+        md("""### 6.6 Contrato operativo completo de Inventory y fallback
+
+Inventory responde una pregunta distinta a Lead Quality: **¿podemos atender esta necesidad con evidencia defendible disponible al score?**
+
+| Componente | Regla |
+|---|---|
+| Availability | último snapshot con snapshot_date <= score_time |
+| Estado sin snapshot / stale | UNKNOWN, nunca UNAVAILABLE por defecto |
+| Serviceability | conserva lower, upper, confidence y ancho de incertidumbre |
+| Candidate generation | hard constraints de sector/modalidad + compatibilidades de área, precio y geografía según observabilidad |
+| Agregación interna | top-3 candidatos para construir la señal de serviceability |
+| Fallback visible | hasta 5 alternativas compatibles, con reason codes |
+| Sin candidato válido | NO_RESULT antes que violar restricciones |
+| Listing history | caveat explícito: no todos los atributos están versionados históricamente |
+
+La separación permite un caso importante: **lead de alta calidad + inventario incierto**. El sistema no lo degrada silenciosamente a “mal lead”; propone verificar inventario o buscar fallback. Esa distinción es parte central del diseño de producto.
+"""),
         md(
             "## 7. Robustez, IA y producto\n\n"
             "### 7.1 Clusters y combinaciones\n\n"
@@ -519,6 +678,21 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "y sólo entonces lanzar un RCT *sticky* por `lead_id`."
         ),
         code("display(read_json(Path('outputs/tables/online_ab_protocol.json')))"),
+        md("""### 7.5 Resultados negativos que protegen la solución
+
+Parte importante del trabajo fue decidir qué **no** usar:
+
+- Inventory incremental sobre el target T1: **NO-GO**; Opportunity lower supera random, pero no supera Quality-only para scheduled_visit.
+- CatBoost: no promovido bajo el contrato final al no justificar complejidad frente a utilidad temporal.
+- Semantic rules: sin Lift incremental suficiente para promoción.
+- LLM-derived predictive features: no promovidas; el LLM queda como Catalog QA.
+- Clusters/pockets: lifts locales interesantes, pero **0/19** celdas confirmadas tras BH-FDR 10% en el rerun gobernado final.
+- Broker Supply clustering: distribución desbalanceada; se rechaza antes de forzar una segmentación artificial.
+- Inquiry Intent clustering: aprendía principalmente weekday; semánticamente pobre.
+- Full historical matching: no se presenta como estrictamente PIT porque varios atributos del listing carecen de historial versionado.
+
+Estos “NO” son guardrails metodológicos: reducen el riesgo de leakage, overfitting narrativo y automatización prematura.
+"""),
         md(
             "## 8. Producción, gobierno y trazabilidad\n\n"
             "El trabajo no se cierra en un modelo offline. La entrega deja contrato de scoring, readiness, "
@@ -553,6 +727,22 @@ def build_notebook(settings: Settings) -> tuple[Path, Path]:
             "assert artifact_check['exists'].all()\n"
             "display(artifact_check)"
         ),
+        md("""### 8.2 Handoff: dónde vive cada parte del trabajo
+
+| Pregunta | Evidencia principal |
+|---|---|
+| ¿Qué datos se leyeron y cómo se auditaron? | outputs/tables/data_audit.json, missingness, fingerprints y este notebook |
+| ¿Qué mostró el EDA? | entregable/01_eda/EDA_FINAL.md + figuras y tablas |
+| ¿Cuál es el contrato temporal? | evidence/LEAKAGE_MATRIX.md, split_manifest.json, feature policy |
+| ¿Cómo se eligió Lead Quality? | entregable/03_lead_quality/MODELO_CALIDAD_LEAD.md + métricas rolling/holdout |
+| ¿Cómo funciona Inventory/Fallback? | entregable/04_inventory_fallback/README.md + ABT de candidatos |
+| ¿Cómo se combina Opportunity? | entregable/05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md |
+| ¿Qué se intentó con IA? | entregable/07_ia_product_vision/01_USO_OBLIGATORIO_IA.md + prompt versionado |
+| ¿Cómo se llevaría a producción? | arquitectura, runbook, readiness y protocolo A/B |
+| ¿Qué consume un sistema operativo? | outputs/predictions/lead_opportunity_scores.parquet |
+
+El notebook es deliberadamente el **índice ejecutable** de esos artefactos: deja visibles las lecturas, cálculos, outputs y decisiones sin obligar al evaluador a reconstruir la historia navegando el repositorio.
+"""),
         md(
             "## 9. Conclusiones y reproducción\n\n"
             "### 9.1 Lo que queda decidido\n\n"
