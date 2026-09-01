@@ -27,6 +27,15 @@ REQUIRED_NOTEBOOK_MARKERS = [
     "### 6.1.1 Candidate generation: del request a un conjunto defendible",
     "### 6.2.1 Opportunity: valor absoluto sí, valor incremental de Inventory no",
     "### 6.5.1 Qué demuestra fallback y qué todavía no puede demostrar",
+    "### 7.1 Mapa de experimentos y decisiones",
+    "### 7.1.1 Qué no funcionó y por qué también importa",
+    "### 7.2 Leakage stress test — por qué una métrica alta puede ser falsa",
+    "### 7.3 IA con alcance acotado: Catalog QA, no motor de priorización",
+    "### 7.4 Diseño experimental final — validar antes de automatizar",
+    "### 8.1 Arquitectura end-to-end",
+    "### 8.3 Monitoreo por componente",
+    "### 9.2 Limitaciones finales",
+    "### 9.3 Cómo reproducir la solución",
 ]
 
 missing = [str(path.relative_to(ROOT)) for path, _ in FILES if not path.exists()]
