@@ -7802,7 +7802,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Spot2-%C2%B7-Lead-Opportunity-Score">Spot2 · Lead Opportunity Score<a class="anchor-link" href="#Spot2-%C2%B7-Lead-Opportunity-Score">¶</a></h1><p><strong>Assessment ejecutivo reproducible.</strong> Conecta la decisión de negocio con la evidencia, el contrato point-in-time y el código que produce cada resultado. Los Markdown extensos siguen siendo anexos; este notebook es la ruta analítica de lectura.</p>
+<h1 id="Spot2-%C2%B7-Lead-Opportunity-Score">Spot2 · Lead Opportunity Score<a class="anchor-link" href="#Spot2-%C2%B7-Lead-Opportunity-Score">¶</a></h1><p><strong>Assessment end-to-end reproducible.</strong> Recorre fuentes canónicas, auditoría, EDA, contrato temporal, feature engineering, modelado, Inventory, fallback, Opportunity, IA, robustez y producción. Los anexos conservan el detalle exhaustivo; este notebook muestra la evidencia ejecutada que conecta todo el trabajo.</p>
 </div>
 </div>
 </div>
@@ -7826,8 +7826,9 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">Image</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span><span class="o">,</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="o">,</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">SVG</span>
 <span class="n">ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_json</span><span class="p">(</span><span class="n">path</span><span class="p">):</span> <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">((</span><span class="n">ROOT</span><span class="o">/</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">))</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">read_json</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">'outputs/metrics/t1_model_metrics.json'</span><span class="p">))</span>
@@ -8146,13 +8147,108 @@ a.anchor-link {
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2cbe1d79">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="2.3-Lectura-directa-de-las-seis-fuentes-can%C3%B3nicas">2.3 Lectura directa de las seis fuentes canónicas<a class="anchor-link" href="#2.3-Lectura-directa-de-las-seis-fuentes-can%C3%B3nicas">¶</a></h3><p>El notebook vuelve a leer las seis tablas Parquet canónicas y deja visible su grano y tamaño. Los CSV se usan únicamente como control de equivalencia; nunca se concatenan con Parquet.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4b538cf8">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">DATA</span> <span class="o">=</span> <span class="n">ROOT</span><span class="o">.</span><span class="n">parent</span><span class="o">/</span><span class="s1">'data'</span><span class="o">/</span><span class="s1">'candidate'</span><span class="o">/</span><span class="s1">'parquet'</span>
+<span class="n">CSV_DATA</span> <span class="o">=</span> <span class="n">ROOT</span><span class="o">.</span><span class="n">parent</span><span class="o">/</span><span class="s1">'data'</span><span class="o">/</span><span class="s1">'candidate'</span><span class="o">/</span><span class="s1">'csv'</span>
+<span class="n">raw_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'leads'</span><span class="p">,</span><span class="s1">'inquiries'</span><span class="p">,</span><span class="s1">'spots'</span><span class="p">,</span><span class="s1">'spot_attributes'</span><span class="p">,</span><span class="s1">'availability_snapshot'</span><span class="p">,</span><span class="s1">'market_context'</span><span class="p">]</span>
+<span class="n">raw</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">DATA</span><span class="o">/</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.parquet'</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">raw_names</span><span class="p">}</span>
+<span class="n">inventory</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s1">'rows'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="s1">'columns'</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span><span class="o">.</span><span class="n">T</span>
+<span class="n">display</span><span class="p">(</span><span class="n">inventory</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s1">'leads'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span> <span class="n">display</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s1">'inquiries'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span> <span class="n">display</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s1">'spots'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>tabla</th><th>filas</th><th>papel</th><th>riesgo</th></tr></thead><tbody><tr><td>leads</td><td>5000</td><td>Perfil, necesidad inicial, modalidad, presupuesto, geografía y origen</td><td>Una fila por lead; los agregados históricos sólo se usan si eran observables en el momento evaluado</td></tr><tr><td>inquiries</td><td>22576</td><td>Interacciones entre lead e inmueble y refinamiento de la necesidad</td><td>Las interacciones posteriores no pueden utilizarse para evaluar decisiones anteriores</td></tr><tr><td>spots</td><td>3000</td><td>Catálogo, sector, modalidad, geografía, área y precios</td><td>La fecha de creación prueba existencia, pero no reconstruye todos los cambios históricos</td></tr><tr><td>spot_attributes</td><td>3000</td><td>Características físicas del inmueble</td><td>Relación 1:1 con inmueble; faltan fechas efectivas para algunos cambios y campos</td></tr><tr><td>availability_snapshot</td><td>30000</td><td>Estado histórico de disponibilidad</td><td>Fuente temporal 1:N; se usa sólo el último estado conocido hasta ese momento; DESCONOCIDO no significa NO DISPONIBLE</td></tr><tr><td>market_context</td><td>500</td><td>Contexto agregado por mercado</td><td>El mes no demuestra cuándo el dato quedó disponible; se usa sólo para análisis descriptivo</td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=395bfe08">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="2.4-Equivalencia-CSV-%E2%86%94-Parquet,-llaves-y-missingness">2.4 Equivalencia CSV ↔ Parquet, llaves y missingness<a class="anchor-link" href="#2.4-Equivalencia-CSV-%E2%86%94-Parquet,-llaves-y-missingness">¶</a></h3><p>La duplicidad de formatos era una trampa potencial. La revisión comprueba equivalencia de filas/columnas y muestra la ausencia de datos antes de definir target o features.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=c4535b72">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">equiv</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">raw_names</span><span class="p">:</span>
+    <span class="n">csv_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">CSV_DATA</span><span class="o">/</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.csv'</span><span class="p">)</span>
+    <span class="n">pq_df</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">equiv</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'table'</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">'rows_parquet'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">pq_df</span><span class="p">),</span> <span class="s1">'rows_csv'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">csv_df</span><span class="p">),</span>
+                  <span class="s1">'same_rows'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">pq_df</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">csv_df</span><span class="p">),</span>
+                  <span class="s1">'same_columns'</span><span class="p">:</span> <span class="nb">set</span><span class="p">(</span><span class="n">pq_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">==</span><span class="nb">set</span><span class="p">(</span><span class="n">csv_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)})</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">equiv</span><span class="p">))</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/tables/data_quality_missingness.csv'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">missing</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">35</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>tabla</th><th>rows_parquet</th><th>rows_csv</th><th>same_rows</th><th>same_columns</th></tr></thead><tbody><tr><td>leads</td><td>5000</td><td>5000</td><td>True</td><td>True</td></tr><tr><td>inquiries</td><td>22576</td><td>22576</td><td>True</td><td>True</td></tr><tr><td>spots</td><td>3000</td><td>3000</td><td>True</td><td>True</td></tr><tr><td>spot_attributes</td><td>3000</td><td>3000</td><td>True</td><td>True</td></tr><tr><td>availability_snapshot</td><td>30000</td><td>30000</td><td>True</td><td>True</td></tr><tr><td>market_context</td><td>500</td><td>500</td><td>True</td><td>True</td></tr></tbody></table></div>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>table</th><th>column</th><th>missing_share</th><th>rows</th></tr></thead><tbody><tr><td>leads</td><td>min_budget_mxn_sale_total</td><td>0.5186</td><td>5000</td></tr><tr><td>leads</td><td>max_budget_mxn_sale_total</td><td>0.5006</td><td>5000</td></tr><tr><td>inquiries</td><td>requested_budget_mxn_sale_total</td><td>0.4989812189936215</td><td>22576</td></tr><tr><td>spots</td><td>price_sqm_mxn_sale</td><td>0.3973333333333333</td><td>3000</td></tr><tr><td>spots</td><td>price_total_mxn_sale</td><td>0.3973333333333333</td><td>3000</td></tr><tr><td>leads</td><td>min_budget_mxn_rent_monthly</td><td>0.3216</td><td>5000</td></tr><tr><td>inquiries</td><td>urgency_days</td><td>0.30643160878809356</td><td>22576</td></tr><tr><td>leads</td><td>max_budget_mxn_rent_monthly</td><td>0.298</td><td>5000</td></tr><tr><td>inquiries</td><td>requested_budget_mxn_rent_monthly</td><td>0.2954907866761162</td><td>22576</td></tr><tr><td>spots</td><td>maintenance_cost_mxn</td><td>0.25366666666666665</td><td>3000</td></tr><tr><td>spots</td><td>price_sqm_mxn_rent</td><td>0.25366666666666665</td><td>3000</td></tr><tr><td>spots</td><td>price_total_mxn_rent</td><td>0.25366666666666665</td><td>3000</td></tr><tr><td>spot_attributes</td><td>charging_ports</td><td>0.202</td><td>3000</td></tr><tr><td>spot_attributes</td><td>vertical_height_m</td><td>0.15233333333333332</td><td>3000</td></tr><tr><td>inquiries</td><td>broker_response_hours</td><td>0.15051381998582566</td><td>22576</td></tr><tr><td>spot_attributes</td><td>floor_material</td><td>0.07866666666666666</td><td>3000</td></tr><tr><td>leads</td><td>preferred_corridor</td><td>0.076</td><td>5000</td></tr><tr><td>leads</td><td>company_size</td><td>0.0514</td><td>5000</td></tr><tr><td>leads</td><td>industry</td><td>0.0302</td><td>5000</td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d01fa05b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="2.3-Target,-madurez-y-censura">2.3 Target, madurez y censura<a class="anchor-link" href="#2.3-Target,-madurez-y-censura">¶</a></h3><p>El proxy primario es <code>scheduled_visit</code> en la primera solicitud. Siete días es el buffer de madurez por defecto. Filas sin seguimiento suficiente conservan <code>target = NA</code>; nunca se convierten silenciosamente en negativas.</p>
+<h3 id="2.5-Target,-madurez-y-censura">2.5 Target, madurez y censura<a class="anchor-link" href="#2.5-Target,-madurez-y-censura">¶</a></h3><p>El proxy primario es <code>scheduled_visit</code> en la primera solicitud. Siete días es el buffer de madurez por defecto. Filas sin seguimiento suficiente conservan <code>target = NA</code>; nunca se convierten silenciosamente en negativas.</p>
 </div>
 </div>
 </div>
@@ -8161,7 +8257,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">maturity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/tables/target_maturity_sensitivity.csv'</span><span class="p">)</span>
@@ -8369,7 +8465,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="2.4-Pol%C3%ADtica-de-leakage">2.4 Política de leakage<a class="anchor-link" href="#2.4-Pol%C3%ADtica-de-leakage">¶</a></h3><p>La allowlist excluye respuesta del broker, horas de respuesta, score interno, solicitudes futuras, contadores mutables, contexto de mercado ambiguo y snapshots más cercanos o futuros. Una señal entra sólo si era demostrablemente observable al momento del score.</p>
+<h3 id="2.6-Pol%C3%ADtica-de-leakage">2.6 Política de leakage<a class="anchor-link" href="#2.6-Pol%C3%ADtica-de-leakage">¶</a></h3><p>La allowlist excluye respuesta del broker, horas de respuesta, score interno, solicitudes futuras, contadores mutables, contexto de mercado ambiguo y snapshots más cercanos o futuros. Una señal entra sólo si era demostrablemente observable al momento del score.</p>
 </div>
 </div>
 </div>
@@ -8378,7 +8474,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">((</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'evidence/LEAKAGE_MATRIX.md'</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)))</span>
@@ -8540,7 +8636,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/figures/eda_lead_mix.png'</span><span class="p">)))</span>
@@ -8765,7 +8861,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/figures/eda_market_context.png'</span><span class="p">)))</span>
@@ -8874,7 +8970,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ebe73b99">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=790e9d2c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8933,12 +9029,12 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=cc7edb04">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=46c145e9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -8992,7 +9088,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=72f095ee">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6dc172da">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9013,12 +9109,12 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=08b38d3d">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7428fb62">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">V4</span> <span class="o">=</span> <span class="n">EXPERIMENTS_ROOT</span> <span class="o">/</span> <span class="s1">'matching_profiles_v4'</span> <span class="o">/</span> <span class="s1">'results'</span>
@@ -9051,7 +9147,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=1b2bab75">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=29a57a5d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -9158,12 +9254,12 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=57ae5fe2">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=76ce4a7d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">top_v4</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">V4</span> <span class="o">/</span> <span class="s1">'top_service_compatibility_cells.csv'</span><span class="p">)</span>
@@ -9222,13 +9318,376 @@ a.anchor-link {
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=acdfc843">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="3.3-EDA-integrado:-hallazgos-que-cambiaron-la-soluci%C3%B3n">3.3 EDA integrado: hallazgos que cambiaron la solución<a class="anchor-link" href="#3.3-EDA-integrado:-hallazgos-que-cambiaron-la-soluci%C3%B3n">¶</a></h3><p>El EDA final integró Codexway, experimentos y AssessmentSol1 sin sustituir la arquitectura ganadora. Se recuperan sólo los hallazgos que cambiaron una decisión técnica u operativa.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=9be4add5">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">eda_metrics</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ROOT</span><span class="o">.</span><span class="n">parent</span><span class="o">/</span><span class="s1">'entregable/01_eda/tablas/01_metricas_eda_clave.csv'</span><span class="p">)</span>
+<span class="n">focus_topics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Contrato T1'</span><span class="p">,</span><span class="s1">'Demanda vs oferta'</span><span class="p">,</span><span class="s1">'Refinamiento'</span><span class="p">,</span><span class="s1">'Datos faltantes'</span><span class="p">,</span><span class="s1">'Exposición'</span><span class="p">,</span><span class="s1">'Inventario'</span><span class="p">,</span><span class="s1">'Disponibilidad'</span><span class="p">,</span><span class="s1">'Vigencia'</span><span class="p">,</span><span class="s1">'Compatibilidad'</span><span class="p">]</span>
+<span class="n">display</span><span class="p">(</span><span class="n">eda_metrics</span><span class="p">[</span><span class="n">eda_metrics</span><span class="p">[</span><span class="s1">'tema'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">focus_topics</span><span class="p">)]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>tema</th><th>metrica</th><th>valor</th><th>universo</th><th>clasificacion</th></tr></thead><tbody><tr><td>Contrato T1</td><td>Leads maduros</td><td>4898</td><td>T1; corte 2026-07-01; madurez 7 días</td><td>FINAL</td></tr><tr><td>Contrato T1</td><td>Prevalencia de visita agendada</td><td>20.44%</td><td>T1 maduro</td><td>FINAL</td></tr><tr><td>Demanda vs oferta</td><td>Demanda Retail</td><td>30.40%</td><td>4368 T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Demanda vs oferta</td><td>Catálogo Retail</td><td>24.51%</td><td>2754 inmuebles existentes antes de 2026-05-01</td><td>COMPLEMENTARIA</td></tr><tr><td>Demanda vs oferta</td><td>Brecha Retail</td><td>+5.89 pp</td><td>Muestra de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Refinamiento</td><td>Área objetivo mediana</td><td>395.05 m2</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Refinamiento</td><td>Área solicitada mediana</td><td>480.90 m2</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Refinamiento</td><td>Área solicitada percentil 90</td><td>2561.10 m2</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Datos faltantes</td><td>Urgencia no informada</td><td>31.34%</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Exposición</td><td>Consultas futuras por lead; mediana</td><td>5</td><td>T1 de desarrollo; sólo análisis descriptivo</td><td>PROHIBIDA_COMO_VARIABLE</td></tr><tr><td>Inventario</td><td>Profundidad de candidatos; mediana</td><td>29</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Inventario</td><td>Profundidad de candidatos Ene-2025</td><td>16</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Inventario</td><td>Profundidad de candidatos Abr-2026</td><td>49</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Disponibilidad</td><td>Cobertura histórica global</td><td>92.38%</td><td>Todas las consultas; evidencia histórica</td><td>COMPLEMENTARIA</td></tr><tr><td>Disponibilidad</td><td>Cobertura de candidatos en desarrollo</td><td>83.93%</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Disponibilidad</td><td>Cobertura Ene-2025</td><td>7.72%</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Disponibilidad</td><td>Cobertura Mar-Abr-2026</td><td>100%</td><td>T1 de desarrollo</td><td>COMPLEMENTARIA</td></tr><tr><td>Vigencia</td><td>Candidatos con estado &lt;=7 días</td><td>19.16%</td><td>195084 filas candidato</td><td>FINAL</td></tr><tr><td>Vigencia</td><td>Leads con &gt;=1 candidato &lt;=7 días</td><td>93.46%</td><td>5000 leads</td><td>FINAL</td></tr><tr><td>Vigencia</td><td>Candidatos con estado &lt;=30 días</td><td>57.09%</td><td>195084 filas candidato</td><td>FINAL</td></tr><tr><td>Vigencia</td><td>Leads con &gt;=1 candidato &lt;=30 días</td><td>98.34%</td><td>5000 leads</td><td>FINAL</td></tr><tr><td>Inventario</td><td>Proporción exacta atendible</td><td>45.64%</td><td>Auditoría final de inventario</td><td>FINAL</td></tr><tr><td>Inventario</td><td>Proporción exacta desconocida</td><td>44.30%</td><td>Auditoría final de inventario</td><td>FINAL</td></tr><tr><td>Inventario</td><td>Sin alternativa conocida</td><td>2.38%</td><td>Auditoría final de inventario</td><td>FINAL</td></tr><tr><td>Compatibilidad</td><td>DN4 × LOC1 × BSV1 lift suavizado</td><td>1.510x</td><td>N=60; future test exploratorio</td><td>HIPOTESIS_NO_PRODUCTIVA</td></tr><tr><td>Compatibilidad</td><td>DN4 × LOC1 × BSV1 tasa suavizada</td><td>31.37%</td><td>N=60; baseline ~20.77%</td><td>HIPOTESIS_NO_PRODUCTIVA</td></tr><tr><td>Compatibilidad</td><td>Celdas confirmadas tras BH-FDR 10%</td><td>0 de 19</td><td>Rerun gobernado Codexway</td><td>FINAL</td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b3049c4c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="3.4-Evidencia-visual-del-EDA-final">3.4 Evidencia visual del EDA final<a class="anchor-link" href="#3.4-Evidencia-visual-del-EDA-final">¶</a></h3><p>Ocho gráficos condensan las decisiones que más importan para el modelo y el sistema.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e0014187">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">eda_fig_dir</span> <span class="o">=</span> <span class="n">ROOT</span><span class="o">.</span><span class="n">parent</span><span class="o">/</span><span class="s1">'entregable/01_eda/figuras'</span>
+<span class="n">eda_gallery</span> <span class="o">=</span> <span class="p">[</span>
+ <span class="p">(</span><span class="s1">'01_demanda_vs_oferta_sector.svg'</span><span class="p">,</span><span class="s1">'Demanda vs oferta por sector'</span><span class="p">),</span>
+ <span class="p">(</span><span class="s1">'02_target_vs_coverage_temporal.svg'</span><span class="p">,</span><span class="s1">'Target y cobertura cambian con el tiempo'</span><span class="p">),</span>
+ <span class="p">(</span><span class="s1">'03_candidate_depth_temporal.svg'</span><span class="p">,</span><span class="s1">'La profundidad de candidatos deriva'</span><span class="p">),</span>
+ <span class="p">(</span><span class="s1">'04_refinamiento_area.svg'</span><span class="p">,</span><span class="s1">'La primera consulta refina la necesidad'</span><span class="p">),</span>
+ <span class="p">(</span><span class="s1">'09_join_availability_leakage.svg'</span><span class="p">,</span><span class="s1">'Nearest availability puede mirar al futuro'</span><span class="p">),</span>
+ <span class="p">(</span><span class="s1">'14_unknown_no_es_unavailable.svg'</span><span class="p">,</span><span class="s1">'UNKNOWN no es UNAVAILABLE'</span><span class="p">),</span>
+ <span class="p">(</span><span class="s1">'16_no_estacionariedad_clocks.svg'</span><span class="p">,</span><span class="s1">'No estacionariedad de múltiples clocks'</span><span class="p">),</span>
+ <span class="p">(</span><span class="s1">'22_quality_inventory_quadrant.svg'</span><span class="p">,</span><span class="s1">'Quality e Inventory son dos ejes distintos'</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">caption</span> <span class="ow">in</span> <span class="n">eda_gallery</span><span class="p">:</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">eda_fig_dir</span><span class="o">/</span><span class="n">filename</span>
+    <span class="k">assert</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="n">path</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s1">'**</span><span class="si">{</span><span class="n">caption</span><span class="si">}</span><span class="s1">**'</span><span class="p">))</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">SVG</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<p><strong>Demanda vs oferta por sector</strong></p>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedSVG jp-OutputArea-output" data-mime-type="image/svg+xml" tabindex="0">
+<img alt="No description has been provided for this image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiB2aWV3Qm94PSIwIDAgOTYwIDU2MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJEZW1hbmRhIHZzLiBvZmVydGEgcG9yIHNlY3RvciI+CjxzdHlsZT4KdGV4dHtmb250LWZhbWlseTpBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZjtmaWxsOiMxNzIwMzN9LnRpdGxle2ZvbnQtc2l6ZToyN3B4O2ZvbnQtd2VpZ2h0OjcwMH0uc3Vie2ZvbnQtc2l6ZToxNXB4O2ZpbGw6IzVjNjY3YX0uYXhpc3tmb250LXNpemU6MTJweDtmaWxsOiM2ZDc2ODd9LmxhYmVse2ZvbnQtc2l6ZToxM3B4O2ZvbnQtd2VpZ2h0OjYwMH0udmFsdWV7Zm9udC1zaXplOjEycHg7Zm9udC13ZWlnaHQ6NzAwfS5ub3Rle2ZvbnQtc2l6ZToxMnB4O2ZpbGw6IzVjNjY3YX0uZ3JpZHtzdHJva2U6I2U2ZTllZjtzdHJva2Utd2lkdGg6MX0uYXhpc2xpbmV7c3Ryb2tlOiM5YWEzYjI7c3Ryb2tlLXdpZHRoOjF9LmF7ZmlsbDojMmY2YjhhfS5ie2ZpbGw6I2Q5ODc0M30uY3tmaWxsOiM2ZDliNzZ9LmR7ZmlsbDojOGI3OGE4fS5saW5lQXtmaWxsOm5vbmU7c3Ryb2tlOiMyZjZiOGE7c3Ryb2tlLXdpZHRoOjR9LmxpbmVCe2ZpbGw6bm9uZTtzdHJva2U6I2Q5ODc0MztzdHJva2Utd2lkdGg6NH0ucHRBe2ZpbGw6IzJmNmI4YX0ucHRCe2ZpbGw6I2Q5ODc0M30KPC9zdHlsZT4KPHJlY3Qgd2lkdGg9Ijk2MCIgaGVpZ2h0PSI1NjAiIGZpbGw9IiNmZmZmZmYiLz4KPHRleHQgeD0iNjAiIHk9IjQ4IiBjbGFzcz0idGl0bGUiPkRlbWFuZGEgdnMuIG9mZXJ0YSBwb3Igc2VjdG9yPC90ZXh0Pgo8dGV4dCB4PSI2MCIgeT0iNzUiIGNsYXNzPSJzdWIiPkV2aWRlbmNpYSBjb21wbGVtZW50YXJpYSBBc3Nlc3NtZW50U29sMTsgZWwgYnJlY2hhIGVzIGRlc2NyaXB0aXZvLCBubyB1bmEgcHJvYmFiaWxpZGFkIGRlIGF0ZW5kaWJpbGlkYWQuPC90ZXh0Pgo8bGluZSB4MT0iOTUiIHkxPSI0NTUiIHgyPSI4OTUiIHkyPSI0NTUiIGNsYXNzPSJncmlkIi8+PHRleHQgeD0iODMiIHk9IjQ1OSIgdGV4dC1hbmNob3I9ImVuZCIgY2xhc3M9ImF4aXMiPjAlPC90ZXh0PjxsaW5lIHgxPSI5NSIgeTE9IjQwOS4yODU3MTQyODU3MTQzIiB4Mj0iODk1IiB5Mj0iNDA5LjI4NTcxNDI4NTcxNDMiIGNsYXNzPSJncmlkIi8+PHRleHQgeD0iODMiIHk9IjQxMy4yODU3MTQyODU3MTQzIiB0ZXh0LWFuY2hvcj0iZW5kIiBjbGFzcz0iYXhpcyI+NSU8L3RleHQ+PGxpbmUgeDE9Ijk1IiB5MT0iMzYzLjU3MTQyODU3MTQyODU2IiB4Mj0iODk1IiB5Mj0iMzYzLjU3MTQyODU3MTQyODU2IiBjbGFzcz0iZ3JpZCIvPjx0ZXh0IHg9IjgzIiB5PSIzNjcuNTcxNDI4NTcxNDI4NTYiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj4xMCU8L3RleHQ+PGxpbmUgeDE9Ijk1IiB5MT0iMzE3Ljg1NzE0Mjg1NzE0MjkiIHgyPSI4OTUiIHkyPSIzMTcuODU3MTQyODU3MTQyOSIgY2xhc3M9ImdyaWQiLz48dGV4dCB4PSI4MyIgeT0iMzIxLjg1NzE0Mjg1NzE0MjkiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj4xNSU8L3RleHQ+PGxpbmUgeDE9Ijk1IiB5MT0iMjcyLjE0Mjg1NzE0Mjg1NzEiIHgyPSI4OTUiIHkyPSIyNzIuMTQyODU3MTQyODU3MSIgY2xhc3M9ImdyaWQiLz48dGV4dCB4PSI4MyIgeT0iMjc2LjE0Mjg1NzE0Mjg1NzEiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj4yMCU8L3RleHQ+PGxpbmUgeDE9Ijk1IiB5MT0iMjI2LjQyODU3MTQyODU3MTQyIiB4Mj0iODk1IiB5Mj0iMjI2LjQyODU3MTQyODU3MTQyIiBjbGFzcz0iZ3JpZCIvPjx0ZXh0IHg9IjgzIiB5PSIyMzAuNDI4NTcxNDI4NTcxNDIiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj4yNSU8L3RleHQ+PGxpbmUgeDE9Ijk1IiB5MT0iMTgwLjcxNDI4NTcxNDI4NTcyIiB4Mj0iODk1IiB5Mj0iMTgwLjcxNDI4NTcxNDI4NTcyIiBjbGFzcz0iZ3JpZCIvPjx0ZXh0IHg9IjgzIiB5PSIxODQuNzE0Mjg1NzE0Mjg1NzIiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj4zMCU8L3RleHQ+PGxpbmUgeDE9Ijk1IiB5MT0iMTM1IiB4Mj0iODk1IiB5Mj0iMTM1IiBjbGFzcz0iZ3JpZCIvPjx0ZXh0IHg9IjgzIiB5PSIxMzkiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj4zNSU8L3RleHQ+PHJlY3QgeD0iMTM5IiB5PSIxODYuNjU3MTQyODU3MTQyODQiIHdpZHRoPSI1MiIgaGVpZ2h0PSIyNjguMzQyODU3MTQyODU3MTYiIHJ4PSIzIiBjbGFzcz0iYSIvPjxyZWN0IHg9IjE5OSIgeT0iMTg0LjczNzE0Mjg1NzE0Mjg5IiB3aWR0aD0iNTIiIGhlaWdodD0iMjcwLjI2Mjg1NzE0Mjg1NzEiIHJ4PSIzIiBjbGFzcz0iYiIvPjx0ZXh0IHg9IjE2NSIgeT0iMTc4LjY1NzE0Mjg1NzE0Mjg0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0idmFsdWUiPjI5LjM1JTwvdGV4dD48dGV4dCB4PSIyMjUiIHk9IjE3Ni43MzcxNDI4NTcxNDI4OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9InZhbHVlIj4yOS41NiU8L3RleHQ+PHRleHQgeD0iMTk1IiB5PSI0ODMiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGNsYXNzPSJsYWJlbCI+T2ZmaWNlPC90ZXh0PjxyZWN0IHg9IjMzOSIgeT0iMjI4LjA3NDI4NTcxNDI4NTc0IiB3aWR0aD0iNTIiIGhlaWdodD0iMjI2LjkyNTcxNDI4NTcxNDI2IiByeD0iMyIgY2xhc3M9ImEiLz48cmVjdCB4PSIzOTkiIHk9IjE4NS40Njg1NzE0Mjg1NzE0IiB3aWR0aD0iNTIiIGhlaWdodD0iMjY5LjUzMTQyODU3MTQyODYiIHJ4PSIzIiBjbGFzcz0iYiIvPjx0ZXh0IHg9IjM2NSIgeT0iMjIwLjA3NDI4NTcxNDI4NTc0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0idmFsdWUiPjI0LjgyJTwvdGV4dD48dGV4dCB4PSI0MjUiIHk9IjE3Ny40Njg1NzE0Mjg1NzE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0idmFsdWUiPjI5LjQ4JTwvdGV4dD48dGV4dCB4PSIzOTUiIHk9IjQ4MyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9ImxhYmVsIj5JbmR1c3RyaWFsPC90ZXh0PjxyZWN0IHg9IjUzOSIgeT0iMTc3LjA1NzE0Mjg1NzE0Mjg4IiB3aWR0aD0iNTIiIGhlaWdodD0iMjc3Ljk0Mjg1NzE0Mjg1NzEiIHJ4PSIzIiBjbGFzcz0iYSIvPjxyZWN0IHg9IjU5OSIgeT0iMjMwLjkwODU3MTQyODU3MTQiIHdpZHRoPSI1MiIgaGVpZ2h0PSIyMjQuMDkxNDI4NTcxNDI4NiIgcng9IjMiIGNsYXNzPSJiIi8+PHRleHQgeD0iNTY1IiB5PSIxNjkuMDU3MTQyODU3MTQyODgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGNsYXNzPSJ2YWx1ZSI+MzAuNDAlPC90ZXh0Pjx0ZXh0IHg9IjYyNSIgeT0iMjIyLjkwODU3MTQyODU3MTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGNsYXNzPSJ2YWx1ZSI+MjQuNTElPC90ZXh0Pjx0ZXh0IHg9IjU5NSIgeT0iNDgzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0ibGFiZWwiPlJldGFpbDwvdGV4dD48cmVjdCB4PSI3MzkiIHk9IjMxMy45MjU3MTQyODU3MTQyNiIgd2lkdGg9IjUyIiBoZWlnaHQ9IjE0MS4wNzQyODU3MTQyODU3NCIgcng9IjMiIGNsYXNzPSJhIi8+PHJlY3QgeD0iNzk5IiB5PSIzMDQuNiIgd2lkdGg9IjUyIiBoZWlnaHQ9IjE1MC40IiByeD0iMyIgY2xhc3M9ImIiLz48dGV4dCB4PSI3NjUiIHk9IjMwNS45MjU3MTQyODU3MTQyNiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9InZhbHVlIj4xNS40MyU8L3RleHQ+PHRleHQgeD0iODI1IiB5PSIyOTYuNiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9InZhbHVlIj4xNi40NSU8L3RleHQ+PHRleHQgeD0iNzk1IiB5PSI0ODMiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGNsYXNzPSJsYWJlbCI+TGFuZDwvdGV4dD48cmVjdCB4PSI2NTAiIHk9Ijk2IiB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIGNsYXNzPSJhIi8+PHRleHQgeD0iNjcyIiB5PSIxMDgiIGNsYXNzPSJheGlzIj5EZW1hbmRhIFQxIERFVkVMT1BNRU5UPC90ZXh0PjxyZWN0IHg9IjY1MCIgeT0iMTE5IiB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIGNsYXNzPSJiIi8+PHRleHQgeD0iNjcyIiB5PSIxMzEiIGNsYXNzPSJheGlzIj5DYXTDoWxvZ28gZXhpc3RlbnRlIGFsIGNvcnRlPC90ZXh0Pjx0ZXh0IHg9Ijk1IiB5PSI1MTUiIGNsYXNzPSJub3RlIj5SZXRhaWw6ICs1Ljg5IHBwIGRlIGRlbWFuZGEgc29icmUgcHJvcG9yY2nDs24gZGVsIGNhdMOhbG9nbyAow61uZGljZSAxLjI0eCkuIHByb3BvcmNpw7NuIGRlbCBjYXTDoWxvZ28g4omgIGNhcGFjaWRhZCBkZSBhdGVuY2nDs24uPC90ZXh0Pgo8L3N2Zz4="/>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<p><strong>Target y cobertura cambian con el tiempo</strong></p>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedSVG jp-OutputArea-output" data-mime-type="image/svg+xml" tabindex="0">
+<img alt="No description has been provided for this image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiB2aWV3Qm94PSIwIDAgOTYwIDU2MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJMYSBncmFuIGRlcml2YSBlc3TDoSBlbiBsYSBjb2JlcnR1cmEgZGVsIGludmVudGFyaW8iPgo8c3R5bGU+CnRleHR7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZmlsbDojMTcyMDMzfS50aXRsZXtmb250LXNpemU6MjdweDtmb250LXdlaWdodDo3MDB9LnN1Yntmb250LXNpemU6MTVweDtmaWxsOiM1YzY2N2F9LmF4aXN7Zm9udC1zaXplOjEycHg7ZmlsbDojNmQ3Njg3fS5sYWJlbHtmb250LXNpemU6MTNweDtmb250LXdlaWdodDo2MDB9LnZhbHVle2ZvbnQtc2l6ZToxMnB4O2ZvbnQtd2VpZ2h0OjcwMH0ubm90ZXtmb250LXNpemU6MTJweDtmaWxsOiM1YzY2N2F9LmdyaWR7c3Ryb2tlOiNlNmU5ZWY7c3Ryb2tlLXdpZHRoOjF9LmF4aXNsaW5le3N0cm9rZTojOWFhM2IyO3N0cm9rZS13aWR0aDoxfS5he2ZpbGw6IzJmNmI4YX0uYntmaWxsOiNkOTg3NDN9LmN7ZmlsbDojNmQ5Yjc2fS5ke2ZpbGw6IzhiNzhhOH0ubGluZUF7ZmlsbDpub25lO3N0cm9rZTojMmY2YjhhO3N0cm9rZS13aWR0aDo0fS5saW5lQntmaWxsOm5vbmU7c3Ryb2tlOiNkOTg3NDM7c3Ryb2tlLXdpZHRoOjR9LnB0QXtmaWxsOiMyZjZiOGF9LnB0QntmaWxsOiNkOTg3NDN9Cjwvc3R5bGU+CjxyZWN0IHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiBmaWxsPSIjZmZmZmZmIi8+Cjx0ZXh0IHg9IjYwIiB5PSI0OCIgY2xhc3M9InRpdGxlIj5MYSBncmFuIGRlcml2YSBlc3TDoSBlbiBsYSBjb2JlcnR1cmEgZGVsIGludmVudGFyaW88L3RleHQ+Cjx0ZXh0IHg9IjYwIiB5PSI3NSIgY2xhc3M9InN1YiI+VDEgREVWRUxPUE1FTlQsIGVuZS0yMDI1IGEgYWJyLTIwMjYuIEFtYmFzIHNlcmllcyBzb24gcG9yY2VudGFqZXMgeSBjb21wYXJ0ZW4gZXNjYWxhLjwvdGV4dD4KPGxpbmUgeDE9Ijg1IiB5MT0iNDU1IiB4Mj0iOTA1IiB5Mj0iNDU1IiBjbGFzcz0iZ3JpZCIvPjx0ZXh0IHg9Ijc1IiB5PSI0NTkiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj4wJTwvdGV4dD48bGluZSB4MT0iODUiIHkxPSIzODkiIHgyPSI5MDUiIHkyPSIzODkiIGNsYXNzPSJncmlkIi8+PHRleHQgeD0iNzUiIHk9IjM5MyIgdGV4dC1hbmNob3I9ImVuZCIgY2xhc3M9ImF4aXMiPjIwJTwvdGV4dD48bGluZSB4MT0iODUiIHkxPSIzMjMiIHgyPSI5MDUiIHkyPSIzMjMiIGNsYXNzPSJncmlkIi8+PHRleHQgeD0iNzUiIHk9IjMyNyIgdGV4dC1hbmNob3I9ImVuZCIgY2xhc3M9ImF4aXMiPjQwJTwvdGV4dD48bGluZSB4MT0iODUiIHkxPSIyNTciIHgyPSI5MDUiIHkyPSIyNTciIGNsYXNzPSJncmlkIi8+PHRleHQgeD0iNzUiIHk9IjI2MSIgdGV4dC1hbmNob3I9ImVuZCIgY2xhc3M9ImF4aXMiPjYwJTwvdGV4dD48bGluZSB4MT0iODUiIHkxPSIxOTEiIHgyPSI5MDUiIHkyPSIxOTEiIGNsYXNzPSJncmlkIi8+PHRleHQgeD0iNzUiIHk9IjE5NSIgdGV4dC1hbmNob3I9ImVuZCIgY2xhc3M9ImF4aXMiPjgwJTwvdGV4dD48bGluZSB4MT0iODUiIHkxPSIxMjUiIHgyPSI5MDUiIHkyPSIxMjUiIGNsYXNzPSJncmlkIi8+PHRleHQgeD0iNzUiIHk9IjEyOSIgdGV4dC1hbmNob3I9ImVuZCIgY2xhc3M9ImF4aXMiPjEwMCU8L3RleHQ+PHBvbHlsaW5lIHBvaW50cz0iODUsNDI5LjUyNCAxMzkuNjY2NjY2NjY2NjY2NjYsMzc5LjEgMTk0LjMzMzMzMzMzMzMzMzMxLDMxMi40MDcgMjQ5LDI1Ni44NjggMzAzLjY2NjY2NjY2NjY2NjYzLDIxMC4yMDYgMzU4LjMzMzMzMzMzMzMzMzMsMTgwLjM3NDAwMDAwMDAwMDAyIDQxMywxNTAuNzA3IDQ2Ny42NjY2NjY2NjY2NjY3LDE0MS45NjIgNTIyLjMzMzMzMzMzMzMzMzMsMTMyLjk1Mjk5OTk5OTk5OTk3IDU3NywxMjkuMTkwOTk5OTk5OTk5OTcgNjMxLjY2NjY2NjY2NjY2NjYsMTI3LjA3OTAwMDAwMDAwMDAxIDY4Ni4zMzMzMzMzMzMzMzM0LDEyNS41OTQgNzQxLDEyNS4xMzIwMDAwMDAwMDAwNiA3OTUuNjY2NjY2NjY2NjY2NiwxMjUuMDY1OTk5OTk5OTk5OTcgODUwLjMzMzMzMzMzMzMzMzQsMTI1IDkwNSwxMjUiIGNsYXNzPSJsaW5lQiIvPjxwb2x5bGluZSBwb2ludHM9Ijg1LDM5MS4zNzYgMTM5LjY2NjY2NjY2NjY2NjY2LDQwMS4wNzggMTk0LjMzMzMzMzMzMzMzMzMxLDM5MS4zNzYgMjQ5LDM4Ny41MTUgMzAzLjY2NjY2NjY2NjY2NjYzLDM4My4yNTggMzU4LjMzMzMzMzMzMzMzMzMsMzg1LjU2OCA0MTMsMzg4LjUzOCA0NjcuNjY2NjY2NjY2NjY2NywzOTIuNzYyIDUyMi4zMzMzMzMzMzMzMzMzLDM3Ny43ODAwMDAwMDAwMDAwMyA1NzcsMzkyLjAzNiA2MzEuNjY2NjY2NjY2NjY2NiwzODkuNDYyIDY4Ni4zMzMzMzMzMzMzMzM0LDM5MS4wNDYgNzQxLDM4OS44NTggNzk1LjY2NjY2NjY2NjY2NjYsMzgzLjk1MSA4NTAuMzMzMzMzMzMzMzMzNCwzNzYuNjkxIDkwNSwzODguMzA3IiBjbGFzcz0ibGluZUEiLz48Y2lyY2xlIGN4PSI4NSIgY3k9IjM5MS4zNzYiIHI9IjMuNSIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjEzOS42NjY2NjY2NjY2NjY2NiIgY3k9IjQwMS4wNzgiIHI9IjMuNSIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjE5NC4zMzMzMzMzMzMzMzMzMSIgY3k9IjM5MS4zNzYiIHI9IjMuNSIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjI0OSIgY3k9IjM4Ny41MTUiIHI9IjMuNSIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjMwMy42NjY2NjY2NjY2NjY2MyIgY3k9IjM4My4yNTgiIHI9IjMuNSIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjM1OC4zMzMzMzMzMzMzMzMzIiBjeT0iMzg1LjU2OCIgcj0iMy41IiBjbGFzcz0icHRBIi8+PGNpcmNsZSBjeD0iNDEzIiBjeT0iMzg4LjUzOCIgcj0iMy41IiBjbGFzcz0icHRBIi8+PGNpcmNsZSBjeD0iNDY3LjY2NjY2NjY2NjY2NjciIGN5PSIzOTIuNzYyIiByPSIzLjUiIGNsYXNzPSJwdEEiLz48Y2lyY2xlIGN4PSI1MjIuMzMzMzMzMzMzMzMzMyIgY3k9IjM3Ny43ODAwMDAwMDAwMDAwMyIgcj0iMy41IiBjbGFzcz0icHRBIi8+PGNpcmNsZSBjeD0iNTc3IiBjeT0iMzkyLjAzNiIgcj0iMy41IiBjbGFzcz0icHRBIi8+PGNpcmNsZSBjeD0iNjMxLjY2NjY2NjY2NjY2NjYiIGN5PSIzODkuNDYyIiByPSIzLjUiIGNsYXNzPSJwdEEiLz48Y2lyY2xlIGN4PSI2ODYuMzMzMzMzMzMzMzMzNCIgY3k9IjM5MS4wNDYiIHI9IjMuNSIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9Ijc0MSIgY3k9IjM4OS44NTgiIHI9IjMuNSIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9Ijc5NS42NjY2NjY2NjY2NjY2IiBjeT0iMzgzLjk1MSIgcj0iMy41IiBjbGFzcz0icHRBIi8+PGNpcmNsZSBjeD0iODUwLjMzMzMzMzMzMzMzMzQiIGN5PSIzNzYuNjkxIiByPSIzLjUiIGNsYXNzPSJwdEEiLz48Y2lyY2xlIGN4PSI5MDUiIGN5PSIzODguMzA3IiByPSIzLjUiIGNsYXNzPSJwdEEiLz48Y2lyY2xlIGN4PSI4NSIgY3k9IjQyOS41MjQiIHI9IjMuNSIgY2xhc3M9InB0QiIvPjxjaXJjbGUgY3g9IjEzOS42NjY2NjY2NjY2NjY2NiIgY3k9IjM3OS4xIiByPSIzLjUiIGNsYXNzPSJwdEIiLz48Y2lyY2xlIGN4PSIxOTQuMzMzMzMzMzMzMzMzMzEiIGN5PSIzMTIuNDA3IiByPSIzLjUiIGNsYXNzPSJwdEIiLz48Y2lyY2xlIGN4PSIyNDkiIGN5PSIyNTYuODY4IiByPSIzLjUiIGNsYXNzPSJwdEIiLz48Y2lyY2xlIGN4PSIzMDMuNjY2NjY2NjY2NjY2NjMiIGN5PSIyMTAuMjA2IiByPSIzLjUiIGNsYXNzPSJwdEIiLz48Y2lyY2xlIGN4PSIzNTguMzMzMzMzMzMzMzMzMyIgY3k9IjE4MC4zNzQwMDAwMDAwMDAwMiIgcj0iMy41IiBjbGFzcz0icHRCIi8+PGNpcmNsZSBjeD0iNDEzIiBjeT0iMTUwLjcwNyIgcj0iMy41IiBjbGFzcz0icHRCIi8+PGNpcmNsZSBjeD0iNDY3LjY2NjY2NjY2NjY2NjciIGN5PSIxNDEuOTYyIiByPSIzLjUiIGNsYXNzPSJwdEIiLz48Y2lyY2xlIGN4PSI1MjIuMzMzMzMzMzMzMzMzMyIgY3k9IjEzMi45NTI5OTk5OTk5OTk5NyIgcj0iMy41IiBjbGFzcz0icHRCIi8+PGNpcmNsZSBjeD0iNTc3IiBjeT0iMTI5LjE5MDk5OTk5OTk5OTk3IiByPSIzLjUiIGNsYXNzPSJwdEIiLz48Y2lyY2xlIGN4PSI2MzEuNjY2NjY2NjY2NjY2NiIgY3k9IjEyNy4wNzkwMDAwMDAwMDAwMSIgcj0iMy41IiBjbGFzcz0icHRCIi8+PGNpcmNsZSBjeD0iNjg2LjMzMzMzMzMzMzMzMzQiIGN5PSIxMjUuNTk0IiByPSIzLjUiIGNsYXNzPSJwdEIiLz48Y2lyY2xlIGN4PSI3NDEiIGN5PSIxMjUuMTMyMDAwMDAwMDAwMDYiIHI9IjMuNSIgY2xhc3M9InB0QiIvPjxjaXJjbGUgY3g9Ijc5NS42NjY2NjY2NjY2NjY2IiBjeT0iMTI1LjA2NTk5OTk5OTk5OTk3IiByPSIzLjUiIGNsYXNzPSJwdEIiLz48Y2lyY2xlIGN4PSI4NTAuMzMzMzMzMzMzMzMzNCIgY3k9IjEyNSIgcj0iMy41IiBjbGFzcz0icHRCIi8+PGNpcmNsZSBjeD0iOTA1IiBjeT0iMTI1IiByPSIzLjUiIGNsYXNzPSJwdEIiLz48dGV4dCB4PSI4NSIgeT0iNDgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0iYXhpcyI+RW5lLTI1PC90ZXh0Pjx0ZXh0IHg9IjI0OSIgeT0iNDgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0iYXhpcyI+QWJyPC90ZXh0Pjx0ZXh0IHg9IjQxMyIgeT0iNDgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0iYXhpcyI+SnVsPC90ZXh0Pjx0ZXh0IHg9IjU3NyIgeT0iNDgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0iYXhpcyI+T2N0PC90ZXh0Pjx0ZXh0IHg9Ijc0MSIgeT0iNDgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0iYXhpcyI+RW5lLTI2PC90ZXh0Pjx0ZXh0IHg9IjkwNSIgeT0iNDgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBjbGFzcz0iYXhpcyI+QWJyPC90ZXh0PjxsaW5lIHgxPSI2NTAiIHkxPSIxMDEiIHgyPSI2ODQiIHkyPSIxMDEiIGNsYXNzPSJsaW5lQSIvPjx0ZXh0IHg9IjY5NCIgeT0iMTA2IiBjbGFzcz0iYXhpcyI+UHJldmFsZW5jaWEgcHJveHkgVDE8L3RleHQ+PGxpbmUgeDE9IjY1MCIgeTE9IjEyNyIgeDI9IjY4NCIgeTI9IjEyNyIgY2xhc3M9ImxpbmVCIi8+PHRleHQgeD0iNjk0IiB5PSIxMzIiIGNsYXNzPSJheGlzIj5Db2JlcnR1cmEgRGlzcG9uaWJpbGlkYWQ8L3RleHQ+PHRleHQgeD0iODUiIHk9IjUyMCIgY2xhc3M9Im5vdGUiPkxhIHByZXZhbGVuY2lhIHBlcm1hbmVjZSBjZXJjYSBkZSAyMCU7IGxhIGNvYmVydHVyYSBjYW1iaWEgZGUgcsOpZ2ltZW4uIE5vIGNvbmZ1bmRpciBjYW1iaW8gZGUgY29iZXJ0dXJhIGNvbiBsZWFkIGRyaWZ0LjwvdGV4dD4KPC9zdmc+"/>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<p><strong>La profundidad de candidatos deriva</strong></p>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedSVG jp-OutputArea-output" data-mime-type="image/svg+xml" tabindex="0">
+<img alt="No description has been provided for this image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiB2aWV3Qm94PSIwIDAgOTYwIDU2MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJDYW5kaWRhdGUgZGVwdGggYXVtZW50YSBjb24gZWwgdGllbXBvIj4KPHN0eWxlPgp0ZXh0e2ZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO2ZpbGw6IzE3MjAzM30udGl0bGV7Zm9udC1zaXplOjI3cHg7Zm9udC13ZWlnaHQ6NzAwfS5zdWJ7Zm9udC1zaXplOjE1cHg7ZmlsbDojNWM2NjdhfS5heGlze2ZvbnQtc2l6ZToxMnB4O2ZpbGw6IzZkNzY4N30ubGFiZWx7Zm9udC1zaXplOjEzcHg7Zm9udC13ZWlnaHQ6NjAwfS52YWx1ZXtmb250LXNpemU6MTJweDtmb250LXdlaWdodDo3MDB9Lm5vdGV7Zm9udC1zaXplOjEycHg7ZmlsbDojNWM2NjdhfS5ncmlke3N0cm9rZTojZTZlOWVmO3N0cm9rZS13aWR0aDoxfS5heGlzbGluZXtzdHJva2U6IzlhYTNiMjtzdHJva2Utd2lkdGg6MX0uYXtmaWxsOiMyZjZiOGF9LmJ7ZmlsbDojZDk4NzQzfS5je2ZpbGw6IzZkOWI3Nn0uZHtmaWxsOiM4Yjc4YTh9LmxpbmVBe2ZpbGw6bm9uZTtzdHJva2U6IzJmNmI4YTtzdHJva2Utd2lkdGg6NH0ubGluZUJ7ZmlsbDpub25lO3N0cm9rZTojZDk4NzQzO3N0cm9rZS13aWR0aDo0fS5wdEF7ZmlsbDojMmY2YjhhfS5wdEJ7ZmlsbDojZDk4NzQzfQo8L3N0eWxlPgo8cmVjdCB3aWR0aD0iOTYwIiBoZWlnaHQ9IjU2MCIgZmlsbD0iI2ZmZmZmZiIvPgo8dGV4dCB4PSI2MCIgeT0iNDgiIGNsYXNzPSJ0aXRsZSI+UHJvZnVuZGlkYWQgZGUgY2FuZGlkYXRvcyBhdW1lbnRhIGNvbiBlbCB0aWVtcG88L3RleHQ+Cjx0ZXh0IHg9IjYwIiB5PSI3NSIgY2xhc3M9InN1YiI+TWVkaWFuYSBkZSBjYW5kaWRhdG9zIHBvciBldmFsdWFjacOzbiBUMSBiYWpvIGxhIHBvbMOtdGljYSBkaXNwb25pYmxlIGVuIGVzZSBtb21lbnRvIGRlIEFzc2Vzc21lbnRTb2wxLjwvdGV4dD4KPGxpbmUgeDE9Ijg1IiB5MT0iNDU1IiB4Mj0iOTA1IiB5Mj0iNDU1IiBjbGFzcz0iZ3JpZCIvPjx0ZXh0IHg9Ijc1IiB5PSI0NTkiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj4wPC90ZXh0PjxsaW5lIHgxPSI4NSIgeTE9IjM5Ni44MTgxODE4MTgxODE4IiB4Mj0iOTA1IiB5Mj0iMzk2LjgxODE4MTgxODE4MTgiIGNsYXNzPSJncmlkIi8+PHRleHQgeD0iNzUiIHk9IjQwMC44MTgxODE4MTgxODE4IiB0ZXh0LWFuY2hvcj0iZW5kIiBjbGFzcz0iYXhpcyI+MTA8L3RleHQ+PGxpbmUgeDE9Ijg1IiB5MT0iMzM4LjYzNjM2MzYzNjM2MzYiIHgyPSI5MDUiIHkyPSIzMzguNjM2MzYzNjM2MzYzNiIgY2xhc3M9ImdyaWQiLz48dGV4dCB4PSI3NSIgeT0iMzQyLjYzNjM2MzYzNjM2MzYiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj4yMDwvdGV4dD48bGluZSB4MT0iODUiIHkxPSIyODAuNDU0NTQ1NDU0NTQ1NSIgeDI9IjkwNSIgeTI9IjI4MC40NTQ1NDU0NTQ1NDU1IiBjbGFzcz0iZ3JpZCIvPjx0ZXh0IHg9Ijc1IiB5PSIyODQuNDU0NTQ1NDU0NTQ1NSIgdGV4dC1hbmNob3I9ImVuZCIgY2xhc3M9ImF4aXMiPjMwPC90ZXh0PjxsaW5lIHgxPSI4NSIgeTE9IjIyMi4yNzI3MjcyNzI3MjcyOCIgeDI9IjkwNSIgeTI9IjIyMi4yNzI3MjcyNzI3MjcyOCIgY2xhc3M9ImdyaWQiLz48dGV4dCB4PSI3NSIgeT0iMjI2LjI3MjcyNzI3MjcyNzI4IiB0ZXh0LWFuY2hvcj0iZW5kIiBjbGFzcz0iYXhpcyI+NDA8L3RleHQ+PGxpbmUgeDE9Ijg1IiB5MT0iMTY0LjA5MDkwOTA5MDkwOTA3IiB4Mj0iOTA1IiB5Mj0iMTY0LjA5MDkwOTA5MDkwOTA3IiBjbGFzcz0iZ3JpZCIvPjx0ZXh0IHg9Ijc1IiB5PSIxNjguMDkwOTA5MDkwOTA5MDciIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJheGlzIj41MDwvdGV4dD48cG9seWxpbmUgcG9pbnRzPSI4NSwzNjEuOTA5MDkwOTA5MDkwOSAxMzkuNjY2NjY2NjY2NjY2NjYsMzU2LjA5MDkwOTA5MDkwOTEgMTk0LjMzMzMzMzMzMzMzMzMxLDM1MC4yNzI3MjcyNzI3MjcyNSAyNDksMzI3IDMwMy42NjY2NjY2NjY2NjY2MywzMjcgMzU4LjMzMzMzMzMzMzMzMzMsMzIxLjE4MTgxODE4MTgxODIgNDEzLDI5Mi4wOTA5MDkwOTA5MDkxIDQ2Ny42NjY2NjY2NjY2NjY3LDI3NC42MzYzNjM2MzYzNjM2IDUyMi4zMzMzMzMzMzMzMzMzLDI1Ny4xODE4MTgxODE4MTgyIDU3NywyNTcuMTgxODE4MTgxODE4MiA2MzEuNjY2NjY2NjY2NjY2NiwyNDUuNTQ1NDU0NTQ1NDU0NTMgNjg2LjMzMzMzMzMzMzMzMzQsMjE2LjQ1NDU0NTQ1NDU0NTQ3IDc0MSwyMjguMDkwOTA5MDkwOTA5MSA3OTUuNjY2NjY2NjY2NjY2NiwxOTAuMjcyNzI3MjcyNzI3MjUgODUwLjMzMzMzMzMzMzMzMzQsMTk5IDkwNSwxNjkuOTA5MDkwOTA5MDkwOTMiIGNsYXNzPSJsaW5lQSIvPjxjaXJjbGUgY3g9Ijg1IiBjeT0iMzYxLjkwOTA5MDkwOTA5MDkiIHI9IjQiIGNsYXNzPSJwdEEiLz48Y2lyY2xlIGN4PSIxMzkuNjY2NjY2NjY2NjY2NjYiIGN5PSIzNTYuMDkwOTA5MDkwOTA5MSIgcj0iNCIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjE5NC4zMzMzMzMzMzMzMzMzMSIgY3k9IjM1MC4yNzI3MjcyNzI3MjcyNSIgcj0iNCIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjI0OSIgY3k9IjMyNyIgcj0iNCIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjMwMy42NjY2NjY2NjY2NjY2MyIgY3k9IjMyNyIgcj0iNCIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjM1OC4zMzMzMzMzMzMzMzMzIiBjeT0iMzIxLjE4MTgxODE4MTgxODIiIHI9IjQiIGNsYXNzPSJwdEEiLz48Y2lyY2xlIGN4PSI0MTMiIGN5PSIyOTIuMDkwOTA5MDkwOTA5MSIgcj0iNCIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjQ2Ny42NjY2NjY2NjY2NjY3IiBjeT0iMjc0LjYzNjM2MzYzNjM2MzYiIHI9IjQiIGNsYXNzPSJwdEEiLz48Y2lyY2xlIGN4PSI1MjIuMzMzMzMzMzMzMzMzMyIgY3k9IjI1Ny4xODE4MTgxODE4MTgyIiByPSI0IiBjbGFzcz0icHRBIi8+PGNpcmNsZSBjeD0iNTc3IiBjeT0iMjU3LjE4MTgxODE4MTgxODIiIHI9IjQiIGNsYXNzPSJwdEEiLz48Y2lyY2xlIGN4PSI2MzEuNjY2NjY2NjY2NjY2NiIgY3k9IjI0NS41NDU0NTQ1NDU0NTQ1MyIgcj0iNCIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9IjY4Ni4zMzMzMzMzMzMzMzM0IiBjeT0iMjE2LjQ1NDU0NTQ1NDU0NTQ3IiByPSI0IiBjbGFzcz0icHRBIi8+PGNpcmNsZSBjeD0iNzQxIiBjeT0iMjI4LjA5MDkwOTA5MDkwOTEiIHI9IjQiIGNsYXNzPSJwdEEiLz48Y2lyY2xlIGN4PSI3OTUuNjY2NjY2NjY2NjY2NiIgY3k9IjE5MC4yNzI3MjcyNzI3MjcyNSIgcj0iNCIgY2xhc3M9InB0QSIvPjxjaXJjbGUgY3g9Ijg1MC4zMzMzMzMzMzMzMzM0IiBjeT0iMTk5IiByPSI0IiBjbGFzcz0icHRBIi8+PGNpcmNsZSBjeD0iOTA1IiBjeT0iMTY5LjkwOTA5MDkwOTA5MDkzIiByPSI0IiBjbGFzcz0icHRBIi8+PHRleHQgeD0iODUiIHk9IjQ4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9ImF4aXMiPkVuZS0yNTwvdGV4dD48dGV4dCB4PSIyNDkiIHk9IjQ4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9ImF4aXMiPkFicjwvdGV4dD48dGV4dCB4PSI0MTMiIHk9IjQ4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9ImF4aXMiPkp1bDwvdGV4dD48dGV4dCB4PSI1NzciIHk9IjQ4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9ImF4aXMiPk9jdDwvdGV4dD48dGV4dCB4PSI3NDEiIHk9IjQ4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9ImF4aXMiPkVuZS0yNjwvdGV4dD48dGV4dCB4PSI5MDUiIHk9IjQ4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9ImF4aXMiPkFicjwvdGV4dD48dGV4dCB4PSI4NSIgeT0iMzQ5LjkwOTA5MDkwOTA5MDkiIGNsYXNzPSJ2YWx1ZSI+MTY8L3RleHQ+PHRleHQgeD0iOTAwIiB5PSIxNTcuOTA5MDkwOTA5MDkwOTMiIHRleHQtYW5jaG9yPSJlbmQiIGNsYXNzPSJ2YWx1ZSI+NDk8L3RleHQ+PHRleHQgeD0iODUiIHk9IjUyMCIgY2xhc3M9Im5vdGUiPk1lZGlhbmEgREVWRUxPUE1FTlQgPSAyOSBjYW5kaWRhdG9zLiBFbCBjcmVjaW1pZW50byBkZSBwcm9mdW5kaWRhZCBwZXJ0ZW5lY2UgYSBJbnZlbnRhcmlvIC8gY29tcGF0aWJpbGlkYWQsIG5vIGFsIG7DumNsZW8gZGUgQ2FsaWRhZCBkZWwgbGVhZC48L3RleHQ+Cjwvc3ZnPg=="/>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<p><strong>La primera consulta refina la necesidad</strong></p>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedSVG jp-OutputArea-output" data-mime-type="image/svg+xml" tabindex="0">
+<img alt="No description has been provided for this image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiB2aWV3Qm94PSIwIDAgOTYwIDU2MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJMYSBwcmltZXJhIGlucXVpcnkgcmVmaW5hIGxhIG5lY2VzaWRhZCBkZSBlc3BhY2lvIj4KPHN0eWxlPgp0ZXh0e2ZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO2ZpbGw6IzE3MjAzM30udGl0bGV7Zm9udC1zaXplOjI3cHg7Zm9udC13ZWlnaHQ6NzAwfS5zdWJ7Zm9udC1zaXplOjE1cHg7ZmlsbDojNWM2NjdhfS5heGlze2ZvbnQtc2l6ZToxMnB4O2ZpbGw6IzZkNzY4N30ubGFiZWx7Zm9udC1zaXplOjEzcHg7Zm9udC13ZWlnaHQ6NjAwfS52YWx1ZXtmb250LXNpemU6MTJweDtmb250LXdlaWdodDo3MDB9Lm5vdGV7Zm9udC1zaXplOjEycHg7ZmlsbDojNWM2NjdhfS5ncmlke3N0cm9rZTojZTZlOWVmO3N0cm9rZS13aWR0aDoxfS5heGlzbGluZXtzdHJva2U6IzlhYTNiMjtzdHJva2Utd2lkdGg6MX0uYXtmaWxsOiMyZjZiOGF9LmJ7ZmlsbDojZDk4NzQzfS5je2ZpbGw6IzZkOWI3Nn0uZHtmaWxsOiM4Yjc4YTh9LmxpbmVBe2ZpbGw6bm9uZTtzdHJva2U6IzJmNmI4YTtzdHJva2Utd2lkdGg6NH0ubGluZUJ7ZmlsbDpub25lO3N0cm9rZTojZDk4NzQzO3N0cm9rZS13aWR0aDo0fS5wdEF7ZmlsbDojMmY2YjhhfS5wdEJ7ZmlsbDojZDk4NzQzfQo8L3N0eWxlPgo8cmVjdCB3aWR0aD0iOTYwIiBoZWlnaHQ9IjU2MCIgZmlsbD0iI2ZmZmZmZiIvPgo8dGV4dCB4PSI2MCIgeT0iNDgiIGNsYXNzPSJ0aXRsZSI+TGEgcHJpbWVyYSBjb25zdWx0YSByZWZpbmEgbGEgbmVjZXNpZGFkIGRlIGVzcGFjaW88L3RleHQ+Cjx0ZXh0IHg9IjYwIiB5PSI3NSIgY2xhc3M9InN1YiI+Q29tcGFyYWNpw7NuIGRlIG1lZGlhbmFzIGVuIFQxIERFVkVMT1BNRU5UOyBsYSBkaWZlcmVuY2lhIHN1c3RlbnRhIHZhcmlhYmxlcyBkZSByZWxhY2nDs24geSBicmVjaGEgVDDihpJUMS48L3RleHQ+Cjx0ZXh0IHg9IjcwIiB5PSIyMTgiIGNsYXNzPSJsYWJlbCI+w4FyZWEgb2JqZXRpdm8gZW4gcmVnaXN0cm8gaW5pY2lhbCAoVDApPC90ZXh0PjxyZWN0IHg9IjI1MCIgeT0iMTgwIiB3aWR0aD0iNTYwIiBoZWlnaHQ9IjYyIiByeD0iNiIgZmlsbD0iI2VlZjFmNSIvPjxyZWN0IHg9IjI1MCIgeT0iMTgwIiB3aWR0aD0iNDAyLjIzMjcyNzI3MjcyNzMiIGhlaWdodD0iNjIiIHJ4PSI2IiBjbGFzcz0iYSIvPjx0ZXh0IHg9IjY0MC4yMzI3MjcyNzI3MjczIiB5PSIyMTkiIHRleHQtYW5jaG9yPSJlbmQiIGZpbGw9IiNmZmZmZmYiIHN0eWxlPSJmb250LWZhbWlseTpBcmlhbDtmb250LXNpemU6MTZweDtmb250LXdlaWdodDo3MDAiPjM5NS4wNSBtwrI8L3RleHQ+PHRleHQgeD0iNzAiIHk9IjM0MyIgY2xhc3M9ImxhYmVsIj7DgXJlYSBzb2xpY2l0YWRhIGVuIHByaW1lcmEgY29uc3VsdGEgKFQxKTwvdGV4dD48cmVjdCB4PSIyNTAiIHk9IjMwNSIgd2lkdGg9IjU2MCIgaGVpZ2h0PSI2MiIgcng9IjYiIGZpbGw9IiNlZWYxZjUiLz48cmVjdCB4PSIyNTAiIHk9IjMwNSIgd2lkdGg9IjQ4OS42NDM2MzYzNjM2MzYzNSIgaGVpZ2h0PSI2MiIgcng9IjYiIGNsYXNzPSJiIi8+PHRleHQgeD0iNzI3LjY0MzYzNjM2MzYzNjMiIHk9IjM0NCIgdGV4dC1hbmNob3I9ImVuZCIgZmlsbD0iI2ZmZmZmZiIgc3R5bGU9ImZvbnQtZmFtaWx5OkFyaWFsO2ZvbnQtc2l6ZToxNnB4O2ZvbnQtd2VpZ2h0OjcwMCI+NDgwLjkwIG3CsjwvdGV4dD48dGV4dCB4PSI3MCIgeT0iNDMwIiBjbGFzcz0ibm90ZSI+VDEgw6FyZWEgc29saWNpdGFkYTogcDkwID0gMiw1NjEuMSBtwrI7IG3DoXhpbW8gPSA0MCw5MjAuOSBtwrIuIExhIGNvbGEgZXMgcmVhbCBlbiBlbCBleHRyYWN0byB5IG5vIGF1dG9yaXphIHdpbnNvcml6YWNpw7NuIGdsb2JhbC48L3RleHQ+PHRleHQgeD0iNzAiIHk9IjQ2MiIgY2xhc3M9Im5vdGUiPkV4cGVyaW1lbnRvczogbWVkaWFuYSByZXF1ZXN0ZWQvdmFyaWFibGUgb2JqZXRpdm8gPSAxLjA1M3g7IHPDs2xvIDYyLjE2JSBkZSBjb25zdWx0YXMgY2FlIGVudHJlIDAuNXggeSAyLjB4IGRlbCDDoXJlYSBpbmljaWFsLjwvdGV4dD4KPC9zdmc+"/>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<p><strong>Nearest availability puede mirar al futuro</strong></p>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedSVG jp-OutputArea-output" data-mime-type="image/svg+xml" tabindex="0">
+<img alt="No description has been provided for this image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiB2aWV3Qm94PSIwIDAgOTYwIDU2MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJBdmFpbGFiaWxpdHk6IHVuIGpvaW4gaW5vY2VudGUgcHVlZGUgcmV2ZWxhciBlbCBmdXR1cm8iPjxzdHlsZT50ZXh0e2ZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO2ZpbGw6IzE3MjAzM30udGl0bGV7Zm9udC1zaXplOjI3cHg7Zm9udC13ZWlnaHQ6NzAwfS5zdWJ7Zm9udC1zaXplOjE1cHg7ZmlsbDojNWM2NjdhfS5heGlze2ZvbnQtc2l6ZToxMnB4O2ZpbGw6IzZkNzY4N30ubGFiZWx7Zm9udC1zaXplOjEzcHg7Zm9udC13ZWlnaHQ6NjAwfS52YWx1ZXtmb250LXNpemU6MTJweDtmb250LXdlaWdodDo3MDB9LmJpZ3tmb250LXNpemU6MzBweDtmb250LXdlaWdodDo4MDB9Lm5vdGV7Zm9udC1zaXplOjEycHg7ZmlsbDojNWM2NjdhfS5ncmlke3N0cm9rZTojZTZlOWVmO3N0cm9rZS13aWR0aDoxfS5heGlzbGluZXtzdHJva2U6IzlhYTNiMjtzdHJva2Utd2lkdGg6MX0uYXtmaWxsOiMyZjZiOGF9LmJ7ZmlsbDojZDk4NzQzfS5je2ZpbGw6IzZkOWI3Nn0uZHtmaWxsOiM4Yjc4YTh9LnNvZnR7ZmlsbDojZjFmM2Y2fS5jYXJke2ZpbGw6I2ZiZmNmZTtzdHJva2U6I2UxZTZlZDtzdHJva2Utd2lkdGg6MX08L3N0eWxlPjxyZWN0IHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiBmaWxsPSIjZmZmIi8+PHRleHQgeD0iNjAiIHk9IjQ4IiBjbGFzcz0idGl0bGUiPkRpc3BvbmliaWxpZGFkOiB1biB1bmnDs24gaW5vY2VudGUgcHVlZGUgcmV2ZWxhciBlbCBmdXR1cm88L3RleHQ+PHRleHQgeD0iNjAiIHk9Ijc1IiBjbGFzcz0ic3ViIj5BdWRpdG9yw61hIGFsbC1jb25zdWx0YXM6IGV4cGFuc2nDs24gZGUgZ3Jhbm8geSByaWVzZ28gZGUgbmVhcmVzdC1yZWdpc3Ryby48L3RleHQ+PHJlY3QgeD0iNjAiIHk9IjExNSIgd2lkdGg9IjQwNSIgaGVpZ2h0PSIzMzAiIHJ4PSIxNCIgY2xhc3M9ImNhcmQiLz48cmVjdCB4PSI0OTUiIHk9IjExNSIgd2lkdGg9IjQwNSIgaGVpZ2h0PSIzMzAiIHJ4PSIxNCIgY2xhc3M9ImNhcmQiLz4KPHRleHQgeD0iODUiIHk9IjE1MCIgY2xhc3M9ImxhYmVsIj4xLiB1bmnDs24gZGlyZWN0YSBwb3Igc3BvdF9pZDwvdGV4dD48dGV4dCB4PSI4NSIgeT0iMTk1IiBjbGFzcz0iYXhpcyI+Q29uc3VsdGFzIG9yaWdpbmFsZXM8L3RleHQ+PHJlY3QgeD0iODUiIHk9IjIxMCIgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGNsYXNzPSJzb2Z0Ii8+PHJlY3QgeD0iODUiIHk9IjIxMCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjI4IiByeD0iNSIgY2xhc3M9ImEiLz48dGV4dCB4PSIzOTUiIHk9IjIzMCIgY2xhc3M9InZhbHVlIj4yMiw1NzY8L3RleHQ+Cjx0ZXh0IHg9Ijg1IiB5PSIyNzUiIGNsYXNzPSJheGlzIj5GaWxhcyB0cmFzIHVuaXIgRGlzcG9uaWJpbGlkYWQ8L3RleHQ+PHJlY3QgeD0iODUiIHk9IjI5MCIgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGNsYXNzPSJzb2Z0Ii8+PHJlY3QgeD0iODUiIHk9IjI5MCIgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGNsYXNzPSJiIi8+PHRleHQgeD0iMzk1IiB5PSIzMTAiIGNsYXNzPSJ2YWx1ZSI+MjI2LDE1MTwvdGV4dD48dGV4dCB4PSI4NSIgeT0iMzY1IiBjbGFzcz0iYmlnIj4xMC4wMTfDlzwvdGV4dD48dGV4dCB4PSI4NSIgeT0iMzk1IiBjbGFzcz0ibm90ZSI+RWwgZ3Jhbm8gY2FtYmlhIGFudGVzIGRlIG1vZGVsYXIuPC90ZXh0Pgo8dGV4dCB4PSI1MjAiIHk9IjE1MCIgY2xhc3M9ImxhYmVsIj4yLiBSZWdpc3RybyBtw6FzIGNlcmNhbm88L3RleHQ+PHJlY3QgeD0iNTQwIiB5PSIyMTUiIHdpZHRoPSIzMjAiIGhlaWdodD0iNDIiIHJ4PSI2IiBjbGFzcz0ic29mdCIvPjxyZWN0IHg9IjU0MCIgeT0iMjE1IiB3aWR0aD0iMTEwIiBoZWlnaHQ9IjQyIiByeD0iNiIgY2xhc3M9ImIiLz48dGV4dCB4PSI3MDAiIHk9IjI0NCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgY2xhc3M9InZhbHVlIj4zNC4zNiUgdXNhcsOtYSBmdXR1cm88L3RleHQ+PHRleHQgeD0iNTQwIiB5PSIzMDAiIGNsYXNzPSJiaWciPjcsNzU4PC90ZXh0Pjx0ZXh0IHg9IjU0MCIgeT0iMzMwIiBjbGFzcz0ibm90ZSI+Y29uc3VsdGFzIGFmZWN0YWRhczwvdGV4dD48dGV4dCB4PSI1NDAiIHk9IjM4MCIgY2xhc3M9ImxhYmVsIj5Qb2zDrXRpY2EgZGVmZW5kaWJsZTwvdGV4dD48dGV4dCB4PSI1NDAiIHk9IjQxMCIgY2xhc3M9Im5vdGUiPsO6bHRpbW8gcmVnaXN0cm8gY29uIHJlZ2lzdHJvX2RhdGUg4omkIG1vbWVudG8gZGUgZXZhbHVhY2nDs248L3RleHQ+Cjx0ZXh0IHg9IjYwIiB5PSI1MDUiIGNsYXNzPSJub3RlIj7Dmmx0aW1vIHJlZ2lzdHJvIGNvbm9jaWRvIGV2aXRhIHRhbnRvIGxhIGV4cGFuc2nDs24gaW5nZW51YSBjb21vIGVsIHVzbyBkZSBpbmZvcm1hY2nDs24gZnV0dXJhLjwvdGV4dD48L3N2Zz4="/>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<p><strong>UNKNOWN no es UNAVAILABLE</strong></p>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedSVG jp-OutputArea-output" data-mime-type="image/svg+xml" tabindex="0">
+<img alt="No description has been provided for this image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiB2aWV3Qm94PSIwIDAgOTYwIDU2MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJVTktOT1dOIG5vIGVzIFVOQVZBSUxBQkxFIj48c3R5bGU+dGV4dHtmb250LWZhbWlseTpBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZjtmaWxsOiMxNzIwMzN9LnRpdGxle2ZvbnQtc2l6ZToyN3B4O2ZvbnQtd2VpZ2h0OjcwMH0uc3Vie2ZvbnQtc2l6ZToxNXB4O2ZpbGw6IzVjNjY3YX0uYXhpc3tmb250LXNpemU6MTJweDtmaWxsOiM2ZDc2ODd9LmxhYmVse2ZvbnQtc2l6ZToxM3B4O2ZvbnQtd2VpZ2h0OjYwMH0udmFsdWV7Zm9udC1zaXplOjEycHg7Zm9udC13ZWlnaHQ6NzAwfS5iaWd7Zm9udC1zaXplOjMwcHg7Zm9udC13ZWlnaHQ6ODAwfS5ub3Rle2ZvbnQtc2l6ZToxMnB4O2ZpbGw6IzVjNjY3YX0uZ3JpZHtzdHJva2U6I2U2ZTllZjtzdHJva2Utd2lkdGg6MX0uYXhpc2xpbmV7c3Ryb2tlOiM5YWEzYjI7c3Ryb2tlLXdpZHRoOjF9LmF7ZmlsbDojMmY2YjhhfS5ie2ZpbGw6I2Q5ODc0M30uY3tmaWxsOiM2ZDliNzZ9LmR7ZmlsbDojOGI3OGE4fS5zb2Z0e2ZpbGw6I2YxZjNmNn0uY2FyZHtmaWxsOiNmYmZjZmU7c3Ryb2tlOiNlMWU2ZWQ7c3Ryb2tlLXdpZHRoOjF9LmxpbmVBe2ZpbGw6bm9uZTtzdHJva2U6IzJmNmI4YTtzdHJva2Utd2lkdGg6NH0ucHRBe2ZpbGw6IzJmNmI4YX08L3N0eWxlPjxyZWN0IHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiBmaWxsPSIjZmZmIi8+PHRleHQgeD0iNjAiIHk9IjQ4IiBjbGFzcz0idGl0bGUiPkRFU0NPTk9DSURPIG5vIGVzIE5PIERJU1BPTklCTEU8L3RleHQ+PHRleHQgeD0iNjAiIHk9Ijc1IiBjbGFzcz0ic3ViIj5Nw6l0cmljYXMgaW5kZXBlbmRpZW50ZXMgZGUgbGEgYXVkaXRvcsOtYSBmaW5hbCBkZSBJbnZlbnRhcmlvOyBubyBzb24gcGFydGVzIGRlIHVuIG1pc21vIHRvdGFsLjwvdGV4dD48dGV4dCB4PSI3MCIgeT0iMTM4IiBjbGFzcz0iYXhpcyI+UHJvcG9yY2nDs24gZXhhY3RhIGF0ZW5kaWJsZTwvdGV4dD48cmVjdCB4PSIzMDAiIHk9IjEyMCIgd2lkdGg9IjU3MCIgaGVpZ2h0PSIyNSIgcng9IjUiIGNsYXNzPSJzb2Z0Ii8+PHJlY3QgeD0iMzAwIiB5PSIxMjAiIHdpZHRoPSI1MjAuMyIgaGVpZ2h0PSIyNSIgcng9IjUiIGNsYXNzPSJjIi8+PHRleHQgeD0iODI4LjI5NTk5OTk5OTk5OTkiIHk9IjEzOCIgY2xhc3M9InZhbHVlIj40NS42NCU8L3RleHQ+PHRleHQgeD0iNzAiIHk9IjE4MCIgY2xhc3M9ImF4aXMiPkV4YWN0IERFU0NPTk9DSURPIHNoYXJlPC90ZXh0PjxyZWN0IHg9IjMwMCIgeT0iMTYyIiB3aWR0aD0iNTcwIiBoZWlnaHQ9IjI1IiByeD0iNSIgY2xhc3M9InNvZnQiLz48cmVjdCB4PSIzMDAiIHk9IjE2MiIgd2lkdGg9IjUwNS4wIiBoZWlnaHQ9IjI1IiByeD0iNSIgY2xhc3M9ImIiLz48dGV4dCB4PSI4MTMuMDIiIHk9IjE4MCIgY2xhc3M9InZhbHVlIj40NC4zMCU8L3RleHQ+PHRleHQgeD0iNzAiIHk9IjIyMiIgY2xhc3M9ImF4aXMiPlNpbiBhbHRlcm5hdGl2YSBjb25vY2lkYTwvdGV4dD48cmVjdCB4PSIzMDAiIHk9IjIwNCIgd2lkdGg9IjU3MCIgaGVpZ2h0PSIyNSIgcng9IjUiIGNsYXNzPSJzb2Z0Ii8+PHJlY3QgeD0iMzAwIiB5PSIyMDQiIHdpZHRoPSIyNy4xIiBoZWlnaHQ9IjI1IiByeD0iNSIgY2xhc3M9ImQiLz48dGV4dCB4PSIzMzUuMTMyIiB5PSIyMjIiIGNsYXNzPSJ2YWx1ZSI+Mi4zOCU8L3RleHQ+PHRleHQgeD0iNzAiIHk9IjI2NCIgY2xhc3M9ImF4aXMiPlNpbiBhbHRlcm5hdGl2YSBwb3RlbmNpYWw8L3RleHQ+PHJlY3QgeD0iMzAwIiB5PSIyNDYiIHdpZHRoPSI1NzAiIGhlaWdodD0iMjUiIHJ4PSI1IiBjbGFzcz0ic29mdCIvPjxyZWN0IHg9IjMwMCIgeT0iMjQ2IiB3aWR0aD0iMC4wIiBoZWlnaHQ9IjI1IiByeD0iNSIgY2xhc3M9ImEiLz48dGV4dCB4PSIzMDgiIHk9IjI2NCIgY2xhc3M9InZhbHVlIj4wLjAwJTwvdGV4dD48dGV4dCB4PSI3MCIgeT0iMzIzIiBjbGFzcz0ibm90ZSI+TGEgZmFsdGEgZGUgZXZpZGVuY2lhIGhpc3TDs3JpY2EgZGUgZGlzcG9uaWJpbGlkYWQgc2UgY29uc2VydmEgY29tbyBpbmNlcnRpZHVtYnJlOyBubyBzZSB0cmFuc2Zvcm1hIGVuIHVuIOKAnG5v4oCdLjwvdGV4dD48L3N2Zz4="/>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<p><strong>No estacionariedad de múltiples clocks</strong></p>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedSVG jp-OutputArea-output" data-mime-type="image/svg+xml" tabindex="0">
+<img alt="No description has been provided for this image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiB2aWV3Qm94PSIwIDAgOTYwIDU2MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJWYXJpb3MgY2xvY2tzIGNhbWJpYW4gYSBsYSB2ZXosIHBlcm8gbm8gaWd1YWwiPjxzdHlsZT50ZXh0e2ZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO2ZpbGw6IzE3MjAzM30udGl0bGV7Zm9udC1zaXplOjI3cHg7Zm9udC13ZWlnaHQ6NzAwfS5zdWJ7Zm9udC1zaXplOjE1cHg7ZmlsbDojNWM2NjdhfS5heGlze2ZvbnQtc2l6ZToxMnB4O2ZpbGw6IzZkNzY4N30ubGFiZWx7Zm9udC1zaXplOjEzcHg7Zm9udC13ZWlnaHQ6NjAwfS52YWx1ZXtmb250LXNpemU6MTJweDtmb250LXdlaWdodDo3MDB9LmJpZ3tmb250LXNpemU6MzBweDtmb250LXdlaWdodDo4MDB9Lm5vdGV7Zm9udC1zaXplOjEycHg7ZmlsbDojNWM2NjdhfS5ncmlke3N0cm9rZTojZTZlOWVmO3N0cm9rZS13aWR0aDoxfS5he2ZpbGw6IzJmNmI4YX0uYntmaWxsOiNkOTg3NDN9LmN7ZmlsbDojNmQ5Yjc2fS5ke2ZpbGw6IzhiNzhhOH0uc29mdHtmaWxsOiNmMWYzZjZ9LmNhcmR7ZmlsbDojZmJmY2ZlO3N0cm9rZTojZTFlNmVkO3N0cm9rZS13aWR0aDoxfTwvc3R5bGU+PHJlY3Qgd2lkdGg9Ijk2MCIgaGVpZ2h0PSI1NjAiIGZpbGw9IiNmZmYiLz48dGV4dCB4PSI2MCIgeT0iNDgiIGNsYXNzPSJ0aXRsZSI+VmFyaW9zIHJlbG9qcyBjYW1iaWFuIGEgbGEgdmV6LCBwZXJvIG5vIGlndWFsPC90ZXh0Pjx0ZXh0IHg9IjYwIiB5PSI3NSIgY2xhc3M9InN1YiI+Q29tcGFyYWNpw7NuIGRlc2NyaXB0aXZhIGVudHJlIGVsIGluaWNpbyB5IGVsIGJvcmRlIGRlbCBERVZFTE9QTUVOVCBjbGVhbi1yb29tLjwvdGV4dD48dGV4dCB4PSIzNjUiIHk9IjExNSIgY2xhc3M9ImF4aXMiPkVuZS0yMDI1PC90ZXh0Pjx0ZXh0IHg9IjcyMCIgeT0iMTE1IiBjbGFzcz0iYXhpcyI+QWJyLTIwMjY8L3RleHQ+CjxyZWN0IHg9IjcwIiB5PSIxNDUiIHdpZHRoPSI4MjAiIGhlaWdodD0iNjIiIHJ4PSIxMCIgY2xhc3M9ImNhcmQiLz48dGV4dCB4PSI5MiIgeT0iMTcwIiBjbGFzcz0ibGFiZWwiPnZhcmlhYmxlIG9iamV0aXZvIHByZXZhbGVuY2U8L3RleHQ+PHRleHQgeD0iMzY1IiB5PSIxODciIGNsYXNzPSJ2YWx1ZSI+MTkuMjglPC90ZXh0PjxsaW5lIHgxPSI0NDAiIHkxPSIxNzYiIHgyPSI2NjUiIHkyPSIxNzYiIHN0cm9rZT0iI2M5ZDBkYSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBvbHlnb24gcG9pbnRzPSI2NjUsMTc2IDY1MSwxNjggNjUxLDE4NCIgY2xhc3M9ImEiLz48dGV4dCB4PSI3MjAiIHk9IjE4NyIgY2xhc3M9InZhbHVlIj4yMC4yMSU8L3RleHQ+PHRleHQgeD0iNzkwIiB5PSIxODciIGNsYXNzPSJheGlzIj7iiYggZXN0YWJsZTwvdGV4dD4KPHJlY3QgeD0iNzAiIHk9IjIyNyIgd2lkdGg9IjgyMCIgaGVpZ2h0PSI2MiIgcng9IjEwIiBjbGFzcz0iY2FyZCIvPjx0ZXh0IHg9IjkyIiB5PSIyNTIiIGNsYXNzPSJsYWJlbCI+RGlzcG9uaWJpbGlkYWQgY292ZXJhZ2U8L3RleHQ+PHRleHQgeD0iMzY1IiB5PSIyNjkiIGNsYXNzPSJ2YWx1ZSI+Ny43MiU8L3RleHQ+PGxpbmUgeDE9IjQ0MCIgeTE9IjI1OCIgeDI9IjY2NSIgeTI9IjI1OCIgc3Ryb2tlPSIjYzlkMGRhIiBzdHJva2Utd2lkdGg9IjMiLz48cG9seWdvbiBwb2ludHM9IjY2NSwyNTggNjUxLDI1MCA2NTEsMjY2IiBjbGFzcz0iYiIvPjx0ZXh0IHg9IjcyMCIgeT0iMjY5IiBjbGFzcz0idmFsdWUiPjEwMCU8L3RleHQ+PHRleHQgeD0iNzkwIiB5PSIyNjkiIGNsYXNzPSJheGlzIj5yw6lnaW1lbiBudWV2bzwvdGV4dD4KPHJlY3QgeD0iNzAiIHk9IjMwOSIgd2lkdGg9IjgyMCIgaGVpZ2h0PSI2MiIgcng9IjEwIiBjbGFzcz0iY2FyZCIvPjx0ZXh0IHg9IjkyIiB5PSIzMzQiIGNsYXNzPSJsYWJlbCI+UHJvZnVuZGlkYWQgZGUgY2FuZGlkYXRvcyDCtyBtZWRpYW5hPC90ZXh0Pjx0ZXh0IHg9IjM2NSIgeT0iMzUxIiBjbGFzcz0idmFsdWUiPjE2PC90ZXh0PjxsaW5lIHgxPSI0NDAiIHkxPSIzNDAiIHgyPSI2NjUiIHkyPSIzNDAiIHN0cm9rZT0iI2M5ZDBkYSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBvbHlnb24gcG9pbnRzPSI2NjUsMzQwIDY1MSwzMzIgNjUxLDM0OCIgY2xhc3M9ImMiLz48dGV4dCB4PSI3MjAiIHk9IjM1MSIgY2xhc3M9InZhbHVlIj40OTwvdGV4dD48dGV4dCB4PSI3OTAiIHk9IjM1MSIgY2xhc3M9ImF4aXMiPjMuMcOXPC90ZXh0Pgo8cmVjdCB4PSI3MCIgeT0iMzkxIiB3aWR0aD0iODIwIiBoZWlnaHQ9IjYyIiByeD0iMTAiIGNsYXNzPSJjYXJkIi8+PHRleHQgeD0iOTIiIHk9IjQxNiIgY2xhc3M9ImxhYmVsIj5GdXR1cmUgY29uc3VsdGEgZXhwb3N1cmU8L3RleHQ+PHRleHQgeD0iMzY1IiB5PSI0MzMiIGNsYXNzPSJ2YWx1ZSI+NS40MDwvdGV4dD48bGluZSB4MT0iNDQwIiB5MT0iNDIyIiB4Mj0iNjY1IiB5Mj0iNDIyIiBzdHJva2U9IiNjOWQwZGEiIHN0cm9rZS13aWR0aD0iMyIvPjxwb2x5Z29uIHBvaW50cz0iNjY1LDQyMiA2NTEsNDE0IDY1MSw0MzAiIGNsYXNzPSJkIi8+PHRleHQgeD0iNzIwIiB5PSI0MzMiIGNsYXNzPSJ2YWx1ZSI+My45MjwvdGV4dD48dGV4dCB4PSI3OTAiIHk9IjQzMyIgY2xhc3M9ImF4aXMiPuKIkjI3JTwvdGV4dD4KPHRleHQgeD0iNzAiIHk9IjUwNSIgY2xhc3M9Im5vdGUiPkVzdG8gcHJ1ZWJhIG5vLWVzdGFjaW9uYXJpZWRhZCBkZSBwcm9jZXNvL2V4cG9zaWNpw7NuOyBubyBiYXN0YSBwYXJhIGFmaXJtYXIgZXN0YWNpb25hbGlkYWQgcmVjdXJyZW50ZS48L3RleHQ+PC9zdmc+"/>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<p><strong>Quality e Inventory son dos ejes distintos</strong></p>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedSVG jp-OutputArea-output" data-mime-type="image/svg+xml" tabindex="0">
+<img alt="No description has been provided for this image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iNTYwIiB2aWV3Qm94PSIwIDAgOTYwIDU2MCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJRdWFsaXR5IGUgSW52ZW50b3J5IHNvbiBkb3MgZWplcyBvcGVyYXRpdm9zIGRpc3RpbnRvcyI+PHN0eWxlPnRleHR7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZmlsbDojMTcyMDMzfS50aXRsZXtmb250LXNpemU6MjdweDtmb250LXdlaWdodDo3MDB9LnN1Yntmb250LXNpemU6MTVweDtmaWxsOiM1YzY2N2F9LmF4aXN7Zm9udC1zaXplOjEycHg7ZmlsbDojNmQ3Njg3fS5sYWJlbHtmb250LXNpemU6MTNweDtmb250LXdlaWdodDo2MDB9LnZhbHVle2ZvbnQtc2l6ZToxMnB4O2ZvbnQtd2VpZ2h0OjcwMH0uYmlne2ZvbnQtc2l6ZTozMHB4O2ZvbnQtd2VpZ2h0OjgwMH0ubm90ZXtmb250LXNpemU6MTJweDtmaWxsOiM1YzY2N2F9LmdyaWR7c3Ryb2tlOiNlNmU5ZWY7c3Ryb2tlLXdpZHRoOjF9LmF7ZmlsbDojMmY2YjhhfS5ie2ZpbGw6I2Q5ODc0M30uY3tmaWxsOiM2ZDliNzZ9LmR7ZmlsbDojOGI3OGE4fS5zb2Z0e2ZpbGw6I2YxZjNmNn0uY2FyZHtmaWxsOiNmYmZjZmU7c3Ryb2tlOiNlMWU2ZWQ7c3Ryb2tlLXdpZHRoOjF9PC9zdHlsZT48cmVjdCB3aWR0aD0iOTYwIiBoZWlnaHQ9IjU2MCIgZmlsbD0iI2ZmZiIvPjx0ZXh0IHg9IjYwIiB5PSI0OCIgY2xhc3M9InRpdGxlIj5DYWxpZGFkIGUgSW52ZW50YXJpbyBzb24gZG9zIGVqZXMgb3BlcmF0aXZvcyBkaXN0aW50b3M8L3RleHQ+PHRleHQgeD0iNjAiIHk9Ijc1IiBjbGFzcz0ic3ViIj5FbCBwcm9kdWN0byBkZWJlIGNvbnNlcnZhciBhbWJvcyBjb21wb25lbnRlcyB2aXNpYmxlcyBwYXJhIGRlY2lkaXIgbGEgYWNjacOzbi48L3RleHQ+PHRleHQgeD0iOTUiIHk9IjMxNSIgdHJhbnNmb3JtPSJyb3RhdGUoLTkwIDk1IDMxNSkiIGNsYXNzPSJsYWJlbCI+Q2FwYWNpZGFkIGRlbCBpbnZlbnRhcmlvIOKGkjwvdGV4dD48dGV4dCB4PSI0NTUiIHk9IjUwMCIgY2xhc3M9ImxhYmVsIj5DYWxpZGFkIGRlbCBsZWFkIOKGkjwvdGV4dD4KPHJlY3QgeD0iMTcwIiB5PSIxMjUiIHdpZHRoPSIyODUiIGhlaWdodD0iMTMwIiByeD0iMTQiIGNsYXNzPSJjYXJkIi8+PHJlY3QgeD0iMTcwIiB5PSIxMjUiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMzAiIHJ4PSI1IiBjbGFzcz0iYSIvPjx0ZXh0IHg9IjE5NSIgeT0iMTY1IiBjbGFzcz0ibGFiZWwiPkNhbGlkYWQgYmFqYSArIEludmVudGFyaW8gYWx0bzwvdGV4dD48dGV4dCB4PSIxOTUiIHk9IjIwMCIgY2xhc3M9ImF4aXMiPk9mZXJ0YSBkaXNwb25pYmxlIG5vIGNvbXBlbnNhPC90ZXh0Pjx0ZXh0IHg9IjE5NSIgeT0iMjIwIiBjbGFzcz0iYXhpcyI+YmFqYSBwcmlvcmlkYWQgY29tZXJjaWFsLjwvdGV4dD4KPHJlY3QgeD0iNTAwIiB5PSIxMjUiIHdpZHRoPSIyODUiIGhlaWdodD0iMTMwIiByeD0iMTQiIGNsYXNzPSJjYXJkIi8+PHJlY3QgeD0iNTAwIiB5PSIxMjUiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMzAiIHJ4PSI1IiBjbGFzcz0iYyIvPjx0ZXh0IHg9IjUyNSIgeT0iMTY1IiBjbGFzcz0ibGFiZWwiPkNhbGlkYWQgYWx0YSArIEludmVudGFyaW8gYWx0bzwvdGV4dD48dGV4dCB4PSI1MjUiIHk9IjIwNSIgY2xhc3M9InZhbHVlIj5UcmFiYWphciBhaG9yYTwvdGV4dD4KPHJlY3QgeD0iMTcwIiB5PSIyODUiIHdpZHRoPSIyODUiIGhlaWdodD0iMTMwIiByeD0iMTQiIGNsYXNzPSJjYXJkIi8+PHJlY3QgeD0iMTcwIiB5PSIyODUiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMzAiIHJ4PSI1IiBjbGFzcz0iZCIvPjx0ZXh0IHg9IjE5NSIgeT0iMzI1IiBjbGFzcz0ibGFiZWwiPkNhbGlkYWQgYmFqYSArIEludmVudGFyaW8gYmFqbzwvdGV4dD48dGV4dCB4PSIxOTUiIHk9IjM2NSIgY2xhc3M9ImF4aXMiPk5vIHByaW9yaXphcjsgYsO6c3F1ZWRhIGRlIG9mZXJ0YSBzaSBhcGxpY2EuPC90ZXh0Pgo8cmVjdCB4PSI1MDAiIHk9IjI4NSIgd2lkdGg9IjI4NSIgaGVpZ2h0PSIxMzAiIHJ4PSIxNCIgY2xhc3M9ImNhcmQiLz48cmVjdCB4PSI1MDAiIHk9IjI4NSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEzMCIgcng9IjUiIGNsYXNzPSJiIi8+PHRleHQgeD0iNTI1IiB5PSIzMjUiIGNsYXNzPSJsYWJlbCI+Q2FsaWRhZCBhbHRhICsgSW52ZW50YXJpbyBiYWpvPC90ZXh0Pjx0ZXh0IHg9IjUyNSIgeT0iMzY1IiBjbGFzcz0idmFsdWUiPlByaW9yaXphciBhbHRlcm5hdGl2YSAvIGFsdGVybmF0aXZhPC90ZXh0Pgo8bGluZSB4MT0iNDc1IiB5MT0iMTEwIiB4Mj0iNDc1IiB5Mj0iNDMwIiBjbGFzcz0iZ3JpZCIvPjxsaW5lIHgxPSIxNTUiIHkxPSIyNzAiIHgyPSI4MDAiIHkyPSIyNzAiIGNsYXNzPSJncmlkIi8+PHRleHQgeD0iMTcwIiB5PSI0NTUiIGNsYXNzPSJheGlzIj5CYWpvPC90ZXh0Pjx0ZXh0IHg9Ijc2MCIgeT0iNDU1IiBjbGFzcz0iYXhpcyI+QWx0bzwvdGV4dD48dGV4dCB4PSIxMjUiIHk9IjQwMCIgY2xhc3M9ImF4aXMiPkJham88L3RleHQ+PHRleHQgeD0iMTI1IiB5PSIxNDUiIGNsYXNzPSJheGlzIj5BbHRvPC90ZXh0Pjwvc3ZnPg=="/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2df8dafe">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="3.5-De-EDA-a-decisiones-de-ingenier%C3%ADa">3.5 De EDA a decisiones de ingeniería<a class="anchor-link" href="#3.5-De-EDA-a-decisiones-de-ingenier%C3%ADa">¶</a></h3><ul>
+<li>T1 gana a T0 porque la consulta aporta información nueva.</li>
+<li>UNKNOWN no es UNAVAILABLE: incertidumbre y vigencia sobreviven al scoring.</li>
+<li>market_context permanece EDA_ONLY por ausencia de publication time.</li>
+<li>Conteos futuros y estado mutable del listing quedan fuera del modelo limpio.</li>
+<li>Los pockets de clusters quedan como hipótesis: 0/19 celdas pasan BH-FDR 10% en confirmación.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=56615c64">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="4.-ABT-y-feature-engineering-point-in-time">4. ABT y feature engineering point-in-time<a class="anchor-link" href="#4.-ABT-y-feature-engineering-point-in-time">¶</a></h2><p>El modelado empieza sólo después de congelar el reloj. La ABT T1 mantiene un registro por lead en su primera inquiry y separa intake, payload contemporáneo y transformaciones determinísticas T0→T1.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=73f4cdda">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">abt_t1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/abt/abt_t1_first_inquiry.parquet'</span><span class="p">)</span>
+<span class="n">policy</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">((</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'config/feature_policy.yaml'</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">))[</span><span class="s1">'clean_t1'</span><span class="p">]</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'rows'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">abt_t1</span><span class="p">),</span> <span class="s1">'columns'</span><span class="p">:</span> <span class="n">abt_t1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+           <span class="s1">'target_observed'</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">abt_t1</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+           <span class="s1">'target_positive'</span><span class="p">:</span> <span class="nb">int</span><span class="p">((</span><span class="n">abt_t1</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+           <span class="s1">'allow_features'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">policy</span><span class="p">[</span><span class="s1">'allow'</span><span class="p">]),</span>
+           <span class="s1">'forbidden_features'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">policy</span><span class="p">[</span><span class="s1">'forbidden'</span><span class="p">])}</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'ABT T1'</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'allow'</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">policy</span><span class="p">[</span><span class="s1">'allow'</span><span class="p">]),</span> <span class="s1">'forbidden'</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">policy</span><span class="p">[</span><span class="s1">'forbidden'</span><span class="p">])}))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>metrica</th><th>valor</th></tr></thead><tbody><tr><td>rows</td><td>5,000</td></tr><tr><td>target_observed</td><td>4,898</td></tr><tr><td>target_positive</td><td>1,001</td></tr><tr><td>positive_rate_mature</td><td>20.44%</td></tr><tr><td>allow_features</td><td>26</td></tr><tr><td>forbidden_features</td><td>11</td></tr></tbody></table></div>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>allow</th><th>forbidden</th></tr></thead><tbody><tr><td>user_type</td><td>lead_score_internal</td></tr><tr><td>company_size</td><td>broker_response</td></tr><tr><td>industry</td><td>broker_response_hours</td></tr><tr><td>search_sector</td><td>days_on_market</td></tr><tr><td>search_modality</td><td>total_inquiries</td></tr><tr><td>target_area_sqm</td><td>total_views</td></tr><tr><td>min_budget_mxn_rent_monthly</td><td>is_active</td></tr><tr><td>max_budget_mxn_rent_monthly</td><td>competing_inquiries_30d</td></tr><tr><td>min_budget_mxn_sale_total</td><td>market_context</td></tr><tr><td>max_budget_mxn_sale_total</td><td>future_inquiry_count</td></tr><tr><td>preferred_state</td><td>future_scheduled_visit</td></tr><tr><td>preferred_municipality</td><td></td></tr><tr><td>preferred_corridor</td><td></td></tr><tr><td>source</td><td></td></tr><tr><td>channel</td><td></td></tr><tr><td>message_length</td><td></td></tr><tr><td>requested_area_sqm</td><td></td></tr><tr><td>requested_budget_mxn_rent_monthly</td><td></td></tr><tr><td>requested_budget_mxn_sale_total</td><td></td></tr><tr><td>urgency_days</td><td></td></tr><tr><td>asked_visit</td><td></td></tr><tr><td>days_from_lead_creation</td><td></td></tr><tr><td>area_request_to_target_ratio</td><td></td></tr><tr><td>rent_request_to_lead_budget_ratio</td><td></td></tr><tr><td>sale_request_to_lead_budget_ratio</td><td></td></tr><tr><td>industrial_small_or_paid_interaction</td><td></td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=eed0b43f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="9.1-Features-derivadas-y-consistencia-T0%E2%86%92T1">9.1 Features derivadas y consistencia T0→T1<a class="anchor-link" href="#9.1-Features-derivadas-y-consistencia-T0%E2%86%92T1">¶</a></h3><p>Las transformaciones priorizan semántica y reproducibilidad: ratios de área/presupuesto, días desde creación, missingness y una interacción estable de baja cardinalidad. No se promueven variables por correlación aislada.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1b985acc">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">derived</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'days_from_lead_creation'</span><span class="p">,</span><span class="s1">'area_request_to_target_ratio'</span><span class="p">,</span>
+           <span class="s1">'rent_request_to_lead_budget_ratio'</span><span class="p">,</span><span class="s1">'sale_request_to_lead_budget_ratio'</span><span class="p">,</span>
+           <span class="s1">'industrial_small_or_paid_interaction'</span><span class="p">]</span>
+<span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">derived</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">abt_t1</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<span class="n">display</span><span class="p">(</span><span class="n">abt_t1</span><span class="p">[[</span><span class="s1">'lead_id'</span><span class="p">,</span><span class="s1">'inquiry_id'</span><span class="p">,</span><span class="s1">'target'</span><span class="p">]</span> <span class="o">+</span> <span class="n">available</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>feature</th><th>rol</th></tr></thead><tbody><tr><td>days_from_lead_creation</td><td>antigüedad observable del lead al T1</td></tr><tr><td>area_request_to_target_ratio</td><td>refinamiento de área T0→T1</td></tr><tr><td>rent_request_to_lead_budget_ratio</td><td>consistencia de presupuesto renta</td></tr><tr><td>sale_request_to_lead_budget_ratio</td><td>consistencia de presupuesto venta</td></tr><tr><td>industrial_small_or_paid_interaction</td><td>interacción estable de baja cardinalidad</td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7a589384">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="9.2-T0-y-T2-como-sensibilidades,-no-como-mezcla-de-scores">9.2 T0 y T2 como sensibilidades, no como mezcla de scores<a class="anchor-link" href="#9.2-T0-y-T2-como-sensibilidades,-no-como-mezcla-de-scores">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=2dcc948c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">read_json</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">'outputs/metrics/t0_t2_sensitivity_metrics.json'</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<pre>{
+  "T0_logistic_30d": {
+    "n": 1371,
+    "positive_rate": 0.5382932166301969,
+    "roc_auc": 0.4665056919131592,
+    "average_precision": 0.5227933718540695,
+    "brier": 0.2962581015841197,
+    "log_loss": 0.7949460322587545,
+    "precision_top_5pct": 0.5217391304347826,
+    "recall_top_5pct": 0.04878048780487805,
+    "lift_top_5pct": 0.9692470837751856,
+    "precision_top_10pct": 0.5507246376811594,
+    "recall_top_10pct": 0.10298102981029811,
+    "lift_top_10pct": 1.0230941439849182,
+    "precision_top_20pct": 0.49818181818181817,
+    "recall_top_20pct": 0.1856368563685637,
+    "lift_top_20pct": 0.9254841093865485
+  },
+  "T2_logistic_trajectory": {
+    "n": 5249,
+    "positive_rate": 0.1992760525814441,
+    "roc_auc": 0.5057211251728143,
+    "average_precision": 0.20686217092886788,
+    "brier": 0.16049334477325972,
+    "log_loss": 0.5025338379378351,
+    "precision_top_5pct": 0.25475285171102663,
+    "recall_top_5pct": 0.06405353728489484,
+    "lift_top_5pct": 1.2783917004122167,
+    "precision_top_10pct": 0.22666666666666666,
+    "recall_top_10pct": 0.11376673040152964,
+    "lift_top_10pct": 1.1374506054811981,
+    "precision_top_20pct": 0.19904761904761906,
+    "recall_top_20pct": 0.19980879541108987,
+    "lift_top_20pct": 0.9988536829645817
+  },
+  "T2_entity_overlap_train_test": 0
+}</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=aeb783cf">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="4.-Lead-Quality-%E2%80%94-selecci%C3%B3n,-ranking-y-calibraci%C3%B3n">4. Lead Quality — selección, ranking y calibración<a class="anchor-link" href="#4.-Lead-Quality-%E2%80%94-selecci%C3%B3n,-ranking-y-calibraci%C3%B3n">¶</a></h2><h3 id="4.1-Baselines-antes-de-complejidad">4.1 Baselines antes de complejidad<a class="anchor-link" href="#4.1-Baselines-antes-de-complejidad">¶</a></h3><p>Tasa positiva, una regla interpretable y Regresión Logística preceden a CatBoost. La promoción usa folds temporales expansivos; el holdout no participa en la selección.</p>
+<h2 id="5.-Lead-Quality-%E2%80%94-selecci%C3%B3n,-ranking-y-calibraci%C3%B3n">5. Lead Quality — selección, ranking y calibración<a class="anchor-link" href="#5.-Lead-Quality-%E2%80%94-selecci%C3%B3n,-ranking-y-calibraci%C3%B3n">¶</a></h2><h3 id="9.1-Baselines-antes-de-complejidad">9.1 Baselines antes de complejidad<a class="anchor-link" href="#9.1-Baselines-antes-de-complejidad">¶</a></h3><p>Tasa positiva, una regla interpretable y Regresión Logística preceden a CatBoost. La promoción usa folds temporales expansivos; el holdout no participa en la selección.</p>
 </div>
 </div>
 </div>
@@ -9237,7 +9696,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
@@ -9747,7 +10206,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="4.2-Ranking-bajo-capacidad-limitada">4.2 Ranking bajo capacidad limitada<a class="anchor-link" href="#4.2-Ranking-bajo-capacidad-limitada">¶</a></h3><p>Recall@X responde la pregunta operativa: ¿qué proporción de resultados positivos aparece al trabajar sólo el X% superior de leads?</p>
+<h3 id="9.2-Ranking-bajo-capacidad-limitada">9.2 Ranking bajo capacidad limitada<a class="anchor-link" href="#9.2-Ranking-bajo-capacidad-limitada">¶</a></h3><p>Recall@X responde la pregunta operativa: ¿qué proporción de resultados positivos aparece al trabajar sólo el X% superior de leads?</p>
 </div>
 </div>
 </div>
@@ -9756,7 +10215,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/figures/gains_curve.png'</span><span class="p">)))</span>
@@ -9840,7 +10299,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="4.3-Calibraci%C3%B3n-e-incertidumbre">4.3 Calibración e incertidumbre<a class="anchor-link" href="#4.3-Calibraci%C3%B3n-e-incertidumbre">¶</a></h3><p>La calibración Platt se ajusta en validación y se conserva sólo si mejora. Los intervalos bootstrap separan una señal plausible de una falsa precisión puntual.</p>
+<h3 id="9.3-Calibraci%C3%B3n-e-incertidumbre">9.3 Calibración e incertidumbre<a class="anchor-link" href="#9.3-Calibraci%C3%B3n-e-incertidumbre">¶</a></h3><p>La calibración Platt se ajusta en validación y se conserva sólo si mejora. Los intervalos bootstrap separan una señal plausible de una falsa precisión puntual.</p>
 </div>
 </div>
 </div>
@@ -9849,7 +10308,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/figures/calibration_plot.png'</span><span class="p">)))</span>
@@ -10057,7 +10516,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="4.4-Interpretabilidad-y-estabilidad-temporal">4.4 Interpretabilidad y estabilidad temporal<a class="anchor-link" href="#4.4-Interpretabilidad-y-estabilidad-temporal">¶</a></h3>
+<h3 id="7.4-Interpretabilidad-y-estabilidad-temporal">7.4 Interpretabilidad y estabilidad temporal<a class="anchor-link" href="#7.4-Interpretabilidad-y-estabilidad-temporal">¶</a></h3>
 </div>
 </div>
 </div>
@@ -10066,7 +10525,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/tables/feature_importance.csv'</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
@@ -10321,13 +10780,57 @@ a.anchor-link {
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ab9af93b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="5.5-Error-analysis-y-desempe%C3%B1o-por-segmento">5.5 Error analysis y desempeño por segmento<a class="anchor-link" href="#5.5-Error-analysis-y-desempe%C3%B1o-por-segmento">¶</a></h3><p>El análisis no termina en una métrica agregada. Se revisan errores y segmentos para detectar soporte pequeño, degradación localizada y posibles artefactos temporales.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=43687242">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/tables/error_analysis.csv'</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/tables/segment_metrics.csv'</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">40</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>lead_id</th><th>prediction_timestamp</th><th>split</th><th>target_t1</th><th>search_sector</th><th>source</th><th>channel</th><th>score</th><th>predicted_priority</th><th>error_type</th></tr></thead><tbody><tr><td>26</td><td>2026-02-13 17:17:05+00:00</td><td>test</td><td>1</td><td>Retail</td><td>paid</td><td>whatsapp</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>30</td><td>2026-01-30 18:11:33+00:00</td><td>test</td><td>1</td><td>Retail</td><td>organic</td><td>phone</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>33</td><td>2026-03-20 14:22:36+00:00</td><td>test</td><td>0</td><td>Industrial</td><td>paid</td><td>whatsapp</td><td>0.2530980692158785</td><td>True</td><td>false_positive</td></tr><tr><td>42</td><td>2026-06-02 07:32:32+00:00</td><td>test</td><td>1</td><td>Retail</td><td>organic</td><td>web</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>51</td><td>2026-06-18 17:31:26+00:00</td><td>test</td><td>1</td><td>Retail</td><td>referral</td><td>whatsapp</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>73</td><td>2026-01-27 14:42:52+00:00</td><td>test</td><td>1</td><td>Industrial</td><td>organic</td><td>app</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>82</td><td>2026-03-25 14:51:18+00:00</td><td>test</td><td>1</td><td>Office</td><td>organic</td><td>email</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>84</td><td>2026-02-24 17:41:43+00:00</td><td>test</td><td>1</td><td>Retail</td><td>social</td><td>email</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>90</td><td>2026-03-12 13:30:00+00:00</td><td>test</td><td>1</td><td>Office</td><td>organic</td><td>whatsapp</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>93</td><td>2026-01-23 09:48:00+00:00</td><td>test</td><td>1</td><td>Industrial</td><td>referral</td><td>email</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>123</td><td>2026-03-05 08:01:41+00:00</td><td>test</td><td>1</td><td>Industrial</td><td>email</td><td>whatsapp</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>132</td><td>2026-05-19 17:52:00+00:00</td><td>test</td><td>0</td><td>Industrial</td><td>email</td><td>app</td><td>0.2530980692158785</td><td>True</td><td>false_positive</td></tr><tr><td>137</td><td>2026-04-08 09:07:58+00:00</td><td>test</td><td>0</td><td>Industrial</td><td>social</td><td>app</td><td>0.2530980692158785</td><td>True</td><td>false_positive</td></tr><tr><td>152</td><td>2026-03-31 11:50:39+00:00</td><td>test</td><td>1</td><td>Land</td><td>organic</td><td>web</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>153</td><td>2026-01-04 14:08:15+00:00</td><td>test</td><td>1</td><td>Retail</td><td>referral</td><td>email</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>161</td><td>2026-06-20 08:07:50+00:00</td><td>test</td><td>1</td><td>Industrial</td><td>email</td><td>app</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>167</td><td>2026-03-31 15:50:10+00:00</td><td>test</td><td>1</td><td>Industrial</td><td>social</td><td>web</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>175</td><td>2026-02-21 08:18:55+00:00</td><td>test</td><td>0</td><td>Industrial</td><td>organic</td><td>web</td><td>0.2530980692158785</td><td>True</td><td>false_positive</td></tr><tr><td>205</td><td>2026-05-21 11:29:41+00:00</td><td>test</td><td>0</td><td>Industrial</td><td>paid</td><td>web</td><td>0.2530980692158785</td><td>True</td><td>false_positive</td></tr><tr><td>231</td><td>2026-04-11 16:02:04+00:00</td><td>test</td><td>1</td><td>Retail</td><td>email</td><td>web</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>240</td><td>2026-05-04 07:31:18+00:00</td><td>test</td><td>1</td><td>Office</td><td>event</td><td>email</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>260</td><td>2026-04-29 13:23:42+00:00</td><td>test</td><td>0</td><td>Industrial</td><td>referral</td><td>app</td><td>0.2530980692158785</td><td>True</td><td>false_positive</td></tr><tr><td>264</td><td>2026-04-22 15:12:11+00:00</td><td>test</td><td>1</td><td>Office</td><td>email</td><td>whatsapp</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>268</td><td>2026-04-20 09:02:10+00:00</td><td>test</td><td>0</td><td>Industrial</td><td>paid</td><td>email</td><td>0.2530980692158785</td><td>True</td><td>false_positive</td></tr><tr><td>269</td><td>2026-02-13 18:58:32+00:00</td><td>test</td><td>0</td><td>Industrial</td><td>paid</td><td>whatsapp</td><td>0.2530980692158785</td><td>True</td><td>false_positive</td></tr><tr><td>293</td><td>2026-04-03 07:27:04+00:00</td><td>test</td><td>1</td><td>Retail</td><td>referral</td><td>web</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>305</td><td>2026-04-20 14:58:43+00:00</td><td>test</td><td>0</td><td>Industrial</td><td>organic</td><td>app</td><td>0.2530980692158785</td><td>True</td><td>false_positive</td></tr><tr><td>314</td><td>2026-03-30 08:40:10+00:00</td><td>test</td><td>1</td><td>Retail</td><td>organic</td><td>app</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>334</td><td>2026-02-24 09:45:37+00:00</td><td>test</td><td>1</td><td>Retail</td><td>referral</td><td>app</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr><tr><td>359</td><td>2026-01-29 16:50:06+00:00</td><td>test</td><td>1</td><td>Retail</td><td>paid</td><td>web</td><td>0.1878992408339654</td><td>False</td><td>false_negative</td></tr></tbody></table></div>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>segment</th><th>value</th><th>n</th><th>positive_rate</th><th>roc_auc</th><th>average_precision</th><th>brier</th><th>log_loss</th><th>precision_top_5pct</th><th>recall_top_5pct</th><th>lift_top_5pct</th><th>precision_top_10pct</th><th>recall_top_10pct</th><th>lift_top_10pct</th><th>precision_top_20pct</th><th>recall_top_20pct</th><th>lift_top_20pct</th></tr></thead><tbody><tr><td>search_sector</td><td>Industrial</td><td>434</td><td>0.2557603686635945</td><td>0.6160432878699132</td><td>0.31764688121424367</td><td>0.1872103747416847</td><td>0.5596475736955001</td><td>0.3582887700534759</td><td>0.07101218865924748</td><td>1.4008768126415185</td><td>0.3582887700534759</td><td>0.14202437731849496</td><td>1.4008768126415185</td><td>0.3582887700534759</td><td>0.28082092787975144</td><td>1.4008768126415185</td></tr><tr><td>search_sector</td><td>Land</td><td>281</td><td>0.19217081850533807</td><td>0.5</td><td>0.19217081850533807</td><td>0.15525944139612904</td><td>0.4894148514520001</td><td>0.1921708185053381</td><td>0.05338078291814947</td><td>1.0000000000000002</td><td>0.1921708185053381</td><td>0.10320284697508898</td><td>1.0000000000000002</td><td>0.19217081850533807</td><td>0.20284697508896798</td><td>1.0</td></tr><tr><td>search_sector</td><td>Office</td><td>478</td><td>0.20502092050209206</td><td>0.5</td><td>0.20502092050209206</td><td>0.1632804945732248</td><td>0.508223784164945</td><td>0.20502092050209206</td><td>0.0502092050209205</td><td>1.0</td><td>0.20502092050209206</td><td>0.100418410041841</td><td>1.0</td><td>0.20502092050209206</td><td>0.200836820083682</td><td>1.0</td></tr><tr><td>search_sector</td><td>Retail</td><td>518</td><td>0.19305019305019305</td><td>0.5</td><td>0.19305019305019305</td><td>0.15580834832221008</td><td>0.4907020082891857</td><td>0.19305019305019305</td><td>0.05019305019305019</td><td>1.0</td><td>0.19305019305019305</td><td>0.10038610038610038</td><td>1.0</td><td>0.19305019305019305</td><td>0.20077220077220076</td><td>1.0</td></tr><tr><td>search_modality</td><td>both</td><td>349</td><td>0.22063037249283668</td><td>0.548629679144385</td><td>0.2493118281083897</td><td>0.1708413467990014</td><td>0.524638063380235</td><td>0.3783783783783784</td><td>0.08845208845208846</td><td>1.714987714987715</td><td>0.3783783783783784</td><td>0.171990171990172</td><td>1.714987714987715</td><td>0.2951923076923077</td><td>0.2683566433566434</td><td>1.3379495504495504</td></tr><tr><td>search_modality</td><td>rent</td><td>855</td><td>0.21169590643274855</td><td>0.5297432660622653</td><td>0.2267258669410458</td><td>0.1662572697561855</td><td>0.514472235382625</td><td>0.32051282051282054</td><td>0.07614392973508996</td><td>1.5140246493837655</td><td>0.30937415821136754</td><td>0.14699545638772157</td><td>1.4614083164128135</td><td>0.2553907290749396</td><td>0.24128074404317498</td><td>1.2064037202158748</td></tr><tr><td>search_modality</td><td>sale</td><td>507</td><td>0.20710059171597633</td><td>0.5786069651741294</td><td>0.2555774709620864</td><td>0.16146037639589678</td><td>0.5020804418040523</td><td>0.3888888888888889</td><td>0.0962962962962963</td><td>1.8777777777777778</td><td>0.38888888888888895</td><td>0.1888888888888889</td><td>1.877777777777778</td><td>0.3265720081135903</td><td>0.3172413793103448</td><td>1.5768762677484787</td></tr><tr><td>user_type</td><td>broker</td><td>616</td><td>0.18993506493506493</td><td>0.5318328965623554</td><td>0.20467032967032966</td><td>0.1529941568861708</td><td>0.4835520657722076</td><td>0.2857142857142857</td><td>0.0757020757020757</td><td>1.5042735042735043</td><td>0.2857142857142857</td><td>0.1514041514041514</td><td>1.5042735042735043</td><td>0.23322930642244646</td><td>0.24718319655028514</td><td>1.2279423312498037</td></tr><tr><td>user_type</td><td>investor</td><td>346</td><td>0.19653179190751446</td><td>0.535759627592044</td><td>0.2150683879742462</td><td>0.1567889409629806</td><td>0.4922685785936252</td><td>0.3225806451612903</td><td>0.08538899430740038</td><td>1.6413662239089182</td><td>0.3067573696145125</td><td>0.15788982259570497</td><td>1.5608536748032547</td><td>0.2454421768707483</td><td>0.2526610644257703</td><td>1.2488675470188073</td></tr><tr><td>user_type</td><td>tenant_direct</td><td>661</td><td>0.23903177004538578</td><td>0.5545461408762615</td><td>0.2726584072289513</td><td>0.18163375406585294</td><td>0.5495364697627689</td><td>0.4050632911392405</td><td>0.08716551834641885</td><td>1.6946002243230252</td><td>0.4050632911392405</td><td>0.17176734497676655</td><td>1.6946002243230252</td><td>0.3285016665374777</td><td>0.27652355474357304</td><td>1.3743012758308402</td></tr><tr><td>source</td><td>email</td><td>166</td><td>0.23493975903614459</td><td>0.5187764990914596</td><td>0.24571362372567196</td><td>0.1809849578875336</td><td>0.5491541282999177</td><td>0.35864978902953587</td><td>0.0827653359298929</td><td>1.5265606404846912</td><td>0.29709605361131797</td><td>0.12950340798442064</td><td>1.2645626897302251</td><td>0.2624720774385704</td><td>0.2288218111002921</td><td>1.117188842430838</td></tr><tr><td>source</td><td>organic</td><td>521</td><td>0.22456813819577734</td><td>0.5576817297114327</td><td>0.26929638925800153</td><td>0.17282362464429674</td><td>0.5290245989057379</td><td>0.5</td><td>0.11538461538461539</td><td>2.2264957264957266</td><td>0.41591468416735033</td><td>0.18840579710144928</td><td>1.8520645337708508</td><td>0.3104209799861974</td><td>0.2785829307568438</td><td>1.382301970707768</td></tr><tr><td>source</td><td>paid</td><td>408</td><td>0.22303921568627452</td><td>0.5732485180434708</td><td>0.25954830408215535</td><td>0.17113108470436203</td><td>0.5245438160505059</td><td>0.3207547169811321</td><td>0.07402031930333818</td><td>1.4381090607505702</td><td>0.3207547169811321</td><td>0.14451586149699358</td><td>1.4381090607505702</td><td>0.3207547169811321</td><td>0.28903172299398716</td><td>1.4381090607505702</td></tr><tr><td>source</td><td>referral</td><td>348</td><td>0.1839080459770115</td><td>0.531800176056338</td><td>0.20207435344827585</td><td>0.14913130785138898</td><td>0.47445518675959925</td><td>0.35</td><td>0.0984375</td><td>1.903125</td><td>0.2744773519163763</td><td>0.15010480182926828</td><td>1.4924706010452962</td><td>0.2241289198606272</td><td>0.24514100609756098</td><td>1.2187010017421605</td></tr><tr><td>source</td><td>social</td><td>176</td><td>0.2159090909090909</td><td>0.5141113653699466</td><td>0.22254784688995213</td><td>0.16948788496549982</td><td>0.5224122522042542</td><td>0.30000000000000004</td><td>0.07105263157894737</td><td>1.3894736842105264</td><td>0.26037483266398925</td><td>0.12333544705136334</td><td>1.2059465933911082</td><td>0.23560910307898256</td><td>0.22320862396956243</td><td>1.0912421616289718</td></tr><tr><td>channel</td><td>app</td><td>432</td><td>0.22685185185185186</td><td>0.5391054625442993</td><td>0.2495275888133031</td><td>0.175041967906162</td><td>0.534678576208595</td><td>0.375</td><td>0.08418367346938775</td><td>1.6530612244897958</td><td>0.3601576994434137</td><td>0.16170345689296126</td><td>1.5876339404036195</td><td>0.28679920243959656</td><td>0.25460745522698874</td><td>1.2642577087133235</td></tr><tr><td>channel</td><td>email</td><td>267</td><td>0.19850187265917604</td><td>0.5359284076882385</td><td>0.21495704493372506</td><td>0.1580965429894273</td><td>0.4953617009120513</td><td>0.2857142857142857</td><td>0.07547169811320754</td><td>1.439353099730458</td><td>0.2857142857142857</td><td>0.14555256064690028</td><td>1.439353099730458</td><td>0.2503991060025543</td><td>0.25512361743656475</td><td>1.2614445528807923</td></tr><tr><td>channel</td><td>web</td><td>503</td><td>0.21868787276341947</td><td>0.5289266712930835</td><td>0.2326592511049406</td><td>0.17054826146136412</td><td>0.5244836840239357</td><td>0.30909090909090914</td><td>0.07305785123966943</td><td>1.4133884297520665</td><td>0.3090909090909091</td><td>0.14330578512396694</td><td>1.4133884297520662</td><td>0.2628624469589816</td><td>0.24135551948051948</td><td>1.2019982801851614</td></tr><tr><td>channel</td><td>whatsapp</td><td>430</td><td>0.2116279069767442</td><td>0.5850756912703815</td><td>0.2721235900442467</td><td>0.16384000835092555</td><td>0.507411524481407</td><td>0.45098039215686275</td><td>0.1090282266752855</td><td>2.1310062486533075</td><td>0.4509803921568627</td><td>0.21310062486533074</td><td>2.131006248653307</td><td>0.34046143461986866</td><td>0.32175476238800776</td><td>1.6087738119400388</td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f64ccda7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5.-Inventory,-Opportunity-y-fallback">5. Inventory, Opportunity y fallback<a class="anchor-link" href="#5.-Inventory,-Opportunity-y-fallback">¶</a></h2><h3 id="5.1-Disponibilidad-point-in-time">5.1 Disponibilidad point-in-time<a class="anchor-link" href="#5.1-Disponibilidad-point-in-time">¶</a></h3><p>Availability se une con un <strong>backward as-of</strong> estricto. Historia ausente o vieja significa <strong>UNKNOWN, no UNAVAILABLE</strong>, y se expresa como bounds lower/upper; jamás se rellena desde el futuro.</p>
+<h2 id="6.-Inventory,-Opportunity-y-fallback">6. Inventory, Opportunity y fallback<a class="anchor-link" href="#6.-Inventory,-Opportunity-y-fallback">¶</a></h2><h3 id="9.1-Disponibilidad-point-in-time">9.1 Disponibilidad point-in-time<a class="anchor-link" href="#9.1-Disponibilidad-point-in-time">¶</a></h3><p>Availability se une con un <strong>backward as-of</strong> estricto. Historia ausente o vieja significa <strong>UNKNOWN, no UNAVAILABLE</strong>, y se expresa como bounds lower/upper; jamás se rellena desde el futuro.</p>
 </div>
 </div>
 </div>
@@ -10336,7 +10839,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/figures/availability_coverage.png'</span><span class="p">)))</span>
@@ -10441,7 +10944,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="5.2-Trade-off-central">5.2 Trade-off central<a class="anchor-link" href="#5.2-Trade-off-central">¶</a></h3><p>Los componentes se comparan sobre el mismo holdout. Como T1 no observa éxito de fallback, la comparación combinada es diagnóstico de ranking, no probabilidad calibrada de inventario.</p>
+<h3 id="9.2-Trade-off-central">9.2 Trade-off central<a class="anchor-link" href="#9.2-Trade-off-central">¶</a></h3><p>Los componentes se comparan sobre el mismo holdout. Como T1 no observa éxito de fallback, la comparación combinada es diagnóstico de ranking, no probabilidad calibrada de inventario.</p>
 </div>
 </div>
 </div>
@@ -10450,7 +10953,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">system_metrics</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/metrics/system_score_metrics.csv'</span><span class="p">)</span>
@@ -10761,7 +11264,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="5.3-Pol%C3%ADtica-de-dos-ejes-y-alternativas">5.3 Política de dos ejes y alternativas<a class="anchor-link" href="#5.3-Pol%C3%ADtica-de-dos-ejes-y-alternativas">¶</a></h3><p>Quality y Serviceability permanecen separados: verificar inventario incierto, buscar alternativas para demanda de calidad sin servicio y mantener el flujo estándar en el resto. El ranking conserva top-3 interno y muestra hasta cinco alternativas compatibles.</p>
+<h3 id="9.3-Pol%C3%ADtica-de-dos-ejes-y-alternativas">9.3 Política de dos ejes y alternativas<a class="anchor-link" href="#9.3-Pol%C3%ADtica-de-dos-ejes-y-alternativas">¶</a></h3><p>Quality y Serviceability permanecen separados: verificar inventario incierto, buscar alternativas para demanda de calidad sin servicio y mantener el flujo estándar en el resto. El ranking conserva top-3 interno y muestra hasta cinco alternativas compatibles.</p>
 </div>
 </div>
 </div>
@@ -10770,7 +11273,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [25]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">policy</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[[</span><span class="s1">'quality_band'</span><span class="p">,</span><span class="s1">'serviceability_band'</span><span class="p">,</span><span class="s1">'diagnostic_action'</span><span class="p">,</span><span class="s1">'deployment_status'</span><span class="p">]]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'leads'</span><span class="p">)</span>
@@ -11029,7 +11532,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="5.4-Caso-real-anotado:-lead-6-de-validaci%C3%B3n">5.4 Caso real anotado: lead 6 de validación<a class="anchor-link" href="#5.4-Caso-real-anotado:-lead-6-de-validaci%C3%B3n">¶</a></h3>
+<h3 id="7.4-Caso-real-anotado:-lead-6-de-validaci%C3%B3n">7.4 Caso real anotado: lead 6 de validación<a class="anchor-link" href="#7.4-Caso-real-anotado:-lead-6-de-validaci%C3%B3n">¶</a></h3>
 </div>
 </div>
 </div>
@@ -11038,7 +11541,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">case</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"lead_id == 6 and split == 'validation'"</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -11068,7 +11571,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [27]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Lógica simplificada y fiel al scorer</span>
@@ -11102,13 +11605,54 @@ a.anchor-link {
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c5b9afdc">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="6.5-Profundidad-de-candidatos-y-cobertura-de-fallback">6.5 Profundidad de candidatos y cobertura de fallback<a class="anchor-link" href="#6.5-Profundidad-de-candidatos-y-cobertura-de-fallback">¶</a></h3><p>Candidate depth cambia materialmente con el tiempo; por eso se mantiene fuera de Lead Quality. El fallback puede devolver NO_RESULT antes que violar hard constraints.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b30f3a90">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [28]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">inv_candidates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/abt/abt_inventory_candidates.parquet'</span><span class="p">)</span>
+<span class="n">depth</span> <span class="o">=</span> <span class="n">inv_candidates</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'lead_id'</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'candidate_depth'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">depth</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.25</span><span class="p">,</span><span class="mf">.5</span><span class="p">,</span><span class="mf">.75</span><span class="p">,</span><span class="mf">.9</span><span class="p">,</span><span class="mf">.95</span><span class="p">])</span><span class="o">.</span><span class="n">to_frame</span><span class="p">())</span>
+<span class="n">fallback_counts</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="s1">'fallback_spot_ids'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'['</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">fallback_counts</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="s1">'visible_fallbacks'</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="s1">'leads'</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>metrica</th><th>valor</th><th>evidencia</th></tr></thead><tbody><tr><td>candidate depth mediana</td><td>29</td><td>T1 desarrollo</td></tr><tr><td>candidate depth Ene-2025</td><td>16</td><td>deriva temporal</td></tr><tr><td>candidate depth Abr-2026</td><td>49</td><td>deriva temporal</td></tr><tr><td>fallback visible máximo</td><td>5</td><td>política final</td></tr><tr><td>sin alternativa conocida</td><td>2.38%</td><td>auditoría final</td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=50d22ecc">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="6.-Robustez,-IA-y-producto">6. Robustez, IA y producto<a class="anchor-link" href="#6.-Robustez,-IA-y-producto">¶</a></h2><h3 id="6.1-Clusters-y-combinaciones:-conclusi%C3%B3n-de-gobierno">6.1 Clusters y combinaciones: conclusión de gobierno<a class="anchor-link" href="#6.1-Clusters-y-combinaciones:-conclusi%C3%B3n-de-gobierno">¶</a></h3><p>El detalle exploratorio por entidad y las combinaciones de mayor lift se documentan en <strong>§3.3–§3.5</strong>. La conclusión para el sistema final permanece sin cambios: los clusters sirven para descubrir facetas y formular hipótesis de compatibilidad, pero <strong>ningún cluster ni pocket descubierto multiplica el score de producción</strong>. La promoción exige nueva evidencia independiente, soporte suficiente y control por multiplicidad.</p>
+<h2 id="7.-Robustez,-IA-y-producto">7. Robustez, IA y producto<a class="anchor-link" href="#7.-Robustez,-IA-y-producto">¶</a></h2><h3 id="9.1-Clusters-y-combinaciones:-conclusi%C3%B3n-de-gobierno">9.1 Clusters y combinaciones: conclusión de gobierno<a class="anchor-link" href="#9.1-Clusters-y-combinaciones:-conclusi%C3%B3n-de-gobierno">¶</a></h3><p>El detalle exploratorio por entidad y las combinaciones de mayor lift se documentan en <strong>§3.3–§3.5</strong>. La conclusión para el sistema final permanece sin cambios: los clusters sirven para descubrir facetas y formular hipótesis de compatibilidad, pero <strong>ningún cluster ni pocket descubierto multiplica el score de producción</strong>. La promoción exige nueva evidencia independiente, soporte suficiente y control por multiplicidad.</p>
 </div>
 </div>
 </div>
@@ -11117,7 +11661,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [29]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/tables/cluster_profile_metrics.csv'</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
@@ -11508,7 +12052,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="6.2-Stress-test-de-leakage">6.2 Stress test de leakage<a class="anchor-link" href="#6.2-Stress-test-de-leakage">¶</a></h3><p>Variantes deliberadamente inválidas muestran por qué una métrica aparente alta no equivale a un sistema desplegable. La ruta limpia no puede importar esas señales.</p>
+<h3 id="9.2-Stress-test-de-leakage">9.2 Stress test de leakage<a class="anchor-link" href="#9.2-Stress-test-de-leakage">¶</a></h3><p>Variantes deliberadamente inválidas muestran por qué una métrica aparente alta no equivale a un sistema desplegable. La ruta limpia no puede importar esas señales.</p>
 </div>
 </div>
 </div>
@@ -11517,7 +12061,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [30]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">read_json</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">'outputs/metrics/leakage_stress_test.json'</span><span class="p">)))</span>
@@ -11618,7 +12162,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="6.3-IA-con-alcance-acotado:-Catalog-QA">6.3 IA con alcance acotado: Catalog QA<a class="anchor-link" href="#6.3-IA-con-alcance-acotado:-Catalog-QA">¶</a></h3><p>El LLM audita contradicciones entre texto de listing y atributos estructurados. Es QA cross-sectional, no feature histórica. La precisión natural aún requiere gold humano ciego; el benchmark inyectado y controlado sólo mide sensibilidad.</p>
+<h3 id="9.3-IA-con-alcance-acotado:-Catalog-QA">9.3 IA con alcance acotado: Catalog QA<a class="anchor-link" href="#9.3-IA-con-alcance-acotado:-Catalog-QA">¶</a></h3><p>El LLM audita contradicciones entre texto de listing y atributos estructurados. Es QA cross-sectional, no feature histórica. La precisión natural aún requiere gold humano ciego; el benchmark inyectado y controlado sólo mide sensibilidad.</p>
 </div>
 </div>
 </div>
@@ -11627,7 +12171,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [31]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">llm</span> <span class="o">=</span> <span class="n">read_json</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">'outputs/metrics/llm_audit_evaluation.json'</span><span class="p">));</span> <span class="n">display</span><span class="p">(</span><span class="n">llm</span><span class="p">)</span>
@@ -11723,7 +12267,7 @@ issue; use <code>review</code> for weaker or non-actionable concerns; otherwise 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="6.4-Roadmap-de-medici%C3%B3n">6.4 Roadmap de medición<a class="anchor-link" href="#6.4-Roadmap-de-medici%C3%B3n">¶</a></h3><p>Versionar precio, geografía, copy y lifecycle; registrar exposición a cada recomendación; capturar visita y conversión a horizontes fijos; crear un holdout temporal realmente intacto; y sólo entonces lanzar un RCT <em>sticky</em> por <code>lead_id</code>.</p>
+<h3 id="7.4-Roadmap-de-medici%C3%B3n">7.4 Roadmap de medición<a class="anchor-link" href="#7.4-Roadmap-de-medici%C3%B3n">¶</a></h3><p>Versionar precio, geografía, copy y lifecycle; registrar exposición a cada recomendación; capturar visita y conversión a horizontes fijos; crear un holdout temporal realmente intacto; y sólo entonces lanzar un RCT <em>sticky</em> por <code>lead_id</code>.</p>
 </div>
 </div>
 </div>
@@ -11732,7 +12276,7 @@ issue; use <code>review</code> for weaker or non-actionable concerns; otherwise 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [32]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">read_json</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">'outputs/tables/online_ab_protocol.json'</span><span class="p">)))</span>
@@ -11786,13 +12330,173 @@ issue; use <code>review</code> for weaker or non-actionable concerns; otherwise 
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5d0bd088">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="8.-Producci%C3%B3n,-gobierno-y-trazabilidad">8. Producción, gobierno y trazabilidad<a class="anchor-link" href="#8.-Producci%C3%B3n,-gobierno-y-trazabilidad">¶</a></h2><p>La entrega no termina en el modelo offline: deja contrato de scoring, readiness, protocolo A/B, evidencia de decisiones y una ruta reproducible para regenerar ABTs, predicciones, métricas, notebook y HTML.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4c5ddf36">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [33]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">read_json</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">'outputs/metrics/deployment_readiness.json'</span><span class="p">)))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">read_json</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">'outputs/tables/online_ab_protocol.json'</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<h4>Deployment readiness</h4><pre>{
+  "decision": "GO",
+  "gate": "PR-AUC &gt; prevalence and Lift@10% &gt; 1 on procedural holdout",
+  "average_precision": 0.2391286807814938,
+  "positive_rate": 0.21215663354763295,
+  "lift_top_10pct": 1.6887936241363564,
+  "validation_priority_threshold": 0.2530980692158785,
+  "recommendation": "Proceed only with guarded monitoring and randomized evaluation.",
+  "shap_status": "NOT_NEEDED_LOGISTIC_SELECTED"
+}</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<h4>Online A/B protocol</h4><pre>{
+  "activation_status": "ELIGIBLE_AFTER_NEW_FORWARD_SHADOW_VALIDATION",
+  "power_estimate_status": "ILLUSTRATIVE_RECALCULATE_WITH_MATURE_30D_PILOT_RATE",
+  "assumptions": {
+    "offline_first_inquiry_proxy_rate": 0.21215663354763295,
+    "relative_mde": 0.1,
+    "alpha": 0.05,
+    "power": 0.8,
+    "illustrative_n_per_arm": 6038
+  },
+  "opportunity_ranking_test": {
+    "unit": "lead_id",
+    "allocation": "50/50 sticky",
+    "analysis": "intention_to_treat",
+    "treatment": "work leads by Opportunity Score top-down",
+    "control": "current operational ordering",
+    "primary_metric": "scheduled_visit within 30 days",
+    "guardrails": [
+      "time_to_first_contact",
+      "contact_attempts",
+      "broker workload",
+      "opt_out_rate"
+    ],
+    "strata": [
+      "search_sector",
+      "source",
+      "calendar_week"
+    ],
+    "horizon_days": 30
+  },
+  "fallback_routing_test": {
+    "unit": "lead_id",
+    "allocation": "50/50 sticky",
+    "analysis": "intention_to_treat",
+    "treatment": "ranked backward-as-of fallback recommendations",
+    "control": "current fallback process",
+    "primary_metric": "accepted alternative or scheduled visit within 30 days",
+    "guardrails": [
+      "recommendation_latency",
+      "no_result_rate",
+      "distance_relaxation",
+      "complaint_rate"
+    ]
+  },
+  "validity_checks": [
+    "sample_ratio_mismatch",
+    "sticky_assignment",
+    "pre-treatment eligibility",
+    "censoring maturity"
+  ]
+}</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=37ca04a0">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="8.1-Evidencia-y-artefactos-can%C3%B3nicos">8.1 Evidencia y artefactos canónicos<a class="anchor-link" href="#8.1-Evidencia-y-artefactos-can%C3%B3nicos">¶</a></h3><ul>
+<li>evidence/LEAKAGE_MATRIX.md — señales permitidas/prohibidas.</li>
+<li>evidence/DECISIONS.md — decisiones metodológicas.</li>
+<li>evidence/TRACEABILITY.md — trazabilidad de claims.</li>
+<li>outputs/metrics/ — métricas versionadas.</li>
+<li>outputs/predictions/lead_opportunity_scores.parquet — salida operacional.</li>
+<li>entregable/ — narrativa final en español.</li>
+</ul>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e5da6e33">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [34]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">artifacts</span> <span class="o">=</span> <span class="p">[</span>
+ <span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/predictions/lead_opportunity_scores.parquet'</span><span class="p">,</span>
+ <span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/metrics/t1_model_metrics.json'</span><span class="p">,</span>
+ <span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/metrics/system_evaluation.json'</span><span class="p">,</span>
+ <span class="n">ROOT</span><span class="o">/</span><span class="s1">'outputs/tables/error_analysis.csv'</span><span class="p">,</span>
+ <span class="n">ROOT</span><span class="o">/</span><span class="s1">'evidence/LEAKAGE_MATRIX.md'</span><span class="p">,</span>
+ <span class="n">ROOT</span><span class="o">.</span><span class="n">parent</span><span class="o">/</span><span class="s1">'entregable/01_eda/EDA_FINAL.md'</span><span class="p">,</span>
+ <span class="n">ROOT</span><span class="o">.</span><span class="n">parent</span><span class="o">/</span><span class="s1">'entregable/03_lead_quality/MODELO_CALIDAD_LEAD.md'</span><span class="p">,</span>
+ <span class="n">ROOT</span><span class="o">.</span><span class="n">parent</span><span class="o">/</span><span class="s1">'entregable/05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md'</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">artifact_check</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'artifact'</span><span class="p">:[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">ROOT</span><span class="o">.</span><span class="n">parent</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">artifacts</span><span class="p">],</span>
+                               <span class="s1">'exists'</span><span class="p">:[</span><span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">artifacts</span><span class="p">]})</span>
+<span class="k">assert</span> <span class="n">artifact_check</span><span class="p">[</span><span class="s1">'exists'</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">artifact_check</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow:auto"><table><thead><tr><th>artifact</th><th>exists</th></tr></thead><tbody><tr><td>codexway/outputs/predictions/lead_opportunity_scores.parquet</td><td>True</td></tr><tr><td>codexway/outputs/metrics/t1_model_metrics.json</td><td>True</td></tr><tr><td>codexway/outputs/metrics/system_evaluation.json</td><td>True</td></tr><tr><td>codexway/outputs/tables/error_analysis.csv</td><td>True</td></tr><tr><td>codexway/evidence/LEAKAGE_MATRIX.md</td><td>True</td></tr><tr><td>entregable/01_eda/EDA_FINAL.md</td><td>True</td></tr><tr><td>entregable/03_lead_quality/MODELO_CALIDAD_LEAD.md</td><td>True</td></tr><tr><td>entregable/05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md</td><td>True</td></tr></tbody></table></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b7ac8fd7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="7.-Conclusiones-y-reproducci%C3%B3n">7. Conclusiones y reproducción<a class="anchor-link" href="#7.-Conclusiones-y-reproducci%C3%B3n">¶</a></h2><h3 id="7.1-Lo-que-queda-decidido">7.1 Lo que queda decidido<a class="anchor-link" href="#7.1-Lo-que-queda-decidido">¶</a></h3><p><code>stable_segment_logistic</code> calibrado ofrece una señal útil de priorización absoluta. El score conservador de Opportunity también supera random, pero no supera a Quality; Inventory mantiene gate incremental NO-GO. La secuencia correcta es <strong>shadow → validación → RCT con guardas</strong>, mientras IA se limita a Catalog QA.</p>
+<h2 id="9.-Conclusiones-y-reproducci%C3%B3n">9. Conclusiones y reproducción<a class="anchor-link" href="#9.-Conclusiones-y-reproducci%C3%B3n">¶</a></h2><h3 id="9.1-Lo-que-queda-decidido">9.1 Lo que queda decidido<a class="anchor-link" href="#9.1-Lo-que-queda-decidido">¶</a></h3><p><code>stable_segment_logistic</code> calibrado ofrece una señal útil de priorización absoluta. El score conservador de Opportunity también supera random, pero no supera a Quality; Inventory mantiene gate incremental NO-GO. La secuencia correcta es <strong>shadow → validación → RCT con guardas</strong>, mientras IA se limita a Catalog QA.</p>
 </div>
 </div>
 </div>
@@ -11803,7 +12507,7 @@ issue; use <code>review</code> for weaker or non-actionable concerns; otherwise 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="7.2-Limitaciones">7.2 Limitaciones<a class="anchor-link" href="#7.2-Limitaciones">¶</a></h3><p>El target es un proxy de primer contacto; el dataset global fue inspeccionado previamente; campos del listing no están versionados por completo; el timing de mercado es incierto; falta gold natural para LLM; las métricas offline son observacionales; y no se probó uplift causal.</p>
+<h3 id="9.2-Limitaciones">9.2 Limitaciones<a class="anchor-link" href="#9.2-Limitaciones">¶</a></h3><p>El target es un proxy de primer contacto; el dataset global fue inspeccionado previamente; campos del listing no están versionados por completo; el timing de mercado es incierto; falta gold natural para LLM; las métricas offline son observacionales; y no se probó uplift causal.</p>
 </div>
 </div>
 </div>
@@ -11814,7 +12518,7 @@ issue; use <code>review</code> for weaker or non-actionable concerns; otherwise 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="7.3-C%C3%B3mo-reproducir">7.3 Cómo reproducir<a class="anchor-link" href="#7.3-C%C3%B3mo-reproducir">¶</a></h3><p>Desde la raíz del repositorio: <code>python codexway/scripts/run_all.py --skip-live-llm</code>. El runner audita datos, construye ABTs, entrena, evalúa, ejecuta pruebas y vuelve a generar este <code>.ipynb</code> y su HTML. Una segunda ejecución verifica fingerprints de predicción.</p>
+<h3 id="9.3-C%C3%B3mo-reproducir">9.3 Cómo reproducir<a class="anchor-link" href="#9.3-C%C3%B3mo-reproducir">¶</a></h3><p>Desde la raíz del repositorio: <code>python codexway/scripts/run_all.py --skip-live-llm</code>. El runner audita datos, construye ABTs, entrena, evalúa, ejecuta pruebas y vuelve a generar este <code>.ipynb</code> y su HTML. Una segunda ejecución verifica fingerprints de predicción.</p>
 </div>
 </div>
 </div>
@@ -11823,7 +12527,7 @@ issue; use <code>review</code> for weaker or non-actionable concerns; otherwise 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [35]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">required</span> <span class="o">=</span> <span class="p">{</span>
