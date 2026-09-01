@@ -24,6 +24,9 @@ REQUIRED_NOTEBOOK_MARKERS = [
     "### 5.1.1 Benchmark canónico y amplitud experimental",
     "### 5.1.2 Rolling temporal CV y gate de promoción",
     "### 5.5.1 Error analysis: dónde falla realmente",
+    "### 6.1.1 Candidate generation: del request a un conjunto defendible",
+    "### 6.2.1 Opportunity: valor absoluto sí, valor incremental de Inventory no",
+    "### 6.5.1 Qué demuestra fallback y qué todavía no puede demostrar",
 ]
 
 missing = [str(path.relative_to(ROOT)) for path, _ in FILES if not path.exists()]
