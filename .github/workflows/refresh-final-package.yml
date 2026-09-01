@@ -1,0 +1,51 @@
+name: Refresh final assessment package
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "codexway/notebooks/spot2_assessment.ipynb"
+      - "codexway/notebooks/spot2_assessment.html"
+      - "entregable/00_LEEME_PRIMERO.md"
+      - "entregable/02_one_pager/**"
+      - "entregable/06_deck_ejecutivo/**"
+      - "entregable/build_final_package.py"
+      - ".github/workflows/refresh-final-package.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-final-assessment-package
+  cancel-in-progress: true
+
+jobs:
+  rebuild-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rebuild and validate final ZIP
+        run: python entregable/build_final_package.py
+
+      - name: Commit synchronized ZIP
+        shell: bash
+        run: |
+          if git diff --quiet -- entregable/SPOT2_ASSESSMENT_FINAL.zip; then
+            echo "Final ZIP already synchronized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add entregable/SPOT2_ASSESSMENT_FINAL.zip
+          git commit -m "Refresh synchronized final assessment ZIP"
+          git push
