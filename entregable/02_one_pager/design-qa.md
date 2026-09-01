@@ -2,39 +2,35 @@
 
 ## Resultado final
 
-passed
+**passed**
 
-## Comparación realizada
+## Qué se corrigió
 
-- Referencia visual: deck ejecutivo oficial, especialmente las páginas 1, 6 y 7.
-- Implementación: fuente HTML del One Pager y PDF Letter derivado.
-- Referencia renderizada: 2.5× por página.
-- Implementación renderizada: 1530 × 1980 px, equivalente a 2.5×.
-- Responsive revisado: 1280 px y 720 px de ancho.
+La versión anterior comprimía demasiados bloques dentro de una sola página Letter y generaba una lectura visual saturada. La versión final prioriza una jerarquía mucho más simple y elimina cualquier riesgo de texto encimado.
 
-La referencia y la implementación se compararon por jerarquía, color, densidad, legibilidad y continuidad editorial. El cambio de 16:9 a Letter vertical es intencional.
+### Cambios de composición
 
-## Superficies verificadas
+1. El titular se acortó a **“Priorizar mejor sin sobreprometer inventario”**.
+2. La recomendación quedó integrada al hero sin invadir el contenido inferior.
+3. Se mantuvieron sólo tres métricas principales: **+69%**, **10%** y **4 acciones**.
+4. La matriz operativa completa se sustituyó por un flujo de tres pasos y cuatro acciones visibles.
+5. La visual principal quedó reducida a una sola comparación: **1.69x Lead Quality vs 1.37x Opportunity**, con baseline **1.0x**.
+6. Impacto esperado y próximos 90 días se condensaron en bloques cortos.
+7. Límites e IA quedaron como notas de cierre, fuera del flujo principal.
+8. Se aumentó el espacio en blanco y se redujo la densidad de texto.
+
+## Verificaciones
 
 | Superficie | Resultado |
 |---|---|
-| Jerarquía | Problema, señal principal, acción de Inventory, impacto y recomendación se entienden antes que el detalle |
-| Tipografía | Título 27 pt; cuerpo principal desde 9.5 pt; metadata desde 7.5 pt |
-| Retícula | Uso equilibrado de la página, sin recortes, solapamientos ni vacío accidental |
-| Color | Navy, azul y teal conservan la función del deck; ámbar queda reservado para incertidumbre |
-| Gráficos | Lift 1.69x vs 1.37x se muestra contra baseline 1.0x sin sugerir uplift incremental de Inventory |
-| Contenido | Impacto esperado explícito, fórmula ejecutiva del Opportunity Score, plan de 90 días y límites visibles |
-| Responsive | Orden de lectura correcto y cero desbordamiento horizontal |
-| Impresión | Una página Letter, fondos impresos y texto extraíble |
+| Página | 1 página Letter |
+| Encimamientos | Ninguno |
+| Texto cortado | Ninguno |
+| Jerarquía | Problema → evidencia → decisión → impacto → siguiente paso |
+| Visual principal | Una sola gráfica, sin ambigüedad de uplift incremental |
+| Lectura ejecutiva | 30–60 segundos |
+| Impresión | Fondos y tipografía preservados |
+| PDF final | Regenerado automáticamente |
+| ZIP final | Reconstruido con el PDF actualizado |
 
-## Correcciones incorporadas
-
-1. Se retiró “No demostrado” como uno de los tres titulares principales.
-2. Se eliminó la lectura ambigua de “+37% al incorporar inventario”; el gráfico ahora muestra **1.69x Quality** y **1.37x Opportunity** frente al azar.
-3. Inventory se expresa por su función de negocio: **decidir la acción**, no como una promesa de uplift incremental.
-4. Se añadió explícitamente: **Oportunidad = posibilidad de avanzar × posibilidad de atenderla**.
-5. Se añadió una sección visible de **Impacto esperado**: concentrar el esfuerzo comercial con la misma capacidad y convertir la prioridad en una instrucción operativa.
-6. Se redujo la banda de contexto a tres datos esenciales para mejorar la lectura en 30–60 segundos.
-7. Se mantiene el límite metodológico: para `scheduled_visit`, Inventory no ha demostrado mejorar a Quality-only; su valor actual es operativo.
-
-No quedan hallazgos visuales que bloqueen el envío.
+La versión final mantiene la evidencia y la prudencia metodológica, pero elimina detalle que corresponde a los anexos técnicos y no al One Pager.
