@@ -4,7 +4,7 @@
 - [Abrir PDF final](ONE_PAGER_SPOT2.pdf)
 - [Consultar QA visual](design-qa.md)
 
-El One Pager resume la decisión para Producto y C-Level en 60–90 segundos: la señal comercial permite concentrar el esfuerzo en el 10% de oportunidades con mayor señal; Inventory no se presenta como un uplift incremental de conversión, sino como el segundo eje que convierte la prioridad en una acción operativa: priorizar, verificar, ofrecer una alternativa o abstenerse.
+El One Pager resume la decisión para Producto y C-Level en 60–90 segundos: la señal comercial permite concentrar primero el esfuerzo en el top 10% de oportunidades mejor posicionadas por el modelo; Inventory no se presenta como un uplift incremental de conversión, sino como el segundo eje que convierte la prioridad en una acción operativa: priorizar, verificar, ofrecer una alternativa o abstenerse.
 
 La historia ejecutiva queda expresada como:
 
