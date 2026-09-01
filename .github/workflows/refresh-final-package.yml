@@ -4,8 +4,6 @@ on:
   push:
     branches: [main]
     paths:
-      - "codexway/notebooks/spot2_assessment.ipynb"
-      - "codexway/notebooks/spot2_assessment.html"
       - "entregable/00_LEEME_PRIMERO.md"
       - "entregable/02_one_pager/**"
       - "entregable/06_deck_ejecutivo/**"
