@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Entrega final del Tech Challenge de Spot2 — José Carlos Del Valle">
+  <title>Spot2 · Tech Challenge · Entrega final</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">SPOT2 · TECH CHALLENGE</div>
+      <h1>Entrega final</h1>
+      <p class="lead">Una propuesta para priorizar demanda comercial sin prometer inventario que todavía no puede confirmarse.</p>
+      <p class="thesis">Oportunidad = posibilidad de avanzar × posibilidad de atenderla.</p>
+      <div class="actions">
+        <a class="btn primary" href="downloads/SPOT2_ASSESSMENT_FINAL.zip" download>Descargar entrega completa</a>
+        <a class="btn" href="#one-pager">Ver One Pager</a>
+        <a class="btn" href="#deck">Ver presentación</a>
+        <a class="btn" href="#notebook">Ver notebook sin código</a>
+      </div>
+      <div class="meta">
+        <span>José Carlos Del Valle</span>
+        <span>·</span>
+        <a href="https://github.com/jcval94/spot2" target="_blank" rel="noopener">Repositorio técnico</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="summary">
+      <article>
+        <span class="kicker">Resultado principal</span>
+        <strong>+69%</strong>
+        <p>más visitas concentradas en el 10% priorizado frente a una selección al azar.</p>
+      </article>
+      <article>
+        <span class="kicker">Decisión operativa</span>
+        <strong>2 ejes</strong>
+        <p>Lead Quality para priorizar y Inventory para decidir si atender, verificar, ofrecer alternativa o abstenerse.</p>
+      </article>
+      <article>
+        <span class="kicker">Uso de IA</span>
+        <strong>Control</strong>
+        <p>La IA se propone para control de calidad del catálogo; el score principal no depende de ella.</p>
+      </article>
+    </section>
+
+    <section class="section" id="one-pager">
+      <div class="section-head">
+        <div>
+          <span class="kicker">01 · Resumen ejecutivo</span>
+          <h2>One Pager</h2>
+          <p>La lectura más rápida de problema, decisión, resultados y siguiente paso.</p>
+        </div>
+        <div class="downloads">
+          <a class="small-btn" href="one-pager.html" target="_blank">Abrir HTML</a>
+          <a class="small-btn" href="downloads/ONE_PAGER_SPOT2.html" download>Descargar HTML</a>
+          <a class="small-btn" href="downloads/ONE_PAGER_SPOT2.pdf" download>Descargar PDF</a>
+        </div>
+      </div>
+      <div class="viewer short">
+        <iframe src="one-pager.html" title="One Pager Spot2" loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <section class="section" id="deck">
+      <div class="section-head">
+        <div>
+          <span class="kicker">02 · Historia ejecutiva</span>
+          <h2>Presentación ejecutiva</h2>
+          <p>Problema, evidencia, solución, arquitectura y propuesta de validación.</p>
+        </div>
+        <div class="downloads">
+          <a class="small-btn" href="deck.html" target="_blank">Abrir HTML</a>
+          <a class="small-btn" href="downloads/DECK_EJECUTIVO_SPOT2.html" download>Descargar HTML</a>
+          <a class="small-btn" href="downloads/DECK_EJECUTIVO_SPOT2.pdf" download>Descargar PDF</a>
+        </div>
+      </div>
+      <div class="viewer deck">
+        <iframe src="deck.html" title="Presentación ejecutiva Spot2" loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <section class="section" id="notebook">
+      <div class="section-head">
+        <div>
+          <span class="kicker">03 · Evidencia reproducible</span>
+          <h2>Notebook ejecutado</h2>
+          <p>Vista de resultados preparada para revisión. El código está oculto aquí, pero la versión reproducible completa sigue disponible para descarga.</p>
+        </div>
+        <div class="downloads">
+          <a class="small-btn" href="notebook.html" target="_blank">Abrir resultados</a>
+          <a class="small-btn" href="downloads/spot2_assessment.html" download>Descargar HTML</a>
+          <a class="small-btn" href="downloads/spot2_assessment.ipynb" download>Descargar IPYNB</a>
+        </div>
+      </div>
+      <div class="viewer notebook">
+        <iframe src="notebook.html" title="Notebook ejecutado Spot2" loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">04 · Documentación completa</span>
+          <h2>Explorar entregables</h2>
+          <p>Los documentos técnicos se renderizan como páginas de lectura para evitar navegar archivos Markdown o código.</p>
+        </div>
+      </div>
+
+      <div class="cards">
+        <a class="card" href="docs/eda/">
+          <span>EDA</span>
+          <h3>Análisis exploratorio</h3>
+          <p>Hallazgos, visualizaciones, calidad de datos, señales y trazabilidad experimental.</p>
+        </a>
+        <a class="card" href="docs/lead-quality/">
+          <span>Modelo</span>
+          <h3>Lead Quality</h3>
+          <p>Target, scoring moment, validación temporal, métricas y política operativa.</p>
+        </a>
+        <a class="card" href="docs/inventory/">
+          <span>Operación</span>
+          <h3>Inventory & fallback</h3>
+          <p>Separación entre oportunidad comercial y capacidad real de atención.</p>
+        </a>
+        <a class="card" href="docs/opportunity/">
+          <span>Scoring</span>
+          <h3>Lead Opportunity Score</h3>
+          <p>Composición final de la señal para priorización y toma de decisiones.</p>
+        </a>
+        <a class="card" href="docs/architecture/">
+          <span>Producción</span>
+          <h3>Arquitectura</h3>
+          <p>Diseño de producción, componentes y flujo operacional propuesto.</p>
+        </a>
+        <a class="card" href="docs/monitoring/">
+          <span>Gobierno</span>
+          <h3>Monitoreo y runbook</h3>
+          <p>Controles, observabilidad, gobierno y respuesta operativa.</p>
+        </a>
+        <a class="card" href="docs/ai/">
+          <span>IA</span>
+          <h3>Uso de IA</h3>
+          <p>Rol acotado, evidencia y límites del componente generativo.</p>
+        </a>
+        <a class="card" href="docs/product-vision/">
+          <span>Producto</span>
+          <h3>Product Vision</h3>
+          <p>Evolución de la solución desde scoring hacia una capacidad de decisión.</p>
+        </a>
+        <a class="card" href="docs/causal/">
+          <span>Validación</span>
+          <h3>Experimentación causal</h3>
+          <p>Diseño propuesto para medir impacto incremental de forma controlada.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="final-download">
+      <div>
+        <span class="kicker">Entrega consolidada</span>
+        <h2>Todo en un solo archivo</h2>
+        <p>Deck, One Pager, notebook ejecutado en HTML y fuente reproducible en IPYNB.</p>
+      </div>
+      <a class="btn primary" href="downloads/SPOT2_ASSESSMENT_FINAL.zip" download>Descargar ZIP completo</a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Spot2 Tech Challenge · José Carlos Del Valle</div>
+  </footer>
+</body>
+</html>
