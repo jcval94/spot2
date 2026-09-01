@@ -948,8 +948,8 @@ text{font-family:Arial,Helvetica,sans-serif;fill:#172033}.title{font-size:27px;f
 <p>El modelado empieza sólo después de congelar el reloj. La ABT T1 mantiene un registro por lead en su primera inquiry y separa intake, payload contemporáneo y transformaciones determinísticas T0→T1.</p></section><section class="code-cell"><details class="code-details"><summary>Ver código reproducible · celda 15</summary><pre><code>abt_t1 = pd.read_parquet(ROOT/'outputs/abt/abt_t1_first_inquiry.parquet')
 policy = yaml.safe_load((ROOT/'config/feature_policy.yaml').read_text(encoding='utf-8'))['clean_t1']
 summary = {'rows': len(abt_t1), 'columns': abt_t1.shape[1],
-           'target_observed': int(abt_t1['target'].notna().sum()),
-           'target_positive': int((abt_t1['target']==1).sum()),
+           'target_observed': int(abt_t1['target_t1'].notna().sum()),
+           'target_positive': int((abt_t1['target_t1']==1).sum()),
            'allow_features': len(policy['allow']),
            'forbidden_features': len(policy['forbidden'])}
 display(pd.Series(summary, name='ABT T1'))
@@ -960,7 +960,7 @@ display(pd.DataFrame({'allow': pd.Series(policy['allow']), 'forbidden': pd.Serie
            'rent_request_to_lead_budget_ratio','sale_request_to_lead_budget_ratio',
            'industrial_small_or_paid_interaction']
 available = [c for c in derived if c in abt_t1.columns]
-display(abt_t1[['lead_id','inquiry_id','target'] + available].head(12))
+display(abt_t1[['lead_id','inquiry_id','target_t1'] + available].head(12))
 </code></pre></details><div class="outputs"><div style="overflow:auto"><table><thead><tr><th>feature</th><th>rol</th></tr></thead><tbody><tr><td>days_from_lead_creation</td><td>antigüedad observable del lead al T1</td></tr><tr><td>area_request_to_target_ratio</td><td>refinamiento de área T0→T1</td></tr><tr><td>rent_request_to_lead_budget_ratio</td><td>consistencia de presupuesto renta</td></tr><tr><td>sale_request_to_lead_budget_ratio</td><td>consistencia de presupuesto venta</td></tr><tr><td>industrial_small_or_paid_interaction</td><td>interacción estable de baja cardinalidad</td></tr></tbody></table></div></div></section><section class="md-cell"><h3 id="4-1-1-contrato-de-features">4.1.1 Contrato de features: qué entra y qué queda fuera</h3><p>La feature policy usa allowlist/forbidden list. Puede entrar intake conocido, payload de la primera inquiry, días desde creación, ratios área/presupuesto, missingness semántico e interacciones de baja cardinalidad validadas temporalmente. Quedan fuera respuesta del broker, inquiries futuras, scores internos, nearest/future Availability, estado mutable actual del listing tratado como historia, Market Context sin publication time y variables T2 dentro del scorer T1.</p><p><strong>Regla:</strong> cada feature debe demostrar observabilidad al score_time.</p></section><section class="md-cell"><h3 id="4-2-t0-y-t2-como-sensibilidades-no-como-mezcla-de-scores">4.2 T0 y T2 como sensibilidades, no como mezcla de scores</h3></section><section class="code-cell"><details class="code-details"><summary>Ver código reproducible · celda 17</summary><pre><code>display(read_json(Path('outputs/metrics/t0_t2_sensitivity_metrics.json')))
 </code></pre></details><div class="outputs"><pre>{
   &quot;T0_logistic_30d&quot;: {
