@@ -11,7 +11,7 @@ Este paquete presenta una propuesta para ayudar a Spot2 a concentrar su esfuerzo
    La historia completa, la evidencia y la decisión recomendada en 12–15 minutos.
 2. [One Pager — PDF, 1 página](02_one_pager/ONE_PAGER_SPOT2.pdf)
 
-   La conclusión en una lectura de 60–90 segundos.
+   La conclusión ejecutiva en una lectura de 60–90 segundos.
 3. [Notebook ejecutado — HTML](../codexway/notebooks/spot2_assessment.html)
 
    Resultados reproducibles, código plegable y el prompt utilizado para la prueba de IA.
@@ -20,13 +20,18 @@ También está disponible el [paquete mínimo para envío](SPOT2_ASSESSMENT_FINA
 
 ## Qué encontramos
 
-- El 10% de oportunidades priorizadas por la señal comercial concentra **69% más visitas** que una selección al azar equivalente.
-- Al incorporar inventario, el grupo priorizado concentra **37% más visitas** que una selección al azar; sin embargo, la mejora adicional frente a usar sólo la señal comercial **todavía no está demostrada**.
-- La información de inventario sí permite tomar mejores decisiones operativas: verificar disponibilidad, proponer alternativas compatibles o reconocer que aún no existe una recomendación defendible.
+- El 10% de oportunidades priorizadas por Lead Quality concentra **69% más visitas** que una selección al azar equivalente.
+- **Quality e Inventory cumplen funciones distintas:** Quality ordena dónde invertir atención; Inventory decide si priorizar, verificar disponibilidad, ofrecer una alternativa o abstenerse.
+- El Opportunity Score conservador sigue siendo mejor que el azar para el target histórico (**Lift@10 = 1.37x**), pero **no mejora a Quality-only (1.69x) para anticipar visitas**. Por eso no se presenta Inventory como uplift incremental de conversión.
+- La lectura ejecutiva del sistema es: **Oportunidad = posibilidad de avanzar × posibilidad de atenderla**.
+
+## Impacto esperado
+
+Con la misma capacidad comercial, la propuesta permite trabajar primero el grupo con mayor señal y dedicar menos atención inicial a oportunidades menos prometedoras. El inventario convierte esa prioridad en una siguiente acción concreta, sin confundir falta de información con falta de oferta.
 
 ## Recomendación
 
-**No automatizar todavía.** Primero debe observarse el desempeño con una nueva cohorte sin cambiar la operación. Después, si la señal se mantiene, debe realizarse un experimento controlado con asignación fija por lead para medir impacto real en visitas, alternativas aceptadas y cierres.
+**Usar la señal primero en observación, sin automatizar.** Debe probarse con una nueva cohorte manteniendo la operación actual. Si la señal se sostiene, el siguiente paso es un experimento controlado con asignación fija por lead para medir impacto real en visitas, alternativas aceptadas y cierres.
 
 La IA queda acotada a **control de calidad del catálogo**. El modelo principal no depende de una API de IA.
 
