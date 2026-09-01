@@ -5,8 +5,6 @@ on:
     branches: [main]
     paths:
       - "entregable/02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html"
-      - "entregable/00_LEEME_PRIMERO.md"
-      - "codexway/notebooks/spot2_assessment.ipynb"
       - "entregable/01_eda/**"
       - ".github/workflows/refresh-executive-one-pager.yml"
   workflow_dispatch:
@@ -33,34 +31,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install playwright pypdf nbconvert nbformat
           python -m playwright install --with-deps chromium
-
-      - name: Refresh notebook HTML
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import nbformat
-          from nbconvert import HTMLExporter
-
-          ipynb = Path("codexway/notebooks/spot2_assessment.ipynb")
-          html = Path("codexway/notebooks/spot2_assessment.html")
-
-          nb = nbformat.read(ipynb, as_version=4)
-          body, _ = HTMLExporter().from_notebook_node(nb)
-          html.write_text(body, encoding="utf-8")
-
-          rendered = html.read_text(encoding="utf-8")
-          required = [
-              "Clustering por entidad",
-              "DN4 × LOC1 × BSV1",
-              "Combinaciones poderosas",
-          ]
-          missing = [x for x in required if x not in rendered]
-          if missing:
-              raise SystemExit("Notebook HTML missing synchronized EDA content: " + ", ".join(missing))
-          if html.stat().st_size < 100_000:
-              raise SystemExit("Rendered notebook HTML is unexpectedly small")
-          print(f"Rendered {html} ({html.stat().st_size} bytes)")
-          PY
 
       - name: Render One Pager PDF
         run: |
@@ -96,43 +66,14 @@ jobs:
           print(f"Rendered {out} ({out.stat().st_size} bytes, 1 page)")
           PY
 
-      - name: Rebuild final delivery ZIP
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          from zipfile import ZipFile, ZIP_DEFLATED
-
-          root = Path(".")
-          out = root / "entregable" / "SPOT2_ASSESSMENT_FINAL.zip"
-          items = [
-              (root / "entregable" / "00_LEEME_PRIMERO.md", "00_LEEME_PRIMERO.md"),
-              (root / "entregable" / "06_deck_ejecutivo" / "DECK_EJECUTIVO_SPOT2.pdf", "01_DECK_EJECUTIVO_SPOT2.pdf"),
-              (root / "entregable" / "02_one_pager" / "ONE_PAGER_SPOT2.pdf", "02_ONE_PAGER_SPOT2.pdf"),
-              (root / "codexway" / "notebooks" / "spot2_assessment.html", "03_NOTEBOOK_SPOT2.html"),
-              (root / "codexway" / "notebooks" / "spot2_assessment.ipynb", "04_NOTEBOOK_SPOT2.ipynb"),
-          ]
-
-          missing = [str(p) for p, _ in items if not p.exists()]
-          if missing:
-              raise SystemExit("Missing package files: " + ", ".join(missing))
-
-          with ZipFile(out, "w", compression=ZIP_DEFLATED, compresslevel=9) as z:
-              for path, arcname in items:
-                  z.write(path, arcname)
-
-          with ZipFile(out) as z:
-              names = z.namelist()
-          expected = [arc for _, arc in items]
-          if names != expected:
-              raise SystemExit(f"Unexpected ZIP contents: {names}")
-          print(f"Built {out} ({out.stat().st_size} bytes) with {len(names)} files")
-          PY
+      - name: Rebuild and validate final delivery ZIP
+        run: python entregable/build_final_package.py
 
       - name: Commit regenerated artifacts
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add codexway/notebooks/spot2_assessment.html entregable/02_one_pager/ONE_PAGER_SPOT2.pdf entregable/SPOT2_ASSESSMENT_FINAL.zip
+          git add entregable/02_one_pager/ONE_PAGER_SPOT2.pdf entregable/SPOT2_ASSESSMENT_FINAL.zip
           if git diff --cached --quiet; then
             echo "No binary artifacts changed."
           else
