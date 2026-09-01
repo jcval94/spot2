@@ -21,17 +21,17 @@ h1{margin:0;max-width:7.35in;font-size:27pt;line-height:1;letter-spacing:-.035em
 .hero-copy{margin:6px 0 0;max-width:7.1in;font-size:9.5pt;line-height:1.25;color:#c8d5e7}
 .recommendation{margin-top:8px;border-left:4px solid var(--teal);background:#ffffff0d;padding:7px 10px;display:grid;grid-template-columns:.96in 1fr;gap:8px;align-items:center;font-size:9pt;line-height:1.22}
 .recommendation strong{font-size:10pt;color:#fff}.recommendation span{min-width:0;color:#d8e2f0;overflow-wrap:anywhere}
-.content{min-width:0;padding:.22in .42in .28in;display:grid;grid-template-rows:.34in .92in 3.15in 1in 1.38in .78in;gap:.12in}
+.content{min-width:0;padding:.22in .42in .28in;display:grid;grid-template-rows:.26in .92in 3.30in .95in 1.30in .73in;gap:.12in}
 .context{min-width:0;display:grid;grid-template-columns:repeat(3,1fr);align-content:center;gap:2px 12px;border-bottom:1px solid #cfd8e5;color:var(--muted);font-size:7.5pt;line-height:1.08;font-weight:650}
 .context b{color:var(--ink)}
-.evidence,.panel,.operations,.roadmap{background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.evidence,.panel,.impact,.roadmap{background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden}
 .evidence{display:grid;grid-template-columns:1.4in 1fr;padding:10px 13px}
 .section-kicker{align-self:center;margin:0;font-size:8pt;line-height:1.25;text-transform:uppercase;letter-spacing:.11em;color:var(--blue);font-weight:850}
 .metric-grid{display:grid;grid-template-columns:repeat(3,1fr)}
 .metric{padding:1px 13px 0;border-left:1px solid var(--line);display:grid;align-content:center}
 .metric-value{font-size:19pt;line-height:1;font-weight:900;letter-spacing:-.035em}
-.metric-value.long{font-size:15pt;line-height:1.05;letter-spacing:-.02em}
-.metric-value.blue{color:var(--blue)}.metric-value.teal{color:var(--teal)}.metric-value.red{color:var(--red)}
+.metric-value.long{font-size:14.5pt;line-height:1.05;letter-spacing:-.02em}
+.metric-value.blue{color:var(--blue)}.metric-value.teal{color:var(--teal)}.metric-value.navy{color:var(--navy-2)}
 .metric-label{margin-top:4px;font-size:8.2pt;line-height:1.18;font-weight:750;color:var(--ink)}
 .metric-note{margin-top:2px;font-size:7.5pt;line-height:1.15;color:var(--muted)}
 .core{display:grid;grid-template-columns:.86fr 1.14fr;gap:.12in;min-height:0}
@@ -48,11 +48,10 @@ h2{margin:0;font-size:11.5pt;line-height:1.18;letter-spacing:-.01em}
 .policy-table tbody th{background:#e3eaf5;text-align:left;font-weight:850}.policy-table .go{background:var(--soft-teal);color:#155e4a;font-weight:750}.policy-table .check{background:var(--soft-amber);color:#875100;font-weight:750}.policy-table .fallback{background:var(--soft-blue);color:#2356aa;font-weight:750}.policy-table .standard{background:var(--soft-gray);color:#566578}
 .formula{margin:10px 0 0;padding-top:8px;border-top:1px solid var(--line);font-size:9.5pt;line-height:1.3;color:var(--muted)}
 .formula code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:8.5pt;color:var(--ink)}
-.operations{padding:11px 13px;display:grid;grid-template-columns:1.28in 1fr;gap:11px;align-items:center}
-.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr)}
-.steps li{position:relative;min-height:.68in;padding:2px 10px 0 31px;border-left:1px solid var(--line);font-size:9.5pt;line-height:1.25;color:var(--muted)}
-.steps li::before{content:counter(list-item);position:absolute;left:9px;top:1px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-size:7.5pt;font-weight:850}
-.steps b{display:block;margin-bottom:2px;color:var(--ink);font-size:9.5pt}
+.impact{padding:11px 13px;display:grid;grid-template-columns:1.28in 1fr;gap:11px;align-items:center}
+.impact-copy{border-left:1px solid var(--line);padding-left:14px;display:grid;grid-template-columns:1fr 1.05fr;gap:14px;align-items:center}
+.impact-copy strong{font-size:10pt;line-height:1.28;color:var(--ink)}
+.impact-copy span{font-size:9.5pt;line-height:1.28;color:var(--muted)}
 .roadmap{background:var(--navy);border-color:var(--navy);color:#fff;padding:11px 13px;display:grid;grid-template-columns:1.25in 1fr;gap:12px;align-items:center}
 .roadmap .section-kicker{color:#8fd9cf}
 .phases{display:grid;grid-template-columns:repeat(3,1fr)}
@@ -71,9 +70,9 @@ h2{margin:0;font-size:11.5pt;line-height:1.18;letter-spacing:-.01em}
   body{padding:0;background:var(--paper)}.page{width:100%;height:auto;min-height:100vh;display:block;overflow:visible;box-shadow:none}
   .hero{padding:28px 24px}.hero h1{font-size:25pt}.recommendation{grid-template-columns:1fr}
   .content{display:block;padding:18px}.content>*{margin-bottom:14px}.context{white-space:normal;flex-wrap:wrap;padding-bottom:9px}
-  .evidence,.core,.operations,.roadmap{display:block}.section-kicker{margin-bottom:10px}.metric-grid,.steps,.phases{grid-template-columns:1fr}
-  .metric,.steps li,.phase{border-left:0;border-top:1px solid var(--line);padding:12px 0}.steps li{padding-left:32px}
-  .core .panel{margin-bottom:14px}.policy-table{font-size:8.5pt}.chart{height:auto}.notes{grid-template-columns:1fr}
+  .evidence,.core,.impact,.roadmap{display:block}.section-kicker{margin-bottom:10px}.metric-grid,.phases{grid-template-columns:1fr}
+  .metric,.phase{border-left:0;border-top:1px solid var(--line);padding:12px 0}
+  .core .panel{margin-bottom:14px}.policy-table{font-size:8.5pt}.chart{height:auto}.impact-copy{border-left:0;border-top:1px solid var(--line);padding:12px 0 0;grid-template-columns:1fr}.notes{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -85,39 +84,36 @@ h2{margin:0;font-size:11.5pt;line-height:1.18;letter-spacing:-.01em}
     <p class="hero-copy">La propuesta separa dos preguntas: qué oportunidades tienen mayor posibilidad de avanzar y cuáles pueden atenderse con el inventario conocido.</p>
     <div class="recommendation" aria-label="Recomendación ejecutiva">
       <strong>Recomendación</strong>
-      <span>Primero observar el sistema con datos nuevos sin cambiar la operación. Después compararlo contra el proceso actual en un experimento controlado. No automatizar todavía.</span>
+      <span>Usar la señal como apoyo en observación con datos nuevos para priorizar y orientar la acción, sin automatizar. Si se mantiene, compararla contra el proceso actual en un experimento controlado.</span>
     </div>
   </header>
 
   <main class="content">
     <section class="context" aria-label="Contexto de la decisión">
-      <span><b>5,000 oportunidades</b> comerciales</span>
       <span><b>Momento</b> · primera consulta, antes de la respuesta</span>
-      <span><b>Éxito observado</b> · visita agendada</span>
-      <span><b>Madurez</b> · 7 días</span>
+      <span><b>Éxito observado</b> · visita agendada a 7 días</span>
       <span><b>Capacidad inicial</b> · 10% con mejor señal</span>
-      <span><b>Alternativas</b> · 3 evaluadas / hasta 5 visibles</span>
     </section>
 
     <section class="evidence" aria-labelledby="evidence-title">
-      <h2 class="section-kicker" id="evidence-title">La evidencia que sostiene la decisión</h2>
+      <h2 class="section-kicker" id="evidence-title">La historia de negocio en tres datos</h2>
       <div class="metric-grid">
         <div class="metric"><div class="metric-value blue">+69%</div><div class="metric-label">Más visitas concentradas</div><div class="metric-note">en el 10% priorizado frente al azar</div></div>
-        <div class="metric"><div class="metric-value teal">+37%</div><div class="metric-label">Más visitas frente al azar</div><div class="metric-note">al incorporar capacidad de inventario</div></div>
-        <div class="metric"><div class="metric-value red long">No demostrado</div><div class="metric-label">Valor adicional del inventario</div><div class="metric-note">todavía no supera la señal comercial</div></div>
+        <div class="metric"><div class="metric-value navy">10%</div><div class="metric-label">Foco comercial inicial</div><div class="metric-note">trabajar primero el grupo con mayor señal</div></div>
+        <div class="metric"><div class="metric-value teal long">4 acciones</div><div class="metric-label">Inventory decide qué hacer</div><div class="metric-note">priorizar, verificar, alternativa o abstenerse</div></div>
       </div>
     </section>
 
     <section class="core" aria-label="Trade-off y política operativa">
       <article class="panel" aria-labelledby="tradeoff-title">
-        <h2 id="tradeoff-title">La señal combinada mejora al azar, pero no a la señal comercial</h2>
-        <p class="panel-intro">El inventario ayuda a decidir si un caso puede atenderse; todavía no mejora la predicción de visitas.</p>
+        <h2 id="tradeoff-title">Quality concentra mejor las visitas; Opportunity conserva utilidad frente al azar</h2>
+        <p class="panel-intro">Agregar inventario cambia el objetivo: de priorizar visita a priorizar una oportunidad que además pueda atenderse.</p>
         <svg class="chart" viewBox="0 0 540 320" role="img" aria-labelledby="lift-title lift-desc">
-          <title id="lift-title">Concentración de visitas en el diez por ciento priorizado</title>
-          <desc id="lift-desc">La señal comercial concentra 69 por ciento más visitas que una selección al azar. Al incorporar inventario, la mejora frente al azar es de 37 por ciento.</desc>
+          <title id="lift-title">Lift en el diez por ciento priorizado</title>
+          <desc id="lift-desc">Quality alcanza un Lift de 1.69 veces frente al azar. El Opportunity Score conservador alcanza 1.37 veces frente al azar; no mejora a Quality para anticipar visitas.</desc>
           <line x1="70" y1="260" x2="500" y2="260" stroke="#a9b4c3"/>
           <line x1="70" y1="196" x2="500" y2="196" stroke="#d89018" stroke-width="2" stroke-dasharray="7 6"/>
-          <text x="62" y="200" text-anchor="end" class="axis">Azar</text>
+          <text x="62" y="200" text-anchor="end" class="axis">1.0x azar</text>
           <rect x="126" y="87" width="110" height="173" rx="8" fill="#2864dc"/>
           <rect x="334" y="130" width="110" height="130" rx="8" fill="#0f9f91"/>
           <line x1="181" y1="48" x2="181" y2="127" stroke="#10223d" stroke-width="2"/>
@@ -126,17 +122,16 @@ h2{margin:0;font-size:11.5pt;line-height:1.18;letter-spacing:-.01em}
           <line x1="389" y1="87" x2="389" y2="181" stroke="#10223d" stroke-width="2"/>
           <line x1="374" y1="87" x2="404" y2="87" stroke="#10223d" stroke-width="2"/>
           <line x1="374" y1="181" x2="404" y2="181" stroke="#10223d" stroke-width="2"/>
-          <text x="181" y="78" text-anchor="middle" class="value">+69%</text>
-          <text x="389" y="121" text-anchor="middle" class="value">+37%</text>
-          <text x="181" y="288" text-anchor="middle" class="label">Señal comercial</text>
-          <text x="389" y="288" text-anchor="middle" class="label">Señal + inventario</text>
+          <text x="181" y="78" text-anchor="middle" class="value">1.69x</text>
+          <text x="389" y="121" text-anchor="middle" class="value">1.37x</text>
+          <text x="181" y="288" text-anchor="middle" class="label">Lead Quality</text>
+          <text x="389" y="288" text-anchor="middle" class="label">Opportunity</text>
         </svg>
-        <div class="nogo"><span class="badge-nogo">Mejora pendiente</span>El inventario aún no aporta una mejora adicional demostrada para anticipar visitas.</div>
       </article>
 
       <article class="panel" aria-labelledby="policy-title">
         <h2 id="policy-title">Dos señales visibles producen una acción</h2>
-        <p class="panel-intro">Separar posibilidad de avance y capacidad de atención permite explicar cada decisión.</p>
+        <p class="panel-intro">Quality ordena dónde invertir atención; Inventory decide cómo actuar sin ocultar la incertidumbre.</p>
         <table class="policy-table" aria-label="Matriz de acciones por posibilidad de avance y capacidad de atención">
           <thead><tr><th scope="col">Señal</th><th scope="col">Atendible</th><th scope="col">Por confirmar</th><th scope="col">Alternativa</th><th scope="col">No atendible</th></tr></thead>
           <tbody>
@@ -144,18 +139,16 @@ h2{margin:0;font-size:11.5pt;line-height:1.18;letter-spacing:-.01em}
             <tr><th scope="row">Estándar</th><td class="standard">Flujo actual</td><td class="standard">Flujo actual</td><td class="standard">Flujo actual</td><td class="standard">Flujo actual</td></tr>
           </tbody>
         </table>
-        <p class="formula"><b>La decisión combina la señal comercial con una lectura conservadora del inventario.</b><br>Falta de información no significa que un inmueble no esté disponible. El sistema evalúa las tres mejores opciones, muestra hasta cinco y se abstiene si ninguna es defendible.</p>
+        <p class="formula"><b>Oportunidad = posibilidad de avanzar × posibilidad de atenderla.</b><br>Falta de información no significa falta de inventario. El sistema evalúa las tres mejores opciones, muestra hasta cinco y se abstiene si ninguna es defendible.</p>
       </article>
     </section>
 
-    <section class="operations" aria-labelledby="operations-title">
-      <h2 class="section-kicker" id="operations-title">De señal a acción</h2>
-      <ol class="steps">
-        <li><b>Momento</b>Primera consulta, antes de recibir respuesta.</li>
-        <li><b>Posibilidad de avance</b>Estima progreso comercial temprano.</li>
-        <li><b>Capacidad de atención</b>Usa sólo el último estado conocido.</li>
-        <li><b>Acción</b>Priorizar, verificar, ofrecer alternativa o mantener el flujo.</li>
-      </ol>
+    <section class="impact" aria-labelledby="impact-title">
+      <h2 class="section-kicker" id="impact-title">Impacto esperado</h2>
+      <div class="impact-copy">
+        <strong>Con la misma capacidad comercial, trabajar primero el 10% con mayor señal y dedicar menos atención inicial a oportunidades menos prometedoras.</strong>
+        <span>El inventario transforma esa prioridad en una instrucción concreta: priorizar, verificar disponibilidad, ofrecer una alternativa o abstenerse cuando no hay evidencia suficiente.</span>
+      </div>
     </section>
 
     <section class="roadmap" aria-labelledby="roadmap-title">
@@ -168,8 +161,8 @@ h2{margin:0;font-size:11.5pt;line-height:1.18;letter-spacing:-.01em}
     </section>
 
     <footer class="notes">
-      <p><b>Límites.</b> Una visita agendada es una señal temprana, no una venta. La evaluación histórica no demuestra impacto real ni éxito de las alternativas.</p>
-      <p><b>IA acotada.</b> La IA sólo revisa la calidad del catálogo; no decide prioridades ni es necesaria para operar el modelo principal.</p>
+      <p><b>Límites.</b> Una visita agendada es una señal temprana, no una venta. La evaluación histórica no demuestra impacto causal ni éxito de las alternativas.</p>
+      <p><b>IA acotada.</b> La IA revisa la calidad del catálogo; no decide prioridades ni es necesaria para operar el modelo principal.</p>
       <p class="source">Autoridad final: Codexway · Fuentes: t1_model_metrics.json, system_evaluation.json, system_score_intervals.csv y PRODUCT_VISION_EJECUTIVA.md.</p>
     </footer>
   </main>
