@@ -1,49 +1,59 @@
-# Matriz final de cobertura del reto
+# Matriz final de cobertura del assessment
 
-Esta tabla permite verificar, en una sola vista, qué parte de la entrega responde a cada requisito.
+> Estados permitidos: **COMPLETO**, **PARCIAL**, **FALTANTE**.
+> Regla: una fila sólo se marca COMPLETO cuando existe un artefacto y evidencia trazable que cubren el requisito.
 
-> **Cómo leerla:** **COMPLETO** significa que existe una respuesta y evidencia suficiente dentro del paquete final. **PARCIAL** significa que existe trabajo sólido, pero todavía falta evidencia que sólo puede obtenerse con nuevos datos o una prueba en operación. No hay requisitos técnicos principales marcados como FALTANTE.
->
-> Cuando aparece **Lift@10**, significa cuánto mejora el 10% mejor priorizado frente a elegir al azar el mismo número de casos. Los nombres de variables como `scheduled_visit` se conservan porque son necesarios para reproducir la solución.
+| Requisito del assessment | Artefacto | Sección | Evidencia | Estado |
+|---|---|---|---|---|
+| EDA — distribución por sector/modalidad/tipo de usuario | [EDA](01_eda/README.md) | Demanda y composición | 5,000 leads + tablas canónicas | COMPLETO |
+| EDA — tasas de conversión/proxy por segmento | [EDA final](01_eda/EDA_FINAL.md) | Target, segmentos e hipótesis | Proxy T1 scheduled_visit; segmentación descriptiva | COMPLETO |
+| EDA — temporalidad/estacionalidad | [EDA final](01_eda/EDA_FINAL.md) | T0/T1/T2, cohortes y drift | Cohortes temporales y coverage drift | COMPLETO |
+| EDA — dinámica de mercado/corredor/municipio | [EDA final](01_eda/EDA_FINAL.md) | Mercado y geografía | Market Context usado sólo para EDA con caveat temporal | COMPLETO |
+| EDA — missingness, outliers y sesgos | [EDA final](01_eda/EDA_FINAL.md) | Calidad de datos | Missingness, colas, structural missingness y drift | COMPLETO |
+| EDA — hipótesis de conversión | [EDA final](01_eda/EDA_FINAL.md) | Hipótesis contrastadas | Hipótesis separadas en soportadas/inconclusas/rechazadas | COMPLETO |
+| One-Pager — problema, enfoque, resultados, impacto | [One-Pager](02_one_pager/README.md) | Documento completo | Síntesis ejecutiva Codexway | COMPLETO |
+| One-Pager — visualización ejecutiva | [HTML fuente](02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html) / [PDF](02_one_pager/ONE_PAGER_SPOT2.pdf) | Tres resultados, matriz operativa y plan de 90 días | Recomendación en español ejecutivo, legible en 60–90 segundos | COMPLETO |
+| One-Pager — formato PDF de una página | [PDF](02_one_pager/ONE_PAGER_SPOT2.pdf) | Página Letter derivada del HTML | Fuente editorial única; PDF de una página con texto extraíble | COMPLETO |
+| Lead Quality — feature engineering justificado | [Lead Quality](03_lead_quality/MODELO_CALIDAD_LEAD.md) | ABT y feature policy | Allowlist T1, PIT y ablations | COMPLETO |
+| Lead Quality — selección/entrenamiento de modelos | [Lead Quality](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Selección final | stable_segment_logistic + Platt | COMPLETO |
+| Lead Quality — AUC/PR/log-loss/Brier | [Lead Quality](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Evaluación | ROC-AUC 0.5478, PR-AUC 0.2391, Brier 0.1658, Log Loss 0.5129 | COMPLETO |
+| Lead Quality — validación temporal | [Lead Quality](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Rolling temporal CV | Gate temporal + holdout procedimental | COMPLETO |
+| Lead Quality — threshold/capacidad | [Lead Quality](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Política operativa | top 10% default; escenarios 5/10/20%; threshold validation ≈0.2531 | COMPLETO |
+| Lead Quality — error analysis | [Lead Quality](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Error analysis / segmentos | Errores, segmentos y estabilidad mensual | COMPLETO |
+| Lead Quality — calibración | [Lead Quality](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Calibration | Platt retenida por proper scoring | COMPLETO |
+| Inventory — definición de disponibilidad/serviceability | [Inventory](04_inventory_fallback/README.md) | Estados y modelo conceptual | Disponible, no atendible, UNKNOWN/stale, lower/upper | COMPLETO |
+| Inventory — restricciones reales | [Inventory](04_inventory_fallback/README.md) | Candidate Generation | Sector, modalidad, geografía, área, precio y PIT | COMPLETO |
+| Inventory — point-in-time availability | [Inventory](04_inventory_fallback/README.md) | Backward as-of | 0 future snapshot violations | COMPLETO |
+| Inventory — inventario insuficiente | [Inventory](04_inventory_fallback/README.md) | Fallback / NO_RESULT | UNKNOWN ≠ UNAVAILABLE; abstención gobernada | COMPLETO |
+| Opportunity — fórmula de combinación | [Opportunity](05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md) | Arquitectura final | p_quality × inventory_serviceability_lower + upper bound | COMPLETO |
+| Opportunity — distribución y bandas | [Opportunity](05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md) | Thresholds/capacidad y monitoring | lower/upper, bands y distribución | COMPLETO |
+| Opportunity — estrategia fallback | [Inventory/Fallback](04_inventory_fallback/README.md) + [Opportunity](05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md) | Fallback | top-3 interno; hasta 5 visibles; reason codes; NO_RESULT | COMPLETO |
+| Opportunity — evaluación combinada alineada al éxito de fallback | [Opportunity](05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md) | Trade-off y evaluación | Absolute Lift@10 1.370x; target T1 no observa éxito de fallback; incremental Inventory NO-GO | PARCIAL |
+| Producción — pipeline entrenamiento/predicción | [Arquitectura](05_opportunity_produccion/02_ARQUITECTURA_PRODUCCION.md) | Flujo online T1 / registry | Arquitectura híbrida y contratos por componente | COMPLETO |
+| Producción — monitoreo | [Runbook](05_opportunity_produccion/03_MONITOREO_GOBIERNO_RUNBOOK.md) | Panel mínimo | Base rate, Lift@K, calibration, drift, Inventory, latency | COMPLETO |
+| Producción — drift | [Runbook](05_opportunity_produccion/03_MONITOREO_GOBIERNO_RUNBOOK.md) | Taxonomía de drift | Population/label/process/inventory/instrumentation/model | COMPLETO |
+| Producción — retraining/rollback | [Runbook](05_opportunity_produccion/03_MONITOREO_GOBIERNO_RUNBOOK.md) | Retraining + rollback | Gates, champion/challenger y last-known-good | COMPLETO |
+| Producción — latencia/volumen | [Arquitectura](05_opportunity_produccion/02_ARQUITECTURA_PRODUCCION.md) | SLO/SLA y escalabilidad | Targets explícitos identificados como propuestos, no medidos | COMPLETO |
+| IA — uso real de LLM | [Uso de IA](07_ia_product_vision/01_USO_OBLIGATORIO_IA.md) | E017 / E015 live | GPT-5 nano real, Structured Outputs y costos reales | COMPLETO |
+| IA — prompt utilizado | [Uso de IA](07_ia_product_vision/01_USO_OBLIGATORIO_IA.md) | Prompt exacto E017 V2 | Prompt preservado literalmente | COMPLETO |
+| IA — qué funcionó y qué no | [Uso de IA](07_ia_product_vision/01_USO_OBLIGATORIO_IA.md) | Resultado y governance | Discovery sí; ABT features no; automatic gate no; rules scoring no | COMPLETO |
+| IA — reproducibilidad/costo/privacidad/fallback | [Uso de IA](07_ia_product_vision/01_USO_OBLIGATORIO_IA.md) | Governance | Cache/schema/budget/store=false/opt-in/no score dependency | COMPLETO |
+| Product Vision — máximo 2 párrafos | [Product Vision ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) | Documento completo | Entry point oficial en dos párrafos | COMPLETO |
+| Product Vision — tres meses adicionales | [Product Vision ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) | Párrafo 1 | Instrumentación → challengers → shadow/RCT | COMPLETO |
+| Product Vision — integración al producto | [Product Vision ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) | Párrafo 1 | CRM/queue con Quality, Inventory, Opportunity y acción | COMPLETO |
+| Product Vision — datos adicionales | [Product Vision ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) | Párrafo 2 | Versionado, exposures, visitas, cierres, SLA, human gold | COMPLETO |
+| Product Vision — causalidad | [Diseño causal](07_ia_product_vision/03_EXPERIMENTACION_CAUSAL.md) | RCT / alternativas | 50/50 sticky, ITT, SRM, interference, ramp-up, DiD | COMPLETO |
+| Formato — notebook reproducible | [Notebook HTML](../codexway/notebooks/spot2_assessment.html) / [IPYNB](../codexway/notebooks/spot2_assessment.ipynb) | 7 capítulos; resumen dinámico; caso lead 6; código plegable | IPYNB ejecutado top-to-bottom (21/21 celdas sin error) y HTML autónomo validado en navegador | COMPLETO |
+| Formato — prompt de IA dentro del notebook | [Notebook IPYNB](../codexway/notebooks/spot2_assessment.ipynb) | Sección LLM | El notebook contiene el prompt del Semantic Inventory Quality Auditor | COMPLETO |
+| Formato — slides PDF 5–8 slides | [Deck ejecutivo final](06_deck_ejecutivo/DECK_EJECUTIVO_SPOT2.pdf) / [HTML fuente](06_deck_ejecutivo/DECK_EJECUTIVO_SPOT2.html) | 7 slides, narrativa ejecutiva y caso reproducible | PDF de 7 páginas validado contra las decisiones canónicas de Codexway | COMPLETO |
+| Formato — paquete mínimo de envío | [ZIP final](SPOT2_ASSESSMENT_FINAL.zip) / [Léeme primero](00_LEEME_PRIMERO.md) | Deck, One Pager y notebook en dos formatos | Cinco archivos exactos, no vacíos y legibles | COMPLETO |
 
-| Requisito | Dónde se responde | Evidencia principal | Estado |
-|---|---|---|---|
-| Entender la distribución de leads por sector, modalidad y tipo de usuario | [EDA](01_eda/README.md) | 5,000 leads y análisis de composición | **COMPLETO** |
-| Analizar tasas de avance comercial por segmento | [EDA final](01_eda/EDA_FINAL.md) | Visita agendada en T1 y segmentación descriptiva | **COMPLETO** |
-| Considerar temporalidad y cambios en el tiempo | [EDA final](01_eda/EDA_FINAL.md) | Cohortes, T0/T1/T2 y cambios en cobertura de inventario | **COMPLETO** |
-| Analizar contexto de mercado y geografía | [EDA final](01_eda/EDA_FINAL.md) | Contexto por sector y geografía, usado con cautela temporal | **COMPLETO** |
-| Revisar datos faltantes, valores extremos y sesgos | [EDA final](01_eda/EDA_FINAL.md) | Calidad de datos y significado de la ausencia de información | **COMPLETO** |
-| Presentar hipótesis de negocio y qué ocurrió con ellas | [EDA final](01_eda/EDA_FINAL.md) | Hipótesis soportadas, inconclusas y descartadas | **COMPLETO** |
-| Resumir problema, enfoque, resultado e impacto | [Resumen ejecutivo](02_one_pager/README.md) | Síntesis de la solución final | **COMPLETO** |
-| Contar con una pieza visual ejecutiva | [Resumen visual](02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html) | Flujo Lead → Calidad → Oportunidad ← Inventario | **COMPLETO** |
-| Justificar las variables del modelo de Calidad del lead | [Modelo de Calidad](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Variables permitidas en T1 y controles temporales | **COMPLETO** |
-| Comparar y seleccionar modelos | [Modelo de Calidad](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Se evaluaron alternativas simples y complejas; se retuvo la solución más estable | **COMPLETO** |
-| Reportar métricas de desempeño | [Modelo de Calidad](03_lead_quality/MODELO_CALIDAD_LEAD.md) | ROC-AUC 0.5478, PR-AUC 0.2391, Brier 0.1658 y Lift@10 1.689x | **COMPLETO** |
-| Validar el modelo respetando el tiempo | [Modelo de Calidad](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Separaciones temporales y muestra histórica de evaluación | **COMPLETO** |
-| Definir una política compatible con capacidad operativa | [Calidad del lead](03_lead_quality/README.md) | Prioridad base sobre el 10% superior; escenarios 5/10/20% | **COMPLETO** |
-| Analizar errores, segmentos y estabilidad | [Modelo de Calidad](03_lead_quality/MODELO_CALIDAD_LEAD.md) | Análisis de errores y estabilidad temporal | **COMPLETO** |
-| Definir qué significa inventario atendible | [Inventario](04_inventory_fallback/README.md) | Compatibilidad, disponibilidad conocida e incertidumbre | **COMPLETO** |
-| Evitar utilizar estados futuros del inventario | [Inventario](04_inventory_fallback/README.md) | Último estado conocido hasta el momento de decisión | **COMPLETO** |
-| Resolver falta de inventario | [Inventario](04_inventory_fallback/README.md) | Alternativas, hasta 5 visibles y abstención si ninguna es defendible | **COMPLETO** |
-| Distinguir “desconocido” de “no disponible” | [Inventario](04_inventory_fallback/README.md) | Incertidumbre explícita y vigencia de 30 días | **COMPLETO** |
-| Combinar Calidad del lead e Inventario | [Puntaje de oportunidad](05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md) | `p_quality × inventory_serviceability_lower` y cota superior | **COMPLETO** |
-| Evaluar el puntaje combinado | [Puntaje de oportunidad](05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md) | Lift@10 conservador 1.370x | **COMPLETO** |
-| Demostrar que Inventario incrementa la conversión T1 | [Puntaje de oportunidad](05_opportunity_produccion/01_LEAD_OPPORTUNITY_SCORE.md) | El resultado T1 no mide directamente el éxito de alternativas | **PARCIAL** |
-| Diseñar una arquitectura para operación real | [Arquitectura](05_opportunity_produccion/02_ARQUITECTURA_PRODUCCION.md) | Componentes separados, versionados y auditables | **COMPLETO** |
-| Definir monitoreo y manejo de fallos | [Guía operativa](05_opportunity_produccion/03_MONITOREO_GOBIERNO_RUNBOOK.md) | Datos, modelo, inventario, operación y resultados | **COMPLETO** |
-| Definir cuándo reentrenar o volver a una versión anterior | [Guía operativa](05_opportunity_produccion/03_MONITOREO_GOBIERNO_RUNBOOK.md) | Controles de reentrenamiento y reversión | **COMPLETO** |
-| Usar IA de forma real y justificar su papel | [Uso de IA](07_ia_product_vision/01_USO_OBLIGATORIO_IA.md) | Piloto real con GPT-5 nano, costos y resultados | **COMPLETO** |
-| Documentar qué funcionó y qué no con IA | [Uso de IA](07_ia_product_vision/01_USO_OBLIGATORIO_IA.md) | Útil para descubrir problemas semánticos; no promovida al predictor | **COMPLETO** |
-| Proponer una visión de producto a tres meses | [Visión ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) | Instrumentación → validación → experimento controlado | **COMPLETO** |
-| Definir qué datos adicionales pedir | [Visión ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) | Historial de inmuebles, recomendaciones, visitas, cierres y valor | **COMPLETO** |
-| Definir cómo medir impacto real | [Diseño experimental](07_ia_product_vision/03_EXPERIMENTACION_CAUSAL.md) | Comparación controlada contra la política actual | **COMPLETO** |
+## Lectura del estado
 
-## Qué queda deliberadamente abierto
+No hay requisitos marcados **FALTANTE** en el contenido técnico y ejecutivo construido.
 
-Hay un punto principal que no puede resolverse sólo con los datos históricos disponibles:
+El único punto **PARCIAL** es deliberado:
 
-**el valor causal e incremental de incorporar Inventario al proceso de priorización.**
+1. **Evaluación conjunta de Opportunity/Fallback:** existe evaluación offline, pero el target T1 no observa directamente éxito de fallback y el valor incremental de Inventory no está demostrado.
 
-La entrega demuestra que el componente puede construirse sin usar información futura y que el Puntaje de oportunidad supera una selección aleatoria. Sin embargo, el resultado actual —visita agendada en la primera consulta— no registra si una alternativa recomendada fue aceptada ni si produjo una venta.
-
-Por eso este punto se mantiene **PARCIAL** y la siguiente etapa propuesta es una validación con datos nuevos seguida de un experimento controlado. Esta limitación se presenta de forma explícita en lugar de convertir evidencia histórica en una afirmación causal.
+El deck, el One Pager, el notebook y el ZIP mínimo ya fueron reconstruidos, validados y conectados desde la portada final.

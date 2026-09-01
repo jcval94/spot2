@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 
+import nbformat
 import numpy as np
 import pandas as pd
 from pypdf import PdfReader
@@ -35,3 +36,37 @@ def test_pdf_page_contract_if_present(settings):
         assert len(PdfReader(str(one)).pages) == 1
     if slides.exists():
         assert 5 <= len(PdfReader(str(slides)).pages) <= 8
+
+
+def test_executive_notebook_contract_if_present(settings):
+    notebook_path = settings.codexway_root / "notebooks" / "spot2_assessment.ipynb"
+    html_path = settings.codexway_root / "notebooks" / "spot2_assessment.html"
+    assert notebook_path.exists() and html_path.exists(), "run the pipeline to render the notebook"
+
+    notebook = nbformat.read(notebook_path, as_version=4)
+    headings = [
+        line
+        for cell in notebook.cells
+        if cell.cell_type == "markdown"
+        for line in cell.source.splitlines()
+        if line.startswith("## ") and not line.startswith("### ")
+    ]
+    assert len(headings) == 7
+    assert headings[0].startswith("## 1. tl;dr")
+    assert headings[-1].startswith("## 7. Conclusiones")
+
+    code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
+    assert code_cells and all(cell.execution_count is not None for cell in code_cells)
+    assert not [
+        output
+        for cell in code_cells
+        for output in cell.get("outputs", [])
+        if output.get("output_type") == "error"
+    ]
+
+    html = html_path.read_text(encoding="utf-8")
+    assert 'id="spot2-executive-theme"' in html
+    assert 'id="spot2-executive-behavior"' in html
+    assert "Ver código reproducible" in html
+    assert '<html lang="es">' in html
+    assert '<script src="https://' not in html

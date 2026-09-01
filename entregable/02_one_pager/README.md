@@ -1,59 +1,19 @@
-# Entregable 2 — Resumen ejecutivo de una página
+# Entregable 2 — One Pager ejecutivo
 
-Este es el documento recomendado para comprender la solución completa de Spot2 en **3 a 5 minutos**.
+- [Abrir fuente HTML](ONE_PAGER_SPOT2_AESTHETIC.html)
+- [Abrir PDF final](ONE_PAGER_SPOT2.pdf)
+- [Consultar QA visual](design-qa.md)
 
-- [Abrir versión visual en HTML](ONE_PAGER_SPOT2_AESTHETIC.html)
+El One Pager resume la decisión para Producto y C-Level en 60–90 segundos: existe una señal útil para priorizar oportunidades, el inventario ayuda a decidir qué acción tomar, pero su mejora adicional todavía debe comprobarse. La recomendación es observar primero sin cambiar la operación y después medir impacto con un experimento controlado.
 
-## El problema
+El HTML es la única fuente editorial; el PDF se deriva directamente de él. La metodología, las métricas completas y los riesgos permanecen en los anexos técnicos del repositorio.
 
-El equipo recibe muchos leads con distinta intención comercial y, al mismo tiempo, el inventario cambia constantemente.
+## Regeneración
 
-Priorizar sólo por “qué lead parece mejor” puede desperdiciar esfuerzo si su necesidad ya no puede atenderse. Priorizar sólo por inventario tampoco resuelve el problema, porque no todos los leads tienen la misma probabilidad de avanzar.
+Desde la raíz del repositorio, con Chrome y Playwright ya disponibles:
 
-## La solución
+```powershell
+python -c "from pathlib import Path; from playwright.sync_api import sync_playwright; src=Path('entregable/02_one_pager/ONE_PAGER_SPOT2_AESTHETIC.html').resolve(); out=Path('entregable/02_one_pager/ONE_PAGER_SPOT2.pdf').resolve(); p=sync_playwright().start(); browser=p.chromium.launch(executable_path=r'C:\Program Files\Google\Chrome\Application\chrome.exe', headless=True); page=browser.new_page(); page.goto(src.as_uri(), wait_until='load'); page.emulate_media(media='print'); page.pdf(path=str(out), format='Letter', print_background=True, display_header_footer=False, prefer_css_page_size=True, margin={'top':'0','right':'0','bottom':'0','left':'0'}); browser.close(); p.stop()"
+```
 
-La propuesta separa dos preguntas:
-
-**1. ¿Qué tan probable es que este lead avance a una visita agendada?**  
-Esto se resume en **Calidad del lead**.
-
-**2. ¿Existe inventario conocido que pueda atender razonablemente su necesidad?**  
-Esto se resume en **Capacidad del inventario**.
-
-Después se combinan ambas señales en un **Puntaje de oportunidad**, sin ocultar ninguna de las dos.
-
-## Datos utilizados
-
-- 5,000 leads;
-- 22,576 consultas;
-- 3,000 inmuebles;
-- 30,000 registros históricos de disponibilidad;
-- contexto de mercado.
-
-La evaluación principal ocurre en **T1: después de registrar la primera consulta y antes de conocer la respuesta del intermediario**.
-
-## Resultado principal
-
-El modelo de Calidad del lead alcanza **Lift@10 = 1.689x**. En términos sencillos, el 10% de leads mejor puntuados concentra aproximadamente **69% más visitas agendadas** que una selección aleatoria equivalente.
-
-El Puntaje de oportunidad alcanza **Lift@10 = 1.370x**. Es mejor que seleccionar al azar, pero no supera a Calidad del lead cuando el único objetivo es predecir la visita agendada. Esto no invalida el inventario: indica que responde a **otra necesidad de negocio**, saber si la oportunidad puede realmente atenderse.
-
-## Qué ocurre si el inmueble original no sirve
-
-El sistema:
-
-1. busca alternativas compatibles;
-2. usa únicamente información que ya era conocida en ese momento;
-3. puede mostrar hasta cinco alternativas;
-4. distingue entre “no disponible” y “no sabemos”;
-5. devuelve **sin resultado** si no existe una recomendación defendible.
-
-## Uso de inteligencia artificial
-
-Se probó GPT-5 nano para revisar la coherencia semántica del catálogo. Fue barato y útil para descubrir patrones, pero **no aportó suficiente mejora para incluirlo en el modelo de priorización**.
-
-La decisión fue usar IA donde sí aporta valor —control de calidad semántico y descubrimiento— sin convertirla en una dependencia innecesaria del sistema.
-
-## Recomendación
-
-**No automatizar inmediatamente.** Primero ejecutar la solución sobre una cohorte nueva sin afectar decisiones reales, comprobar que la señal se mantiene y, después, realizar un experimento controlado para medir impacto real.
+Contrato de salida: una página Letter, fondos impresos, texto extraíble y sin encabezados del navegador.

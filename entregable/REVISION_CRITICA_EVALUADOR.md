@@ -2,188 +2,267 @@
 
 ## Dictamen ejecutivo
 
-La entrega presenta una sola solución coherente y deja claro qué partes están demostradas y cuáles todavía necesitan validación.
+El paquete presenta una sola solución coherente con **Codexway como autoridad final**. La amplitud de `experimentos/**` aparece condensada como evidencia de decisiones y `AssessmentSol1/**` como auditoría metodológica; ninguno sustituye silenciosamente al champion.
 
-**Conclusión:** la solución está suficientemente cerrada para ser evaluada como propuesta técnica y de producto. **Todavía no debe presentarse como una automatización lista para producción**, porque falta comprobar su impacto con datos nuevos y un experimento controlado.
+La solución es defendible como assessment técnico y de producto. No es defendible todavía como un sistema listo para automatización plena, y el paquete lo reconoce explícitamente.
 
-## Lo más sólido de la propuesta
+---
 
-### 1. La decisión se toma en un momento bien definido
+## Fortalezas
 
-El lead se evalúa en **T1: después de registrar su primera consulta y antes de conocer la respuesta del intermediario**.
+### 1. Contrato temporal claro
 
-La señal de éxito es una **visita agendada** (`scheduled_visit`) durante esa primera consulta, esperando 7 días para que el resultado madure.
+El scoring principal está congelado en **T1: primera inquiry, después de persistir el request y antes de broker response**.
 
-Esto evita usar información que sólo apareció después de la decisión.
+El target final es:
 
-### 2. Se protege explícitamente contra información futura
+**scheduled_visit en la primera inquiry, madurez 7 días.**
 
-La solución no se limita a separar entrenamiento y evaluación por fechas. También impide utilizar:
+Esto evita que features posteriores al evento contaminen el modelo.
 
-- respuestas posteriores del intermediario;
-- consultas futuras del mismo lead;
-- estados futuros de disponibilidad;
-- atributos actuales como si siempre hubieran sido iguales;
-- información de mercado cuya fecha efectiva no puede reconstruirse.
+### 2. Leakage tratado como requisito de diseño
 
-Para disponibilidad, la regla es sencilla: **usar el último estado conocido hasta ese momento, nunca uno posterior**.
+No se limita a “hacer split temporal”.
 
-### 3. El modelo final es simple por una razón
+Se documentan y bloquean:
 
-Se probaron alternativas más complejas, pero la solución final conserva una regresión logística estable porque ofrece una señal reproducible, interpretable y temporalmente defendible.
+- broker response;
+- future inquiries;
+- current mutable listing state sin versionado;
+- nearest/future Availability;
+- market context sin publication time;
+- internal score leakage.
 
-Su resultado operativo más importante es:
+Availability usa strict backward-as-of y reporta 0 future-snapshot violations.
 
-- **Lift@10 = 1.689x**
-- intervalo de confianza de **1.381x a 1.982x**
+### 3. Modelo final simple por una razón defendible
 
-En palabras sencillas: el 10% de leads mejor puntuados concentra aproximadamente **69% más visitas agendadas** que elegir al azar el mismo número de casos.
+La baja complejidad del `stable_segment_logistic` puede parecer poco ambiciosa, pero el paquete demuestra que fue seleccionado frente a challengers por estabilidad temporal y concentración top-decile.
 
-### 4. No se confunde “buen lead” con “inventario disponible”
+El resultado principal es útil para capacidad:
 
-La propuesta separa dos preguntas:
+- Lead Quality Lift@10: **1.689x**;
+- IC95%: **[1.381x, 1.982x]**.
 
-1. **¿Qué tan probable es que este lead avance?**
-2. **¿Podemos atender razonablemente su necesidad con el inventario conocido?**
+### 4. Métricas alineadas al uso
 
-Esta separación es una fortaleza porque un lead atractivo puede no tener inventario atendible, y un inmueble adecuado puede existir para un lead poco prometedor.
+No se vende AUC como única métrica.
 
-### 5. La incertidumbre del inventario se muestra, no se oculta
+Se usan:
 
-Una regla central es:
+- PR-AUC;
+- Brier/Log Loss;
+- Lift@K;
+- Recall@K;
+- calibration;
+- temporal stability;
+- tie-aware capacity metrics.
 
-> **Desconocido no significa no disponible.**
+### 5. Inventory no se confunde con Lead Quality
 
-Si la información de un inmueble es antigua o incompleta, el sistema reduce su confianza. No convierte automáticamente la falta de evidencia en una respuesta negativa.
+El sistema conserva dos preguntas:
 
-Si el inmueble original no funciona, puede proponer alternativas. Si ninguna es defendible, devuelve **sin resultado** en lugar de fabricar una recomendación.
+- ¿este lead tiene propensión a avanzar?
+- ¿podemos atenderlo?
 
-### 6. Los resultados negativos también forman parte de la decisión
+Eso permite reconocer que Opportunity puede mejorar “serviceability” sin necesariamente mejorar el target puro de conversión.
 
-La investigación no presenta cada experimento como un éxito.
+### 6. Fallback con abstención
 
-Entre las ideas que **no** se promovieron están:
+La decisión **UNKNOWN ≠ UNAVAILABLE** y el uso de **NO_RESULT** son fortalezas de producto y governance.
 
-- modelos más complejos que no mostraron estabilidad suficiente;
-- variables derivadas con un LLM;
-- reglas semánticas que no mejoraron la priorización;
-- segmentos locales interesantes pero no confirmados;
-- la afirmación de que Inventario ya mejora la conversión T1.
+Es preferible abstenerse que fabricar una recomendación.
 
-Esto fortalece la entrega porque demuestra selección, no acumulación de experimentos.
+### 7. Resultados negativos bien gobernados
 
-## Las principales limitaciones
+El paquete no es una colección de winners.
 
-### 1. La señal global del modelo es moderada
+Documenta decisiones negativas:
 
-El ROC-AUC es **0.5478**, por lo que el modelo no separa perfectamente casos positivos y negativos.
+- CatBoost no promovido bajo el contrato final;
+- semantic rules sin Lift incremental;
+- LLM-derived features no promovidas;
+- Inventory incremental gate NO-GO;
+- pockets locales como hipótesis, no reglas.
 
-La defensa correcta no es ocultarlo: el valor observado está principalmente en **ordenar mejor la parte superior de la lista**, no en clasificar con precisión a toda la población.
+Esto transmite seniority metodológico.
 
-Por eso Lift@10 es más relevante para el caso de uso que presentar AUC como única métrica.
+### 8. IA utilizada donde existe ventaja informacional
 
-### 2. La muestra histórica de evaluación no es completamente nueva
+El LLM se probó con un caso real y costos reales.
 
-El conjunto histórico fue consultado durante la investigación general. Por ello, sus resultados deben verse como evidencia retrospectiva, no como una confirmación totalmente independiente.
+La decisión de dejarlo fuera del predictor está respaldada por evidencia, no por omisión.
 
-La mitigación propuesta es correcta: **probar primero con una cohorte futura no utilizada durante el desarrollo**.
+### 9. Producción y causalidad están separadas de claims offline
 
-### 3. La visita agendada no es una venta
+El siguiente paso es shadow + RCT, no “deploy porque Lift > 1”.
 
-`scheduled_visit` es una señal temprana de avance comercial. No mide cierre, ingresos ni valor total.
+---
 
-La solución debe presentarse como priorización de progreso comercial temprano.
+## Debilidades
 
-### 4. Inventario todavía no demuestra mejora incremental sobre esa señal
+### 1. Lead Quality tiene discriminación global modesta
 
-El Puntaje de oportunidad conservador obtiene:
+ROC-AUC **0.5478** es bajo.
 
-- **Lift@10 = 1.370x**
+La defensa correcta no es ocultarlo, sino explicar que:
 
-Supera una selección aleatoria, pero queda por debajo de Calidad del lead (**1.689x**) si el único objetivo es predecir la visita agendada.
+- la señal está concentrada;
+- el uso es ranking bajo capacidad;
+- Lift@10 es la métrica operacional principal;
+- el modelo tiene baja resolución y no debe sobreinterpretarse.
 
-Esto no significa que Inventario carezca de valor. Significa que responde a otra pregunta: **si la oportunidad puede realmente atenderse**.
+### 2. El holdout no es completamente virgen
 
-Su valor incremental debe medirse con resultados que registren recomendaciones mostradas, alternativas aceptadas y desenlaces comerciales.
+Codexway lo etiqueta como **procedural holdout** porque el histórico fue consumido globalmente durante la investigación.
 
-### 5. No todos los atributos del inmueble tienen historial completo
+Esto reduce fuerza confirmatoria.
 
-La disponibilidad sí puede reconstruirse respetando el tiempo. Sin embargo, precio, geografía y otros atributos no siempre cuentan con un historial efectivo completo.
+La mitigación propuesta —forward shadow— es necesaria.
 
-Por eso no se afirma que toda la compatibilidad histórica del inmueble sea perfectamente reconstruible.
+### 3. El target es un proxy temprano
 
-### 6. Todavía no existe una “respuesta correcta” limpia para las alternativas
+`scheduled_visit` no es cierre ni valor comercial.
 
-El inmueble que históricamente terminó visitándose no necesariamente era la única alternativa válida ni sabemos qué opciones fueron mostradas en ese momento.
+El sistema optimiza progreso comercial temprano, no revenue.
 
-Por eso no conviene usarlo como verdad absoluta para evaluar recomendaciones.
+### 4. Inventory no demuestra valor incremental sobre el target T1
 
-### 7. La cobertura del inventario cambia con el tiempo
+El Opportunity conservador:
 
-Los periodos recientes están mejor instrumentados que los antiguos. Parte de una aparente mejora puede provenir de tener mejores datos, no necesariamente de un cambio real del mercado.
+- Lift@10 = **1.370x**;
+- supera random;
+- pero queda por debajo de Quality-only 1.689x.
 
-### 8. La IA no tiene etiquetas humanas suficientes para medir precisión completa
+El incremental Inventory gate es **NO-GO** para ese target.
 
-El piloto con GPT-5 nano demostró costo bajo, estabilidad técnica y utilidad para descubrir patrones. No existe evidencia suficiente para afirmar una precisión humana completa sobre el catálogo natural.
+La justificación del sistema combinado depende de un objetivo distinto: oportunidades que además sean servibles.
 
-Por eso se mantiene como herramienta de apoyo al control de calidad.
+### 5. Matching histórico completo no es estrictamente PIT
 
-## Preguntas difíciles y respuesta recomendada
+Availability sí está defendida point-in-time.
 
-### “¿Por qué confiar en un modelo con AUC cercano a 0.55?”
+Pero precio, área, geografía y otros atributos del listing no tienen un historial efectivo completo.
 
-Porque el uso propuesto no es clasificar perfectamente a todos los leads, sino **priorizar cuando la capacidad es limitada**. El 10% mejor ordenado muestra Lift@10 de 1.689x. Aun así, la baja separación global se reconoce como limitación y exige validación futura.
+Por tanto el full matching histórico es condicional.
 
-### “¿Por qué usar Puntaje de oportunidad si su Lift es menor?”
+### 6. Fallback carece de gold label limpio
 
-Porque mide un objetivo diferente. Para maximizar visitas agendadas se prioriza por Calidad del lead. Para priorizar casos que además puedan atenderse se incorporan Inventario e incertidumbre. La entrega no afirma que ambos objetivos sean equivalentes.
+El Spot históricamente visitado no es un log de recomendaciones.
 
-### “¿Por qué conservar dos números en lugar de uno?”
+No puede interpretarse como ground truth de relevance.
 
-Porque ocultar Calidad e Inventario dentro de un único puntaje dificultaría entender por qué se toma una decisión. La operación necesita saber si el problema es baja intención, falta de inventario o falta de información.
+### 7. Availability tiene coverage/freshness drift
 
-### “¿Cuál es la política final de alternativas?”
+Parte de la mejora aparente en períodos tardíos puede venir de mejor instrumentación del inventario, no de cambios reales del mercado.
 
-Se usan las **3 mejores alternativas** para construir el componente agregado de capacidad del inventario y pueden mostrarse **hasta 5** alternativas visibles.
+### 8. LLM sin human gold completo
 
-### “¿Qué porcentaje de leads debería priorizarse?”
+Se puede afirmar estabilidad técnica, costo y behavior sobre challenge.
 
-La política base es el **10% superior**, con escenarios de 5%, 10% y 20% para adaptarse a la capacidad operativa.
+No se puede afirmar precision/recall real sobre listings naturales.
 
-### “¿Por qué usar IA si no quedó dentro del modelo?”
+---
 
-Porque se probó donde sí existía una ventaja potencial: texto no estructurado del catálogo. Fue útil para descubrir problemas semánticos, pero no aportó suficiente valor predictivo. La decisión responsable fue conservarla donde ayuda y no convertirla en dependencia artificial.
+## Preguntas difíciles que probablemente hará un evaluador
 
-### “¿Por qué no automatizar ya?”
+### “¿Por qué debería confiar en un modelo con AUC 0.55?”
 
-Porque aún faltan cuatro piezas de evidencia:
+Porque el caso de uso es ranking bajo capacidad, no clasificación perfecta. El evidence gate relevante muestra Lift@10 1.689x con intervalo bootstrap por encima de 1. Aun así, la baja resolución es una limitación y exige validación forward.
 
-1. validación con datos completamente nuevos;
-2. historial más completo de atributos del inmueble;
-3. registro de qué alternativas se muestran y aceptan;
-4. prueba causal de que la nueva política mejora resultados reales.
+### “¿Por qué usar Opportunity si empeora Lead Quality?”
 
-## Estado de la entrega
+Porque son objetivos distintos. Si el objetivo es sólo scheduled_visit, se usa Quality-only. Si el objetivo es concentrar oportunidades que además puedan atenderse, Inventory entra como segundo eje. El paquete no afirma que Inventory ya mejore el target T1.
 
-| Tema | Estado |
+### “¿No estás double-counting Inventory?”
+
+No en Codexway: el Lead Quality final no utiliza Availability ni selected-Spot serviceability. El Actionability Gate de AssessmentSol1 corresponde a otra arquitectura y aparece sólo como challenger.
+
+### “¿Cuál es el K final: 3 o 5?”
+
+**Top-3 interno** para agregar el componente de serviceability; **hasta 5 visibles** en fallback. K=3 visible fue un challenger histórico y no reemplaza la configuración final de Codexway.
+
+### “¿La capacidad final es 10%, 15% o 20%?”
+
+Codexway final: **top 10% default**, con escenarios 5/10/20%. P85/top15 y P80/top20 pertenecen a arquitecturas históricas de otras ramas y no son la política final.
+
+### “¿El threshold 0.2531 es una frontera de negocio?”
+
+No. Es el percentil de validation asociado a la capacidad final del dataset. La política es capacity-first; el cutoff no debe universalizarse.
+
+### “¿Por qué usar un LLM si terminó fuera del modelo?”
+
+Porque el requisito de IA se investigó en el dominio donde sí existe texto no estructurado. El LLM fue útil como semantic discovery; cuando no agregó información predictiva incremental, se evitó convertirlo en dependencia artificial.
+
+### “¿Puedes afirmar que todo el matching es point-in-time?”
+
+No. Se puede afirmar estrictamente para Availability. El matching completo queda condicionado por atributos del Spot sin versionado histórico.
+
+### “¿Cuántos leads adicionales gana el sistema combinado?”
+
+Codexway no tiene un gold causal/alineado para responder esa pregunta de forma limpia. Existe Lift absoluto del Opportunity Score, pero el valor incremental de Inventory queda no demostrado. La pregunta correcta debe resolverse online con exposure logs y RCT.
+
+### “¿Por qué no usar el Spot que finalmente visitó el lead como gold?”
+
+Porque no sabemos qué opciones fueron expuestas, recomendadas o disponibles bajo la misma política. Reproducir el Spot histórico podría aprender el proceso anterior, no relevance.
+
+### “¿Por qué no desplegar ya?”
+
+Por holdout retrospectivo, target proxy, listing state no versionado y ausencia de causalidad. El estado correcto es **eligible for forward validation**, no automatic deployment.
+
+---
+
+## Inconsistencias encontradas durante el cierre
+
+| Inconsistencia/riesgo editorial | Resolución |
 |---|---|
-| EDA y calidad de datos | **Cerrado** |
-| Modelo de Calidad del lead | **Cerrado para evaluación; pendiente de validación futura** |
-| Inventario y alternativas | **Cerrado metodológicamente; pendiente de evidencia causal** |
-| Puntaje de oportunidad | **Cerrado como diseño; valor incremental de Inventario no demostrado** |
-| Uso de IA | **Cerrado; IA retenida sólo donde mostró utilidad** |
-| Arquitectura de producción | **Diseñada, no presentada como implementación productiva completa** |
-| Visión de producto | **Cerrada** |
-| Medición causal | **Diseñada; pendiente de ejecución** |
+| Product Vision detallada excedía el máximo de 2 párrafos del assessment | Se creó [Product Vision ejecutiva](07_ia_product_vision/04_PRODUCT_VISION_EJECUTIVA.md) como entry point oficial; el roadmap largo queda como anexo |
+| No existía un One-Pager final dentro de `entregable/**` | Se creó [Entregable 2](02_one_pager/README.md) y su PDF de una página |
+| HTML y PDF del One-Pager tenían composiciones divergentes | El HTML quedó como fuente editorial única y el PDF Letter se regenera directamente desde él |
+| `01_EDA.md` legado podía parecer la versión vigente | Se etiqueta como histórico y el índice maestro apunta exclusivamente a `01_eda/README.md` |
+| P85/top15 y P80/top20 aparecen en evidencia histórica | Se mantienen sólo como challengers explícitos; la decisión final es top10 con escenarios 5/10/20 |
+| K=3 vs K=5 | Reconciliado: top-3 interno de serviceability; máximo 5 recomendaciones visibles |
+| Quality × Inventory vs Actionability Gate | Reconciliado: producto lower/upper es final Codexway; Gate es challenger de AssessmentSol1 bajo otro Lead Quality |
+| Métricas E020 podían confundirse con performance final | Se mantienen etiquetadas como robustness check y no se mezclan con métricas Codexway |
 
-## Conclusión
+---
 
-La mayor fortaleza del paquete no es una sola métrica. Es que distingue con claridad:
+## Estado de blockers antes de entregar
 
-- lo que el modelo puede predecir;
-- lo que el inventario permite atender;
-- lo que simplemente desconocemos;
-- lo que se aprendió en experimentos;
-- lo que todavía necesita probarse con datos nuevos.
+### Blocker de paquete resuelto: experiencia de envío
 
-La solución **no pretende ser más precisa de lo que la evidencia permite**. Para una evaluación, eso es una fortaleza. Para una puesta en producción, el siguiente paso correcto es validación futura seguida de un experimento controlado.
+Se creó y certificó el deck oficial dentro de `entregable/06_deck_ejecutivo/`:
+
+- [HTML editable](06_deck_ejecutivo/DECK_EJECUTIVO_SPOT2.html);
+- [PDF final de 7 slides](06_deck_ejecutivo/DECK_EJECUTIVO_SPOT2.pdf).
+
+El PDF fue exportado desde una única fuente HTML, validado en exactamente 7 páginas y revisado visualmente. Conserva T1, madurez 7d, `stable_segment_logistic`, top10, top-3 interno / hasta 5 visibles, Opportunity lower, Inventory incremental `NO-GO`, IA como Catalog QA y forward shadow + RCT.
+
+`codexway/reports/slides.pdf` permanece intacto como artefacto histórico y ya no es la autoridad editorial del paquete.
+
+Además, la portada se redujo a una ruta de lectura clara, el One Pager se reescribió en lenguaje de negocio y se creó `SPOT2_ASSESSMENT_FINAL.zip` con cinco archivos exactos. El evaluador puede recorrer deck → One Pager → notebook sin navegar la estructura técnica del repositorio.
+
+### No son blockers para enviar el assessment, pero sí para claims de producción
+
+1. falta nueva validación forward independiente;
+2. full historical listing state no está versionado;
+3. fallback no tiene gold de exposure/acceptance;
+4. no existe impacto causal online;
+5. no existe human gold completo de Semantic QA.
+
+---
+
+## Conclusión del evaluador
+
+**El paquete está técnicamente y editorialmente cerrado para evaluación; los documentos ejecutivos, el notebook y el ZIP mínimo ya fueron reconstruidos y validados.**
+
+La mayor fortaleza no es una métrica aislada; es la disciplina con la que se separan:
+
+- señal predictiva;
+- observabilidad temporal;
+- serviceability;
+- incertidumbre;
+- evidencia challenger;
+- causalidad futura.
+
+La solución no pretende ser más precisa de lo que la evidencia permite.
