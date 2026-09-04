@@ -112,3 +112,13 @@ El challenge set no estima prevalencia.
 - [Rules v2](../llm_inventory_quality/E015_llm_inventory_semantic_audit/src/rules_v2.py)
 
 **Nuevo descubrimiento:** [D055](../conocimiento_agregado/DESCUBRIMIENTOS.md#d055--la-semantica-cross-field-descubre-un-patron-material-land--building-copy).
+
+
+## Evidencia visual añadida
+
+- [Semantic discovery classification](../llm_inventory_quality/E015_llm_inventory_semantic_audit/results/charts/semantic_classification_composition.svg).
+- [Rule candidate issues](../llm_inventory_quality/E015_llm_inventory_semantic_audit/results/charts/rule_candidate_issues.svg).
+- [Rules v1 → v2 incremental coverage](../llm_inventory_quality/E015_llm_inventory_semantic_audit/results/charts/rules_v1_v2_incremental.svg).
+- [Concrete contradiction examples](../llm_inventory_quality/E015_llm_inventory_semantic_audit/results/charts/semantic_issue_examples.svg).
+
+Guardrail visual: las 2,570 observaciones `not_verifiable` quedan separadas de mismatches y no se contabilizan como errores. Las tarjetas de ejemplos son contradicciones candidatas de reglas deterministas; el LLM sigue sin ejecutarse en la evaluación final.

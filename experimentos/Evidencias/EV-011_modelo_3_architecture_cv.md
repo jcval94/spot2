@@ -104,3 +104,15 @@ E006 resuelve la incertidumbre del single holdout E005:
 - [D022](../conocimiento_agregado/DESCUBRIMIENTOS.md#d022--el-híbrido-mejora-pero-su-composición-no-es-estable)
 - [D034](../conocimiento_agregado/DESCUBRIMIENTOS.md#d034--rolling-cv-confirma-ventaja-de-modelos-tabulares-sobre-multi-head)
 - [D037](../conocimiento_agregado/DESCUBRIMIENTOS.md#d037--el-meta-selector-por-etapa-no-es-estable)
+
+
+## Evidencia visual añadida
+
+- [PR T0](../modelo_3/architecture_cv/results/charts/pr_curve_t0.svg), [PR T1](../modelo_3/architecture_cv/results/charts/pr_curve_t1.svg), [PR T2](../modelo_3/architecture_cv/results/charts/pr_curve_t2.svg).
+- [ROC T0](../modelo_3/architecture_cv/results/charts/roc_curve_t0.svg), [ROC T1](../modelo_3/architecture_cv/results/charts/roc_curve_t1.svg), [ROC T2](../modelo_3/architecture_cv/results/charts/roc_curve_t2.svg).
+- [Calibration T0](../modelo_3/architecture_cv/results/charts/calibration_curve_t0.svg), [Calibration T1](../modelo_3/architecture_cv/results/charts/calibration_curve_t1.svg), [Calibration T2](../modelo_3/architecture_cv/results/charts/calibration_curve_t2.svg).
+- [Lift/Gains T0](../modelo_3/architecture_cv/results/charts/lift_gains_t0.svg), [T1](../modelo_3/architecture_cv/results/charts/lift_gains_t1.svg), [T2](../modelo_3/architecture_cv/results/charts/lift_gains_t2.svg).
+- [AP por fold](../modelo_3/architecture_cv/results/charts/ap_by_fold_macro.svg) y [Lift@10 por fold](../modelo_3/architecture_cv/results/charts/lift10_by_fold_macro.svg).
+- [Prevalencia por stage/fold](../modelo_3/architecture_cv/results/charts/positive_rate_by_fold_stage.svg), [Hybrid AP por stage/fold](../modelo_3/architecture_cv/results/charts/hybrid_ap_by_fold_stage.svg) y [Hybrid Lift@10 por stage/fold](../modelo_3/architecture_cv/results/charts/hybrid_lift10_by_fold_stage.svg).
+
+La prevalencia del target no es estacionaria entre folds/stages. Esta variación debe leerse junto con los cambios de AP, Brier y Lift y refuerza la necesidad del esquema temporal de validación.
