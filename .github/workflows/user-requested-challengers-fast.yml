@@ -1,0 +1,38 @@
+name: user requested challenger metrics
+
+on:
+  push:
+    branches:
+      - analysis/user-requested-separate-features-clusters
+    paths:
+      - ".github/workflows/user-requested-challengers-fast.yml"
+      - "codexway/tests/test_user_requested_challengers.py"
+
+permissions:
+  contents: read
+
+jobs:
+  challengers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: codexway/requirements.lock
+      - name: Install environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r codexway/requirements.lock
+          python -m pip install -e codexway --no-deps
+      - name: Run requested challengers only
+        run: python -m pytest codexway/tests/test_user_requested_challengers.py -q
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: user-requested-challenger-metrics
+          path: codexway/outputs/metrics/user_requested_challengers.json
+          if-no-files-found: warn
+          retention-days: 2
