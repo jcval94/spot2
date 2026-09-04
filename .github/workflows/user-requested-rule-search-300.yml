@@ -1,0 +1,47 @@
+name: user requested rule search 300
+
+on:
+  push:
+    branches:
+      - analysis/user-requested-separate-features-clusters
+    paths:
+      - ".github/workflows/user-requested-rule-search-300.yml"
+      - "codexway/analysis/user_requested_rule_search_300.py"
+
+permissions:
+  contents: read
+
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install analysis environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            numpy==2.3.5 \
+            pandas==2.3.3 \
+            pyarrow==21.0.0 \
+            PyYAML==6.0.3 \
+            scikit-learn==1.7.2 \
+            scipy==1.16.3 \
+            statsmodels==0.14.5 \
+            joblib==1.5.2
+          python -m pip install -e codexway --no-deps
+      - name: Search pivot-style rules
+        env:
+          PYTHONPATH: codexway/src
+        run: python codexway/analysis/user_requested_rule_search_300.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: user-requested-rule-search-300
+          path: codexway/outputs/metrics/rule_search_300/
+          if-no-files-found: warn
+          retention-days: 2
