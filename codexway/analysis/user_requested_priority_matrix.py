@@ -18,10 +18,6 @@ OUT_CSV = ROOT / "outputs" / "metrics" / "user_requested_priority_matrix_monthly
 TARGET = "target_t1"
 
 
-def monthly_baseline(frame: pd.DataFrame) -> pd.Series:
-    return frame.groupby("month")[TARGET].mean()
-
-
 def segment_monthly(frame: pd.DataFrame, mask_col: str, label: str) -> list[dict]:
     out = []
     for month, g in frame.groupby("month", sort=True):
@@ -94,7 +90,6 @@ def run() -> None:
     all_rent = pd.to_numeric(mature["requested_budget_mxn_rent_monthly"], errors="coerce").fillna(rent_median)
     mature["z_requested_budget_mxn_rent_monthly"] = (all_rent - rent_mean) / rent_std
 
-    # Stable rule ingredients from prior search.
     mature["rule_industrial_retail"] = mature["search_sector"].eq("Industrial") & mature["industry"].eq("retail")
     mature["rule_winner"] = mature["industrial_small_or_paid_interaction"].eq(1)
     mature["rule_winner_ph1"] = mature["rule_winner"] & mature["physical_profile"].eq("PH1")
@@ -105,7 +100,6 @@ def run() -> None:
     )
 
     # Hierarchy fixed from validation evidence: no test-driven ordering.
-    # 1: Industrial+retail, 2: winner+PH1, 3: winner, 4: Industrial+rent band, 5: rest.
     conditions = [
         mature["rule_industrial_retail"],
         (~mature["rule_industrial_retail"]) & mature["rule_winner_ph1"],
@@ -113,7 +107,8 @@ def run() -> None:
         (~mature["rule_industrial_retail"]) & (~mature["rule_winner_ph1"]) & (~mature["rule_winner"]) & mature["rule_industrial_rent_band"],
     ]
     mature["priority_num"] = np.select(conditions, [1, 2, 3, 4], default=5).astype(int)
-    mature["priority_score"] = (6 - mature["priority_num"]).astype(float)
+    # Valid ordinal score in [0,1], preserving P1>P2>P3>P4>P5 without probability clipping.
+    mature["priority_score"] = (5 - mature["priority_num"]).astype(float) / 4.0
     mature["priority_label"] = mature["priority_num"].map({
         1: "P1 Industrial + industry=retail",
         2: "P2 Winner + PH1 (exclusive)",
@@ -160,14 +155,14 @@ def run() -> None:
             "cumulative_monthly": [],
             "policy_topk_monthly": policy_topk_monthly(frame),
         }
-        for priority in [1,2,3,4,5]:
+        for priority in [1, 2, 3, 4, 5]:
             col = f"is_p{priority}"
             frame[col] = frame["priority_num"].eq(priority)
             rows = segment_monthly(frame, col, f"P{priority}")
             split_out["exclusive_tiers_monthly"].extend(rows)
             for r in rows:
                 monthly_rows.append({"split": split, **r})
-        for max_p, label in [(1,"P1"),(2,"P1-P2"),(3,"P1-P3"),(4,"P1-P4")]:
+        for max_p, label in [(1, "P1"), (2, "P1-P2"), (3, "P1-P3"), (4, "P1-P4")]:
             rows = cumulative_monthly(frame, max_p, label)
             split_out["cumulative_monthly"].extend(rows)
             for r in rows:
