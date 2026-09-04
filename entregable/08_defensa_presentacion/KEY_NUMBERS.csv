@@ -1,0 +1,143 @@
+topic;metric;value;population;period;source_path;notes
+provenance;repository_commit;7d4e90df6d7e7340f3963128089bd303e8993e52;Repositorio completo;2026-08-31 commit;git rev-parse HEAD;Snapshot auditado
+dataset;leads_rows;5000;Tabla leads;Completo;codexway/outputs/tables/data_audit.json;Grano lead
+dataset;inquiries_rows;22576;Tabla inquiries;Completo;codexway/outputs/tables/data_audit.json;Grano inquiry
+dataset;spots_rows;3000;Tabla spots;Completo;codexway/outputs/tables/data_audit.json;Grano listing
+dataset;spot_attributes_rows;3000;Tabla spot_attributes;Completo;codexway/outputs/tables/data_audit.json;Uno por spot
+dataset;availability_snapshot_rows;30000;Tabla availability_snapshot;Completo;codexway/outputs/tables/data_audit.json;Histórico de estado
+dataset;market_context_rows;500;Tabla market_context;Completo;codexway/outputs/tables/data_audit.json;Sólo EDA en solución final
+dataset;raw_rows_total;64076;Suma de seis tablas;Completo;codexway/outputs/tables/data_audit.json;Reconstruido. No son observaciones independientes
+dataset;primary_key_duplicates;0;Todas las tablas;Completo;codexway/outputs/tables/data_audit.json;Audit de unicidad
+dataset;foreign_key_orphans;0;Relaciones auditadas;Completo;codexway/outputs/tables/data_audit.json;Audit de integridad
+target;t1_rows_all;5000;Todos los leads T1;Hasta as_of;codexway/outputs/tables/data_audit.json;Primera inquiry por lead
+target;t1_mature;4898;Leads con horizonte cerrado;as_of 2026-07-01 UTC;codexway/outputs/tables/data_audit.json;Ventana 7d
+target;t1_censored;102;Leads sin horizonte cerrado;as_of 2026-07-01 UTC;codexway/outputs/tables/data_audit.json;No son negativos
+target;t1_positive;1001;T1 maduros;Ventana 7d;codexway/outputs/tables/data_audit.json;scheduled_visit_7d igual 1
+target;t1_negative;3897;T1 maduros;Ventana 7d;codexway/outputs/tables/data_audit.json;scheduled_visit_7d igual 0
+target;t1_prevalence;0.20436913025724784;T1 maduros N 4898;Ventana 7d;codexway/outputs/tables/data_audit.json;1001 dividido 4898
+target;maturity_days;7;T1 target;Desde primera inquiry;codexway/config/base.yaml;Horizonte final
+maturity;eligible_7d;4898;Todos los leads;as_of 2026-07-01 UTC;codexway/outputs/tables/target_maturity_sensitivity.csv;1001 positivos y 3897 negativos
+maturity;prevalence_7d;0.20436913025724784;Elegibles N 4898;7d;codexway/outputs/tables/target_maturity_sensitivity.csv;Final
+maturity;eligible_14d;4836;Todos los leads;as_of 2026-07-01 UTC;codexway/outputs/tables/target_maturity_sensitivity.csv;988 positivos y 3848 negativos
+maturity;prevalence_14d;0.204301;Elegibles N 4836;14d;codexway/outputs/tables/target_maturity_sensitivity.csv;Redondeado a seis decimales desde artefacto
+maturity;eligible_30d;4680;Todos los leads;as_of 2026-07-01 UTC;codexway/outputs/tables/target_maturity_sensitivity.csv;955 positivos y 3725 negativos
+maturity;prevalence_30d;0.204060;Elegibles N 4680;30d;codexway/outputs/tables/target_maturity_sensitivity.csv;Redondeado a seis decimales desde artefacto
+split;train_n;2191;T1 maduro asignado train;2025-01-01 a 2025-09-23 UTC;codexway/outputs/abt/split_manifest.json;443 positivos
+split;train_positive;443;Train N 2191;2025-01-01 a 2025-09-23 UTC;codexway/outputs/abt/split_manifest.json;Prevalencia 0.20219078
+split;train_prevalence;0.20219078;Train N 2191;2025-01-01 a 2025-09-23 UTC;codexway/outputs/abt/split_manifest.json;443 dividido 2191
+split;validation_n;847;T1 maduro validation;2025-10-01 a 2025-12-23 UTC;codexway/outputs/abt/split_manifest.json;165 positivos
+split;validation_positive;165;Validation N 847;2025-10-01 a 2025-12-23 UTC;codexway/outputs/abt/split_manifest.json;Prevalencia 0.19480519
+split;validation_prevalence;0.19480519;Validation N 847;2025-10-01 a 2025-12-23 UTC;codexway/outputs/abt/split_manifest.json;165 dividido 847
+split;holdout_n;1711;T1 maduro holdout temporal;2026-01-01 a 2026-06-23 UTC;codexway/outputs/abt/split_manifest.json;Procedimental no prístino
+split;holdout_positive;363;Holdout N 1711;2026-01-01 a 2026-06-23 UTC;codexway/outputs/abt/split_manifest.json;1348 negativos
+split;holdout_prevalence;0.21215663354763295;Holdout N 1711;2026-01-01 a 2026-06-23 UTC;codexway/outputs/abt/split_manifest.json;363 dividido 1711
+split;purge_n;149;T1 maduro en buffers;2025-09-24 a 2025-12-31 UTC;codexway/outputs/abt/split_manifest.json;30 positivos
+rolling;fold_count;4;Temporal CV T1;2025 development;codexway/outputs/metrics/t1_model_metrics.json;Stable model
+rolling;stable_mean_auc;0.512695;Cuatro validation folds N total 1034;2025;codexway/outputs/metrics/rolling_model_comparison.csv;Media reconstruida
+rolling;stable_mean_ap;0.203179;Cuatro validation folds N total 1034;2025;codexway/outputs/metrics/rolling_model_comparison.csv;Media reconstruida
+rolling;stable_mean_lift10;1.2137132669864192;Cuatro validation folds N total 1034;2025;codexway/outputs/metrics/t1_model_metrics.json;Mediana 1.159051
+rolling;stable_lift10_sd;0.462668;Cuatro validation folds;2025;codexway/outputs/metrics/rolling_model_comparison.csv;Reconstruido
+rolling;stable_folds_lift_gt1;2;Cuatro validation folds;2025;codexway/outputs/metrics/t1_model_metrics.json;Magnitud variable
+rolling;catboost_mean_ap;0.244760;Cuatro validation folds N total 1034;2025;codexway/outputs/metrics/rolling_model_comparison.csv;Media reconstruida
+rolling;catboost_ap_wins_vs_logistic;2;Cuatro folds;2025;codexway/outputs/metrics/rolling_model_comparison.csv;Gate requería al menos 3
+rolling;catboost_brier_degradation_vs_logistic;0.013765;Cuatro folds;2025;codexway/outputs/metrics/rolling_model_comparison.csv;Media reconstruida y supera tolerancia 0.005
+model;final_name;stable_segment_logistic;T1;Final;codexway/outputs/metrics/t1_model_metrics.json;Logistic Regression
+model;logistic_C;1.0;Modelo final;Final;codexway/config/base.yaml;Regularización L2 default
+model;max_iter;2000;Modelo final;Final;codexway/config/base.yaml;Sklearn
+model;feature_count_raw;1;Modelo final;Final;codexway/outputs/tables/feature_importance.csv;Interacción binaria
+model;feature_count_encoded;1;Modelo final;Final;codexway/outputs/models/t1_model_bundle.joblib;Reconstruido por inspección de bundle
+model;broad_raw_feature_count;25;Challenger logistic amplio;Final benchmark;codexway/src/spot2_codexway/features.py;14 lead y 11 inquiry
+model;broad_encoded_dimension;105;Challenger logistic amplio train N 2191;Final benchmark;codexway/outputs/models/t1_model_bundle.joblib;Reconstruido ejecutando pipeline canónico
+feature;stable_coefficient_standardized;0.12042669978141404;Modelo final;Train;codexway/outputs/tables/feature_importance.csv;Efecto firmado positivo
+feature;stable_odds_ratio_per_sd;1.1279780568972904;Modelo final;Train;codexway/outputs/tables/feature_importance.csv;Reconstruido exp coeficiente
+feature;stable_segment_n;514;T1 maduro N 4898;Completo maduro;codexway/outputs/abt/abt_t1_first_inquiry.parquet;Reconstruido
+feature;stable_segment_positive;155;Segmento N 514;Completo maduro;codexway/outputs/abt/abt_t1_first_inquiry.parquet;Reconstruido
+feature;stable_segment_prevalence;0.301556;Segmento N 514;Completo maduro;codexway/outputs/abt/abt_t1_first_inquiry.parquet;Reconstruido
+feature;asked_visit_lift10_with;0.8495259145364854;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Challenger amplio
+feature;asked_visit_lift10_without;0.9865462233326928;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Ablation
+metric;final_roc_auc;0.5477761156207339;T1 holdout N 1711 y 363 positivos;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Selected calibrated
+metric;final_roc_auc_ci95;[0.527297,0.568425];T1 holdout bootstrap 1000;2026-01 a 2026-06;codexway/outputs/metrics/t1_metric_intervals.csv;Percentile bootstrap
+metric;final_pr_auc;0.2391286807814938;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Average precision
+metric;final_pr_auc_ci95;[0.214479,0.265538];T1 holdout bootstrap 1000;2026-01 a 2026-06;codexway/outputs/metrics/t1_metric_intervals.csv;Percentile bootstrap
+metric;final_brier;0.16577089801701325;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Calibrado
+metric;final_logloss;0.5128738920902987;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Calibrado
+metric;final_lift5;1.6887936241363564;T1 holdout;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Tie-aware
+metric;final_lift10;1.6887936241363564;T1 holdout;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Tie-aware
+metric;final_lift10_ci95;[1.380730,1.981679];T1 holdout bootstrap 1000;2026-01 a 2026-06;codexway/outputs/metrics/t1_metric_intervals.csv;Percentile bootstrap
+metric;final_lift20;1.3370836867688725;T1 holdout;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Tie-aware
+metric;final_recall10;0.16976768167823103;T1 holdout;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Tie-aware capture
+metric;final_precision10;0.3582887700534759;T1 holdout;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;High score group precision
+metric;top10_discrete_leads;172;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/tables/gains.csv;Reconstruido ceil de 10 por ciento
+metric;top10_model_expected_positives;61.63;T1 holdout;2026-01 a 2026-06;codexway/outputs/tables/gains.csv;Reconstruido tie-aware
+metric;top10_random_expected_positives;36.49;T1 holdout;2026-01 a 2026-06;codexway/outputs/tables/gains.csv;Reconstruido 172 por prevalence
+metric;accuracy_threshold_validation;0.7568673;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/predictions/t1_holdout_predictions.parquet;Reconstruido a threshold 0.253098
+metric;precision_threshold_validation;0.35828877;T1 holdout pred positive N 187;2026-01 a 2026-06;codexway/outputs/predictions/t1_holdout_predictions.parquet;Reconstruido
+metric;recall_threshold_validation;0.1845730;T1 holdout 363 positivos;2026-01 a 2026-06;codexway/outputs/predictions/t1_holdout_predictions.parquet;Reconstruido 67 dividido 363
+metric;f1_threshold_validation;0.24363636;T1 holdout;2026-01 a 2026-06;codexway/outputs/predictions/t1_holdout_predictions.parquet;Reconstruido
+metric;calibration_intercept_slope;NO LOCALIZADO EN LOS ARTEFACTOS;Modelo final;Holdout;codexway/outputs/metrics/t1_model_metrics.json;No confundir con Platt
+metric;ece;NO LOCALIZADO EN LOS ARTEFACTOS;Modelo final;Holdout;codexway/outputs/metrics/t1_model_metrics.json;No calculado
+metric;lift1;NO LOCALIZADO EN LOS ARTEFACTOS;Modelo final;Holdout;codexway/outputs/metrics/t1_model_metrics.json;Curva guardada inicia en 5 por ciento
+calibration;validation_brier_before;0.15611060003219587;Validation N 847;2025-10 a 2025-12;codexway/outputs/metrics/t1_model_metrics.json;Raw
+calibration;validation_brier_after;0.15607623369286977;Validation N 847;2025-10 a 2025-12;codexway/outputs/metrics/t1_model_metrics.json;Platt
+calibration;holdout_brier_raw;0.16550078342809005;Holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Ligeramente mejor que calibrated
+challenger;catboost_auc;0.49221272612829137;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Comparable
+challenger;catboost_ap;0.20859087365925627;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Comparable
+challenger;catboost_brier;0.24226942867066004;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Comparable
+challenger;catboost_lift10;0.826371216784215;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Comparable
+challenger;final_minus_catboost_auc;0.05556338949244253;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/t1_model_metrics.json;Reconstruido
+leakage;availability_bad_join_rows;226151;Todas las inquiries;Histórico;entregable/01_eda/EDA_FINAL.md;Join directo por spot
+leakage;availability_bad_join_multiplier;10.017;22576 inquiries;Histórico;entregable/01_eda/EDA_FINAL.md;Reconstruido 226151 dividido 22576
+leakage;nearest_future_inquiries;7758;Todas las inquiries N 22576;Histórico;entregable/01_eda/EDA_FINAL.md;Política incorrecta
+leakage;nearest_future_rate_all_inquiries;0.3436;Todas las inquiries N 22576;Histórico;entregable/01_eda/EDA_FINAL.md;No mezclar con S003
+leakage;s003_future_rate_holdout;0.43541788;T1 holdout stress;2026-01 a 2026-06;codexway/outputs/metrics/leakage_stress_test.json;Población distinta
+leakage;final_future_snapshot_violations;0;Inventory final;Completo;codexway/outputs/metrics/inventory_audit.json;Backward-as-of
+leakage;backward_coverage;0.9238;Todas las inquiries;Histórico;entregable/01_eda/EDA_FINAL.md;Snapshot pasado encontrado
+leakage;backward_lag_median_days;6.61;Inquiries cubiertas;Histórico;entregable/01_eda/EDA_FINAL.md;Freshness separada
+leakage;backward_lag_p90_days;58.66;Inquiries cubiertas;Histórico;entregable/01_eda/EDA_FINAL.md;Freshness separada
+leakage;backward_lag_p95_days;83.35;Inquiries cubiertas;Histórico;entregable/01_eda/EDA_FINAL.md;Freshness separada
+leakage;s002_future_inquiry_auc;0.825725;T1 holdout stress;2026-01 a 2026-06;codexway/outputs/metrics/leakage_stress_test.json;Leaky
+leakage;s002_future_inquiry_lift10;2.984648;T1 holdout stress;2026-01 a 2026-06;codexway/outputs/metrics/leakage_stress_test.json;Leaky
+inventory;exact_attendable_rate;0.4564;5000 leads;Completo;codexway/outputs/metrics/inventory_audit.json;2282 leads
+inventory;exact_unknown_rate;0.4430;5000 leads;Completo;codexway/outputs/metrics/inventory_audit.json;2215 leads
+inventory;exact_known_unavailable_rate;0.1006;5000 leads;Completo;codexway/outputs/metrics/inventory_audit.json;Reconstruido 503 leads
+inventory;no_known_alternative_rate;0.0238;5000 leads;Completo;codexway/outputs/metrics/inventory_audit.json;119 leads
+inventory;no_potential_alternative_rate;0.0;5000 leads;Completo;codexway/outputs/metrics/inventory_audit.json;0 leads
+inventory;serviceability_lower_mean;0.693569322;5000 leads;Completo;codexway/outputs/metrics/inventory_audit.json;Lower bound
+inventory;serviceability_upper_mean;0.8212508633;5000 leads;Completo;codexway/outputs/metrics/inventory_audit.json;Upper bound
+inventory;serviceability_gap_mean;0.1276815413;5000 leads;Completo;codexway/outputs/metrics/inventory_audit.json;Upper menos lower
+inventory;confidence_mean;0.5216938475;5000 leads;Completo;codexway/outputs/metrics/inventory_audit.json;Cobertura de conocimiento
+inventory;candidate_pairs;195084;5000 leads;Completo;codexway/outputs/predictions/lead_opportunity_scores.csv;Reconstruido suma eligible_candidate_count
+inventory;candidate_depth_mean;39.0168;5000 leads;Completo;codexway/outputs/predictions/lead_opportunity_scores.csv;Reconstruido
+inventory;candidate_depth_median;33;5000 leads;Completo;codexway/outputs/predictions/lead_opportunity_scores.csv;Final full-pop
+inventory;candidate_depth_p90;71;5000 leads;Completo;codexway/outputs/predictions/lead_opportunity_scores.csv;Reconstruido
+inventory;candidate_depth_max;152;5000 leads;Completo;codexway/outputs/predictions/lead_opportunity_scores.csv;Reconstruido
+inventory;fresh_candidate_rate_30d;0.570898;195084 candidate pairs;Umbral 30d;codexway/outputs/tables/inventory_freshness_sensitivity.csv;57.09 por ciento
+inventory;lead_any_fresh_rate_30d;0.9834;5000 leads;Umbral 30d;codexway/outputs/tables/inventory_freshness_sensitivity.csv;4917 leads
+inventory;lead_any_fresh_rate_7d;0.9346;5000 leads;Umbral 7d;codexway/outputs/tables/inventory_freshness_sensitivity.csv;Sensibilidad
+inventory;lead_any_fresh_rate_90d;0.9852;5000 leads;Umbral 90d;codexway/outputs/tables/inventory_freshness_sensitivity.csv;Sensibilidad
+fallback;alternatives_aggregated;3;Cada lead;Final;codexway/src/spot2_codexway/inventory.py;Top 3 para serviceability
+fallback;alternatives_displayed_max;5;Cada lead;Final;codexway/src/spot2_codexway/inventory.py;Hasta 5 IDs
+fallback;leads_with_known_fallback_needed;2607;5000 leads;Completo;codexway/outputs/predictions/lead_opportunity_scores.csv;Reconstruido exact no atendible y alternativa conocida
+fallback;known_fallback_needed_rate;0.5214;5000 leads;Completo;codexway/outputs/predictions/lead_opportunity_scores.csv;Reconstruido
+fallback;e020_fold4_cases;598;Casos fallback históricos;E020 fold4;experimentos/E020_lead_opportunity_fallback_e2e/results/fallback_fold4_summary.csv;Contrato diferente del final
+fallback;e020_full_list_at_k3;0.6237458193979933;598 casos históricos;E020 fold4;experimentos/E020_lead_opportunity_fallback_e2e/results/fallback_k_selection.csv;Sensibilidad de K
+fallback;e020_no_result_rate;0.24080267558528423;598 casos históricos;E020 fold4;experimentos/E020_lead_opportunity_fallback_e2e/results/fallback_k_selection.csv;No comparar con output final
+opportunity;formula_lower;100*lead_quality_probability*serviceability_lower;Cada lead;T1;codexway/src/spot2_codexway/inventory.py;Rango 0 a 100
+opportunity;quality_lift10;1.688793624;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/system_score_metrics.csv;Target visita
+opportunity;lower_lift10;1.370203;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/system_score_metrics.csv;Target visita
+opportunity;lower_lift10_ci95;[1.077626,1.689829];T1 holdout bootstrap;2026-01 a 2026-06;codexway/outputs/metrics/system_score_intervals.csv;Percentile bootstrap
+opportunity;upper_lift10;1.507223;T1 holdout N 1711;2026-01 a 2026-06;codexway/outputs/metrics/system_score_metrics.csv;Target visita
+opportunity;delta_lower_vs_quality_lift10;-0.318591;T1 holdout paired bootstrap;2026-01 a 2026-06;codexway/outputs/metrics/system_score_paired_delta.csv;IC totalmente negativo
+opportunity;relative_lift_loss;0.18865;T1 holdout;2026-01 a 2026-06;codexway/outputs/metrics/system_score_metrics.csv;Reconstruido
+experiment;interaction_confirmatory_cells;19;Celdas elegibles;Final;codexway/outputs/tables/cluster_combinations.csv;Multiple testing
+experiment;interaction_fdr_pass;0;19 celdas;Final;codexway/outputs/tables/cluster_combinations.csv;BH FDR 10 por ciento
+experiment;semantic_rules_oof_n;5499;OOF;EV-018;experimentos/Evidencias/EV-018_semantic_rules_lift_ablation.md;Reglas sidecar
+experiment;semantic_rules_delta_lift10;-0.071565;OOF N 5499;EV-018;experimentos/Evidencias/EV-018_semantic_rules_lift_ablation.md;CI cruza cero
+llm;real_model;gpt-5-nano;Piloto real N 100;EV-017 V2;experimentos/llm_semantic_feature_pilot/results/PILOT_REPORT.md;No quedó en camino crítico
+llm;real_cases;100;Muestra estratificada;EV-017 V2;experimentos/llm_semantic_feature_pilot/results/PILOT_REPORT.md;25 por estrato
+llm;input_tokens_v2;12634;100 casos;EV-017 V2;experimentos/llm_semantic_feature_pilot/results/pilot_usage_summary_v2.csv;Real
+llm;output_tokens_v2;4869;100 casos;EV-017 V2;experimentos/llm_semantic_feature_pilot/results/pilot_usage_summary_v2.csv;Real
+llm;cost_usd_v2;0.002579;100 casos;EV-017 V2;experimentos/llm_semantic_feature_pilot/results/pilot_usage_summary_v2.csv;Coste experimental
+llm;residual_actionable;0;100 casos;EV-017 V2;experimentos/llm_semantic_feature_pilot/results/PILOT_REPORT.md;0 de 100
+llm;canonical_n_gold;0;Evaluación 340 filas;Final;codexway/outputs/metrics/llm_audit_evaluation.json;Precision recall natural no disponible
+deployment;decision;ELIGIBLE_FOR_NEW_FORWARD_VALIDATION_AND_GUARDED_RANDOMIZED_PILOT;Sistema final;Final;codexway/outputs/metrics/deployment_readiness.json;No auto-routing
