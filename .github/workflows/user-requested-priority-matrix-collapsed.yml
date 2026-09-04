@@ -1,0 +1,36 @@
+name: user requested simplified priority matrix
+
+on:
+  push:
+    branches:
+      - analysis/user-requested-separate-features-clusters
+    paths:
+      - ".github/workflows/user-requested-priority-matrix-collapsed.yml"
+      - "codexway/analysis/user_requested_priority_matrix_collapsed.py"
+
+permissions:
+  contents: read
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install analysis environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy==2.3.5 pandas==2.3.3 pyarrow==21.0.0 PyYAML==6.0.3 scikit-learn==1.7.2 scipy==1.16.3 statsmodels==0.14.5
+          python -m pip install -e codexway --no-deps
+      - name: Evaluate simplified matrix
+        env:
+          PYTHONPATH: codexway/src
+        run: python codexway/analysis/user_requested_priority_matrix_collapsed.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: user-requested-priority-matrix-collapsed
+          path: codexway/outputs/metrics/user_requested_priority_matrix_collapsed.json
+          retention-days: 2
